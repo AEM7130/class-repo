@@ -36,9 +36,9 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 
 - Class participation: 10%
 - Presentation of a numerical paper: 10%
-- Final project proposal: 10%
-- Final project: 20%
-- Problem sets: 50%
+- Final project proposal: 15%
+- Final project: 25%
+- Problem sets: 40%
 
 ## Important dates
 
