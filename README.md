@@ -62,3 +62,72 @@ There is a final project for the course, due at the end of the semester, where e
 
 ### Numerical paper presentations
 Starting near the middle of the course, one student a week will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. More information will come later in the course.
+
+
+## Course Schedule
+
+### January 22: Intro to computing
+
+Miranda and Fackler (2002, Chapters 1, 2, and 5); Judd (1998, Chapters 2, 3 and 7)
+
+### January 29: Coding and the shell
+
+Learn Julia the Hard Way, QuantEcon lectures, Shell
+
+### February 5: Version control
+
+[SEERE Lab wiki](https://github.com/cornell-seere/lab-information/wiki)
+
+### February 12: Rootfinding and optimization
+
+Miranda and Fackler (2002, Chapters 3 and 4); Judd (1998, Chapter 4 and 5); Nocedal and Wright (2006, Chapters 2-6)
+
+### February 19: Discrete time dynamic programming
+
+Adda, Jerome and Russell W Cooper (2003) Dynamic Economics: Quantitative Methods and Ap- plications: MIT press.
+
+Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT press.
+
+### February 26: Function approximation
+
+Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
+
+### March 4: Solving discrete time dynamic models
+
+Aruoba, S Boragan, Jesus Fernandez-Villaverde, and Juan F Rubio-Ramirez (2006) “Comparing solution methods for dynamic equilibrium economies,” Journal of Economic Dynamics and Control, Vol. 30, No. 12, pp. 2477–2508.
+
+Cai, Yongyang and Kenneth L Judd (2014) Advances in Numerical Dynamic Programming and New Applications, Vol. 3: Elsevier B.V. pp.479–516.
+
+Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
+
+### March 11: Continuous time optimal control
+
+Caputo, Michael Ralph (2005) Foundations of dynamic economic analysis: optimal control theory and applications: Cambridge University Press.
+
+### March 18: Solving continuous time dynamic models
+
+Brunner, Martin and Holger Strulik (2002) “Solution of perfect foresight saddlepoint problems: A simple method and applications,” Journal of Economic Dynamics and Control, Vol. 26, No. 5, pp. 737–753.
+
+Judd (1998, Chapter 10)
+
+Trimborn, Timo, Karl-Josef Koch, and Thomas M. Steger (2008) “Multidimensional Transitional Dynamics: a Simple Numerical Procedure,” Macroeconomic Dynamics, Vol. 12, No. 03, pp. 301– 319.
+
+### March 25: Efficient methods for expectations in high dimensions
+
+Betancourt, Michael (2017) “A conceptual introduction to Hamiltonian Monte Carlo,” arXiv preprint arXiv:1701.02434.
+
+Chib, Siddhartha and Edward Greenberg (1995) “Understanding the Metropolis-Hastings Algorithm,” The American Statistician, Vol. 49, No. 4, pp. 327–335.
+
+Chib, Siddhartha and Edward Greenberg (1996) “Markov Chain Monte Carlo Simulation Methods in Econometrics,” Econometric Theory, Vol. 12, No. 3, pp. 409–431.
+
+### April 8: Regularization and prediction
+
+Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York.
+
+### April 15: Regularization and prediction
+
+Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York.
+
+### April 22: Cloud computing
+
+### April 29: Final project presentations
