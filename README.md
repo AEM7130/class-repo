@@ -42,9 +42,9 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 
 ## Important dates
 
-- Final project proposals due:
-- Final project presentations:
-- Final project paper due:
+- Final project proposals due: March 13
+- Final project presentations: April 29
+- Final project paper due: May 3
 
 ## Assignments
 
