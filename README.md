@@ -68,11 +68,15 @@ Starting near the middle of the course, one student a week will present either a
 
 ### January 22: Intro to computing
 
-Miranda and Fackler (2002, Chapters 1, 2, and 5); Judd (1998, Chapters 2, 3 and 7)
+Judd (1998, Chapters 2, 3 and 7)
+
+Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 ### January 29: Coding and the shell
 
-Learn Julia the Hard Way, QuantEcon lectures, Shell
+Learn Julia the Hard Way
+
+QuantEcon lectures
 
 ### February 5: Version control
 
@@ -80,7 +84,11 @@ Learn Julia the Hard Way, QuantEcon lectures, Shell
 
 ### February 12: Rootfinding and optimization
 
-Miranda and Fackler (2002, Chapters 3 and 4); Judd (1998, Chapter 4 and 5); Nocedal and Wright (2006, Chapters 2-6)
+Judd (1998, Chapter 4 and 5)
+
+Miranda and Fackler (2002, Chapters 3 and 4)
+
+Nocedal and Wright (2006, Chapters 2-6)
 
 ### February 19: Discrete time dynamic programming
 
