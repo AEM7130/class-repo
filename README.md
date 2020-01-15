@@ -44,7 +44,7 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 
 - Final project proposals due: March 13
 - Final project presentations: April 29
-- Final project paper due: May 3
+- Final project paper due: April 30
 
 ## Assignments
 
@@ -68,11 +68,15 @@ Starting near the middle of the course, one student a week will present either a
 
 ### January 22: Intro to computing
 
+**Theory**: matrix inversion, differentiation, integration, storage, truncation, rounding, error propagation, memory
+
 Judd (1998, Chapters 2, 3 and 7)
 
 Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 ### January 29: Coding and the shell
+
+**Applications**: generic coding, making stuff fast
 
 Learn Julia the Hard Way
 
@@ -80,9 +84,13 @@ QuantEcon lectures
 
 ### February 5: Version control
 
+**Applications**: git, github, issues, pull requests
+
 [SEERE Lab wiki](https://github.com/cornell-seere/lab-information/wiki)
 
 ### February 12: Rootfinding and optimization
+
+**Theory**: iterative methods, newton methods, gaussian methods, global solvers
 
 Judd (1998, Chapter 4 and 5)
 
@@ -92,15 +100,21 @@ Nocedal and Wright (2006, Chapters 2-6)
 
 ### February 19: Discrete time dynamic programming
 
+**Theory**: markov chains, principle of optimality
+
 Adda, Jerome and Russell W Cooper (2003) Dynamic Economics: Quantitative Methods and Ap- plications: MIT press.
 
 Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT press.
 
 ### February 26: Function approximation
 
+**Theory**: discretization, pseudospectral methods, finite element methods
+
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
 ### March 4: Solving discrete time dynamic models
+
+**Theory**: value function iteration, policy iteration, time iteration
 
 Aruoba, S Boragan, Jesus Fernandez-Villaverde, and Juan F Rubio-Ramirez (2006) “Comparing solution methods for dynamic equilibrium economies,” Journal of Economic Dynamics and Control, Vol. 30, No. 12, pp. 2477–2508.
 
@@ -110,9 +124,13 @@ Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide
 
 ### March 11: Continuous time optimal control
 
+**Theory**: maximum principle, hamiltonians
+
 Caputo, Michael Ralph (2005) Foundations of dynamic economic analysis: optimal control theory and applications: Cambridge University Press.
 
 ### March 18: Solving continuous time dynamic models
+
+**Theory**: shooting, backwards shooting
 
 Brunner, Martin and Holger Strulik (2002) “Solution of perfect foresight saddlepoint problems: A simple method and applications,” Journal of Economic Dynamics and Control, Vol. 26, No. 5, pp. 737–753.
 
@@ -122,6 +140,8 @@ Trimborn, Timo, Karl-Josef Koch, and Thomas M. Steger (2008) “Multidimensional
 
 ### March 25: Efficient methods for expectations in high dimensions
 
+**Theory**: monte carlo, markov chain monte carlo, hamiltonian monte carlo
+
 Betancourt, Michael (2017) “A conceptual introduction to Hamiltonian Monte Carlo,” arXiv preprint arXiv:1701.02434.
 
 Chib, Siddhartha and Edward Greenberg (1995) “Understanding the Metropolis-Hastings Algorithm,” The American Statistician, Vol. 49, No. 4, pp. 327–335.
@@ -130,12 +150,18 @@ Chib, Siddhartha and Edward Greenberg (1996) “Markov Chain Monte Carlo Simulat
 
 ### April 8: Regularization and prediction
 
+**Theory**: lasso, elastic net, unsupervised learning
+
 Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York.
 
 ### April 15: Regularization and prediction
 
+**Theory**: trees, forests, neural networks
+
 Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York.
 
 ### April 22: Cloud computing
+
+**Applications**: google compute engine, amazon elastic compute cloud
 
 ### April 29: Final project presentations
