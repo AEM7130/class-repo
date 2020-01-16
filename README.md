@@ -22,7 +22,8 @@ I will be teaching the class in Julia. Julia is becoming widely used in computat
 
 ## Readings
 
-Some theory on dynamics will draw from Karp and Traeger (2013). Nocedal and Wright (2006) is highly useful as a detailed reference for optimization. Judd (1998) and Miranda and Fackler (2002) take a more detailed look at the fundamental numerical methods in economics. Judd (1998), Miranda and Fackler (2002), and Nocedal and Wright (2006) are available as eBooks in the library and Karp and Traeger (2013) will be available on Canvas or from the authors' websites. Please read *Learn Julia the Hard Way* or go over the first few [QuantEcon Julia lectures](https://quantecon.org) for a brief introduction to coding in Julia. The remainder of the required readings will be from journal articles or excerpts from texts which will be accessible online and posted on GitHub a week before class.
+Some theory on dynamics will draw from Karp and Traeger (2013). Nocedal and Wright (2006) is highly useful as a detailed reference for optimization. Judd (1998) and Miranda and Fackler (2002) take a more detailed look at the fundamental numerical methods in economics. Judd (1998), Miranda and Fackler (2002), and Nocedal and Wright (2006) are available as eBooks in the library and Karp and Traeger (2013) will be available on Canvas or from the authors' websites. Please look at 
+[Learning Julia](https://julialang.org/learning/) or go over the first few [QuantEcon Julia lectures](https://quantecon.org) for a brief introduction to coding in Julia. The remainder of the required readings will be from journal articles or excerpts from texts which will be accessible online and posted on GitHub a week before class.
 
 Judd, Kenneth L. (1998) Numerical Methods in Economics, Cambridge, MA: MIT Press.
 
@@ -73,7 +74,7 @@ Starting near the middle of the course, one student a week will present either a
 
 ### January 22: Intro to computing
 
-**Theory**: matrix inversion, differentiation, integration, storage, truncation, rounding, error propagation, memory
+**Theory**: floats, ints, read/write, memory, truncation, rounding, error propagation, matrix inversion, differentiation, integration
 
 Judd (1998, Chapters 2, 3 and 7)
 
@@ -81,11 +82,13 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 ### January 29: Coding and the shell
 
-**Applications**: generic coding, making stuff fast
+**Applications**: shell scripts, generic coding, making stuff fast
 
-Learn Julia the Hard Way
+[Software Carpentry: The Unix Shell](https://swcarpentry.github.io/shell-novice/)
 
-QuantEcon lectures
+[Learning Julia](https://julialang.org/learning/)
+
+[QuantEcon lectures](https://quantecon.org/)
 
 ### February 5: Version control
 
@@ -175,7 +178,7 @@ Orlik, Anna and Laura Veldkamp (2014) “Understanding uncertainty shocks and th
 
 ### April 8: Regularization and prediction
 
-**Theory**: lasso, elastic net, unsupervised learning
+**Theory**: lasso, elastic net, crossvalidation, unsupervised learning
 
 Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York.
 
@@ -185,7 +188,7 @@ Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wol
 
 ### April 15: Regularization and prediction
 
-**Theory**: trees, forests, neural networks
+**Theory**: trees, bagging and boosting, neural networks
 
 Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York.
 
