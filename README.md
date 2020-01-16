@@ -82,9 +82,9 @@ Judd (1998, Chapters 2, 3 and 7)
 
 Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
-### January 29: Coding and the shell
+### January 29: Coding, reproducibility, and the shell
 
-**Applications**: shell scripts, generic coding, making stuff fast
+**Applications**: shell scripts, generic coding, reproducible coding, speed in julia
 
 [Software Carpentry: The Unix Shell](https://swcarpentry.github.io/shell-novice/)
 
