@@ -88,6 +88,8 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 [Software Carpentry: The Unix Shell](https://swcarpentry.github.io/shell-novice/)
 
+[AEA Reproducibility Guidance](https://aeadataeditor.github.io/aea-de-guidance/)
+
 [Learning Julia](https://julialang.org/learning/)
 
 [QuantEcon lectures](https://quantecon.org/)
