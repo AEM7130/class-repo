@@ -92,11 +92,13 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 [Learning Julia](https://julialang.org/learning/)
 
-[QuantEcon lectures](https://quantecon.org/)
+[QuantEcon Lectures](https://quantecon.org/)
 
 ### February 5: Version control
 
 **Applications**: git, github, issues, pull requests
+
+[Software Carpentry: Version Control with Git](https://swcarpentry.github.io/git-novice/)
 
 [SEERE Lab wiki](https://github.com/cornell-seere/lab-information/wiki)
 
