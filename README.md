@@ -127,11 +127,21 @@ Cai, Yongyang and Kenneth L Judd (2014) Advances in Numerical Dynamic Programmin
 
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
+**Applications**: climate change, bioeconomics
+
+Lemoine, Derek and Christian Traeger (2014) “Watch Your Step: Optimal policy in a tipping climate,” American Economic Journal: Economic Policy, Vol. 6, No. 1.
+
+Springborn, Michael and James N. Sanchirico (2013) “A density projection approach for non-trivial information dynamics: Adaptive management of stochastic natural resources,” Journal of Envi- ronmental Economics and Management, Vol. 66, No. 3, pp. 609–624.
+
 ### March 11: Continuous time optimal control
 
 **Theory**: maximum principle, hamiltonians
 
 Caputo, Michael Ralph (2005) Foundations of dynamic economic analysis: optimal control theory and applications: Cambridge University Press.
+
+**Applications**: oil extraction
+
+Anderson, Soren T, Ryan Kellogg, and Stephen W Salant (2018) “Hotelling under pressure,” Journal of Political Economy, Vol. 126, No. 3, pp. 984–1026.
 
 ### March 18: Solving continuous time dynamic models
 
@@ -143,6 +153,12 @@ Judd (1998, Chapter 10)
 
 Trimborn, Timo, Karl-Josef Koch, and Thomas M. Steger (2008) “Multidimensional Transitional Dynamics: a Simple Numerical Procedure,” Macroeconomic Dynamics, Vol. 12, No. 03, pp. 301– 319.
 
+**Applications**: climate change, shallow lakes
+
+Lemoine, Derek and Ivan Rudik (2017) “Steering the climate system: using inertia to lower the cost of policy,” American Economic Review, Vol. 107, No. 10, pp. 2947–57.
+
+Maler, Karl Goran, Anastasios Xepapadeas, and Aart De Zeeuw (2003) “The Economics of Shallow Lakes,” Environmental and Resource Economics, Vol. 26, No. 4, pp. 603–624.
+
 ### March 25: Efficient methods for expectations in high dimensions
 
 **Theory**: monte carlo, markov chain monte carlo, hamiltonian monte carlo
@@ -153,11 +169,19 @@ Chib, Siddhartha and Edward Greenberg (1995) “Understanding the Metropolis-Has
 
 Chib, Siddhartha and Edward Greenberg (1996) “Markov Chain Monte Carlo Simulation Methods in Econometrics,” Econometric Theory, Vol. 12, No. 3, pp. 409–431.
 
+**Applications**: uncertainty shocks
+
+Orlik, Anna and Laura Veldkamp (2014) “Understanding uncertainty shocks and the role of the black swan.”
+
 ### April 8: Regularization and prediction
 
 **Theory**: lasso, elastic net, unsupervised learning
 
 Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York.
+
+**Applications**: LASSO counterfactual, 
+
+Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) Machine learning from schools about energy efficiency. No. w23908. National Bureau of Economic Research.
 
 ### April 15: Regularization and prediction
 
