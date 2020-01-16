@@ -51,6 +51,11 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 ### Problem sets
 There will be four problem sets. You must submit your code on [GitHub](https://github.com) to your group's repository. We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of **three or fewer people**. **You must submit your problem set solutions as a well-commented (and already executed) Jupyter notebook in either Julia, Python, or R.** Each group should turn in one assignment with all members' names in the first cell of the notebook. 
 
+- Problem set 1: TBD
+- Problem set 2: TBD
+- Problem set 3: TBD
+- Problem set 4: TBD
+
 ### Final project
 
 There is a final project for the course, due at the end of the semester, where each student will submit the beginning of a numerically-driven research paper. A proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results. The paper is due the day after the final class. It should be at least 10 pages including tables and graphs and should:
