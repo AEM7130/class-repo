@@ -50,7 +50,9 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 ## Assignments
 
 ### Problem sets
-There will be four problem sets. You must submit your code on [GitHub](https://github.com) to your group's repository. We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of **three or fewer people**. **You must submit your problem set solutions as a well-commented (and already executed) Jupyter notebook in either Julia, Python, or R.** Each group should turn in one assignment with all members' names in the first cell of the notebook. 
+There will be four problem sets. You must submit your code on [GitHub](https://github.com) to your group's repository. We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of **three or fewer people**. Each group should turn in one assignment with all members' names at the top of the file. Your grade will be a function of how well your answer the questions and how reproducible you make your code.
+
+In addition to submitting problem sets you will be required to do a reproduction exercise on your classmates' code. You will be randomly assigned to another classmate's submitted problem set and tasked with seeing whether it reproduces and offer suggestions for reproducibility.
 
 - Problem set 1: TBD
 - Problem set 2: TBD
