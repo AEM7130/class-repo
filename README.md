@@ -180,7 +180,7 @@ Orlik, Anna and Laura Veldkamp (2014) “Understanding uncertainty shocks and th
 
 **Theory**: lasso, elastic net, crossvalidation, unsupervised learning
 
-Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York.
+[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 3, 4 and 7.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 **Applications**: LASSO counterfactual, 
 
@@ -190,7 +190,7 @@ Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wol
 
 **Theory**: trees, bagging and boosting, neural networks
 
-Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York.
+[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 8, 9, 10, and 15.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 ### April 22: Cloud computing
 
