@@ -182,7 +182,7 @@ Chib, Siddhartha and Edward Greenberg (1996) “Markov Chain Monte Carlo Simulat
 
 Orlik, Anna and Laura Veldkamp (2014) “Understanding uncertainty shocks and the role of the black swan.”
 
-### April 8: Regularization and prediction
+### April 8: Machine learning
 
 **Theory**: lasso, elastic net, crossvalidation, unsupervised learning
 
@@ -190,9 +190,9 @@ Orlik, Anna and Laura Veldkamp (2014) “Understanding uncertainty shocks and th
 
 **Applications**: LASSO for counterfactuals
 
-Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) Machine learning from schools about energy efficiency. No. w23908. National Bureau of Economic Research.
+Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) "Machine learning from schools about energy efficiency." No. w23908. National Bureau of Economic Research.
 
-### April 15: Regularization and prediction
+### April 15: Machine learning
 
 **Theory**: trees, bagging and boosting, neural networks
 
