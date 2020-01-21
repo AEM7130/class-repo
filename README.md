@@ -1,5 +1,5 @@
 # AEM 7130 Syllabus
-**Time**: Monday 4:30-7:00
+**Time**: Wednesday 4:30-7:00
 
 **Location**: Warren 113
 
