@@ -50,7 +50,7 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 ## Assignments
 
 ### Problem sets
-There will be four problem sets. You must submit your code on [GitHub](https://github.com) to your group's repository. We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of **three or fewer people**. Each group should turn in one assignment with all members' names at the top of the file. Your grade will be a function of how well your answer the questions and how reproducible you make your code.
+There will be four problem sets. You must submit your code on [GitHub](https://github.com). We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of **three or fewer people**. Each group should turn in one assignment with all members' names at the top of the file. Your grade will be a function of how well your answer the questions, and how reproducible you make your code for a peer code reviewer.
 
 In addition to submitting problem sets you will be required to do a reproduction exercise on your classmates' code. You will be randomly assigned to another classmate's submitted problem set and tasked with seeing whether it reproduces and offer suggestions for reproducibility.
 
@@ -61,16 +61,15 @@ In addition to submitting problem sets you will be required to do a reproduction
 
 ### Final project
 
-There is a final project for the course, due at the end of the semester, where each student will submit the beginning of a numerically-driven research paper. A proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results. The paper is due the day after the final class. It should be at least 10 pages including tables and graphs and should:
+There is a final project for the course, due at the end of the semester, where each student will submit the beginning of a computationally-driven research paper. A proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results. The paper is due the day after the final class. It should be at least 10 pages including tables and graphs and should:
 
 1. Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.
 2. Analytically develop the model, provide proofs for theoretical results if there are any.
 3. Describe how you solve the model.
 4. Have preliminary results.
 
-### Numerical paper presentations
+### Computational paper presentations
 Starting near the middle of the course, one student a week will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. More information will come later in the course.
-
 
 ## Course Schedule
 
@@ -84,7 +83,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 ### January 29: Coding, reproducibility, and the shell
 
-**Applications**: shell scripts, generic coding, reproducible coding, speed in julia
+**Applications**: shell scripts, generic coding, reproducible coding, speed in julia, workflow
 
 [Software Carpentry: The Unix Shell](https://swcarpentry.github.io/shell-novice/)
 
