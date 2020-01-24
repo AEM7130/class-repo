@@ -73,7 +73,7 @@ Starting near the middle of the course, one student a week will present either a
 
 ## Course Schedule
 
-### January 22: Intro to computing
+### [January 22: Intro to computing](https://rawcdn.githack.com/AEM7130/spring-2020/623a189abe90d1ec9fcd81644852d4123ceb1bd1/lecture_notes/lecture_1/1_intro_to_computing.html)
 
 **Theory**: floats, ints, read/write, memory, truncation, rounding, error propagation, matrix inversion, differentiation, integration
 
