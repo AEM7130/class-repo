@@ -115,7 +115,7 @@ Nocedal and Wright (2006, Chapters 2-6)
 
 **Theory**: markov chains, principle of optimality
 
-Adda, Jerome and Russell W Cooper (2003) Dynamic Economics: Quantitative Methods and Ap- plications: MIT press.
+Adda, Jerome and Russell W Cooper (2003) Dynamic Economics: Quantitative Methods and Applications: MIT press.
 
 Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT press.
 
@@ -139,7 +139,7 @@ Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide
 
 Lemoine, Derek and Christian Traeger (2014) “Watch Your Step: Optimal policy in a tipping climate,” American Economic Journal: Economic Policy, Vol. 6, No. 1.
 
-Springborn, Michael and James N. Sanchirico (2013) “A density projection approach for non-trivial information dynamics: Adaptive management of stochastic natural resources,” Journal of Envi- ronmental Economics and Management, Vol. 66, No. 3, pp. 609–624.
+Springborn, Michael and James N. Sanchirico (2013) “A density projection approach for non-trivial information dynamics: Adaptive management of stochastic natural resources,” Journal of Environmental Economics and Management, Vol. 66, No. 3, pp. 609–624.
 
 ### March 11: Continuous time optimal control
 
@@ -183,7 +183,11 @@ Orlik, Anna and Laura Veldkamp (2014) “Understanding uncertainty shocks and th
 
 ### April 8: Machine learning
 
-**Theory**: lasso, elastic net, crossvalidation, unsupervised learning
+**Theory**: regularization and sparsity, prediction and model selection
+
+[Mullainathan, Sendhil, and Jann Spiess (2017) "Machine learning: an applied econometric approach." Journal of Economic Perspectives 31, No. 2, 87-106.](https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.31.2.87)
+
+[Athey, S., & Imbens, G. W. (2019) Machine Learning Methods Economists Should Know About.](https://www.gsb.stanford.edu/gsb-cmis/gsb-cmis-download-auth/476281)
 
 [Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 3, 4 and 7.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
@@ -193,7 +197,7 @@ Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wol
 
 ### April 15: Machine learning
 
-**Theory**: trees, bagging and boosting, neural networks
+**Theory**: trees, bagging, boosting, ensembles, neural networks
 
 [Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 8, 9, 10, and 15.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
