@@ -31,15 +31,15 @@ name: toc
 
 Necessary things to do:
 
-- Windows users: Install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+- Windows users: Install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and a Unix distribution
 
 - Install [Julia](https://julialang.org/downloads/)
 
-- Install these Julia packages: `Expectations, Distributions, LinearAlgebra`
+- Install these Julia packages: `Expectations, Distributions, LinearAlgebra, BenchmarkTools`
 
 --
 
-These slides are based on QuantEcon, Julia documentation, etc
+These slides are based on Software Carpentry, notes by Grant Mcdermott, QuantEcon, Julia documentation, etc
 
 ---
 
@@ -47,7 +47,7 @@ These slides are based on QuantEcon, Julia documentation, etc
 
 What is the shell?
 
-The shell is the interface for interacting with your operating system,  
+The shell is the interface for interacting with your operating system,
 typically we are referring to the command line interface (terminal, command prompt, bash, etc)
 
 --
@@ -58,50 +58,55 @@ A lot of what you can do in the shell can be done in Julia itself, why bother wi
 
 # Why learn the shell?
 
-- Not everything can be done directily in your usual programming language
+Not everything can be done directily in your usual programming language
+
 --
 
-- Command line is fast, powerful, and relatively easy to use,  
+Command line is fast, powerful, and relatively easy to use,
 especially with modern shells like zsh or fish
+
 --
 
-- Writing shell scripts is reproducible and fast, unlike clicking buttons on a GUI
+Writing shell scripts is reproducible and fast, unlike clicking buttons on a GUI
+
 --
 
-- If you want to use servers or any high performance computing you are likely to need to use shell 
+If you want to use servers or any high performance computing you are likely to need to use shell
 
 ---
 
 # Why learn the shell?
 
-- You can automate your entire research pipeline with shell scripts (e.g. write something that calls multiple languages to execute your code then compiles your latex for the paper)
+You can automate your entire research pipeline with shell scripts (e.g. write something that calls multiple languages to execute your code then compiles your latex for the paper)
+
 --
 
-- It really gets to the fundamentals of interacting with a computer (loops, tab-completions, saving scripts, etc)
+It really gets to the fundamentals of interacting with a computer (loops, tab-completions, saving scripts, etc)
+
 --
 
-- It gets you understanding how to write code in terms of functions which will be important for any programming you do in scripting languages like Julia, R, MATLAB, or Stata
+It gets you understanding how to write code in terms of functions which will be important for any programming you do in scripting languages like Julia, R, MATLAB, or Stata
 
 ---
 
 # What is the shell?
 
-The shell is basically just a program where you can  
+The shell is basically just a program where you can
 type in commands to interact with the **kernel** and hardware
 
 &lt;div align="center"&gt;
-  &lt;img src="/figures/shell.png" height=450&gt;
+  &lt;img src="figures/shell.png" height=450&gt;
 &lt;/div&gt;
 
 ---
 
 # What is the shell?
 
-The most common one is **bash**, Bourne again shell, because it comes default on Macs and Linux
+The most common one is .hi-blue[bash], Bourne again shell, because it comes default on Macs and Linux
 
 --
 
-I use **fish**, friendly interactive shell, because it comes default with a lot of nice features,  
+I use .hi-blue[fish], friendly interactive shell, because it comes default with a lot of nice features,
 all the commands still work identically to bash
 
 ---
@@ -118,6 +123,9 @@ $
 
 We can type in one .hi-blue[command], `ls` which lists the contents of your current directory
 
+--
+
+
 ```bash
 $ ls
 ```
@@ -130,6 +138,8 @@ $ ls
 ## my-css.css
 ## sandbox
 ```
+
+My current directory is the one for this set of slides
 
 ---
 
@@ -151,17 +161,17 @@ $ ls
 ```
 
 ```bash
-$ ls -l
+$ ls -l # long form command
 ```
 
 ```
-## total 368
-## -rw-r--r--@ 1 ir229  staff  47395 Jan 26 16:34 2a_coding.Rmd
-## -rw-r--r--  1 ir229  staff  86995 Jan 26 16:33 2a_coding.html
-## drwxr-xr-x  6 ir229  staff    192 Jan 26 16:33 2a_coding_files
-## drwxr-xr-x  5 ir229  staff    160 Jan 26 10:16 figures
-## -rw-r--r--@ 1 ir229  staff   6573 Jan 22 12:44 my-css.css
-## drwxr-xr-x  8 ir229  staff    256 Jan 26 16:34 sandbox
+## total 360
+## -rw-r--r--@ 1 ir229  staff   43236 Jan 29 14:39 2a_coding.Rmd
+## -rw-r--r--@ 1 ir229  staff  107662 Jan 29 14:37 2a_coding.html
+## drwxr-xr-x  7 ir229  staff     224 Jan 29 14:39 2a_coding_files
+## drwxr-xr-x  9 ir229  staff     288 Jan 28 15:22 figures
+## -rw-r--r--@ 1 ir229  staff    6573 Jan 22 12:44 my-css.css
+## drwxr-xr-x  8 ir229  staff     256 Jan 29 14:39 sandbox
 ```
 
 ---
@@ -179,20 +189,27 @@ $ ls -lSh
 ```
 
 ```
-## total 368
-## -rw-r--r--  1 ir229  staff    85K Jan 26 16:33 2a_coding.html
-## -rw-r--r--@ 1 ir229  staff    46K Jan 26 16:34 2a_coding.Rmd
+## total 360
+## -rw-r--r--@ 1 ir229  staff   105K Jan 29 14:37 2a_coding.html
+## -rw-r--r--@ 1 ir229  staff    42K Jan 29 14:39 2a_coding.Rmd
 ## -rw-r--r--@ 1 ir229  staff   6.4K Jan 22 12:44 my-css.css
-## drwxr-xr-x  8 ir229  staff   256B Jan 26 16:34 sandbox
-## drwxr-xr-x  6 ir229  staff   192B Jan 26 16:33 2a_coding_files
-## drwxr-xr-x  5 ir229  staff   160B Jan 26 10:16 figures
+## drwxr-xr-x  9 ir229  staff   288B Jan 28 15:22 figures
+## drwxr-xr-x  8 ir229  staff   256B Jan 29 14:39 sandbox
+## drwxr-xr-x  7 ir229  staff   224B Jan 29 14:39 2a_coding_files
 ```
 
 ---
 
 # Shell basics
 
-Finally commands have an **argument** that the command operates on, the previous `ls` calls were operating on the current directory, but we could use it on any directory we want
+Finally commands have an .hi-blue[argument] that the command operates on
+
+--
+
+The previous `ls` calls were operating on the current directory,  
+but we could use it on any directory we want
+
+--
 
 
 ```bash
@@ -213,7 +230,7 @@ $ ls -lSh ~/Desktop/git
 ## drwxr-xr-x  24 ir229  staff   768B Sep 30 20:43 optimal-climate-policy-aej
 ## drwxr-xr-x  19 ir229  staff   608B Jan 15 18:23 irudik.github.io
 ## drwxr-xr-x  15 ir229  staff   480B Jan 24 11:00 hurricane_forecasts
-## drwxr-xr-x  13 ir229  staff   416B Jan  9 12:28 seere-lab
+## drwxr-xr-x  14 ir229  staff   448B Jan 27 13:59 seere-lab
 ## drwxr-xr-x  11 ir229  staff   352B Apr 29  2019 drillinginfo-data-import
 ## drwxr-xr-x  11 ir229  staff   352B Jan 21 21:11 ed_rubin_class
 ## drwxr-xr-x  11 ir229  staff   352B Aug 18 17:13 growth-versus-levels
@@ -643,7 +660,11 @@ We already learned how to list the files in a particular directory, but we need 
 
 We often will want to know our .hi-blue[current working directory] so we know where we are before we start running commands
 
+--
+
 We do this with `pwd`
+
+--
 
 
 ```bash
@@ -695,6 +716,8 @@ $ ls /
 
 The root directory contains everything else
 
+--
+
 Other directories are inside the root directory and come afterward in the file path separated by forward slashes `/`
 
 
@@ -728,13 +751,13 @@ $ ls -lSh /Users/ir229
 
 ```
 ## total 8
-## drwx------+ 829 ir229  staff    26K Jan 26 15:01 Downloads
+## drwx------+ 841 ir229  staff    26K Jan 29 11:59 Downloads
 ## drwx------+  71 ir229  staff   2.2K Sep 23 18:25 Library
 ## -rw-r--r--@   1 ir229  staff   1.0K Nov 25 13:39 artelys_lic_trial_artelys_knitro_academic_bb-8b-8e-28-3d.txt
-## drwx------@  24 ir229  staff   768B Jan 21 17:03 Dropbox
+## drwx------@  25 ir229  staff   800B Jan 27 14:00 Dropbox
 ## drwxr-xr-x   21 ir229  staff   672B Jan 17  2019 reveal.js
-## drwx------+   8 ir229  staff   256B Feb  7  2019 Documents
-## drwx------+   7 ir229  staff   224B Jan 23 11:37 Desktop
+## drwx------+   9 ir229  staff   288B Jan 28 07:53 Documents
+## drwx------+   7 ir229  staff   224B Jan 28 15:22 Desktop
 ## drwxr-xr-x    7 ir229  staff   224B Jan 26 12:49 HEG
 ## drwxr-xr-x    7 ir229  staff   224B Jan 26 12:50 wekafiles
 ## drwx------+   4 ir229  staff   128B Dec 21  2017 Music
@@ -750,7 +773,9 @@ $ ls -lSh /Users/ir229
 
 # Navigation
 
-Next we need to be able to change directories, we can do this with `cd`
+Next we need to be able to change directories, we can do this with `cd` (change directory)
+
+--
 
 
 ```bash
@@ -803,6 +828,8 @@ $ pwd
 ## /Users/ir229/Desktop/git/aem7130/spring-2020/lecture_notes
 ```
 
+--
+
 You can see `.` and `..` in your current directory when using `ls` with the `a` flag
 
 ```bash
@@ -825,7 +852,12 @@ $ ls -a
 
 # Navigation
 
-This makes navigation much easier, if we wanted to move from the current directory to the parent directory for this year's course we can just do
+This makes navigation much easier
+
+If we wanted to move from the current directory to the parent directory for this year's course we can just do
+
+--
+
 
 ```bash
 $ pwd
@@ -837,6 +869,9 @@ $ pwd
 ## /Users/ir229/Desktop/git/aem7130/spring-2020/lecture_notes/lecture_2
 ## /Users/ir229/Desktop/git/aem7130/spring-2020
 ```
+
+--
+
 instead of
 
 ```bash
@@ -850,11 +885,34 @@ $ pwd
 
 ---
 
+# Navigation
+
+Relative paths are very important for reproducible code
+
+--
+
+Your directory structure starting at root `/` will not be the same as someone else's
+
+--
+
+Using relative paths lets you circumvent this  
+as long as the project's directory structure is consistent 
+
+--
+
+If you use Git or Dropbox it should be
+
+---
+
 # Creating files and directories
 
 We learned how to move around directories but how do we make them?
 
+--
+
 We do so with `mkdir` (make directory)
+
+--
 
 
 ```bash
@@ -877,6 +935,8 @@ $ ls
 # Creating files and directories
 
 We create blank files using `touch`
+
+--
 
 
 ```bash
@@ -908,6 +968,8 @@ $ nano test_directory/test.txt
 
 Here are some tips for naming files and directories
 
+--
+
 1. .hi-red[DON'T USE SPACES]
     - Spaces are used to separate commands, you generally want to avoid them in names in favor of underscores or dashes
 2. Use letters, numbers, underscores, periods, and dashes only
@@ -917,6 +979,8 @@ Here are some tips for naming files and directories
 # Creating files and directories
 
 If you really, really, want to use spaces in names you'll have to do one of two things, enclose in quotes or backslash the space
+
+--
 
 
 ```bash
@@ -968,7 +1032,9 @@ $ ls
 
 # Moving files and directories
 
-We can move files and directories with `mv`, move
+We can move files and directories with `mv` (move)
+
+--
 
 
 ```bash
@@ -1014,6 +1080,8 @@ Note that `mv` will overwrite any file with the move, use the `-i` option to mak
 
 `mv` can also be used to rename files by just moving them to the same directory
 
+--
+
 
 ```bash
 $ mv test_directory/test.txt test_directory/test_new_name.txt
@@ -1040,6 +1108,8 @@ $ ls test_directory
 
 Now that we've made the directory and file, how do we get rid of them? With `rm`
 
+--
+
 
 ```bash
 $ rm test_directory/test.txt
@@ -1061,6 +1131,8 @@ $ ls
 # Moving files and directories
 
 We remove directories with `rmdir`
+
+--
 
 
 ```bash
@@ -1085,7 +1157,9 @@ Notice that if a directory isn't empty you can't delete it
 
 # Moving files and directories
 
-To delete a non-empty directory, you need to use `rm` but apply the recursive option `-r` to delete everything inside of it first
+To delete a non-empty directory, you need to use `rm` on the directory, but apply the recursive option `-r` to delete everything inside of it first
+
+--
 
 
 ```bash
@@ -1109,6 +1183,8 @@ Sometimes you might want to add the force option `-f` so it doesn't ask you if y
 # Copying files and directories
 
 To copy files and directories just use `cp`, it works similarly to `mv`
+
+--
 
 
 ```bash
@@ -1145,39 +1221,34 @@ $ ls
 
 You copy directories the same way, but if you want to copy the full file contents you need to apply the recursive option `-r`
 
+--
+
 
 ```bash
 $ cp -r test_directory ..
-$ ls ..
+$ ls .. test_directory
 ```
 
 ```
+## ..:
 ## figures
 ## lecture_1
 ## lecture_2
 ## test_directory
+## 
+## test_directory:
+## test_copy.txt
 ```
 
 ```bash
-$ ls
+$ ls ../test_directory
 ```
 
 ```
-## 2a_coding.Rmd
-## 2a_coding.html
-## 2a_coding_files
-## figures
-## my-css.css
-## sandbox
-## test_directory
+## test_copy.txt
 ```
 
 
-```
-## figures
-## lecture_1
-## lecture_2
-```
 
 ---
 
@@ -1206,6 +1277,9 @@ $ ls main_directory
 
 To copy them we can just use `cp` as we did before
 
+--
+
+
 ```bash
 $ cp main_directory/file1.txt main_directory/file2.txt main_directory/file3.txt copy_directory
 $ ls copy_directory
@@ -1216,6 +1290,12 @@ $ ls copy_directory
 ## file2.txt
 ## file3.txt
 ```
+
+--
+
+We remove them the same way with `rm`
+
+--
 
 
 ```bash
@@ -1259,8 +1339,10 @@ $ ls copy_directory
 
 # Accessing multiple files
 
-We can access multiple things at once using .hi-blue[wildcards] `*`, 
+We can access multiple things at once using .hi-blue[wildcards] `*`,
 which replaces zero to any number of characters in the expression
+
+--
 
 
 ```bash
@@ -1297,7 +1379,9 @@ $ ls copy_directory/*.csv # return everything in copy_directory with the csv ext
 
 The shell really shines when you try to combine multiple commands into one
 
-Lets play around with the `sandbox` directory and count the number of words in one of the files using `wc`
+Lets play around with the `sandbox` directory and count the number of words in `animals.txt` using `wc`
+
+--
 
 
 ```bash
@@ -1341,9 +1425,11 @@ $ wc sandbox/*.txt
 
 Now suppose we had 1 million files and wanted to find the one with the most words? Just printing to the screen doesn't work, we'd want to save the output and use it somewhere else, we can do that by .hi-blue[redirecting] with the greater than symbol `&gt;`
 
+--
+
 
 ```bash
-$ wc -m sandbox/*.txt &gt; sandbox/lengths.txt
+$ wc -w sandbox/*.txt &gt; sandbox/lengths.txt
 $ ls sandbox
 ```
 
@@ -1360,7 +1446,9 @@ $ ls sandbox
 
 # Printing and cating
 
-We can print the file to the screen using `cat` (concatenate, print the full file) or `less` (print only one screenful)
+We can print the file to the screen using `cat` (print the full file) or `less` (one screenful)
+
+--
 
 
 ```bash
@@ -1368,27 +1456,14 @@ $ cat sandbox/lengths.txt
 ```
 
 ```
-##       33 sandbox/animals.txt
-##      979 sandbox/hey_jude.txt
-##     1191 sandbox/lucy_in_the_sky.txt
-##       46 sandbox/trees.txt
-##     2249 total
+##        7 sandbox/animals.txt
+##      195 sandbox/hey_jude.txt
+##      220 sandbox/lucy_in_the_sky.txt
+##        8 sandbox/trees.txt
+##      430 total
 ```
 
-
-```bash
-$ less sandbox/lengths.txt
-```
-
-```
-##       33 sandbox/animals.txt
-##      979 sandbox/hey_jude.txt
-##     1191 sandbox/lucy_in_the_sky.txt
-##       46 sandbox/trees.txt
-##     2249 total
-```
-
-The `m` option made it so we only got the number of characters, not words or lines
+The `w` option made it so we only got the number of words, not characters or lines
 
 ---
 
@@ -1396,22 +1471,30 @@ The `m` option made it so we only got the number of characters, not words or lin
 
 If we want to return the output sorted we can use `sort`
 
+--
+
 
 ```bash
 $ sort -n sandbox/lengths.txt
 ```
 
 ```
-##       33 sandbox/animals.txt
-##       46 sandbox/trees.txt
-##      979 sandbox/hey_jude.txt
-##     1191 sandbox/lucy_in_the_sky.txt
-##     2249 total
+##        7 sandbox/animals.txt
+##        8 sandbox/trees.txt
+##      195 sandbox/hey_jude.txt
+##      220 sandbox/lucy_in_the_sky.txt
+##      430 total
 ```
 
 where the `n` option means to sort numerically
 
+---
+
+# Sorting
+
 We can look at only the first few lines using `head`, (`tail` gets the last lines)
+
+--
 
 
 ```bash
@@ -1419,7 +1502,7 @@ $ head -n 1 sandbox/lengths.txt
 ```
 
 ```
-##       33 sandbox/animals.txt
+##        7 sandbox/animals.txt
 ```
 
 Where the 1 means we only want the first line
@@ -1430,7 +1513,11 @@ Where the 1 means we only want the first line
 
 `&gt;` will always overwrite a file, we can use the double greater than symbol `&gt;&gt;` to append to a file
 
+--
+
 Lets use `echo` for an example which prints text
+
+--
 
 
 ```bash
@@ -1457,9 +1544,15 @@ $ cat sandbox/trees.txt
 
 We've learned a few options for manipulating text files, we can combine them in easy ways using .hi-blue[piping] (same idea as Julia's queryverse and R's tidyverse)
 
+--
+
 Pipes `|` allow you sequentially write out commands that use the previous command's output as the next command's input
 
+--
+
 Suppose we wanted to find the file in a directory with the most number of characters, we could do this with
+
+--
 
 
 ```bash
@@ -1472,7 +1565,7 @@ $ wc -m sandbox/* | sort -n | tail -n 2
 ##     2395 total
 ```
 
-The `length.txt` file is the longest in the sandbox directory
+`lucy_in_the_sky.txt` is the longest in the sandbox directory
 
 ---
 
@@ -1483,6 +1576,9 @@ Look at the file `sandbox/hey_jude.txt`, how would we get the second verse?
 --
 
 We can pipe a `head` and `tail` together:
+
+--
+
 
 ```bash
 $ head -n 9 sandbox/hey_jude.txt | tail -n 4
@@ -1495,7 +1591,8 @@ $ head -n 9 sandbox/hey_jude.txt | tail -n 4
 ## Then you begin to make it better.
 ```
 
-`head` grabs the first two verses (with the empty line inbetween), `tail` grabs second verse
+`head` grabs the first two verses (with the empty line inbetween),  
+`tail` grabs second verse
 
 ---
 
@@ -1503,7 +1600,11 @@ $ head -n 9 sandbox/hey_jude.txt | tail -n 4
 
 What if we wanted the second verse of *multiple songs*?
 
+--
+
 We can do that with a loop
+
+--
 
 
 ```bash
@@ -1544,9 +1645,13 @@ $ done
 
 How about a more realistic one that is real world useful (taken from [Grant Mcdermott](https://raw.githack.com/uo-ec607/lectures/master/03-shell/03-shell.html#109))
 
+--
+
 Let's combine a bunch of csvs using the shell
 
 This is particularly useful with many or large datasets, because when done through shell, you do not need to load them into memory
+
+--
 
 The files are in `/sandbox/classes` and report a fake class schedule
 
@@ -1558,6 +1663,9 @@ Let's combine them into one
 
 First we need to make our class schedule file
 
+--
+
+
 ```bash
 $ touch sandbox/classes/class_schedule.csv
 ```
@@ -1565,6 +1673,9 @@ $ touch sandbox/classes/class_schedule.csv
 --
 
 Then we need to add each day's schedule to the file
+
+--
+
 
 ```bash
 $ for day in $(ls sandbox/classes/*day.csv)
@@ -1587,12 +1698,6 @@ $ cat sandbox/classes/class_schedule.csv
 ```
 ## day,morning,afternoon,evening
 ## friday,nothing,workshop,nothing
-## monday,micro,macro,metrics
-## thursday,game theory,seminar,nothings
-## tuesday,game theory,seminar,nothings
-## wednesday,micro,macro,metrics
-## day,morning,afternoon,evening
-## friday,nothing,workshop,nothing
 ## day,morning,afternoon,evening
 ## monday,micro,macro,metrics
 ## day,morning,afternoon,evening
@@ -1603,7 +1708,11 @@ $ cat sandbox/classes/class_schedule.csv
 ## wednesday,micro,macro,metrics
 ```
 
-Looks like it worked but we have the header, how do we get rid of it?
+--
+
+Looks like it worked but we have the header every other line, how do we get rid of it?
+
+--
 
 .hi-blue[Hint:] we only need the header once, and then we want the last line of the csv for each file
 
@@ -1613,11 +1722,18 @@ Looks like it worked but we have the header, how do we get rid of it?
 
 First lets remove the old file
 
+--
+
+
 ```bash
 $ rm -f sandbox/classes/class_schedule.csv
 ```
 
+--
+
 Next create the new file by grabbing the header from Monday
+
+--
 
 
 ```bash
@@ -1635,7 +1751,12 @@ $ cat sandbox/classes/class_schedule.csv
 
 So we've got the file started, now we need to fill in the days using our looping skills
 
-Then we need to add each day's schedule to the file
+--
+
+We need to add each day's schedule to the file
+
+--
+
 
 ```bash
 $ for day in $(ls sandbox/classes/*day.csv)
@@ -1654,17 +1775,26 @@ $ cat sandbox/classes/class_schedule.csv
 ## wednesday,micro,macro,metrics
 ```
 
+
+
+
 ---
 
 # Finding things
 
 How can we find things within files?
 
+--
+
 We use the command `grep` (global/regular expression/print)
+
+--
 
 `grep` finds and prints lines that match a certain pattern
 
 For example, lets find the lines in Hey Jude that contain "make"
+
+--
 
 
 ```bash
@@ -1700,6 +1830,8 @@ Here `make` is the pattern we are searching for inside Hey Jude
 
 Now lets search Lucy in the Sky for "in"
 
+--
+
 
 ```bash
 $ grep in sandbox/lucy_in_the_sky.txt | head -5
@@ -1713,6 +1845,8 @@ $ grep in sandbox/lucy_in_the_sky.txt | head -5
 ## Lucy in the sky with diamonds
 ```
 
+--
+
 This gave us words that contained "in" but weren't actually the word "in"
 
 ---
@@ -1720,6 +1854,8 @@ This gave us words that contained "in" but weren't actually the word "in"
 # Finding things
 
 We can restrict the search to words with the `w` option
+
+--
 
 
 ```bash
@@ -1742,7 +1878,11 @@ $ grep -w in sandbox/lucy_in_the_sky.txt | head -5
 
 These are complex expressions that allow you to search for very specific things
 
+--
+
 For example, lets find lines with "a" as the second letter
+
+--
 
 
 ```bash
@@ -1763,12 +1903,14 @@ You can imagine using it to do things like dynamically renaming a set of variabl
 
 A nice thing about shell that's pretty underused by economists is putting the commands into scripts so we can re-use them
 
+--
+
 
 ```bash
 $ # writing a shell script using echo is kind of silly
 $ # but I want to show you what I'm doing on the slides
 $ touch sandbox/shell_script.sh
-$ echo echo "Hello World!" &gt;&gt; sandbox/shell_script.sh 
+$ echo echo "Hello World!" &gt;&gt; sandbox/shell_script.sh
 $ cat sandbox/shell_script.sh
 ```
 
@@ -1788,1233 +1930,2157 @@ $ bash sandbox/shell_script.sh
 
 
 
-&lt;!-- --- --&gt;
+---
 
-&lt;!-- # Why am I doing this to you? --&gt;
+# Why am I doing this to you?
 
-&lt;!-- Why learn shell and Julia? --&gt;
+Why learn Julia?
 
-&lt;!-- 1. It's a high-level language, much easier to use than C++, Fortran, etc --&gt;
-&lt;!-- 2. It delivers speeds in the ballpark of C++ and Fortran even with the super old 0.2 version --&gt;
+1. It's a high-level language, much easier to use than C++, Fortran, etc
+2. It delivers C++ and Fortran speed
 
-&lt;!-- &lt;div align="center"&gt; --&gt;
-&lt;!--   &lt;img src="/figures/julia_speed_2.png" height=350&gt; --&gt;
-&lt;!-- &lt;/div&gt; --&gt;
+&lt;div align="center"&gt;
+  &lt;img src="figures/julia_speed_2.png" height=390&gt;
+&lt;/div&gt;
 
-&lt;!-- --- --&gt;
+---
 
-&lt;!-- # Intro to programming --&gt;
+# Intro to programming
 
-&lt;!-- ### Programming `\(\equiv\)` writing a set of instructions --&gt;
+### Programming `\(\equiv\)` writing a set of instructions
 
-&lt;!-- 1. There are hard and fast rules you can't break if you want it to work --&gt;
-&lt;!-- 2. There are elements of style (e.g. Strunk and White) that make for clearer and more efficient code --&gt;
+1. There are hard and fast rules you can't break if you want it to work
+2. There are elements of style (e.g. Strunk and White) that make for clearer and more efficient code
 
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- If you will be doing computational work there are: --&gt;
+If you will be doing computational work there are:
 
-&lt;!-- 1. Language-independent coding basics you should know --&gt;
-&lt;!--   - Arrays are stored in memory in particular ways   --&gt;
-&lt;!-- -- --&gt;
+1. Language-independent coding basics you should know
+    - Arrays are stored in memory in particular ways
+2. Language-independent best practices you should use
+    - Indent to convey program structure (or function in Python)
+3. Language-dependent idiosyncracies that matter for function, speed, etc
+    - Julia: type stability; R: vectorize
 
-&lt;!-- 2. Language-independent best practices you should use --&gt;
-&lt;!--   - Indent to convey program structure (or function in Python)    --&gt;
-&lt;!-- -- --&gt;
+---
+# Intro to programming
 
-&lt;!-- 3. Language-dependent idiosyncracies that matter for function, speed, memory allocation, etc --&gt;
-&lt;!--   - MATLAB: vectorize, vectorize, vectorize --&gt;
-&lt;!--   - Julia: loops forever --&gt;
+### Learning these early will:
 
-&lt;!-- --- --&gt;
-&lt;!-- # Intro to programming --&gt;
+1. Make coding a lot easier
+--
 
-&lt;!-- ### Learning these early will: --&gt;
+2. Reduce total programmer time
+--
 
-&lt;!-- 1. Make coding a lot easier --&gt;
-&lt;!-- -- --&gt;
+3. Reduce total computer time
+--
 
-&lt;!-- 2. Reduce total programmer time --&gt;
-&lt;!-- -- --&gt;
+4. Make your code understandable by someone else or your future self
+--
 
-&lt;!-- 3. Reduce total computer time --&gt;
-&lt;!-- -- --&gt;
+5. Make your code flexible
 
-&lt;!-- 4. Make your code understandable by someone else or your future self --&gt;
-&lt;!-- -- --&gt;
+---
 
-&lt;!-- 5. Make your code flexible --&gt;
+# A broad view of programming
 
-&lt;!-- --- --&gt;
+Your goal is to make a **program**
 
-&lt;!-- # A broad view of programming --&gt;
+A program is made of different components and sub-components
 
-&lt;!-- Your goal is to make a **program** --&gt;
+--
 
-&lt;!-- A program is made of different components and sub-components --&gt;
+The most basic component is a **statement**, more commonly called a **line of code**
 
-&lt;!-- -- --&gt;
 
-&lt;!-- The most basic component is a **statement**, more commonly called a **line of code** --&gt;
+---
 
-&lt;!-- -- --&gt;
+# A broad view of programming
 
-&lt;!-- Here's pseudoprogram:   --&gt;
-&lt;!-- ```julia --&gt;
-&lt;!-- deck = ["4 of hearts", "King of clubs", "Ace of spades"] --&gt;
-&lt;!-- shuffled_deck = shuffle(deck) --&gt;
-&lt;!-- first_card = shuffled_deck[1] --&gt;
-&lt;!-- println("The first drawn card was " * shuffled_deck ".") --&gt;
-&lt;!-- ``` --&gt;
+Here's pseudoprogram:
+```julia
+*deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+shuffled_deck = shuffle(deck)
+first_card = shuffled_deck[1]
+println("The first drawn card was " * shuffled_deck ".")
+```
 
-&lt;!-- This program is real simple: --&gt;
+This program is real simple:
 
-&lt;!-- --- --&gt;
+1. Create a deck of cards
 
-&lt;!-- # A broad view of programming --&gt;
+---
 
-&lt;!-- Your goal is to make a **program** --&gt;
+# A broad view of programming
 
-&lt;!-- A program is made of different components and sub-components --&gt;
+Here's pseudoprogram:
+```julia
+deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+*shuffled_deck = shuffle(deck)
+first_card = shuffled_deck[1]
+println("The first drawn card was " * shuffled_deck ".")
+```
 
-&lt;!-- The most basic component is a **statement**, more commonly called a **line of code** --&gt;
+This program is real simple:
 
-&lt;!-- Here's pseudoprogram:   --&gt;
-&lt;!-- ```julia --&gt;
-&lt;!-- *deck = ["4 of hearts", "King of clubs", "Ace of spades"] --&gt;
-&lt;!-- shuffled_deck = shuffle(deck) --&gt;
-&lt;!-- first_card = shuffled_deck[1] --&gt;
-&lt;!-- println("The first drawn card was " * shuffled_deck ".") --&gt;
-&lt;!-- ``` --&gt;
+1. Create a deck of cards
+2. Shuffle the deck
 
-&lt;!-- This program is real simple: --&gt;
+---
 
-&lt;!-- 1. Create a deck of cards --&gt;
+# A broad view of programming
 
-&lt;!-- --- --&gt;
+Here's pseudoprogram:
+```julia
+deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+shuffled_deck = shuffle(deck)
+*first_card = shuffled_deck[1]
+println("The first drawn card was " * shuffled_deck ".")
+```
 
-&lt;!-- # A broad view of programming --&gt;
+This program is real simple:
 
-&lt;!-- Your goal is to make a **program** --&gt;
+1. Create a deck of cards
+2. Shuffle the deck
+3. Draw the top card
 
-&lt;!-- A program is made of different components and sub-components --&gt;
+---
 
-&lt;!-- The most basic component is a **statement**, more commonly called a **line of code** --&gt;
+# A broad view of programming
 
-&lt;!-- Here's pseudoprogram:   --&gt;
-&lt;!-- ```julia --&gt;
-&lt;!-- deck = ["4 of hearts", "King of clubs", "Ace of spades"] --&gt;
-&lt;!-- *shuffled_deck = shuffle(deck) --&gt;
-&lt;!-- first_card = shuffled_deck[1] --&gt;
-&lt;!-- println("The first drawn card was " * shuffled_deck ".") --&gt;
-&lt;!-- ``` --&gt;
+Here's pseudoprogram:
+```julia
+deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+shuffled_deck = shuffle(deck)
+first_card = shuffled_deck[1]
+*println("The first drawn card was " * shuffled_deck ".")
+```
 
-&lt;!-- This program is real simple: --&gt;
+This program is real simple:
 
-&lt;!-- 1. Create a deck of cards --&gt;
-&lt;!-- 2. Shuffle the deck --&gt;
+1. Create a deck of cards
+2. Shuffle the deck
+3. Draw the top card
+4. Print it
 
-&lt;!-- --- --&gt;
+---
 
-&lt;!-- # A broad view of programming --&gt;
+# A broad view of programming
 
-&lt;!-- Your goal is to make a **program** --&gt;
+```julia
+deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+shuffled_deck = shuffle(deck)
+first_card = shuffled_deck[1]
+println("The first drawn card was " * shuffled_deck ".")
+```
 
-&lt;!-- A program is made of different components and sub-components --&gt;
+What are the parentheses and why are they different from square brackets?
 
-&lt;!-- The most basic component is a **statement**, more commonly called a **line of code** --&gt;
+How does shuffle work?
 
-&lt;!-- Here's pseudoprogram:   --&gt;
-&lt;!-- ```julia --&gt;
-&lt;!-- deck = ["4 of hearts", "King of clubs", "Ace of spades"] --&gt;
-&lt;!-- shuffled_deck = shuffle(deck) --&gt;
-&lt;!-- *first_card = shuffled_deck[1] --&gt;
-&lt;!-- println("The first drawn card was " * shuffled_deck ".") --&gt;
-&lt;!-- ``` --&gt;
+What’s println?
 
-&lt;!-- This program is real simple: --&gt;
+It’s important to know that a good program has understandable code
 
-&lt;!-- 1. Create a deck of cards --&gt;
-&lt;!-- 2. Shuffle the deck --&gt;
-&lt;!-- 3. Draw the top card --&gt;
+---
 
-&lt;!-- --- --&gt;
+# Julia specifics
 
-&lt;!-- # A broad view of programming --&gt;
+We will discuss coding in the context of Julia  
+but a lot of this ports to Python, MATLAB, etc
 
-&lt;!-- Your goal is to make a **program** --&gt;
+To do:
 
-&lt;!-- A program is made of different components and sub-components --&gt;
+1. Types
+2. Operators
+3. Scope
+4. Generic functions
+5. Multiple dispatch
 
-&lt;!-- The most basic component is a **statement**, more commonly called a **line of code** --&gt;
+---
 
-&lt;!-- Here's pseudoprogram:   --&gt;
-&lt;!-- ```julia --&gt;
-&lt;!-- deck = ["4 of hearts", "King of clubs", "Ace of spades"] --&gt;
-&lt;!-- shuffled_deck = shuffle(deck) --&gt;
-&lt;!-- first_card = shuffled_deck[1] --&gt;
-&lt;!-- *println("The first drawn card was " * shuffled_deck ".") --&gt;
-&lt;!-- ``` --&gt;
+# Types
 
-&lt;!-- This program is real simple: --&gt;
+All languages have some kind of **data types** like integers or arrays
 
-&lt;!-- 1. Create a deck of cards --&gt;
-&lt;!-- 2. Shuffle the deck --&gt;
-&lt;!-- 3. Draw the top card --&gt;
-&lt;!-- 4. Print it --&gt;
+--
 
-&lt;!-- --- --&gt;
+The first type you will often use is a boolean (`Bool`) variable that takes on a value of `true` or `false`:
 
-&lt;!-- # A broad view of programming   --&gt;
-&lt;!-- ```julia --&gt;
-&lt;!-- deck = ["4 of hearts", "King of clubs", "Ace of spades"] --&gt;
-&lt;!-- shuffled_deck = shuffle(deck) --&gt;
-&lt;!-- first_card = shuffled_deck[1] --&gt;
-&lt;!-- println("The first drawn card was " * shuffled_deck ".") --&gt;
-&lt;!-- ``` --&gt;
+```julia
+ x = true
+```
 
-&lt;!-- What are the parentheses and why are they different from square brackets? --&gt;
+```
+## true
+```
 
-&lt;!-- How does shuffle work?  --&gt;
+```julia
+ typeof(x)
+```
 
-&lt;!-- What’s println?  --&gt;
+```
+## Bool
+```
 
-&lt;!-- It’s important to know that a good program has understandable code --&gt;
+---
 
-&lt;!-- --- --&gt;
+# Types
 
-&lt;!-- # Julia specifics --&gt;
+We can save the boolean value of actual statements in variables this way:
 
-&lt;!-- We will discuss coding in the context of Julia but a lot of this ports to Python, MATLAB, etc --&gt;
+```julia
+ @show y = 1 &gt; 2
+```
 
-&lt;!-- To do: --&gt;
+```
+## y = 1 &gt; 2 = false
+```
 
-&lt;!-- 1. Types --&gt;
-&lt;!-- 2. Operators --&gt;
-&lt;!-- 3. Scope --&gt;
-&lt;!-- 4. Generic functions --&gt;
-&lt;!-- 5. Multiple dispatch --&gt;
+```
+## false
+```
 
-&lt;!-- --- --&gt;
+`@show` is a Julia macro for showing the operation
 
-&lt;!-- # Types --&gt;
+---
 
-&lt;!-- All languages have some kind of **data types** like integers or arrays --&gt;
+# Numbers
 
-&lt;!-- The first type you will often use is a boolean (`Bool`) variable that takes on a value of `true` or `false`: --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- x = true --&gt;
-&lt;!-- typeof(x) --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- Note that lines starting with `##` are code output --&gt;
+Two other data types you will use frequently are integers
 
-&lt;!-- -- --&gt;
+```julia
+ typeof(1)
+```
 
-&lt;!-- We can save the boolean value of actual statements in variables this way: --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- @show y = 1 &gt; 2 --&gt;
-&lt;!-- ``` --&gt;
+```
+## Int64
+```
 
-&lt;!-- `@show` is a Julia macro for showing the operation --&gt;
+--
 
-&lt;!-- --- --&gt;
+and floating point numbers
 
-&lt;!-- # Numbers --&gt;
+```julia
+ typeof(1.0)
+```
 
-&lt;!-- Two other data types you will use frequently are integers --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- typeof(1) --&gt;
-&lt;!-- ``` --&gt;
+```
+## Float64
+```
 
-&lt;!-- and floating point numbers --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- typeof(1.0) --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- Recall from last week the 64 means 64 bits of storage for the number, which is probably the default on your machine --&gt;
+--
 
-&lt;!-- -- --&gt;
+Recall from lecture 1 the 64 means 64 bits of storage for the number, which is probably the default on your machine
 
-&lt;!-- But you can always instantiate alternative floating point number types --&gt;
+---
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- converted_int = convert(Float32, 1.0); --&gt;
-&lt;!-- typeof(converted_int) --&gt;
-&lt;!-- ``` --&gt;
+# Numbers
 
-&lt;!-- --- --&gt;
+You can always instantiate alternative floating point number types
 
-&lt;!-- # Numbers --&gt;
 
-&lt;!-- ### Math works like you would expect: --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- a = 2; b = 1.0; --&gt;
-&lt;!-- a * b --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- -- --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- a^2 --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- -- --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- 2a - 4b --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- -- --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- @show 4a + 3b^2 --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- -- --&gt;
-&lt;!-- You dont need `*` inbetween numeric literals (numbers) and variables --&gt;
+```julia
+ converted_int = convert(Float32, 1.0);
+ typeof(converted_int)
+```
 
-&lt;!-- --- --&gt;
+```
+## Float32
+```
 
-&lt;!-- # Strings --&gt;
+---
 
-&lt;!-- Strings store sequences of characters --&gt;
+# Numbers
 
-&lt;!-- You implement them with double quotations: --&gt;
+### Math works like you would expect:
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- x = "Hello World!"; --&gt;
-&lt;!-- typeof(x) --&gt;
-&lt;!-- ``` --&gt;
+```julia
+ a = 2; b = 1.0;
+ a * b
+```
 
-&lt;!-- Note that `;` suppresses output for that line of code but is unnecessary --&gt;
+```
+## 2.0
+```
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- It's easy to work with strings, use `$` to interpolate a variable/expression --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- x = 10; y = 20; println("x + y =  $(x+y).") --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- -- --&gt;
+```julia
+ a^2
+```
 
-&lt;!-- Use `*` to concatenate strings --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- a = "Aww"; b = "Yeah!!!"; println(a * " " * b) --&gt;
-&lt;!-- ``` --&gt;
+```
+## 4
+```
 
-&lt;!-- -- --&gt;
+---
 
-&lt;!-- You probably won't use strings too often unless you're working with data or printing output --&gt;
+# Numbers
 
-&lt;!-- --- --&gt;
 
-&lt;!-- # Containers --&gt;
+```julia
+ 2a - 4b
+```
 
-&lt;!-- Containers are types that store collections of data --&gt;
+```
+## 0.0
+```
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- The most basic container is the `Array` which is denoted by square brackets --&gt;
 
-&lt;!-- -- --&gt;
+```julia
+ @show 4a + 3b^2
+```
 
+```
+## 4a + 3 * b ^ 2 = 11.0
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- a1 = [1 2; 3 4]; typeof(a1) --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- `a1` is a two-dimensional `Array` of `Int64`s --&gt;
+```
+## 11.0
+```
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- Arrays are **mutable** which means you can change their values --&gt;
+You dont need `*` inbetween numeric literals (numbers) and variables
 
-&lt;!-- -- --&gt;
+---
 
+# Strings
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- a1[1,1] = 5; a1 --&gt;
-&lt;!-- ``` --&gt;
+Strings store sequences of characters
 
-&lt;!-- You reference elements in a container with square brackets --&gt;
+--
 
-&lt;!-- --- --&gt;
+You implement them with double quotations:
 
-&lt;!-- # Containers --&gt;
 
-&lt;!-- An alternative to the `Array` is the `Tuple` which is denoted by parentheses --&gt;
+```julia
+ x = "Hello World!";
+ typeof(x)
+```
 
-&lt;!-- -- --&gt;
+```
+## String
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- a2 = (1, 2, 3, 4); typeof(a2) --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- `a2` is a `Tuple` of 4 `Int64`s, tuples have no dimension --&gt;
+--
 
-&lt;!-- -- --&gt;
+Note that `;` suppresses output for that line of code but is unnecessary in Julia
 
-&lt;!-- Tuples are **immutable** which means you **can't** change their values --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- try --&gt;
-&lt;!--   a2[1,1] = 5; --&gt;
-&lt;!-- catch --&gt;
-&lt;!--   println("Error, can't change value of a tuple.") --&gt;
-&lt;!--   a2 --&gt;
-&lt;!-- ``` --&gt;
+---
 
-&lt;!-- --- --&gt;
+# Strings
 
-&lt;!-- # Containers --&gt;
+It's easy to work with strings, use `$` to interpolate a variable/expression
 
-&lt;!-- Tuples don't need parentheses (but it's probably best practice for clarity) --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- a3 = 5, 6; typeof(a3) --&gt;
-&lt;!-- ``` --&gt;
+```julia
+ x = 10; y = 20; println("x + y =  $(x+y).")
+```
 
-&lt;!-- -- --&gt;
+```
+## x + y =  30.
+```
 
-&lt;!-- And they can be **unpacked** (see [`NamedTuple`](https://docs.julialang.org/en/v1/manual/types/index.html#Parametric-Types-1) for an alternative and more efficient container) --&gt;
+--
 
-&lt;!-- -- --&gt;
+Use `*` to concatenate strings
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- a3_x, a3_y = a3; --&gt;
-&lt;!-- a3_x --&gt;
-&lt;!-- a3_y --&gt;
-&lt;!-- ``` --&gt;
+```julia
+ a = "Aww"; b = "Yeah!!!"; println(a * " " * b)
+```
 
-&lt;!-- -- --&gt;
+```
+## Aww Yeah!!!
+```
 
-&lt;!-- This is basically how functions return output when you call them --&gt;
+--
 
-&lt;!-- --- --&gt;
+You probably won't use strings too often unless you're working with text data or printing output
 
-&lt;!-- # Containers --&gt;
+---
 
-&lt;!-- A `Dictionary` is the last main container type, they are arrays but are indexed by keys (names) instead of numbers --&gt;
+# Containers
 
-&lt;!-- -- --&gt;
+Containers are types that store collections of data
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- d1 = Dict("class" =&gt; "AEM7130", "grade" =&gt; 97);  --&gt;
-&lt;!-- typeof(d1) --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- -- --&gt;
+The most basic container is the `Array` which is denoted by square brackets
 
-&lt;!-- `d1` is a dictionary where the key are strings and the values are any kind of type --&gt;
+--
 
-&lt;!-- --- --&gt;
 
-&lt;!-- # Containers --&gt;
 
-&lt;!-- Reference specific values you want in the dictionary by referencing the key --&gt;
+```julia
+ a1 = [1 2; 3 4]; typeof(a1)
+```
 
-&lt;!-- -- --&gt;
+```
+## Array{Int64,2}
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- d1["class"] --&gt;
-&lt;!-- d1["grade"] --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- -- --&gt;
+Arrays are **mutable** which means you can change their values
 
-&lt;!-- If you just want all the keys or all the values you can use the base functions --&gt;
+--
 
-&lt;!-- -- --&gt;
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- keys_d1 = keys(d1) --&gt;
-&lt;!-- values_d1 = values(d1) --&gt;
-&lt;!-- ``` --&gt;
+```julia
+ a1[1,1] = 5; a1
+```
 
-&lt;!-- --- --&gt;
+```
+## 2×2 Array{Int64,2}:
+##  5  2
+##  3  4
+```
 
-&lt;!-- # Iterating --&gt;
+You reference elements in a container with square brackets
 
-&lt;!-- As in other languages we have loops at our disposal: --&gt;
+---
 
-&lt;!-- `for` loops iterate over containers --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- for count in 1:10 --&gt;
-&lt;!--   random_number = rand() --&gt;
-&lt;!--   if random_number &gt; 0.5 --&gt;
-&lt;!--     println("We drew a $random_number.") --&gt;
-&lt;!--   end --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
+# Containers
 
-&lt;!-- --- --&gt;
+An alternative to the `Array` is the `Tuple` which is denoted by parentheses
 
-&lt;!-- # Iterating --&gt;
+--
 
-&lt;!-- `while` loops iterate until a logical expression is false  --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- while rand() &gt; 0.5 --&gt;
-&lt;!--   random_number = rand() --&gt;
-&lt;!--   if random_number &gt; 0.5 --&gt;
-&lt;!--     println("We drew a $random_number.") --&gt;
-&lt;!--   end --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- --- --&gt;
+```julia
+ a2 = (1, 2, 3, 4); typeof(a2)
+```
 
-&lt;!-- # Iterating --&gt;
+```
+## NTuple{4,Int64}
+```
+`a2` is a `Tuple` of 4 `Int64`s, tuples have no dimension
 
-&lt;!-- An `Iterable` is something you can loop over, like arrays --&gt;
+--
 
-&lt;!-- -- --&gt;
+Tuples are **immutable** which means you **can't** change their values
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- actions = ["codes well", "skips class"]; --&gt;
-&lt;!-- for action in actions --&gt;
-&lt;!--     println("Charlie $action") --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
+```julia
+ try
+   a2[1,1] = 5;
+ catch
+   println("Error, can't change value of a tuple.")
+ end
+```
 
-&lt;!-- -- --&gt;
+```
+## Error, can't change value of a tuple.
+```
 
-&lt;!-- But there's a type that's a subset of iterables: `Iterator` --&gt;
+---
 
-&lt;!-- -- --&gt;
+# Containers
 
-&lt;!-- These include things like the dictionary keys: --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- for key in keys_d1 --&gt;
-&lt;!--   println(d1[key]) --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
+Tuples don't need parentheses (but it's probably best practice for clarity)
 
-&lt;!-- --- --&gt;
+```julia
+ a3 = 5, 6; typeof(a3)
+```
 
-&lt;!-- # Iterating --&gt;
+```
+## Tuple{Int64,Int64}
+```
 
-&lt;!-- Iterating on iterators is more memory efficient than iterating on arrays --&gt;
+---
 
-&lt;!-- -- --&gt;
+# Containers
 
-&lt;!-- Here's a **very** simple example (the `global` isn't great style but ignore that; advanced tip: fix it with a wrapper function): --&gt;
+Tuples can be **unpacked** (see [`NamedTuple`](https://docs.julialang.org/en/v1/manual/types/#Named-Tuple-Types-1) for an alternative and more efficient container)
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- j = 1; --&gt;
-&lt;!-- @time for i = [1, 2, 3, 4, 5, 6] --&gt;
-&lt;!--   global j *= i --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- -- --&gt;
+```julia
+ a3_x, a3_y = a3;
+ a3_x
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- m = 1; --&gt;
-&lt;!-- @time for i = 1:6 --&gt;
-&lt;!--   global m *= i --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
+```
+## 5
+```
 
-&lt;!-- -- --&gt;
+```julia
+ a3_y
+```
 
-&lt;!-- `@time` is a macro that shows you the elasped time, memory allocation, and number of allocations (also garbage collection) --&gt;
+```
+## 6
+```
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- Minimizing allocations and garbage collection will make your code faster (see `@profile`) --&gt;
+This is basically how functions return output when you call them
 
-&lt;!-- --- --&gt;
+---
 
-&lt;!-- # Neat looping --&gt;
+# Containers
 
-&lt;!-- The nice thing about Julia vs MATLAB is your loops can be much neater since you don't need to index if you just want the container elements --&gt;
+A `Dictionary` is the last main container type,  
+they are arrays but are indexed by keys (names) instead of numbers
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- f(x) = x^2; --&gt;
-&lt;!-- x_values = 0:20:100; --&gt;
-&lt;!-- for x in x_values --&gt;
-&lt;!--   println(f(x)) --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- -- --&gt;
+```julia
+ d1 = Dict("class" =&gt; "AEM7130", "grade" =&gt; 97);
+ typeof(d1)
+```
 
-&lt;!-- The loop directly assigns the elements of `x_values` to `x` instead of having to do something clumsy like `x_values[i]` --&gt;
+```
+## Dict{String,Any}
+```
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- `0:20:100` creates something called a `StepRange` which starts at `0`, steps up by `20` and ends at `100` --&gt;
+`d1` is a dictionary where the key are strings and the values are any kind of type
 
+---
 
-&lt;!-- --- --&gt;
+# Containers
 
-&lt;!-- # Neat looping --&gt;
+Reference specific values you want in the dictionary by referencing the key
 
-&lt;!-- You can also pull out an index and the element value by enumerating --&gt;
+--
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- f(x) = x^2; --&gt;
-&lt;!-- x_values = 0:20:100; --&gt;
-&lt;!-- for (index, x) in enumerate(x_values) --&gt;
-&lt;!--   println("f(x) at value $index is $(f(x)).") --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- `enumerate` basically assigns an index vector --&gt;
+```julia
+ d1["class"]
+```
 
-&lt;!-- --- --&gt;
+```
+## "AEM7130"
+```
 
-&lt;!-- # Neat looping --&gt;
+```julia
+ d1["grade"]
+```
 
-&lt;!-- There is also a lot of Python-esque functionality --&gt;
+```
+## 97
+```
 
-&lt;!-- -- --&gt;
+---
 
-&lt;!-- For example: `zip` lets you loop over multiple different iterables at once --&gt;
+# Containers
 
-&lt;!-- -- --&gt;
+If you just want all the keys or all the values you can use the base functions
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- last_name = ("Lincoln", "Bond", "Walras"); --&gt;
-&lt;!-- first_name = ("Abraham", "James", "Leon"); --&gt;
+--
 
-&lt;!-- for (first_idx, last_idx) in zip(first_name, last_name) --&gt;
-&lt;!--   println("The name's $last_idx, $first_idx $last_idx.") --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- --- --&gt;
+```julia
+ keys_d1 = keys(d1)
+```
 
-&lt;!-- # Neat looping --&gt;
+```
+## Base.KeySet for a Dict{String,Any} with 2 entries. Keys:
+##   "class"
+##   "grade"
+```
 
-&lt;!-- Nested loops can also be made very neatly --&gt;
+```julia
+ values_d1 = values(d1)
+```
 
-&lt;!-- -- --&gt;
+```
+## Base.ValueIterator for a Dict{String,Any} with 2 entries. Values:
+##   "AEM7130"
+##   97
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- for x in 1:3, y in 3:-1:1 --&gt;
-&lt;!--   println(y-x) --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
+---
 
-&lt;!-- -- --&gt;
+# Iterating
 
-&lt;!-- The first loop is the inner loop, the second loop is the outer loop --&gt;
+As in other languages we have loops at our disposal:
 
-&lt;!-- --- --&gt;
+`for` loops iterate over containers
 
-&lt;!-- # Comprehensions: the neatest looping --&gt;
+```julia
+ for count in 1:10
+   random_number = rand()
+   if random_number &gt; 0.2
+     println("We drew a $random_number.")
+   end
+ end
+```
 
-&lt;!-- Comprehensions are super nice ways to use iterables that make your code cleaner and more compact --&gt;
+```
+## We drew a 0.7600855101338988.
+## We drew a 0.49274639430432443.
+## We drew a 0.8921567760692246.
+## We drew a 0.27352582996706154.
+## We drew a 0.790319051812356.
+## We drew a 0.2353900368896369.
+## We drew a 0.8048663968302878.
+## We drew a 0.7067448362153019.
+```
 
-&lt;!-- -- --&gt;
+---
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- squared = [y^2 for y in 1:2:11] --&gt;
-&lt;!-- ``` --&gt;
+# Iterating
 
-&lt;!-- -- --&gt;
+`while` loops iterate until a logical expression is false
 
-&lt;!-- This created a 1-dimension `Array` using one line --&gt;
+```julia
+ while rand() &gt; 0.5
+   random_number = rand()
+   if random_number &gt; 0.2
+     println("We drew a $random_number.")
+   end
+ end
+```
 
-&lt;!-- --- --&gt;
+```
+## We drew a 0.5576232957214851.
+```
 
-&lt;!-- # Comprehensions: the neatest looping --&gt;
+---
 
-&lt;!-- We can also use nested loops for comprehensions --&gt;
+# Iterating
 
-&lt;!-- -- --&gt;
+An `Iterable` is something you can loop over, like arrays
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- squared_2 = [(y+z)^2 for y in 1:2:11, z in 1:6] --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- -- --&gt;
 
-&lt;!-- This created a 2-dimensional `Array` --&gt;
+```julia
+ actions = ["codes well", "skips class"];
+ for action in actions
+     println("Charlie $action")
+ end
+```
 
-&lt;!-- -- --&gt;
+```
+## Charlie codes well
+## Charlie skips class
+```
 
-&lt;!-- Use this (and the compact nested loop) sparingly since it's hard to follow --&gt;
+---
 
-&lt;!-- --- --&gt;
+# Iterating
 
-&lt;!-- # Dot syntax: vectorization --&gt;
+There's a type that's a subset of iterables, `Iterator`, that are particularly convenient
 
-&lt;!-- Vectorizing operations (e.g. applying it to a whole array or vector at once) is easy in Julia, just use dot syntax like you would in MATLAB, etc --&gt;
+--
 
-&lt;!-- -- --&gt;
+These include things like the dictionary keys:
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- g(x) = x^2; --&gt;
-&lt;!-- squared_2 = g.(1:2:11) --&gt;
-&lt;!-- ``` --&gt;
+```julia
+ for key in keys(d1)
+   println(d1[key])
+ end
+```
 
-&lt;!-- -- --&gt;
+```
+## AEM7130
+## 97
+```
 
-&lt;!-- This is actually called **broadcasting** --&gt;
+---
 
-&lt;!-- -- --&gt;
+# Iterating
 
-&lt;!-- When broadcasting, you might want to consider **pre-allocating** arrays --&gt;
+Iterating on `Iterator`s is more memory efficient than iterating on arrays
 
-&lt;!-- --- --&gt;
-&lt;!-- # Dot syntax: vectorization --&gt;
+--
 
-&lt;!-- Not pre-allocated: --&gt;
+Here's a **very** simple example, the top function iterates on an `Array`, the bottom function iterates on an `Iterator`:
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- h(y,z) = y^2 + sin(z);   # function to evaluate --&gt;
-&lt;!-- y = 1:2:1e6+1;           # input y --&gt;
-&lt;!-- z = rand(length(y));     # input z --&gt;
-&lt;!-- out_1 = h.(y,z);         # pre-evaluate h.(y,z) --&gt;
-&lt;!-- @time out_1 = h.(y,z)    # evaluate h.(y,z) and time --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- --- --&gt;
-&lt;!-- # Dot syntax: vectorization --&gt;
 
-&lt;!-- Pre-allocated, clumsy dot syntax where `.=` assigns elements in a vectorized fashion: --&gt;
+```julia
+ function show_array_speed()
+   m = 1
+   for i = [1, 2, 3, 4, 5, 6]
+     m = m*i
+   end
+ end;
+ 
+ function show_iterator_speed()
+   m = 1
+   for i = 1:6
+     m = m*i
+   end
+ end;
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- out_2 = similar(y); --&gt;
-&lt;!-- out_2 .= h.(y,z); --&gt;
-&lt;!-- @time out_2 .= h.(y,z) --&gt;
-&lt;!-- ``` --&gt;
+---
 
-&lt;!-- --- --&gt;
-&lt;!-- # Dot syntax: vectorization --&gt;
+# Iterating
 
-&lt;!-- Pre-allocated, galaxy brain dot syntax: --&gt;
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- out_3 = similar(y); --&gt;
-&lt;!-- @. out_3 = h(y,z); --&gt;
-&lt;!-- @time @. out_3 = h(y,z) --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- --- --&gt;
-&lt;!-- # Logical operators --&gt;
+```julia
+ using BenchmarkTools
+ @btime show_array_speed()
+```
 
-&lt;!-- Logical operators work like every other language  --&gt;
+```
+##   26.849 ns (1 allocation: 128 bytes)
+```
 
-&lt;!-- -- --&gt;
+```julia
+ @btime show_iterator_speed()
+```
 
-&lt;!-- - `==` tests for equality --&gt;
+```
+##   1.279 ns (0 allocations: 0 bytes)
+```
 
-&lt;!-- -- --&gt;
+The `Iterator` approach is faster and allocates no memory
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- 1 == 1 --&gt;
-&lt;!-- ``` --&gt;
+`@btime` is a macro from `BenchmarkTools` that shows you the elasped time and memory allocation
 
-&lt;!-- -- --&gt;
+---
 
-&lt;!-- - `!=` tests for inequality --&gt;
+# Neat looping
 
-&lt;!-- -- --&gt;
+The nice thing about Julia vs MATLAB is your loops can be much neater since you don't need to index if you just want the container elements
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- 2 != 2 --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- -- --&gt;
 
-&lt;!-- - You can also test for approximate equality with `\(\approx\)` (type `\approx&lt;TAB&gt;`) --&gt;
+```julia
+ f(x) = x^2;
+ x_values = 0:20:100;
+ for x in x_values
+   println(f(x))
+ end
+```
 
-&lt;!-- -- --&gt;
+```
+## 0
+## 400
+## 1600
+## 3600
+## 6400
+## 10000
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- 1.00000001 ≈ 1 --&gt;
-&lt;!-- ``` --&gt;
+---
 
-&lt;!-- --- --&gt;
-&lt;!-- # Scope --&gt;
+# Neat looping
 
-&lt;!-- **Scope** can be a frustrating concept if you haven't used a similarly scoped language before (and why I used that `global` indicator before) --&gt;
+The loop directly assigns the elements of `x_values` to `x` instead of having to do something clumsy like `x_values[i]`
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- The scope of a variable name determines when it is valid to refer to it --&gt;
+`0:20:100` creates something called a `StepRange` (a type of `Iterator`) which starts at `0`, steps up by `20` and ends at `100`
 
-&lt;!-- -- --&gt;
 
-&lt;!-- If you want to dive into the details: the type of scoping in Julia is called **lexical scoping** --&gt;
+---
 
-&lt;!-- -- --&gt;
+# Neat looping
 
-&lt;!-- Different scopes can have the same name, i.e. `saving_rate`, but be assigned to different variables --&gt;
+You can also pull out an index and the element value by enumerating
 
-&lt;!-- -- --&gt;
 
-&lt;!-- Let's walk through some simple examples to see how it works --&gt;
+```julia
+ f(x) = x^2;
+ x_values = 0:20:100;
+ for (index, x) in enumerate(x_values)
+   println("f(x) at value $index is $(f(x)).")
+ end
+```
 
-&lt;!-- -- --&gt;
+```
+## f(x) at value 1 is 0.
+## f(x) at value 2 is 400.
+## f(x) at value 3 is 1600.
+## f(x) at value 4 is 3600.
+## f(x) at value 5 is 6400.
+## f(x) at value 6 is 10000.
+```
 
-&lt;!-- First, functions have their own local scope --&gt;
+`enumerate` basically assigns an index vector
 
-&lt;!-- -- --&gt;
+---
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- ff(xx) = xx^2; --&gt;
-&lt;!-- yy = 5; --&gt;
-&lt;!-- ff(yy) --&gt;
-&lt;!-- ``` --&gt;
+# Neat looping
 
-&lt;!-- `xx` isn't bound to any values outside the function `ff` --&gt;
+There is also a lot of Python-esque functionality
 
-&lt;!-- --- --&gt;
-&lt;!-- # Scope --&gt;
+--
 
-&lt;!-- This allows us to do things like: --&gt;
+For example: `zip` lets you loop over multiple different iterables at once
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- xx = 10; --&gt;
-&lt;!-- fff(xx) = xx^2; --&gt;
-&lt;!-- fff(5) --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- Although `xx` was declared equal to 10, the function still evaluated at 5 --&gt;
 
-&lt;!-- -- --&gt;
+```julia
+ last_name = ("Lincoln", "Bond", "Walras");
+ first_name = ("Abraham", "James", "Leon");
+ 
+ for (first_idx, last_idx) in zip(first_name, last_name)
+   println("The name's $last_idx, $first_idx $last_idx.")
+ end
+```
 
-&lt;!-- This is all kind of obvious so far --&gt;
+```
+## The name's Lincoln, Abraham Lincoln.
+## The name's Bond, James Bond.
+## The name's Walras, Leon Walras.
+```
 
-&lt;!-- --- --&gt;
+---
 
-&lt;!-- # Scope --&gt;
+# Neat looping
 
-&lt;!-- But, this type of scoping also has (initially) counterintuitive results like: --&gt;
+Nested loops can also be made very neatly
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- zz = 0; --&gt;
-&lt;!-- for ii = 1:10 --&gt;
-&lt;!--   zz = ii --&gt;
-&lt;!-- end --&gt;
-&lt;!-- println("zz = $zz") --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- -- --&gt;
 
-&lt;!-- What happened? --&gt;
+```julia
+ for x in 1:3, y in 3:-1:1
+   println(y-x)
+ end
+```
 
-&lt;!-- -- --&gt;
+```
+## 2
+## 1
+## 0
+## 1
+## 0
+## -1
+## 0
+## -1
+## -2
+```
 
-&lt;!-- The `zz` outside the for loop has a different scope, the **global scope**, than the `zz` inside it --&gt;
+--
 
-&lt;!-- -- --&gt;
+The first loop is the inner loop, the second loop is the outer loop
 
-&lt;!-- The `zz` inside the for loop has a scope local to the loop --&gt;
+---
 
-&lt;!-- -- --&gt;
+# Comprehensions: the neatest looping
 
-&lt;!-- Since the outside `zz` has global scope the loop can't change it without the `global` indicator like we saw earlier  --&gt;
+Comprehensions are super nice ways to use iterables that make your code cleaner and more compact
 
-&lt;!-- --- --&gt;
+--
 
-&lt;!-- # Scope --&gt;
 
-&lt;!-- Generally you want to avoid `global` because it can cause conflicts, slowness, etc, but you can use them if you want something to have global scope --&gt;
+```julia
+ squared = [y^2 for y in 1:2:11]
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- zz = 0; --&gt;
-&lt;!-- for ii = 1:10 --&gt;
-&lt;!--   global zz --&gt;
-&lt;!--   zz = ii --&gt;
-&lt;!-- end --&gt;
-&lt;!-- println("zz = $zz") --&gt;
-&lt;!-- ``` --&gt;
+```
+## 6-element Array{Int64,1}:
+##    1
+##    9
+##   25
+##   49
+##   81
+##  121
+```
 
-&lt;!-- --- --&gt;
+--
 
-&lt;!-- # Scope --&gt;
+This created a 1-dimension `Array` using one line
 
-&lt;!-- Local scope kicks in whenever you have a new block keyword (i.e. you indented something) except for `if` --&gt;
+---
 
-&lt;!-- Global variables inside a local scope are inherted for reading, not writing --&gt;
+# Comprehensions: the neatest looping
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- x, y = 1, 2; --&gt;
-&lt;!-- function foo() --&gt;
-&lt;!--   x = 2        # assignment introduces a new local --&gt;
-&lt;!--   return x + y # y refers to the global --&gt;
-&lt;!-- end; --&gt;
-&lt;!-- foo() --&gt;
-&lt;!-- x --&gt;
-&lt;!-- ``` --&gt;
+We can also use nested loops for comprehensions
 
-&lt;!-- `foo` did not alter the value of `x` defined outside its local scope --&gt;
+--
 
-&lt;!-- --- --&gt;
 
-&lt;!-- # Scope --&gt;
+```julia
+ squared_2 = [(y+z)^2 for y in 1:2:11, z in 1:6]
+```
 
-&lt;!-- Important piece: nested functions can modify their parent scope's *local* variables --&gt;
+```
+## 6×6 Array{Int64,2}:
+##    4    9   16   25   36   49
+##   16   25   36   49   64   81
+##   36   49   64   81  100  121
+##   64   81  100  121  144  169
+##  100  121  144  169  196  225
+##  144  169  196  225  256  289
+```
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- x, y = 1, 2; # set globals --&gt;
+This created a 2-dimensional `Array`
 
-&lt;!-- function f_outer() --&gt;
-&lt;!--   x = 2                # introduces a new local --&gt;
-&lt;!--   function f_inner() --&gt;
-&lt;!--     x = 10             # modifies the parent's x --&gt;
-&lt;!--     return x + y       # y is global --&gt;
-&lt;!--   end --&gt;
-&lt;!--   return f_inner() + x # 12 + 10 (x is modified in call of bar()) --&gt;
-&lt;!-- end; --&gt;
-&lt;!-- f_outer() --&gt;
-&lt;!-- x, y                   # verify that global x and y are unchanged --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- -- --&gt;
+Use this (and the compact nested loop) sparingly since it's hard to follow
 
-&lt;!-- If `f_inner` was not nested and was in the global scope we'd get `14` not `22`, this is also a way to handle the issue with loops editing variables not created in their local scope --&gt;
+---
 
-&lt;!-- --- --&gt;
+# Dot syntax: broadcasting/vectorization
 
-&lt;!-- # Scope --&gt;
+Vectorizing operations (e.g. applying it to a whole array or vector at once) is easy in Julia, just use dot syntax like you would in MATLAB, etc
 
-&lt;!-- We can fix looping issues with global scope by using a wrapper function that doesn't do anything but change the parent scope so it is not global --&gt;
+--
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- function wrapper() --&gt;
-&lt;!--   zzz = 0; --&gt;
-&lt;!--   for iii = 1:10 --&gt;
-&lt;!--     zzz = iii --&gt;
-&lt;!--   end --&gt;
-&lt;!--   println("zzz = $zzz")  --&gt;
-&lt;!-- end --&gt;
-&lt;!-- wrapper() --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- --- --&gt;
+```julia
+ g(x) = x^2;
+ squared_2 = g.(1:2:11)
+```
 
-&lt;!-- # Closures --&gt;
+```
+## 6-element Array{Int64,1}:
+##    1
+##    9
+##   25
+##   49
+##   81
+##  121
+```
 
-&lt;!-- These inner functions we've been looking at are called **closures** --&gt;
+--
 
-&lt;!-- When a function `f` is parsed in Julia, it looks to see if any of the variables have been previously defined in the current scope --&gt;
+This is actually called **broadcasting**
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- a = 0.2; --&gt;
-&lt;!-- f(x) = a * x^2;    # refers to the `a` in the outer scope --&gt;
-&lt;!-- f(1)               # univariate function --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- -- --&gt;
+When broadcasting, you might want to consider **pre-allocating** arrays
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- function g(a) --&gt;
-&lt;!--     f(x) = a * x^2; # refers to the `a` passed in the function --&gt;
-&lt;!--     f(1);           # univariate function --&gt;
-&lt;!-- end --&gt;
-&lt;!-- g(0.2) --&gt;
-&lt;!-- ``` --&gt;
+---
 
-&lt;!-- -- --&gt;
+# Dot syntax: broadcasting/vectorization
 
-&lt;!-- In both of these examples `f` is a closure designed to **capture** a variable from an outer scope --&gt;
+Vectorization creates *temporary allocations*, temporary arrays in the middle of the process that aren't actually needed for the final product
 
-&lt;!-- --- --&gt;
+Julia can do broadcasting in a nicer, faster way by .hi-blue[fusing] operations together and avoiding these temporary allocations
 
-&lt;!-- # Closures --&gt;
+---
 
-&lt;!-- Here's a complicated example that actually returns a closure (a function!) itself: --&gt;
+# Dot syntax: broadcasting/vectorization
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- x = 0; --&gt;
-&lt;!-- function toplevel(y) --&gt;
-&lt;!--   println("x = ", x, " is a global variable") --&gt;
-&lt;!--   println("y = ", y, " is a parameter") --&gt;
-&lt;!--   z = 2 --&gt;
-&lt;!--   println("z = ", z, " is a local variable") --&gt;
+Let's write two functions that do the same thing:
 
-&lt;!--   function closure(v) --&gt;
-&lt;!--     println("v = ", v, " is a parameter") --&gt;
-&lt;!--     w = 3 --&gt;
-&lt;!--     println("w = ", w, " is a local variable") --&gt;
-&lt;!--     println("x = ", x, " is a global variable") --&gt;
-&lt;!--     println("y = ", y, " is a closed variable (a parameter of the outer function)") --&gt;
-&lt;!--     println("z = ", z, " is a closed variable (a local of the outer function)") --&gt;
-&lt;!--   end; --&gt;
-&lt;!--   return closure --&gt;
-&lt;!-- end; --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- --- --&gt;
+```julia
+ function show_vec_speed(x) 
+   out = [3x.^2 + 4x + 7x.^3 for i = 1:1]
+ end
+```
 
-&lt;!-- # Closures --&gt;
+```
+## show_vec_speed (generic function with 1 method)
+```
 
-&lt;!-- Here's a complicated example: --&gt;
+```julia
+ function show_fuse_speed(x) 
+   out = @. [3x.^2 + 4x + 7x.^3 for i = 1:1]
+ end
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- c_func = toplevel(10) --&gt;
-&lt;!-- c_func(20) --&gt;
-&lt;!-- ``` --&gt;
+```
+## show_fuse_speed (generic function with 1 method)
+```
 
-&lt;!-- The returned closure still has access to the outer function's local scope! --&gt;
+The top one is vectorized for the operations, the `@.` in the bottom one vectorizes everything in one swoop: the function call, the operation, and the assignment to a variable
 
+---
 
+# Dot syntax: broadcasting/vectorization
 
-&lt;!-- --- --&gt;
+First, precompile the functions
 
-&lt;!-- # Generic functions --&gt;
 
-&lt;!-- If you go down a computational route with research a goal you should have in mind is to write **generic functions** --&gt;
+```julia
+ x = rand(10^6);
+ @time show_vec_speed(x);
+ @time show_fuse_speed(x);
+```
 
-&lt;!-- -- --&gt;
 
-&lt;!-- These are functions that are flexible (e.g. can deal with someone using an `Int` instead of a `Float`)   --&gt;
-&lt;!-- and have high performance (e.g. comparable speed to C) --&gt;
+```julia
+ @time show_vec_speed(x)
+```
 
-&lt;!-- -- --&gt;
+```
+##   0.019510 seconds (20 allocations: 45.777 MiB, 23.83% gc time)
+```
 
-&lt;!-- Functions are made generic by paying attention to types and making sure types are **stable** --&gt;
+```
+## 1-element Array{Array{Float64,1},1}:
+##  [12.861723629700903, 1.9288570130193439, 4.618121381082656, 2.1092997815476298, 0.5474929676796775, 0.2581580004559404, 1.7316931735226495, 0.865498488679512, 7.489015929309849, 1.3240002299519937  …  8.87972822880598, 11.058919443149918, 5.79373631326248, 7.363341963385606, 0.026949311578706444, 3.358930924502511, 1.2591943206571903, 12.868332924140653, 2.3547706579519305, 0.1613862421281777]
+```
 
-&lt;!-- -- --&gt;
+```julia
+ @time show_fuse_speed(x)
+```
 
-&lt;!-- **Type stability:** Given an input, operations on that input should maintain the type so Julia **knows** what its type will be throughout --&gt;
+```
+##   0.001814 seconds (9 allocations: 7.630 MiB)
+```
 
-&lt;!-- -- --&gt;
+```
+## 1-element Array{Array{Float64,1},1}:
+##  [12.861723629700903, 1.9288570130193439, 4.618121381082656, 2.1092997815476298, 0.5474929676796775, 0.2581580004559404, 1.7316931735226495, 0.865498488679512, 7.489015929309849, 1.3240002299519937  …  8.87972822880598, 11.058919443149918, 5.79373631326248, 7.363341963385606, 0.026949311578706444, 3.358930924502511, 1.2591943206571903, 12.868332924140653, 2.3547706579519305, 0.1613862421281777]
+```
 
-&lt;!-- This allows it to compile type-specialized versions of the functions, which will yield higher performance --&gt;
+Full vectorization using `@.` is 10x faster with 1/6 of the memory allocation
 
-&lt;!-- -- --&gt;
+---
 
-&lt;!-- The question you might have is: Type stability sounds like mandating types, so how do we make it flexible? --&gt;
+# Dot syntax: vectorization
 
-&lt;!-- -- --&gt;
+Not pre-allocated:
 
-&lt;!-- We'll see next --&gt;
 
-&lt;!-- --- --&gt;
+```julia
+ h(y,z) = y^2 + sin(z);   # function to evaluate
+ y = 1:2:1e6+1;           # input y
+ z = rand(length(y));     # input z
+```
 
-&lt;!-- # These two functions look the same, but are they? --&gt;
+---
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- function t1(n) --&gt;
-&lt;!--   s = 0 --&gt;
-&lt;!--   t = 1 --&gt;
-&lt;!--   for i in 1:n --&gt;
-&lt;!--      s += s/i --&gt;
-&lt;!--      t = div(t, i) --&gt;
-&lt;!--   end --&gt;
-&lt;!--   return t --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- ```{julia} --&gt;
-&lt;!-- function t2(n) --&gt;
-&lt;!--   s  = 0.0 --&gt;
-&lt;!--   t = 1 --&gt;
-&lt;!--   for i in 1:n --&gt;
-&lt;!--      s += s/i --&gt;
-&lt;!--      t = div(t, i) --&gt;
-&lt;!--   end --&gt;
-&lt;!--   return t --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
+# Dot syntax
 
-&lt;!-- --- --&gt;
+Here we are vectorizing the function call
 
-&lt;!-- # No! t1 is not type stable --&gt;
 
-&lt;!-- -- --&gt;
+```julia
+ # precompile h so first timer isn't picking up on compile time
+ h(1,2) 
+```
 
-&lt;!-- `t1` starts with `s` as an `Int64` but then we have `s += s/i` which will mean it must hold a `Float64` --&gt;
+```julia
+ @time out_1 = h.(y,z)    # evaluate h.(y,z) and time
+```
 
-&lt;!-- -- --&gt;
+```
+##   0.041467 seconds (147.64 k allocations: 10.681 MiB, 13.87% gc time)
+```
 
-&lt;!-- It must be converted to `Float` so it is not type stable --&gt;
+```
+## 500001-element Array{Float64,1}:
+##    1.5282379529505645  
+##    9.346421517864995   
+##   25.735112300725387   
+##   49.719218820749624   
+##   81.6045065941119     
+##  121.44590854348961    
+##  169.4543440659069     
+##  225.51640067832085    
+##  289.5748078394144     
+##  361.3057619181106     
+##    ⋮                   
+##    9.999700002256343e11
+##    9.999740001690128e11
+##    9.999780001214305e11
+##    9.999820000811464e11
+##    9.999860000495673e11
+##    9.999900000257694e11
+##    9.999940000093579e11
+##    9.999980000016255e11
+##    1.000002000001051e12
+```
 
-&lt;!-- -- --&gt;
+---
+# Dot syntax: vectorization
 
-&lt;!-- We can see this when calling the macro `@code_warntype` where it reports `t1` must at some point handle a variable that is `Union{Float64,Int64}`, either `Float64` or `Int64` --&gt;
+Here we are vectorizing the function call and assignment
 
-&lt;!-- Julia now can't assume `s`'s type and produce pure integer or floating point code `\(\rightarrow\)` performance degradation --&gt;
 
-&lt;!-- &lt;div align="center"&gt; --&gt;
-&lt;!--   &lt;img src="figures/code_warntype.png" height=350&gt; --&gt;
-&lt;!-- &lt;/div&gt; --&gt;
+```julia
+ out_2 = similar(out_1)
+```
 
-&lt;!-- --- --&gt;
+```julia
+ @time out_2 .= h.(y,z)
+```
 
-&lt;!-- # Concrete vs abstract types --&gt;
+```
+##   0.024322 seconds (21.73 k allocations: 995.816 KiB)
+```
 
-&lt;!-- A **concrete type** is one that can be instantiated (`Float64` `Bool` `Int32`) --&gt;
+```
+## 500001-element Array{Float64,1}:
+##    1.5282379529505645  
+##    9.346421517864995   
+##   25.735112300725387   
+##   49.719218820749624   
+##   81.6045065941119     
+##  121.44590854348961    
+##  169.4543440659069     
+##  225.51640067832085    
+##  289.5748078394144     
+##  361.3057619181106     
+##    ⋮                   
+##    9.999700002256343e11
+##    9.999740001690128e11
+##    9.999780001214305e11
+##    9.999820000811464e11
+##    9.999860000495673e11
+##    9.999900000257694e11
+##    9.999940000093579e11
+##    9.999980000016255e11
+##    1.000002000001051e12
+```
 
-&lt;!-- -- --&gt;
+---
+# Dot syntax: vectorization
 
-&lt;!-- An **abstract type** cannot (`Real`, `Number`, `Any`) --&gt;
+Here we are vectorizing the function call, assignment, and operations
 
-&lt;!-- -- --&gt;
 
-&lt;!-- Abstract types are for organizing the types --&gt;
+```julia
+ out_3 = similar(out_1)
+```
 
-&lt;!-- You can check where types are in the hierarchy --&gt;
+```julia
+ @time @. out_3 = h(y,z)
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- @show Float64 &lt;: Real --&gt;
-&lt;!-- @show Array &lt;: Real --&gt;
-&lt;!-- @show Number &lt;: Any --&gt;
-&lt;!-- ``` --&gt;
+```
+##   0.006950 seconds (6 allocations: 240 bytes)
+```
 
-&lt;!-- --- --&gt;
+```
+## 500001-element Array{Float64,1}:
+##    1.5282379529505645  
+##    9.346421517864995   
+##   25.735112300725387   
+##   49.719218820749624   
+##   81.6045065941119     
+##  121.44590854348961    
+##  169.4543440659069     
+##  225.51640067832085    
+##  289.5748078394144     
+##  361.3057619181106     
+##    ⋮                   
+##    9.999700002256343e11
+##    9.999740001690128e11
+##    9.999780001214305e11
+##    9.999820000811464e11
+##    9.999860000495673e11
+##    9.999900000257694e11
+##    9.999940000093579e11
+##    9.999980000016255e11
+##    1.000002000001051e12
+```
 
-&lt;!-- # Concrete vs abstract types --&gt;
+---
+# Logical operators work like you'd think
 
-&lt;!-- You can see the type hierarchy with the supertypes and subtypes commands --&gt;
+- `==` (equal equal) tests for equality
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- using Base: show_supertypes --&gt;
-&lt;!-- show_supertypes(Float64) --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- --- --&gt;
 
-&lt;!-- # Creating new types --&gt;
+```julia
+ 1 == 1
+```
 
-&lt;!-- We can actually create new composite types using `struct` --&gt;
+```
+## true
+```
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- struct FoobarNoType # This will be immutable by default --&gt;
-&lt;!--   a --&gt;
-&lt;!--   b --&gt;
-&lt;!--   c --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
+- `!=` (exclaimation point equal) tests for inequality
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- This creates a new type called `FoobarNoType`, and we can generate a variable of this type using its **constructor** which will have the same name --&gt;
 
-&lt;!-- -- --&gt;
+```julia
+ 2 != 2
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- newfoo = FoobarNoType(1.3, 2, "plzzz"); --&gt;
-&lt;!-- typeof(newfoo) --&gt;
-&lt;!-- newfoo.a --&gt;
-&lt;!-- ``` --&gt;
+```
+## false
+```
 
-&lt;!-- -- --&gt;
+--
 
-&lt;!-- ### You should always declare types for the fields of a new composite type --&gt;
+- You can also test for approximate equality with `\(\approx\)` (type `\approx&lt;TAB&gt;`)
 
-&lt;!-- --- --&gt;
+--
 
-&lt;!-- # Creating new types --&gt;
 
-&lt;!-- You can declare types with the double colon --&gt;
+```julia
+ 1.00000001 ≈ 1
+```
 
+```
+## true
+```
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- struct FoobarType # This will be immutable by default --&gt;
-&lt;!--   a::Float64 --&gt;
-&lt;!--   b::Int --&gt;
-&lt;!--   c::String --&gt;
-&lt;!-- end --&gt;
-&lt;!-- ``` --&gt;
+---
 
-&lt;!-- -- --&gt;
+# Scope
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- newfoo_typed = FoobarType(1.3, 2, "plzzz"); --&gt;
-&lt;!-- typeof(newfoo_typed) --&gt;
-&lt;!-- newfoo.a --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- This lets the compiler generate efficient code because it knows the types of the fields when you construct a `FoobarType` --&gt;
+The .hi-blue[scope] of a variable name determines when it is valid to refer to it
 
-&lt;!-- Declaring abstract types isn't good enough, you need to declare concrete types --&gt;
+--
 
-&lt;!-- -- --&gt;
+Scope can be a frustrating concept if you haven't used a similarly scoped language before
 
-&lt;!-- Or do we? --&gt;
+--
 
-&lt;!-- --- --&gt;
+If you want to dive into the details: the type of scoping in Julia is called **lexical scoping**
 
-&lt;!-- # Parametric types are what help deliver flexibility --&gt;
+--
 
-&lt;!-- We can create types that hold different types of fields by declaring subsets of abstract types --&gt;
+Different scopes can have the same name, i.e. `saving_rate`, but be assigned to different variables
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- struct FooParam{t1 &lt;: Real, t2 &lt;: Real, t3 &lt;: AbstractArray{&lt;:Real}} --&gt;
-&lt;!--   a::t1 --&gt;
-&lt;!--   b::t2 --&gt;
-&lt;!--   c::t3  --&gt;
-&lt;!-- end --&gt;
-&lt;!-- newfoo_para = FooParam(1.0, 7, [1., 4., 6.]) --&gt;
-&lt;!-- ``` --&gt;
+--
 
-&lt;!-- -- --&gt;
+Let's walk through some simple examples to see how it works
 
-&lt;!-- The curly brackets declare all the different type subsets we will use in `FooParam` --&gt;
+---
 
-&lt;!-- -- --&gt;
+# Scope
 
-&lt;!-- This actually delivers high performance code! --&gt;
+First, functions have their own local scope
 
-&lt;!-- --- --&gt;
+--
 
-&lt;!-- # Smart use of existing Julia functions delivers flexibility --&gt;
 
-&lt;!-- We want to make sure types are stable but code is flexible --&gt;
+```julia
+ ff(xx) = xx^2;
+ yy = 5;
+ ff(yy)
+```
 
-&lt;!-- Ex: if want to preallocate an array to store data, how do we know how to declare it's type? --&gt;
+```
+## 25
+```
 
-&lt;!-- -- --&gt;
+`xx` isn't bound to any values outside the function `ff`
 
-&lt;!-- We don't need to --&gt;
+This is pretty natural for those of you who have done any programming before
 
-&lt;!-- -- --&gt;
+---
+# Scope
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- using LinearAlgebra               # necessary for I --&gt;
-&lt;!-- function sametypes(x) --&gt;
-&lt;!--   y = similar(x)                  # creates an array that is `similar` to x, use this for preallocating --&gt;
-&lt;!--   z = I                           # creates a scalable identity matrix --&gt;
-&lt;!--   q = ones(eltype(x), length(x))  # one is a type generic array of ones, fill creates the array of length(x) --&gt;
-&lt;!--   y .= z * x + q --&gt;
-&lt;!--   return y --&gt;
-&lt;!-- end --&gt;
+Locally scoped functions allow us to do things like:
 
-&lt;!-- x = [5.5, 7.0, 3.1]; --&gt;
-&lt;!-- y = [7, 8, 9]; --&gt;
-&lt;!-- ``` --&gt;
 
-&lt;!-- -- --&gt;
+```julia
+ xx = 10;
+ fff(xx) = xx^2;
+ fff(5)
+```
 
-&lt;!-- We did not declare any types but the function is type stable --&gt;
+```
+## 25
+```
 
-&lt;!-- --- --&gt;
+Although `xx` was declared equal to 10, the function still evaluated at 5
 
-&lt;!-- # Smart use of existing Julia functions delivers flexibility --&gt;
+--
 
-&lt;!-- ```{julia}  --&gt;
-&lt;!-- sametypes(x) --&gt;
-&lt;!-- sametypes(y) --&gt;
-&lt;!-- ``` --&gt;
+This is all kind of obvious so far
 
-&lt;!-- -- --&gt;
+---
 
-&lt;!-- There's a lot of other functions out there that help with writing flexible, type stable code --&gt;
+# Scope
 
-&lt;!-- --- --&gt;
+But, this type of scoping also has (initially) counterintuitive results like:
 
-&lt;!-- # Multiple dispatch --&gt;
 
-&lt;!-- Neat thing about Julia: the same function name can perform different operations depending on the underlying type of the inputs --&gt;
+```julia
+ zz = 0;
+ for ii = 1:10
+   zz = ii
+ end
+ println("zz = $zz")
+```
 
-&lt;!-- A function specifies different **methods**, each of which operates on a specific set of types --&gt;
+```
+## zz = 0
+```
 
-&lt;!-- `/` has 103 different methods depending on the input types, these are 103 specialized sets of codes --&gt;
+---
 
-&lt;!-- ```{julia} --&gt;
-&lt;!-- methods(/) --&gt;
-&lt;!-- ```   --&gt;
+# Scope
 
+What happened?
 
-&lt;!-- --- --&gt;
+--
 
-&lt;!-- # Coding practices etc --&gt;
+The `zz` outside the for loop has a different scope,  
+the .hi-blue[global scope], than the `zz` inside it
 
-&lt;!-- See [JuliaPraxis](https://github.com/JuliaPraxis) for best practices for naming, spacing, comments, etc --&gt;
+--
+
+The global scope is the outer most scope, outside all functions and loops
+
+--
+
+The `zz` inside the for loop has a scope .hi-blue[local] to the loop
+
+--
+
+Since the outside `zz` has global scope the locally scoped variables in the loop can't change it
+
+---
+
+# Scope
+
+Generally you want to avoid global scope because it can cause conflicts, slowness, etc, but you can use `global` to force it if you want something to have global scope
+
+
+```julia
+ zz = 0;
+ for ii = 1:10
+   global zz
+   zz = ii
+ end
+ println("zz = $zz")
+```
+
+```
+## zz = 10
+```
+
+---
+
+# Scope
+
+Local scope kicks in whenever you have a new block keyword (i.e. you indented something) except for `if`
+
+Global variables inside a local scope are inherted for .hi-blue[reading], not writing
+
+
+```julia
+ x, y = 1, 2;
+ function foo()
+   x = 2        # assignment introduces a new local
+   return x + y # y refers to the global
+ end;
+ foo()
+```
+
+```
+## 4
+```
+
+```julia
+ x
+```
+
+```
+## 1
+```
+
+
+---
+
+# Scope
+
+Important piece: nested functions can modify their parent scope's .hi-blue[local] variables
+
+--
+
+
+```julia
+ x, y = 1, 2; # set globals
+ 
+ function f_outer()
+   x = 2                # introduces a new local
+   function f_inner()
+     x = 10             # modifies the parent's x
+     return x + y       # y is global
+   end
+   return f_inner() + x # 12 + 10 (x is modified in call of f_inner())
+ end;
+ f_outer()
+ x, y                   # verify that global x and y are unchanged
+```
+---
+
+# Scope
+
+
+```julia
+ function f_outer()
+   x = 2                # introduces a new local
+   function f_inner()
+     x = 10             # modifies the parent's x
+     return x + y       # y is global
+   end
+   return f_inner() + x # 12 + 10 (x is modified in call of f_inner())
+ end;
+ f_outer()
+```
+
+```
+## 22
+```
+
+```julia
+ x, y                   # verify that global x and y are unchanged
+```
+
+```
+## (1, 2)
+```
+
+--
+
+If `f_inner` was not nested and was in the global scope we'd get `14` not `22`, this is also a way to handle the issue with loops editing variables not created in their local scope
+
+---
+
+# Scope
+
+We can fix looping issues with global scope by using a wrapper function that doesn't do anything but change the parent scope so it is not global
+
+
+```julia
+ function wrapper()
+   zzz = 0;
+   for iii = 1:10
+     zzz = iii
+   end
+   println("zzz = $zzz")
+ end
+```
+
+```
+## wrapper (generic function with 1 method)
+```
+
+```julia
+ wrapper()
+```
+
+```
+## zzz = 10
+```
+
+---
+
+# Closures
+
+These inner functions we've been looking at are called .hi-blue[closures]
+
+When a function `f` is parsed in Julia, it looks to see if any of the variables have been previously defined in the current scope
+
+
+```julia
+ a = 0.2;
+ f(x) = a * x^2;    # refers to the `a` in the outer scope
+```
+
+```
+## f (generic function with 1 method)
+```
+
+```julia
+ f(1)               # univariate function
+```
+
+```
+## 0.2
+```
+
+---
+
+# Closures
+
+
+```julia
+ function g(a)
+     f(x) = a * x^2; # refers to the `a` passed in the function
+     f(1);           # univariate function
+ end
+```
+
+```
+## g (generic function with 2 methods)
+```
+
+```julia
+ g(0.2)
+```
+
+```
+## 0.2
+```
+
+--
+
+In both of these examples `f` is a closure designed to .hi-blue[capture] a variable from an outer scope
+
+---
+
+# Closures
+
+Here's a complicated example that actually returns a closure (a function!) itself:
+
+
+```julia
+ x = 0;
+ function toplevel(y)
+   println("x = ", x, " is a global variable")
+   println("y = ", y, " is a parameter")
+   z = 2
+   println("z = ", z, " is a local variable")
+ 
+   function closure(v)
+     println("v = ", v, " is a parameter")
+     w = 3
+     println("w = ", w, " is a local variable")
+     println("x = ", x, " is a global variable")
+     println("y = ", y, " is a closed variable (a parameter of the outer function)")
+     println("z = ", z, " is a closed variable (a local of the outer function)")
+   end;
+   return closure
+ end;
+```
+What will be returned when we call these functions?
+
+---
+
+# Closures
+
+Here's a complicated example:
+
+
+```julia
+ c_func = toplevel(10)
+```
+
+```
+## x = 0 is a global variable
+## y = 10 is a parameter
+## z = 2 is a local variable
+```
+
+```
+## (::getfield(Main, Symbol("#closure#2372")){Int64,Int64}) (generic function with 1 method)
+```
+
+```julia
+ c_func(20)
+```
+
+```
+## v = 20 is a parameter
+## w = 3 is a local variable
+## x = 0 is a global variable
+## y = 10 is a closed variable (a parameter of the outer function)
+## z = 2 is a closed variable (a local of the outer function)
+```
+
+The returned closure still has access to the outer function's local scope!
+
+
+
+---
+
+# Generic functions
+
+If you use Julia to write code for research you should aim to write .hi-blue[generic functions]
+
+--
+
+These are functions that are flexible (e.g. can deal with someone using an `Int` instead of a `Float`)
+and have high performance (e.g. comparable speed to C)
+
+--
+
+Functions are made generic by paying attention to types and making sure types are .hi-blue[stable]
+
+--
+
+.hi-blue[Type stability:] Given an input into a function, operations on that input should maintain the type so Julia **knows** what its type will be throughout the full function call
+
+--
+
+This allows it to compile type-specialized versions of the functions, which will yield higher performance
+
+---
+
+# Generic functions
+
+The question you might have is: Type stability sounds like mandating types (e.g. what C and Fortran do, not what R/Python/etc do), so how do we make it flexible?
+
+--
+
+We'll see next
+
+---
+
+# These two functions look the same, but are they?
+
+
+```julia
+ function t1(n)
+   s = 0
+   t = 1
+   for i in 1:n
+      s += s/i
+      t = div(t, i)
+   end
+   return t
+ end
+```
+
+```
+## t1 (generic function with 1 method)
+```
+
+```julia
+ function t2(n)
+   s  = 0.0
+   t = 1
+   for i in 1:n
+      s += s/i
+      t = div(t, i)
+   end
+   return t
+ end
+```
+
+```
+## t2 (generic function with 1 method)
+```
+
+---
+
+# No! t1 is not type stable
+
+--
+
+`t1` starts with `s` as an `Int64` but then we have `s += s/i` which will mean it must hold a `Float64`
+
+--
+
+It must be converted to `Float` so it is not type stable
+
+---
+
+# No! t1 is not type stable
+
+We can see this when calling the macro `@code_warntype` where it reports `t1` at some point handles `s` that has type `Union{Float64,Int64}`, either `Float64` or `Int64`
+
+Julia now can't assume `s`'s type and produce pure integer or floating point code `\(\rightarrow\)` performance degradation
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/t1_codewarn.png" height=150&gt;
+  &lt;img src="figures/t2_codewarn.png" height=150&gt;
+&lt;/div&gt;
+
+---
+
+# THIS MATTERS
+
+Type stability matters for speed, here there's about a 100% difference
+
+
+```julia
+ @btime t1(5)
+```
+
+```
+##   21.519 ns (0 allocations: 0 bytes)
+```
+
+```
+## 0
+```
+
+```julia
+ @btime t2(5)
+```
+
+```
+##   13.985 ns (0 allocations: 0 bytes)
+```
+
+```
+## 0
+```
+
+---
+
+# THIS MATTERS
+
+Here's an order of magnitude difference for a similar function
+
+```julia
+ # Type instable
+ function g()
+   x=1
+   for i = 1:10
+     x = x/2
+   end
+   return x
+ end
+ # Type stable
+ function h()
+   x=1.0
+   for i = 1:10
+     x = x/2
+   end
+   return x
+ end
+```
+
+---
+
+# THIS MATTERS
+
+Here's an order of magnitude difference for a similar function
+
+
+```julia
+ @btime g()
+```
+
+```
+##   10.412 ns (0 allocations: 0 bytes)
+```
+
+```
+## 0.0009765625
+```
+
+```julia
+ @btime h()
+```
+
+```
+##   1.312 ns (0 allocations: 0 bytes)
+```
+
+```
+## 0.0009765625
+```
+
+---
+
+# Concrete vs abstract types
+
+A **concrete type** is one that can be instantiated (`Float64` `Bool` `Int32`)
+
+--
+
+An **abstract type** cannot (`Real`, `Number`, `Any`)
+
+--
+
+Abstract types are for organizing the types
+
+You can check where types are in the hierarchy
+
+
+```julia
+ @show Float64 &lt;: Real
+```
+
+```
+## Float64 &lt;: Real = true
+```
+
+```
+## true
+```
+
+```julia
+ @show Array &lt;: Real
+```
+
+```
+## Array &lt;: Real = false
+```
+
+```
+## false
+```
+
+```julia
+ @show Number &lt;: Any
+```
+
+```
+## Number &lt;: Any = true
+```
+
+```
+## true
+```
+
+---
+
+# Concrete vs abstract types
+
+You can see the type hierarchy with the supertypes and subtypes commands
+
+
+```julia
+ using Base: show_supertypes
+ show_supertypes(Float64)
+```
+
+```
+## Float64 &lt;: AbstractFloat &lt;: Real &lt;: Number &lt;: Any
+```
+
+---
+
+# Creating new types
+
+We can actually create new composite types using `struct`
+
+--
+
+
+```julia
+ struct FoobarNoType # This will be immutable by default
+   a
+   b
+   c
+ end
+```
+
+---
+
+# Creating new types
+
+This creates a new type called `FoobarNoType`, and we can generate a variable of this type using its **constructor** which will have the same name
+
+--
+
+
+```julia
+ newfoo = FoobarNoType(1.3, 2, "plzzz");
+ typeof(newfoo)
+```
+
+```
+## FoobarNoType
+```
+
+```julia
+ newfoo.a
+```
+
+```
+## 1.3
+```
+
+--
+
+.hi-red[You should always declare types for the fields of a new composite type]
+
+---
+
+# Creating new types
+
+You can declare types with the double colon
+
+
+
+```julia
+ struct FoobarType # This will be immutable by default
+   a::Float64
+   b::Int
+   c::String
+ end
+```
+
+---
+
+# Creating new types
+
+
+```julia
+ newfoo_typed = FoobarType(1.3, 2, "plzzz");
+ typeof(newfoo_typed)
+```
+
+```
+## FoobarType
+```
+
+```julia
+ newfoo.a
+```
+
+```
+## 1.3
+```
+
+This lets the compiler generate efficient code because it knows the types of the fields when you construct a `FoobarType`
+
+Declaring abstract types isn't good enough, you need to declare concrete types
+
+--
+
+Or do we?
+
+---
+
+# Parametric types are what help deliver flexibility
+
+We can create types that hold different types of fields  
+by declaring subsets of abstract types
+
+
+```julia
+ struct FooParam{t1 &lt;: Real, t2 &lt;: Real, t3 &lt;: AbstractArray{&lt;:Real}}
+   a::t1
+   b::t2
+   c::t3
+ end
+ newfoo_para = FooParam(1.0, 7, [1., 4., 6.])
+```
+
+```
+## FooParam{Float64,Int64,Array{Float64,1}}(1.0, 7, [1.0, 4.0, 6.0])
+```
+
+--
+
+The curly brackets declare all the different type subsets we will use in `FooParam`
+
+--
+
+This actually delivers high performance code!
+
+---
+
+# Delivering flexibility
+
+We want to make sure types are stable but code is flexible
+
+Ex: if want to preallocate an array to store data,  
+how do we know how to declare it's type?
+
+--
+
+We don't need to
+
+---
+
+# Delivering flexibility
+
+
+```julia
+ using LinearAlgebra               # necessary for I
+ function sametypes(x)
+   y = similar(x)                  # creates an array that is `similar` to x, use this for preallocating
+   z = I                           # creates a scalable identity matrix
+   q = ones(eltype(x), length(x))  # one is a type generic array of ones, fill creates the array of length(x)
+   y .= z * x + q
+   return y
+ end
+```
+
+```
+## sametypes (generic function with 1 method)
+```
+
+```julia
+ 
+ x = [5.5, 7.0, 3.1];
+ y = [7, 8, 9];
+```
+
+---
+
+# Delivering flexibility
+
+We did not declare any types but the function is type stable
+
+
+
+```julia
+ sametypes(x)
+```
+
+```
+## 3-element Array{Float64,1}:
+##  6.5
+##  8.0
+##  4.1
+```
+
+```julia
+ sametypes(y)
+```
+
+```
+## 3-element Array{Int64,1}:
+##   8
+##   9
+##  10
+```
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/generic_codewarn_float.png" height=125&gt;
+  &lt;img src="figures/generic_codewarn_int.png" height=125&gt;
+&lt;/div&gt;
+
+--
+
+There's a lot of other functions out there that help with writing flexible, type stable code
+
+---
+
+# Multiple dispatch
+
+.hi-red[Why type stability really matters: multiple dispatch]
+
+Neat thing about Julia: the same function name can perform different operations depending on the underlying type of the inputs
+
+A function specifies different **methods**, each of which operates on a specific set of types
+
+When you write a function that's type stable, you are actually writing many different methods, each of which are optimized for certain types
+
+--
+
+If your function isn't type stable, the optimized method may not be used
+
+This is why Julia can achieve C speeds: it compiles to C (or faster) code
+
+---
+
+# Multiple dispatch
+
+`/` has 103 different methods depending on the input types, these are 103 specialized sets of codes
+
+
+```julia
+ methods(/)
+```
+
+```
+## # 103 methods for generic function "/":
+## [1] /(a::Float16, b::Float16) in Base at float.jl:392
+## [2] /(x::Float32, y::Float32) in Base at float.jl:400
+## [3] /(x::Float64, y::Float64) in Base at float.jl:401
+## [4] /(z::Complex{Float64}, w::Complex{Float64}) in Base at complex.jl:361
+## [5] /(::Missing, ::Missing) in Base at missing.jl:93
+## [6] /(::Missing, ::Number) in Base at missing.jl:94
+## [7] /(x::BigInt, y::BigInt) in Base.GMP at gmp.jl:428
+## [8] /(x::BigInt, y::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}) in Base.GMP at gmp.jl:477
+## [9] /(x::BigFloat, c::BigInt) in Base.MPFR at mpfr.jl:464
+## [10] /(x::BigFloat, y::BigFloat) in Base.MPFR at mpfr.jl:421
+## [11] /(x::BigFloat, c::Union{UInt16, UInt32, UInt64, UInt8}) in Base.MPFR at mpfr.jl:428
+## [12] /(x::BigFloat, c::Union{Int16, Int32, Int64, Int8}) in Base.MPFR at mpfr.jl:440
+## [13] /(x::BigFloat, c::Union{Float16, Float32, Float64}) in Base.MPFR at mpfr.jl:452
+## [14] /(x::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}, y::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}) in Base at int.jl:59
+## [15] /(x::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}, y::BigInt) in Base.GMP at gmp.jl:478
+## [16] /(x::T, y::T) where T&lt;:Integer in Base at int.jl:57
+## [17] /(x::Rational, y::Complex{#s75} where #s75&lt;:Union{Integer, Rational}) in Base at rational.jl:266
+## [18] /(a::R, z::S) where {R&lt;:Real, S&lt;:Complex} in Base at complex.jl:324
+## [19] /(z::Complex, x::Real) in Base at complex.jl:325
+## [20] /(z::Complex{T}, w::Complex{T}) where T&lt;:Union{Float16, Float32} in Base at complex.jl:351
+## [21] /(a::Complex{T}, b::Complex{T}) where T&lt;:Real in Base at complex.jl:328
+## [22] /(x::Rational, y::Rational) in Base at rational.jl:265
+## [23] /(c::Union{UInt16, UInt32, UInt64, UInt8}, x::BigFloat) in Base.MPFR at mpfr.jl:433
+## [24] /(c::Union{Int16, Int32, Int64, Int8}, x::BigFloat) in Base.MPFR at mpfr.jl:445
+## [25] /(c::Union{Float16, Float32, Float64}, x::BigFloat) in Base.MPFR at mpfr.jl:457
+## [26] /(x::AbstractIrrational, y::AbstractIrrational) in Base at irrationals.jl:137
+## [27] /(x::T, y::T) where T&lt;:Number in Base at promotion.jl:392
+## [28] /(x::Number, y::Number) in Base at promotion.jl:316
+## [29] /(x::Base.TwicePrecision, v::Number) in Base at twiceprecision.jl:301
+## [30] /(x::Base.TwicePrecision, y::Base.TwicePrecision) in Base at twiceprecision.jl:305
+## [31] /(r::StepRangeLen{#s75,#s74,S} where S where #s74&lt;:Base.TwicePrecision where #s75&lt;:Real, x::Real) in Base at twiceprecision.jl:482
+## [32] /(B::BitArray, x::Number) in Base at bitarray.jl:1103
+## [33] /(X::Union{DenseArray{P,N}, Base.ReinterpretArray{P,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, Base.ReshapedArray{P,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, SubArray{P,N,A,I,L} where L where I&lt;:Tuple{Vararg{Union{Int64, AbstractRange{Int64}, Base.AbstractCartesianIndex},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, Base.ReshapedArray{T,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, DenseArray}} where N, y::Real) where P&lt;:Dates.Period in Dates at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/Dates/src/deprecated.jl:46
+## [34] /(A::SymTridiagonal, B::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/tridiag.jl:162
+## [35] /(A::Tridiagonal, B::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/tridiag.jl:621
+## [36] /(A::UpperTriangular, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:736
+## [37] /(A::UnitUpperTriangular, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:739
+## [38] /(A::LowerTriangular, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:736
+## [39] /(A::UnitLowerTriangular, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:739
+## [40] /(A::Symmetric, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/symmetric.jl:486
+## [41] /(A::Hermitian, x::Real) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/symmetric.jl:487
+## [42] /(D::Diagonal, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/diagonal.jl:161
+## [43] /(A::Bidiagonal, B::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/bidiag.jl:327
+## [44] /(x::Union{SubArray{T,1,#s617,Tuple{Base.Slice{Base.OneTo{Int64}},Int64},false} where #s617&lt;:SparseArrays.SparseMatrixCSC, SparseArrays.SparseVector{T,Ti} where Ti&lt;:Integer} where T, a::Number) in SparseArrays at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/SparseArrays/src/sparsevector.jl:1409
+## [45] /(A::AbstractArray, B::Number) in Base at arraymath.jl:55
+## [46] /(A::Union{BitArray{2}, BitArray{1}}, B::Union{BitArray{2}, BitArray{1}}) in Base at bitarray.jl:1100
+## [47] /(x::Number, B::BitArray) in Base at bitarray.jl:1104
+## [48] /(::Number, ::Missing) in Base at missing.jl:95
+## [49] /(x::P, y::P) where P&lt;:Dates.Period in Dates at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/Dates/src/periods.jl:80
+## [50] /(x::P, y::Real) where P&lt;:Dates.Period in Dates at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/Dates/src/periods.jl:81
+## [51] /(X::Union{DenseArray{P,N}, Base.ReinterpretArray{P,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, Base.ReshapedArray{P,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, SubArray{P,N,A,I,L} where L where I&lt;:Tuple{Vararg{Union{Int64, AbstractRange{Int64}, Base.AbstractCartesianIndex},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, Base.ReshapedArray{T,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, DenseArray}} where N, y::P) where P&lt;:Dates.Period in Dates at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/Dates/src/deprecated.jl:46
+## [52] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2547
+## [53] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2548
+## [54] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:(AbstractArray{T,2} where T) where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/adjtrans.jl:282
+## [55] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2542
+## [56] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2543
+## [57] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2545
+## [58] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2546
+## [59] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::AbstractArray{T,2} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/adjtrans.jl:280
+## [60] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2553
+## [61] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2554
+## [62] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:(AbstractArray{T,2} where T) where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/adjtrans.jl:283
+## [63] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2550
+## [64] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2551
+## [65] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2555
+## [66] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2556
+## [67] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::AbstractArray{T,2} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/adjtrans.jl:281
+## [68] /(A::LowerTriangular, B::LowerTriangular) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1730
+## [69] /(A::LowerTriangular, B::UnitLowerTriangular) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1737
+## [70] /(A::UpperTriangular, B::UpperTriangular) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1744
+## [71] /(A::UpperTriangular, B::UnitUpperTriangular) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1751
+## [72] /(A::LowerTriangular, xformB::Adjoint{#s617,#s616} where #s616&lt;:UpperTriangular where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1765
+## [73] /(A::LowerTriangular, xformB::Adjoint{#s615,#s614} where #s614&lt;:UnitUpperTriangular where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1774
+## [74] /(A::UpperTriangular, xformB::Adjoint{#s613,#s612} where #s612&lt;:LowerTriangular where #s613) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1783
+## [75] /(A::UpperTriangular, xformB::Adjoint{#s611,#s610} where #s610&lt;:UnitLowerTriangular where #s611) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1792
+## [76] /(A::LowerTriangular, xformB::Transpose{#s617,#s616} where #s616&lt;:UpperTriangular where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1765
+## [77] /(A::LowerTriangular, xformB::Transpose{#s615,#s614} where #s614&lt;:UnitUpperTriangular where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1774
+## [78] /(A::UpperTriangular, xformB::Transpose{#s613,#s612} where #s612&lt;:LowerTriangular where #s613) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1783
+## [79] /(A::UpperTriangular, xformB::Transpose{#s611,#s610} where #s610&lt;:UnitLowerTriangular where #s611) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1792
+## [80] /(A::AbstractArray{T,1} where T, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1921
+## [81] /(A::AbstractArray{T,1} where T, adjB::Adjoint{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1928
+## [82] /(A::AbstractArray{T,1} where T, transB::Transpose{#s615,#s614} where #s614&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1936
+## [83] /(A::AbstractArray{T,1} where T, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1947
+## [84] /(A::AbstractArray{T,1} where T, adjB::Adjoint{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1954
+## [85] /(A::AbstractArray{T,1} where T, transB::Transpose{#s615,#s614} where #s614&lt;:Union{LowerTriangular, UpperTriangular} where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1962
+## [86] /(A::AbstractArray{T,2} where T, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1921
+## [87] /(A::AbstractArray{T,2} where T, adjB::Adjoint{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1928
+## [88] /(A::AbstractArray{T,2} where T, transB::Transpose{#s615,#s614} where #s614&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1936
+## [89] /(A::AbstractArray{T,2} where T, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1947
+## [90] /(A::AbstractArray{T,2} where T, adjB::Adjoint{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1954
+## [91] /(A::AbstractArray{T,2} where T, transB::Transpose{#s615,#s614} where #s614&lt;:Union{LowerTriangular, UpperTriangular} where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1962
+## [92] /(Da::Diagonal, Db::Diagonal) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/diagonal.jl:306
+## [93] /(A::Union{LinearAlgebra.AbstractTriangular, Union{DenseArray{T,2}, Base.ReinterpretArray{T,2,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, Base.ReshapedArray{T,2,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, SubArray{T,2,A,I,L} where L where I&lt;:Tuple{Vararg{Union{Int64, AbstractRange{Int64}, Base.AbstractCartesianIndex},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, Base.ReshapedArray{T,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, DenseArray}} where T}, D::Diagonal) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/diagonal.jl:378
+## [94] /(A::Bidiagonal{T,V} where V&lt;:AbstractArray{T,1}, adjB::Adjoint{#s617,#s616} where #s616&lt;:AbstractArray{T,1} where #s617) where T in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/bidiag.jl:574
+## [95] /(A::Bidiagonal{T,V} where V&lt;:AbstractArray{T,1}, B::AbstractArray{T,1}) where T in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/bidiag.jl:573
+## [96] /(A::Union{AbstractArray{T,1}, AbstractArray{T,2}} where T, B::Union{AbstractArray{T,1}, AbstractArray{T,2}} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/generic.jl:977
+## [97] /(x::Number, v::AbstractArray{T,1} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/generic.jl:982
+## [98] /(B::AbstractArray{T,2} where T, A::LU) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/lu.jl:627
+## [99] /(J1::UniformScaling, J2::UniformScaling) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/uniformscaling.jl:202
+## [100] /(J::UniformScaling, A::AbstractArray{T,2} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/uniformscaling.jl:203
+## [101] /(A::AbstractArray{T,2} where T, J::UniformScaling) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/uniformscaling.jl:204
+## [102] /(J::UniformScaling, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/uniformscaling.jl:206
+## [103] /(x::RObject, y::RObject) in RCall at /Users/ir229/.julia/packages/RCall/g7dhB/src/operators.jl:6
+```
+
+
+---
+
+# Coding practices etc
+
+See [JuliaPraxis](https://github.com/JuliaPraxis) for best practices for naming, spacing, comments, etc
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
