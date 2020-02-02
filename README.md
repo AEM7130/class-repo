@@ -81,7 +81,7 @@ Judd (1998, Chapters 2, 3 and 7)
 
 Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
-### January 29: Coding, reproducibility, and the shell
+### January 29: [Coding, reproducibility, and the shell](https://rawcdn.githack.com/AEM7130/spring-2020/8a2fbf6e67e90bc64f4abd23800c7d46fa512240/lecture_notes/lecture_2/2a_coding.html)
 
 **Applications**: shell scripts, generic coding, reproducible coding, speed in julia, workflow
 
