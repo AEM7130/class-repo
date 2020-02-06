@@ -54,7 +54,7 @@ There will be four problem sets. You must submit your code on [GitHub](https://g
 
 In addition to submitting problem sets you will be required to do a reproduction exercise on your classmates' code. You will be randomly assigned to another classmate's submitted problem set and tasked with seeing whether it reproduces and offer suggestions for reproducibility.
 
-- [Problem set 1](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/1_ps/1_ps.ipynb): Due Feb 14
+- [Problem set 1](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/1_ps/1_ps.ipynb): Due Feb 17
 - Problem set 2: TBD
 - Problem set 3: TBD
 - Problem set 4: TBD
