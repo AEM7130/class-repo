@@ -1,0 +1,706 @@
+---
+title: "Lecture 3"
+subtitle: "Git and GitHub"
+author: Ivan Rudik
+date: AEM 7130
+output:
+  xaringan::moon_reader:
+    css: ['default', 'metropolis', 'metropolis-fonts', 'my-css.css']
+    # self_contained: true
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+
+---
+name: toc
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(knitr)
+opts_chunk$set(
+  prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+  fig.align = "center", #fig.width=6, fig.height=4.5, 
+  # out.width="748px", #out.length="520.75px",
+  dpi = 300, #fig.path='Figs/',
+  cache = F#, echo=F, warning=F, message=F
+  )
+## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+knit_hooks$set(
+  prompt = function(before, options, envir) {
+    options(
+      prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+      continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+      )
+})
+```
+
+---
+
+# Software and stuff
+
+Necessary things to do:
+
+- Install [Git](https://git-scm.com/downloads)
+
+- Create an account on [GitHub](https://github.com/) 
+
+- Install [GitHub Desktop](https://desktop.github.com/) if you want a GUI for Git
+
+- Accept invite to the AEM 7130 classroom repository on GitHub
+
+---
+
+# Quick note
+
+A decent chunk of these slides is inspired by [Grant McDermott's data science course](https://github.com/uo-ec607/lectures)
+
+If you're interested in more data science-y (similar to Ariel's class) and less numerical/structural material, check his material out
+
+---
+
+# Why bother with this new fangled Git stuff?
+
+The classic .hi-blue[date your file name method] is not good
+
+<div align="center">
+  <img src="figures/bad_version_control.png" height=300>
+</div>
+
+--
+
+When did you make changes? Who made them?  
+How do you undo only **some** changes from one update to the next?
+
+--
+
+If you've ever had a disaster managing code changes (you will), Git can help
+
+---
+
+# Git is the smart way to handle code
+
+## What is git?
+
+>> Git is a distributed version control system for tracking changes in source code during software development. It is designed for coordinating work among programmers, but it can be used to track changes in any set of files. Its goals include speed, data integrity, and support for distributed, non-linear workflows.
+
+---
+
+# Git is the smart way to handle code
+ 
+## Okay, so what?
+
+--
+
+Git combines a bunch of very useful features:
+
+--
+
+- Remote storage of code on a host like GitHub/GitLab/Bitbucket/etc, .hi-blue[just like Dropbox]
+
+--
+
+- Tracking of changes to files in a very clean way
+
+--
+
+- Easy ways to test out experimental changes (e.g. new specifications, additional model states) and not have them mess with your main code
+
+--
+
+- Built for versioning .hi-blue[code] like R, Julia, LaTeX, etc
+
+---
+
+# Git histories in GitHub Desktop
+
+<div style="float: right">
+  <img src="figures/git_history.png" height=500>
+</div>
+
+Some apps can give you a pretty visual of the history of changes to your code (shell can too, but not as nice)
+
+
+---
+
+# GitHub
+
+## Git $\neq$ GitHub
+
+--
+
+## GitHub hosts a bunch of online services we want when using Git
+
+--
+
+- Allows for people to suggest code changes to existing code
+
+--
+
+- It's the main location for non-base Julia packages (and .hi-blue[tons] of other stuff) to be stored and developed
+
+--
+
+- It has services that I used to set up this class, etc
+
+---
+
+# The differences
+
+--
+
+Git is the infrastructure for versioning and merging files
+
+--
+
+GitHub provides an online service to coordinate working with Git repositories, and adds some additional features for managing projects
+
+--
+
+GitHub stores the project on the cloud, allows for task management, creation of groups, etc
+
+---
+
+# Why Git and GitHub?
+
+## Selfish reasons
+
+--
+
+The private benefits of having well-versioned code in case you need to go back to previous stages
+
+--
+
+Your directories will be super clean
+
+--
+
+It is .hi-blue[MUCH] easier to collaborate on projects
+
+---
+
+# Why Git and GitHub?
+
+## Semi-altruistic reasons
+
+--
+
+The external benefits of open science, collaboration, etc
+
+--
+
+These external benefits also generate some downstream private reputational benefits (must be confident in your code to make it public) and can improve future social efficiency (commitment device to post future code)
+
+--
+
+My code for .hi-blue[everything] I've ever published is on [my GitHub](https://github.com/irudik) (I'll look real shady if I don't post code in the future)
+
+--
+
+Ideally yours will be too
+
+---
+
+# Git basics
+
+Everything on Git is stored in something called a .hi-blue[repository] or *repo* for short
+
+--
+
+This is the directory for a project
+
+--
+
+- .hi-blue[Local:] a directory with a `.git` subdirectory that stores the history of changes to the repository
+- .hi-blue[Remote:] a website, e.g. see the GitHub repo for the [Optim](https://github.com/JuliaNLSolvers/Optim.jl) package in Julia
+
+<div align="center">
+  <img src="figures/repo_example.png" height=450>
+</div>
+
+---
+
+# Creating a new repo on GitHub
+
+## Let's create a new repo
+
+--
+
+This is pretty easy from the GitHub website: just click on that green `new` button from the launch page
+<div align="center">
+  <img src="figures/create_repo.png" height=350>
+</div>
+
+---
+
+# Creating a new repo on GitHub
+
+Next steps:
+1. Choose a name
+2. Choose a description
+3. Choose whether the repo is public or private
+4. Choose whether you want to add a `README.md` (yes), or a `.gitignore` or a `LICENSE.md` file (more next slide) 
+<div align="center">
+  <img src="figures/create_repo_2.png" height=400>
+</div>
+
+---
+
+# Git basics
+
+Repos come with some common files in them
+
+- `.gitignore`: lists files/directories/extensions that Git shouldnt track (raw data, restricted data, those weird LaTeX files); this is usually a good idea
+- `README.md`: a Markdown file that is basically the welcome content on repo's GitHub website, you should generally initialize a repo with one of these
+- `LICENSE.md`: describes the license agreement for the repository
+
+<div align="center">
+  <img src="figures/repo_example.png" height=600>
+</div>
+
+---
+
+# Creating a new repo on GitHub
+
+You can find the repo at [https://github.com/irudik/example-repo-7130](https://github.com/irudik/example-repo-7130)
+
+<div align="center">
+  <img src="figures/create_repo_3.png" height=350>
+</div>
+
+
+---
+
+# How do I get a repo on GitHub onto on my computer?
+
+## Clone
+
+To get the repository on your local machine you need to .hi-blue[clone] the repo, you can do this in a few ways from the repo site
+
+--
+
+Key thing: this will .hi-blue[link] your local repository to the remote, you'll be able to update your local when the remote is changed
+
+---
+
+# Cloning
+
+<div style="float: right">
+  <img src="figures/cloning.png" height=400>
+</div>
+
+1. If you want to use the GitHub desktop app instead of command line, click on "Open in Desktop"
+2. You can use command line `git clone https://github.com/irudik/example-repo-7130.git`
+
+---
+
+# Cloning
+
+You're done! Now create and clone your own repository, initialized with a `README.md`, and follow along.
+<div align="center">
+  <img src="figures/terminal_cloning.png">
+</div>
+
+---
+
+# Cloning
+
+You're done! Now create and clone your own repository, initialized with a `README.md`, and follow along.
+<div align="center">
+  <img src="figures/github_desk_cloning.png" height=450>
+</div>
+
+---
+
+# The flow of Git
+
+.hi-blue[Workspace:] the actual files on your computer  
+.hi-blue[Repository:] your saved local history of changes to the files in the repository  
+.hi-blue[Remote:] The remote repository on GitHub that allows for sharing across collaborators
+
+<div align="center">
+  <img src="figures/git_flow.png">
+</div>
+
+---
+
+# Using Git
+
+There are only a few basic Git operations you need to know for versioning solo economics research efficiently
+
+--
+
+.hi-blue[Add/Stage:] This adds files to the index, in other words, it takes a snapshot of the changes you want updated/saved in your local repository (i.e. your computer)
+  - `git add -A` Adds all files to the index
+
+--
+
+.hi-blue[Commit:] This records the changes to your local repository
+  - `git commit -m "Updated some files"` Commits the changes added to the index with the commit message in quotations
+
+---
+
+# Using Git
+
+.hi-blue[Push:] This sends the changes to the remote repository (i.e. GitHub)
+  - `git push origin master` Pushes changes on your local repo to a **branch** called `master` on your remote, typically named `origin` (can often omit `origin master`)
+
+--
+
+.hi-blue[Pull:] This takes changes on the remote and integrates them with the local repository (technically two operations are going on: fetch and merge)
+  - `git pull origin master` Integrates the changes on the `master` branch of your remote `origin` into your local repo (again, can often omit `origin master`)
+
+  
+---
+
+# Using Git
+
+In your own repository do the following using either shell or GitHub Desktop:
+
+--
+
+1. Open `README.md` in some text editor and insert the following code: `# Hello World!`
+2. Save `README.md`
+3. Add the changes to `README.md` to the index
+4. Commit the changes to your local repo with the message: "First README.md edit."
+5. Push the changes to your remote
+
+--
+
+Did the changes show up your repo's GitHub page?
+
+---
+
+# Using Git: branching
+
+Some more (but not very) advanced operations relate to .hi-blue[branching]
+
+Branching creates different, but parallel, versions of your code
+
+e.g. If you want to test out a new feature of your model but don't want to contaminate your `master` branch, create a new branch and add the feature there
+
+If it works out, you can bring the changes back into `master`
+
+If it doesn't, just delete it
+
+---
+
+# Using Git: branching
+
+.hi-blue[Branch:] This adds/deletes/merges different .hi-blue[branches] of your repository
+
+  - `git branch` Lists all local branches
+  - `git branch -a` Lists all remote branches
+  - `git branch solar-panels` Creates a new branch called `solar-panels`
+  - `git branch -d solar-panels` Deletes the local `solar-panels` branch
+
+---
+
+# Using Git: branching
+
+.hi-blue[Checkout:] This switches you between different commits or branches
+  - `git checkout solar-panels` Switches you to branch `solar-panels`
+  - `git checkout -b wind-turbines` Creates a new branch called `wind-turbines` and checks it out
+
+---
+
+# Using Git: branching
+ 
+.hi-blue[Merge:] This merges two separate histories together (e.g. merges a separate branch back into the master)
+  - `git checkout master`  
+  `git merge wind-turbines`  
+  Checks out `master` and then merges `wind-turbines` back into the master
+  
+This brings the changes from `wind-turbines` since the initial branch back into the `master` branch
+
+---
+
+# Using Git
+
+In your own repository do the following using either shell or GitHub Desktop:
+
+--
+
+1. Create and checkout a new branch called `test-branch`
+2. Edit `README.md` and add the following code: `## your_name_here`
+2. Save `README.md`
+3. Add the changes to `README.md` to the index
+4. Commit the changes to your local repo with the message: "Test change to README.md."
+5. Merge the changes back into the `master` branch
+6. Push the changes to your remote
+
+--
+
+Did the changes show up your repo's GitHub page?
+
+---
+
+# Teaming up
+
+<div style="float: right">
+  <img src="figures/collab.png" height=450>
+</div>
+
+Find a partner for this next piece:
+
+One of you invite the other to collaborate on the project (GitHub page $\rightarrow$ Settings $\rightarrow$ Manage access $\rightarrow$ invite a collaborator)
+
+
+
+---
+
+# Teaming up
+
+If you were the one being invited, accept the invite, and clone the repo to your local
+
+--
+
+Now do the following:
+
+1. Each of you edit the `# Hello World!` line of code to be something else and different from each other
+
+--
+2. Commit the changes to your local
+
+--
+3. Have the repo creator push their changes
+
+--
+4. Have the collaborator push their changes
+
+---
+
+# Can't push changes when you aren't updated
+
+### Shell
+<div align="center">
+  <img src="figures/push_error.png" height=200>
+</div>
+
+It turns out that the second person can't push their local changes to the remote
+
+The second person is pushing their history of changes
+
+But the remote is already one commit ahead because of the first person, so the second person's changes can't be pushed
+
+---
+
+# Update by pulling after you commit local changes
+
+You need to pull the remote changes first, but then you get the following message:
+
+<div align="center">
+  <img src="figures/merge_conflict.png" height=300>
+</div>
+
+And we got a .hi-blue[merge conflict] in `README.md`
+
+This means there were differences between the remote and your local that conflicted
+
+---
+
+# Merge conflicts
+
+Sometimes there will be conflicts between two separate histories
+  - e.g. if you and your collaborator edited the same chunk of code separately on your local repos
+
+--
+
+When you try to merge these histories by pushing to the remote, Git will throw a .hi-blue[merge conflict]
+
+--
+
+When you get a merge conflict, the conflicted part of the code in your file will look like:
+```{bash, eval = FALSE}   
+<<<<<<< HEAD
+# nascar_and_unleaded <-- my local version
+=======
+# nascar_and_leaded <-- the remote version
+>>>>>>> 03c774b0e9baff0230855822a11e6ed24a0aa6b2
+
+```
+
+---
+
+# Merge conflicts
+
+```{bash, eval = FALSE}   
+<<<<<<< HEAD
+# nascar_and_unleaded <-- my local version
+=======
+# nascar_and_leaded <-- the remote version
+>>>>>>> 03c774b0e9baff0230855822a11e6ed24a0aa6b2
+
+```
+
+`<<<<<<< HEAD` indicates the start of the conflicted code  
+--
+
+`=======` separates the two different conflicting histories  
+--
+
+`>>>>>>> lots of numbers and letters` indicates the end of the conflicted code and the hash (don't worry about it) for the specific commit
+
+
+
+---
+
+# Fixing the merge conflict
+
+Merge conflicts can be fixed by directly editing the file, then doing an `add` of the conflicted file, a `commit`, and then a `push` to the remote
+
+<div align="center">
+  <img src="figures/merge_conflict_2.png" height=200>
+</div>
+
+--
+
+Fixed!
+
+---
+
+# Git help pages are excellent, so is StackExchange
+
+```{bash,eval = FALSE}
+git help add
+```
+<div align="center">
+  <img src="figures/git_help.png" height=525>
+</div>
+
+---
+
+# Managing tasks and workflow
+
+GitHub is also very useful for task management in solo or group projects using .hi-blue[issues] and .hi-red[pull requests]
+
+.hi-blue[Issues:] task management for you and your collaborators, should be able to completely replace email
+
+Let's look at the issues for the `Optim` package in Julia
+
+---
+
+# Issues
+
+<div style="float: right">
+  <img src="figures/issues_1.png" height=450>
+</div>
+
+The issues tab reports a list of 56 open issues (286 closed, meaning the task or problem has been solved)
+
+Each issue has its own title
+
+Lets check out the issue about the `Double64` type
+
+---
+
+# Issues
+
+<div style="float: right">
+  <img src="figures/issues_2.png" height=450>
+</div>
+
+The issue is because one person has found an error with the package where it doesn't seem to work correctly with a certain type of variable `Double64`
+
+Someone else has responded with some feedback
+
+---
+
+# Issues
+
+<div style="float: right">
+  <img src="figures/issues_3.png" height=450>
+</div>
+
+From the issues tab, click the green **new issue** button which takes you here
+
+You can:
+- create a title
+- add some text for the body of the issue
+- select people to assign the issue to
+- add some labels
+
+---
+
+# Issues
+
+<div style="float: right">
+  <img src="figures/issues_4.png" height=550>
+</div>
+
+The issue keeps track of the history of everything that's happened to it
+
+---
+
+# Issues
+
+<div style="float: right">
+  <img src="figures/issues_5.png" height=550>
+</div>
+
+You can reference people with `@` which brings up a dropdown menu of all collaborators on the project
+
+---
+
+# Issues
+
+<div style="float: right">
+  <img src="figures/issues_6.png" height=550>
+</div>
+
+You can also reference *other issues* if they're related by using `#` which brings up a dropdown of all issues for your repository
+
+---
+
+# Issues
+
+Issues can also be referenced in your commits to your project by adding `#issue_number_here` to the commit message
+
+<div align = "center">
+  <img src="figures/issues_7.png" height=350>
+</div>
+
+---
+
+# Issues
+
+<div style="float: right">
+  <img src="figures/issues_8.png" height=550>
+</div>
+
+Then those commits show up in your issue so you have a history of what code changes have been made.
+
+---
+
+# Issues
+
+
+If you click on the commit, it takes you to the `git diff` which shows you any changes to files made in that commit
+
+<div align = "center">
+  <img src="figures/issues_9.png">
+</div>
+
+---
+
+# Windows users!!!!!
+
+## Do the following:
+
+- Open up a command prompt or Git Bash (recommend Bash from here on out)
+- Run the following commands:
+```bash
+git config --global core.eol lf
+git config --global core.autocrlf false
+```
+
+--
+
+Git tracks changes by specific characters at the end of each line, it does this differently across Windows/Unix by default
+
+---
+
+# Next up:
+
+## Optimization: root-finding and maximization/minimization
