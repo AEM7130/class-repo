@@ -93,7 +93,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 [QuantEcon Lectures](https://quantecon.org/)
 
-### February 5: Version control
+### February 5: [Version control](https://rawcdn.githack.com/AEM7130/spring-2020/93def05f54a61f2d5c871ec48503d39e5a4ae293/lecture_notes/lecture_3/3_git.html)
 
 **Applications**: git, github, issues, pull requests
 
