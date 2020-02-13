@@ -68,7 +68,7 @@ There is a final project for the course, due at the end of the semester, where e
 3. Describe how you solve the model.
 4. Have preliminary results.
 
-### Computational paper presentations
+### [Computational paper presentations](https://rawcdn.githack.com/AEM7130/spring-2020/fb175a76affc956dd0cf1fe681dc1dc0c979eb71/paper_presentation/paper_presentation.html)
 Starting near the middle of the course, one student a week will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. More information will come later in the course.
 
 ## Course Schedule
