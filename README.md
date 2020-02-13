@@ -59,7 +59,7 @@ In addition to submitting problem sets you will be required to do a reproduction
 - Problem set 3: TBD
 - Problem set 4: TBD
 
-### Final project
+### Final project ([proposal link here](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html))
 
 There is a final project for the course, due at the end of the semester, where each student will submit the beginning of a computationally-driven research paper. A proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results. The paper is due the day after the final class. It should be at least 10 pages including tables and graphs and should:
 
