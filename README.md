@@ -43,7 +43,7 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 
 ## Important dates
 
-- Final project proposals due: March 13
+- [Final project proposals due: March 13](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html)
 - Final project presentations: April 29
 - Final project paper due: April 30
 
