@@ -101,7 +101,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 [SEERE Lab wiki](https://github.com/cornell-seere/lab-information/wiki)
 
-### February 12: Rootfinding and optimization
+### February 12: [Rootfinding and optimization](https://rawcdn.githack.com/AEM7130/spring-2020/cd4786fa16d1820620fc6d1d3f86c7e8aa41167b/lecture_notes/lecture_4/4_optimization.html)
 
 **Theory**: iterative methods, newton methods, gaussian methods, global solvers
 
