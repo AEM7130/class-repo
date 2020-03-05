@@ -111,7 +111,7 @@ Miranda and Fackler (2002, Chapters 3 and 4)
 
 Nocedal and Wright (2006, Chapters 2-6)
 
-### February 19: Discrete time dynamic programming
+### February 19: [Discrete time dynamic programming](https://rawcdn.githack.com/AEM7130/spring-2020/3fceafa72b63d046aad7d456b694cb45f8ea1ab4/lecture_notes/lecture_5/5_dynamics.html)
 
 **Theory**: markov chains, principle of optimality
 
