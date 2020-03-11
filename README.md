@@ -119,7 +119,7 @@ Adda, Jerome and Russell W Cooper (2003) Dynamic Economics: Quantitative Methods
 
 Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT press.
 
-### February 26: Function approximation
+### February 26: [Function approximation](https://rawcdn.githack.com/AEM7130/spring-2020/f8f72c02c63119eabea4653c9501f0b38127dd59/lecture_notes/lecture_6/6_projection_short.html)
 
 **Theory**: discretization, pseudospectral methods, finite element methods
 
