@@ -59,14 +59,22 @@ In addition to submitting problem sets you will be required to do a reproduction
 - [Problem set 3](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/3_ps/3_ps_approx.ipynb): Due March 22
 - Problem set 4: TBD
 
-### Final project ([proposal link here](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html))
+### Final project ([proposal link here (no longer required)](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html))
 
-There is a final project for the course, due at the end of the semester, where each student will submit the beginning of a computationally-driven research paper. A proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results. The paper is due the day after the final class. It should be at least 10 pages including tables and graphs and should:
+There is a final project for the course, due at the end of the semester. You may select one of two options:
 
-1. Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.
-2. Analytically develop the model, provide proofs for theoretical results if there are any.
-3. Describe how you solve the model.
-4. Have preliminary results.
+1. Begin a new computationally-driven research paper. The paper should
+    1. Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.
+    2. Analytically develop the model, provide proofs for theoretical results if there are any.
+    3. Describe how you solve or estimate the model.
+    4. If possible, have preliminary results.
+2. Expand an existing paper by bringing in machine learning techniques, advanced numerical techniques, or a remotely sensed geospatial dataset. This can be your own paper (e.g. your current second year paper in progress), or an existing published paper where reproduction data and code are available online. The paper should
+    1. Briefly summarize the existing paper.
+    2. Describe the new techniques or data your are bringing to the table in detail.
+    3. Have preliminary results.
+    4. If using alternative techniques, compare outcomes or performance against the original methodology in the paper.
+
+The paper should be up to 7 pages in length and is due the day after the final class. 
 
 ### [Computational paper presentations](https://rawcdn.githack.com/AEM7130/spring-2020/fb175a76affc956dd0cf1fe681dc1dc0c979eb71/paper_presentation/paper_presentation.html)
 Starting near the middle of the course, one student a week will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. More information will come later in the course.
