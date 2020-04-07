@@ -31,10 +31,6 @@ Necessary things to download to follow along today and in the future:
 
 For this lecture you will need the following Julia packages
 
-```{julia}
-using Plots, ForwardDiff, Distributions, BenchmarkTools
-```
-
 
 ---
 

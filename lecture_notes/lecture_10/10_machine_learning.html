@@ -1,0 +1,3240 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 10</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Ivan Rudik" />
+    <script src="10_machine_learning_files/header-attrs-2.1/header-attrs.js"></script>
+    <link href="10_machine_learning_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="10_machine_learning_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="10_machine_learning_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="my-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Lecture 10
+## Intro to Machine Learning
+### Ivan Rudik
+### AEM 7130
+
+---
+
+
+# Roadmap
+
+1. Intro to machine learning
+2. Supervised methods, validation, and cross-validation
+4. Unsupervised methods
+
+---
+
+# What is machine learning?
+
+Machine learning is an algorithmically-driven way to .hi-blue[predict] outcomes
+
+--
+
+Unlike standard econometrics, we aren't as interested in unbiased estimators or causality
+
+--
+
+We just care about getting the prediction right and it working rather than having formal statistical properties
+
+--
+
+.hi-blue[We want a good prediction of y, not good estimates of coefficients]
+
+--
+
+Econometricians are finding ways to do both (double selection, double ML, trees for heterogeneous causal effects, etc)
+
+---
+
+# Terminology
+
+You'll run into terms that have similar meaning to what we use in economics 
+
+1. .hi-blue[Features]: regressors, your `\(x\)`s
+2. .hi-blue[Supervised learning]: settings where we have an outcome `\(y\)` and a set of features `\(x\)`, this will be called regression if `\(y\)` is continuous, or classification if `\(y\)` is categorical
+3. .hi-blue[Unsupervised learning]: settings where we only have features `\(x\)`, there's no outcomes!
+4. .hi-blue[Training sample]: the partition of the dataset used to estimate the model
+5. .hi-blue[Validation sample]: the partition of the dataset used to validate the out-of-sample fit within a fold
+6. .hi-blue[Test sample]: The partition of the dataset used to test out-of-sample fit of the final model
+
+---
+
+# The key pieces
+
+.hi-blue[Out-of-sample validation]: we will validate our methods by checking their fit and properties out-of-sample
+
+The fact that we're trying to solve prediction problems is why we can do this: we see the actual realizations of `\(y\)`, so that we can test the quality of the fit
+
+For causal inference problems we never observe the true `\(\beta\)` so we can't validate our solutions
+
+We use our training sample to estimate our model and then test it on our test sample
+
+---
+
+# The key pieces
+
+.hi-blue[Regularization]: impose a penalty for overfitting the model
+
+You can get great (perfect) in-sample prediction by having `\(N=K\)`
+
+The problem is that this will lead to an over-fit model that will do very poorly out-of-sample
+
+How much regularization do we want? 
+
+We typically use cross-validation methods to help us choose
+
+---
+
+# The key pieces
+
+.hi-blue[Scalability]: can handle a lot of data `\(N\)` or `\(K\)`
+
+Could have thousands of features, billions of observations
+
+Having parallelizable algorithms is important
+
+---
+
+# The key pieces
+
+.hi-blue[Bias-variance trade-off]: expected mean squared error (MSE) of a prediction is a combo of bias and variance
+
+Typically as economists we want low (zero) bias estimators because we care about the sign and interpretation of coefficients
+
+If we want a good prediction of `\(y\)`, we may be willing to allow more bias to reduce variance and decrease MSE
+
+`\begin{align}
+  E(y-\hat{f}(x)^2) 
+    &amp;= E[y^2] + E[\hat{f}^2] - 2[Ey\hat{f}]\\
+    &amp;= var(y) + E[y^2] + var(\hat{f}) + E[\hat{f}^2] - 2fE[\hat{f}] \\
+    &amp;= var(y) + var(\hat{f}) + (f-E[\hat{f}])^2 \\
+    &amp;= \sigma^2 + variance + bias^2
+\end{align}`
+
+---
+
+# Bias-variance trade-off
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/bias_variance.png" height=550&gt;
+&lt;/div&gt;
+
+---
+
+# Bias-variance trade-off
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/bias_variance_2.png" height=550&gt;
+&lt;/div&gt;
+
+---
+
+# Shrinkage/regularization methods
+
+One way to reduce variance is to shrink the `\(\beta\)`s, or even set some to zero `\((var(0) = 0)\)`
+
+A common way we implement this is by penalizing deviation in `\(\beta\)`s different than zero:
+
+`$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda \times Penalty(\beta \neq 0)$$`
+
+If we set estimates to zero we will end up with .hi-blue[sparse] representations
+
+Bet on the .hi-blue[sparsity principle]: use a procedure that does well in sparse problems, since no procedure does well in dense problems (Hastie, Tibshirani and Wainwright 2015)
+
+---
+
+# Shrinkage/regularization methods
+
+There are three common specifications for this approach depending on how we specify the penalty function
+
+- .hi-blue[Ridge regression]: Penalty = `\(\sum_l \beta^2_l\)`
+- .hi-blue[Least Absolute Shrinkage and Selection Operator (LASSO)]: Penalty = `\(\sum_l |\beta_l|\)`
+- .hi-blue[Elastic Net]: Penalty = `\((1-\alpha)\sum_l \beta^2_l + \alpha\sum_l |\beta_l|\)`
+
+---
+
+# Ridge regression
+
+`$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda\sum_l \beta^2_l$$`
+
+`$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda (||\beta||_2)^2$$`
+
+Ridge regression penalizes coefficients based on their `\(L_2\)` norm, this tends to .hi-red[shrink] coefficients toward zero
+
+It rarely sets coefficients exactly equal to zero since the penalty is smooth
+
+It does a good job with fixing ill-conditioning problems and in cases where `\(K&gt;N\)`
+
+It also has a closed form solution: `\(\hat{\beta} = (X'X + \lambda I)^{-1} X'Y\)`
+
+---
+
+# Ridge regression
+
+Ridge has a nice Bayesian interpretation
+
+If 
+
+- The prior distribution of `\(\beta\)` is `\(\mathcal{N}(0,\tau^2 \times I)\)`
+- The error term is distributed `\(\mathcal{N}(0,\sigma^2)\)`
+- `\(\lambda = \sigma^2/\tau^2\)`
+
+Then
+
+`\(\hat{\beta}_{ridge}\)` is the posterior mean, median, and mode
+
+---
+
+# Sidebar: normalization
+
+When regularizing we generally want to normalize our features and outcome
+
+Why?
+
+If features vary dramatically in magnitude or have different scales (dollars of GDP vs percent GDP), variables that are numerically large will get penalized more just because of their units
+
+If we set all variables to mean zero, variance one they are on a common playing field for regularization
+
+Regularizing the outcome will get rid of the intercept term as well
+
+For ridge, normalizing results in coefficients being shrunk by a factor of `\(1/(1+\lambda)\)`
+
+---
+
+# LASSO
+
+`$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda\sum_l |\beta_l|$$`
+
+`$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda ||\beta||_1$$`
+
+LASSO penalizes coefficients based on their `\(L_1\)` norm, this tends to .hi-red[select] a subset of ceofficients, i.e. it sets a number of them equal precisely to zero and generates a sparse solution
+
+LASSO is generally used for variable or model selection
+
+LASSO has no analytic solution, need to use convex optimization routines
+
+
+---
+
+# LASSO
+
+LASSO also has a nice Bayesian interpretation
+
+If 
+
+- The prior distribution of `\(\beta\)` is Laplacian
+- The error term is distributed `\(\mathcal{N}(0,\sigma^2)\)`
+
+Then
+
+`\(\hat{\beta}_{ridge}\)` is the posterior mode
+
+---
+
+# `\(L_p\)` regularization
+
+`$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda (||\beta||_p)^{1/p}$$`
+
+Ridge and LASSO are special cases of a general `\(L_p\)` regularizer
+
+Another special case is subset selection is we use the `\(L_0\)` norm
+
+.hi-blue[Subset selection] induces the estimates to be the OLS estimates but it is computationally tough to solve so it is not often used
+
+---
+
+# Ridge vs LASSO
+
+One way to reframe ridge and LASSO are as their dual, constrained problems:
+
+Ridge: `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 \text{ subject to } \sum_l \beta^2_l \leq s$$`
+
+LASSO: `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 \text{ subject to } \sum_l |\beta_l| \leq s$$`
+
+We can then plot the constraints and the contours of the unconstrained problem to see how they differ
+
+---
+
+# Ridge vs LASSO
+
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/lasso_vs_ridge.png" height=450&gt;
+&lt;/div&gt;
+
+LASSO induces a constraint set with kinks at `\(x_1=0; x_2=0, ...\)`
+
+`\(\rightarrow\)` solutions will generally be at the kinks and we get lots of zero coefficients
+
+Ridge induces a spherical constraint set, it tends to shrink coefficients toward zero without setting them exactly to zero
+
+---
+
+# Elastic Net
+
+`$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda [(1-\alpha)(||\beta||_2)^2 + \alpha||\beta||_1]$$`
+
+Elastic net tries to get the best of both ridge and LASSO by using a convex combination of their penalties
+
+LASSO has one big problem:
+
+.hi-blue[Selection with Collinearity]: if features are highly correlated LASSO tends to select one and ignore the others
+
+The ridge penalty helps get around these issues by allowing us to select multiple of the correlated variables
+
+---
+
+# Elastic Net
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/elastic_net.png" height=300&gt;
+&lt;/div&gt;
+
+---
+
+# Validation and cross-validation
+
+One thing we haven't discussed yet is how we select `\(\lambda\)`, our penalty parameter
+
+Big lambdas tend to result in a lot of shrinkage and sparsity,  
+as `\(\lambda \rightarrow 0\)` our solution approaches the OLS solution
+
+There are two general ways to select `\(\lambda\)`
+
+1. Select model with lowest AIC/BIC/other plug-in criterion
+    - This uses no out-of-sample information for selection but is fast
+2. Cross-validate by testing on our hold-out test sample
+    - Variants of cross-validation are most commonly used
+
+---
+
+# Cross-validation
+
+When we perform cross-validation we split our sample into three different pieces: a training sample, a validation sample, and a test sample
+
+First you randomly allocate some fraction of your data to the test sample
+
+Next you perform cross-validation on the remaining data
+
+A common way to do this is called .hi-blue[k-fold cross-validation]
+
+---
+
+# k-fold cross-validation
+
+In k-fold cross-validation we do the following:
+
+- Create a grid of `\(\lambda\)`s
+- For each `\(\lambda\)`:
+    - Split data into `\(k\)` mutually-exclusive folds of about equal size, usually choose `\(k=5,10\)`
+    - For `\(j=1,...,k\)`
+        - fit the model using all folds but fold `\(j\)`
+        - Predict out-of-sample on fold `\(j\)`
+    - Compute average mean squared prediction error across the `\(k\)` folds: `\(\bar{Q}(\lambda) = \frac{1}{k}\sum_{j=1}^k \sum_{i \in \text{fold j}} \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda ||\beta||_1\)`
+- Choose `\(\hat{\lambda}_{min} = argmin_{\lambda} \bar{Q}(\lambda)\)` or to avoid modest overfitting   
+choose the largest `\(\lambda\)` such that `\(\bar{Q}(\lambda) \leq \hat{\lambda}_{min} + \sigma_{\hat{\lambda}_{min}}\)` (1 standard deviation rule)
+
+---
+
+# Supervised learning examples: Preliminaries
+
+We need `tidyverse` to work with the data, `glmnet` to do the ML, , `caret` to do some higher-level tuning, and `tidymodels` to use a similar grammar and structure to `tidyverse`
+
+We will be working with the mtcars dataset
+
+
+```r
+if (!require("pacman")) install.packages("pacman")
+require(devtools)
+devtools::install_github("tidymodels/tidymodels")
+pacman::p_load(tidymodels, tidyverse, glmnet)
+set.seed(123)
+```
+
+---
+
+# Supervised learning examples: Preliminaries
+
+
+```r
+mtcars &lt;- mtcars %&gt;% as_tibble()
+mtcars
+```
+
+```
+## # A tibble: 32 x 11
+##      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4
+##  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+##  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
+##  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+##  5  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+##  6  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
+##  7  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+##  8  24.4     4  147.    62  3.69  3.19  20       1     0     4     2
+##  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
+## 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+## # … with 22 more rows
+```
+
+---
+
+# Supervised learning example: pre-processing
+
+
+```r
+y &lt;- mtcars %&gt;% # center and scale y's, glmnet will center and scale Xs
+  select(mpg) %&gt;% 
+  scale(center = TRUE, scale = FALSE) %&gt;% 
+  as.matrix()
+X &lt;- mtcars %&gt;% 
+  select(-mpg) %&gt;% 
+  as.matrix()
+```
+
+---
+
+# Ridge regression with glmnet
+
+
+```r
+lambdas_to_try &lt;- 10^seq(-3, 5, length.out = 100) # penalty parameter grid
+ridge_cv &lt;- cv.glmnet(X, y, 
+                      alpha = 0, # alpha is the elastic net parameter, 0 -&gt; ridge
+                      lambda = lambdas_to_try, # lambda grid
+                      standardize = TRUE, # standardize X's
+                      nfolds = 10) # number of CV folds
+```
+
+---
+
+# Ridge regression with glmnet
+Here's MSE as a function of the choice of `\(\log(\lambda)\)`, notice we keep all variables
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Ridge regression with glmnet
+
+
+```r
+res_ridge &lt;- glmnet(X, y, alpha = 0, lambda = lambdas_to_try, standardize = TRUE)
+plot(res_ridge, xvar = "lambda")
+legend("bottomright", lwd = 1, col = 1:6, legend = colnames(X), cex = .7)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# LASSO with glmnet
+
+
+```r
+lambdas_to_try &lt;- 10^seq(-3, 5, length.out = 100) # penalty parameter grid
+lasso_cv &lt;- cv.glmnet(X, y, 
+                      alpha = 1, # alpha is the elastic net parameter, 1 -&gt; LASSO
+                      lambda = lambdas_to_try, # lambda grid
+                      standardize = TRUE, # standardize X's
+                      nfolds = 10) # number of CV folds
+```
+
+---
+
+# LASSO with glmnet
+Here's MSE as a function of the choice of `\(\log(\lambda)\)`, LASSO generates sparse solutions
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# LASSO with glmnet
+
+
+```r
+res_lasso &lt;- glmnet(X, y, alpha = 1, lambda = lambdas_to_try, standardize = TRUE)
+plot(res_lasso, xvar = "lambda")
+legend("bottomright", lwd = 1, col = 1:6, legend = colnames(X), cex = .7)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Elastic net with glmnet
+
+
+```r
+lambdas_to_try &lt;- 10^seq(-3, 5, length.out = 100) # penalty parameter grid
+elastic_net_cv &lt;- cv.glmnet(X, y, 
+                      alpha = 0.45, # alpha is the elastic net parameter
+                      lambda = lambdas_to_try, # lambda grid
+                      standardize = TRUE, # standardize X's
+                      nfolds = 10) # number of CV folds
+```
+
+---
+
+# Elastic net with glmnet
+Here's MSE as a function of the choice of `\(\log(\lambda)\)`, elastic net generates sparse solutions
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Elastic net with glmnet
+
+
+```r
+res_en &lt;- glmnet(X, y, alpha = 0.45, lambda = lambdas_to_try, standardize = TRUE)
+plot(res_en, xvar = "lambda")
+legend("bottomright", lwd = 1, col = 1:6, legend = colnames(X), cex = .7)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Elastic net with caret
+
+Elastic net has a second hyper-parameter, `\(\alpha\)` that we can tune in addition to `\(\lambda\)`
+
+`glmnet` doesn't let you tune both, but `caret` does
+
+
+```r
+train_control &lt;- trainControl(method = "cv", # use repeated cv
+                              number = 10, # number of folds
+                              search = "random",
+                              verboseIter = TRUE)
+```
+
+---
+
+# Elastic net with caret
+
+use `train` to train the model in `caret` using `glmnet`
+
+```r
+elastic_net_model &lt;- train(mpg ~ .,
+                           data = cbind(y, X), # data
+                           method = "glmnet", # use glmnet package
+                           preProcess = c("center", "scale"), # already centered and scaled
+                           tuneLength = 100, # 100 point grid for tuning parameters
+                           trControl = train_control)
+```
+
+```
+## + Fold01: alpha=0.40947, lambda=0.381599 
+## - Fold01: alpha=0.40947, lambda=0.381599 
+## + Fold01: alpha=0.01047, lambda=0.004588 
+## - Fold01: alpha=0.01047, lambda=0.004588 
+## + Fold01: alpha=0.18385, lambda=0.293152 
+## - Fold01: alpha=0.18385, lambda=0.293152 
+## + Fold01: alpha=0.84273, lambda=0.016224 
+## - Fold01: alpha=0.84273, lambda=0.016224 
+## + Fold01: alpha=0.23116, lambda=0.668596 
+## - Fold01: alpha=0.23116, lambda=0.668596 
+## + Fold01: alpha=0.23910, lambda=0.035556 
+## - Fold01: alpha=0.23910, lambda=0.035556 
+## + Fold01: alpha=0.07669, lambda=6.069734 
+## - Fold01: alpha=0.07669, lambda=6.069734 
+## + Fold01: alpha=0.24572, lambda=5.963581 
+## - Fold01: alpha=0.24572, lambda=5.963581 
+## + Fold01: alpha=0.73214, lambda=0.681664 
+## - Fold01: alpha=0.73214, lambda=0.681664 
+## + Fold01: alpha=0.84745, lambda=0.009915 
+## - Fold01: alpha=0.84745, lambda=0.009915 
+## + Fold01: alpha=0.49753, lambda=0.007205 
+## - Fold01: alpha=0.49753, lambda=0.007205 
+## + Fold01: alpha=0.38791, lambda=0.204418 
+## - Fold01: alpha=0.38791, lambda=0.204418 
+## + Fold01: alpha=0.24645, lambda=0.010880 
+## - Fold01: alpha=0.24645, lambda=0.010880 
+## + Fold01: alpha=0.11110, lambda=0.116946 
+## - Fold01: alpha=0.11110, lambda=0.116946 
+## + Fold01: alpha=0.38999, lambda=1.155720 
+## - Fold01: alpha=0.38999, lambda=1.155720 
+## + Fold01: alpha=0.57194, lambda=0.004440 
+## - Fold01: alpha=0.57194, lambda=0.004440 
+## + Fold01: alpha=0.21689, lambda=0.037348 
+## - Fold01: alpha=0.21689, lambda=0.037348 
+## + Fold01: alpha=0.44477, lambda=0.068417 
+## - Fold01: alpha=0.44477, lambda=0.068417 
+## + Fold01: alpha=0.21799, lambda=2.437477 
+## - Fold01: alpha=0.21799, lambda=2.437477 
+## + Fold01: alpha=0.50230, lambda=4.095965 
+## - Fold01: alpha=0.50230, lambda=4.095965 
+## + Fold01: alpha=0.35390, lambda=2.761990 
+## - Fold01: alpha=0.35390, lambda=2.761990 
+## + Fold01: alpha=0.64999, lambda=0.424674 
+## - Fold01: alpha=0.64999, lambda=0.424674 
+## + Fold01: alpha=0.37471, lambda=5.105919 
+## - Fold01: alpha=0.37471, lambda=5.105919 
+## + Fold01: alpha=0.35545, lambda=0.102506 
+## - Fold01: alpha=0.35545, lambda=0.102506 
+## + Fold01: alpha=0.53369, lambda=0.176134 
+## - Fold01: alpha=0.53369, lambda=0.176134 
+## + Fold01: alpha=0.74033, lambda=0.020225 
+## - Fold01: alpha=0.74033, lambda=0.020225 
+## + Fold01: alpha=0.22110, lambda=0.022331 
+## - Fold01: alpha=0.22110, lambda=0.022331 
+## + Fold01: alpha=0.41275, lambda=0.001170 
+## - Fold01: alpha=0.41275, lambda=0.001170 
+## + Fold01: alpha=0.26569, lambda=0.090657 
+## - Fold01: alpha=0.26569, lambda=0.090657 
+## + Fold01: alpha=0.62997, lambda=2.502837 
+## - Fold01: alpha=0.62997, lambda=2.502837 
+## + Fold01: alpha=0.18383, lambda=0.001034 
+## - Fold01: alpha=0.18383, lambda=0.001034 
+## + Fold01: alpha=0.86364, lambda=0.001869 
+## - Fold01: alpha=0.86364, lambda=0.001869 
+## + Fold01: alpha=0.74657, lambda=0.004289 
+## - Fold01: alpha=0.74657, lambda=0.004289 
+## + Fold01: alpha=0.66828, lambda=1.009991 
+## - Fold01: alpha=0.66828, lambda=1.009991 
+## + Fold01: alpha=0.61802, lambda=0.735805 
+## - Fold01: alpha=0.61802, lambda=0.735805 
+## + Fold01: alpha=0.37224, lambda=6.209096 
+## - Fold01: alpha=0.37224, lambda=6.209096 
+## + Fold01: alpha=0.52984, lambda=0.065341 
+## - Fold01: alpha=0.52984, lambda=0.065341 
+## + Fold01: alpha=0.87468, lambda=0.001909 
+## - Fold01: alpha=0.87468, lambda=0.001909 
+## + Fold01: alpha=0.58175, lambda=0.337892 
+## - Fold01: alpha=0.58175, lambda=0.337892 
+## + Fold01: alpha=0.83977, lambda=0.908596 
+## - Fold01: alpha=0.83977, lambda=0.908596 
+## + Fold01: alpha=0.31245, lambda=0.003359 
+## - Fold01: alpha=0.31245, lambda=0.003359 
+## + Fold01: alpha=0.70829, lambda=0.034809 
+## - Fold01: alpha=0.70829, lambda=0.034809 
+## + Fold01: alpha=0.26502, lambda=0.007416 
+## - Fold01: alpha=0.26502, lambda=0.007416 
+## + Fold01: alpha=0.59434, lambda=0.001646 
+## - Fold01: alpha=0.59434, lambda=0.001646 
+## + Fold01: alpha=0.48129, lambda=0.034593 
+## - Fold01: alpha=0.48129, lambda=0.034593 
+## + Fold01: alpha=0.26503, lambda=0.001753 
+## - Fold01: alpha=0.26503, lambda=0.001753 
+## + Fold01: alpha=0.56459, lambda=0.007476 
+## - Fold01: alpha=0.56459, lambda=0.007476 
+## + Fold01: alpha=0.91319, lambda=0.001598 
+## - Fold01: alpha=0.91319, lambda=0.001598 
+## + Fold01: alpha=0.90187, lambda=0.409992 
+## - Fold01: alpha=0.90187, lambda=0.409992 
+## + Fold01: alpha=0.27417, lambda=0.014285 
+## - Fold01: alpha=0.27417, lambda=0.014285 
+## + Fold01: alpha=0.32148, lambda=0.002420 
+## - Fold01: alpha=0.32148, lambda=0.002420 
+## + Fold01: alpha=0.98564, lambda=0.001867 
+## - Fold01: alpha=0.98564, lambda=0.001867 
+## + Fold01: alpha=0.61999, lambda=2.724001 
+## - Fold01: alpha=0.61999, lambda=2.724001 
+## + Fold01: alpha=0.93731, lambda=0.873704 
+## - Fold01: alpha=0.93731, lambda=0.873704 
+## + Fold01: alpha=0.46653, lambda=1.532489 
+## - Fold01: alpha=0.46653, lambda=1.532489 
+## + Fold01: alpha=0.40683, lambda=6.810803 
+## - Fold01: alpha=0.40683, lambda=6.810803 
+## + Fold01: alpha=0.65923, lambda=0.002484 
+## - Fold01: alpha=0.65923, lambda=0.002484 
+## + Fold01: alpha=0.15235, lambda=0.002384 
+## - Fold01: alpha=0.15235, lambda=0.002384 
+## + Fold01: alpha=0.57287, lambda=1.305689 
+## - Fold01: alpha=0.57287, lambda=1.305689 
+## + Fold01: alpha=0.23873, lambda=1.148283 
+## - Fold01: alpha=0.23873, lambda=1.148283 
+## + Fold01: alpha=0.96236, lambda=0.001063 
+## - Fold01: alpha=0.96236, lambda=0.001063 
+## + Fold01: alpha=0.60137, lambda=1.092669 
+## - Fold01: alpha=0.60137, lambda=1.092669 
+## + Fold01: alpha=0.51503, lambda=0.698377 
+## - Fold01: alpha=0.51503, lambda=0.698377 
+## + Fold01: alpha=0.40257, lambda=0.285530 
+## - Fold01: alpha=0.40257, lambda=0.285530 
+## + Fold01: alpha=0.88025, lambda=0.074420 
+## - Fold01: alpha=0.88025, lambda=0.074420 
+## + Fold01: alpha=0.36409, lambda=0.004006 
+## - Fold01: alpha=0.36409, lambda=0.004006 
+## + Fold01: alpha=0.28824, lambda=0.001052 
+## - Fold01: alpha=0.28824, lambda=0.001052 
+## + Fold01: alpha=0.17065, lambda=0.057590 
+## - Fold01: alpha=0.17065, lambda=0.057590 
+## + Fold01: alpha=0.17217, lambda=0.082459 
+## - Fold01: alpha=0.17217, lambda=0.082459 
+## + Fold01: alpha=0.48204, lambda=0.032682 
+## - Fold01: alpha=0.48204, lambda=0.032682 
+## + Fold01: alpha=0.25296, lambda=0.064286 
+## - Fold01: alpha=0.25296, lambda=0.064286 
+## + Fold01: alpha=0.21625, lambda=0.604003 
+## - Fold01: alpha=0.21625, lambda=0.604003 
+## + Fold01: alpha=0.67438, lambda=0.001607 
+## - Fold01: alpha=0.67438, lambda=0.001607 
+## + Fold01: alpha=0.04766, lambda=0.023884 
+## - Fold01: alpha=0.04766, lambda=0.023884 
+## + Fold01: alpha=0.70085, lambda=1.353373 
+## - Fold01: alpha=0.70085, lambda=1.353373 
+## + Fold01: alpha=0.35189, lambda=1.820349 
+## - Fold01: alpha=0.35189, lambda=1.820349 
+## + Fold01: alpha=0.40894, lambda=0.008320 
+## - Fold01: alpha=0.40894, lambda=0.008320 
+## + Fold01: alpha=0.82095, lambda=0.023713 
+## - Fold01: alpha=0.82095, lambda=0.023713 
+## + Fold01: alpha=0.91886, lambda=2.203063 
+## - Fold01: alpha=0.91886, lambda=2.203063 
+## + Fold01: alpha=0.28253, lambda=2.141949 
+## - Fold01: alpha=0.28253, lambda=2.141949 
+## + Fold01: alpha=0.96110, lambda=0.014049 
+## - Fold01: alpha=0.96110, lambda=0.014049 
+## + Fold01: alpha=0.72839, lambda=0.003674 
+## - Fold01: alpha=0.72839, lambda=0.003674 
+## + Fold01: alpha=0.68638, lambda=0.555515 
+## - Fold01: alpha=0.68638, lambda=0.555515 
+## + Fold01: alpha=0.05284, lambda=0.002488 
+## - Fold01: alpha=0.05284, lambda=0.002488 
+## + Fold01: alpha=0.39522, lambda=0.001323 
+## - Fold01: alpha=0.39522, lambda=0.001323 
+## + Fold01: alpha=0.47785, lambda=7.957189 
+## - Fold01: alpha=0.47785, lambda=7.957189 
+## + Fold01: alpha=0.56025, lambda=0.001337 
+## - Fold01: alpha=0.56025, lambda=0.001337 
+## + Fold01: alpha=0.69826, lambda=0.020604 
+## - Fold01: alpha=0.69826, lambda=0.020604 
+## + Fold01: alpha=0.91568, lambda=3.721357 
+## - Fold01: alpha=0.91568, lambda=3.721357 
+## + Fold01: alpha=0.61835, lambda=0.254204 
+## - Fold01: alpha=0.61835, lambda=0.254204 
+## + Fold01: alpha=0.42842, lambda=0.012884 
+## - Fold01: alpha=0.42842, lambda=0.012884 
+## + Fold01: alpha=0.54208, lambda=0.753336 
+## - Fold01: alpha=0.54208, lambda=0.753336 
+## + Fold01: alpha=0.05848, lambda=1.793411 
+## - Fold01: alpha=0.05848, lambda=1.793411 
+## + Fold01: alpha=0.26086, lambda=0.016579 
+## - Fold01: alpha=0.26086, lambda=0.016579 
+## + Fold01: alpha=0.39715, lambda=0.082662 
+## - Fold01: alpha=0.39715, lambda=0.082662 
+## + Fold01: alpha=0.19774, lambda=0.523354 
+## - Fold01: alpha=0.19774, lambda=0.523354 
+## + Fold01: alpha=0.83193, lambda=0.316222 
+## - Fold01: alpha=0.83193, lambda=0.316222 
+## + Fold01: alpha=0.15289, lambda=0.323312 
+## - Fold01: alpha=0.15289, lambda=0.323312 
+## + Fold01: alpha=0.80342, lambda=6.552722 
+## - Fold01: alpha=0.80342, lambda=6.552722 
+## + Fold01: alpha=0.54683, lambda=0.040994 
+## - Fold01: alpha=0.54683, lambda=0.040994 
+## + Fold02: alpha=0.40947, lambda=0.381599 
+## - Fold02: alpha=0.40947, lambda=0.381599 
+## + Fold02: alpha=0.01047, lambda=0.004588 
+## - Fold02: alpha=0.01047, lambda=0.004588 
+## + Fold02: alpha=0.18385, lambda=0.293152 
+## - Fold02: alpha=0.18385, lambda=0.293152 
+## + Fold02: alpha=0.84273, lambda=0.016224 
+## - Fold02: alpha=0.84273, lambda=0.016224 
+## + Fold02: alpha=0.23116, lambda=0.668596 
+## - Fold02: alpha=0.23116, lambda=0.668596 
+## + Fold02: alpha=0.23910, lambda=0.035556 
+## - Fold02: alpha=0.23910, lambda=0.035556 
+## + Fold02: alpha=0.07669, lambda=6.069734 
+## - Fold02: alpha=0.07669, lambda=6.069734 
+## + Fold02: alpha=0.24572, lambda=5.963581 
+## - Fold02: alpha=0.24572, lambda=5.963581 
+## + Fold02: alpha=0.73214, lambda=0.681664 
+## - Fold02: alpha=0.73214, lambda=0.681664 
+## + Fold02: alpha=0.84745, lambda=0.009915 
+## - Fold02: alpha=0.84745, lambda=0.009915 
+## + Fold02: alpha=0.49753, lambda=0.007205 
+## - Fold02: alpha=0.49753, lambda=0.007205 
+## + Fold02: alpha=0.38791, lambda=0.204418 
+## - Fold02: alpha=0.38791, lambda=0.204418 
+## + Fold02: alpha=0.24645, lambda=0.010880 
+## - Fold02: alpha=0.24645, lambda=0.010880 
+## + Fold02: alpha=0.11110, lambda=0.116946 
+## - Fold02: alpha=0.11110, lambda=0.116946 
+## + Fold02: alpha=0.38999, lambda=1.155720 
+## - Fold02: alpha=0.38999, lambda=1.155720 
+## + Fold02: alpha=0.57194, lambda=0.004440 
+## - Fold02: alpha=0.57194, lambda=0.004440 
+## + Fold02: alpha=0.21689, lambda=0.037348 
+## - Fold02: alpha=0.21689, lambda=0.037348 
+## + Fold02: alpha=0.44477, lambda=0.068417 
+## - Fold02: alpha=0.44477, lambda=0.068417 
+## + Fold02: alpha=0.21799, lambda=2.437477 
+## - Fold02: alpha=0.21799, lambda=2.437477 
+## + Fold02: alpha=0.50230, lambda=4.095965 
+## - Fold02: alpha=0.50230, lambda=4.095965 
+## + Fold02: alpha=0.35390, lambda=2.761990 
+## - Fold02: alpha=0.35390, lambda=2.761990 
+## + Fold02: alpha=0.64999, lambda=0.424674 
+## - Fold02: alpha=0.64999, lambda=0.424674 
+## + Fold02: alpha=0.37471, lambda=5.105919 
+## - Fold02: alpha=0.37471, lambda=5.105919 
+## + Fold02: alpha=0.35545, lambda=0.102506 
+## - Fold02: alpha=0.35545, lambda=0.102506 
+## + Fold02: alpha=0.53369, lambda=0.176134 
+## - Fold02: alpha=0.53369, lambda=0.176134 
+## + Fold02: alpha=0.74033, lambda=0.020225 
+## - Fold02: alpha=0.74033, lambda=0.020225 
+## + Fold02: alpha=0.22110, lambda=0.022331 
+## - Fold02: alpha=0.22110, lambda=0.022331 
+## + Fold02: alpha=0.41275, lambda=0.001170 
+## - Fold02: alpha=0.41275, lambda=0.001170 
+## + Fold02: alpha=0.26569, lambda=0.090657 
+## - Fold02: alpha=0.26569, lambda=0.090657 
+## + Fold02: alpha=0.62997, lambda=2.502837 
+## - Fold02: alpha=0.62997, lambda=2.502837 
+## + Fold02: alpha=0.18383, lambda=0.001034 
+## - Fold02: alpha=0.18383, lambda=0.001034 
+## + Fold02: alpha=0.86364, lambda=0.001869 
+## - Fold02: alpha=0.86364, lambda=0.001869 
+## + Fold02: alpha=0.74657, lambda=0.004289 
+## - Fold02: alpha=0.74657, lambda=0.004289 
+## + Fold02: alpha=0.66828, lambda=1.009991 
+## - Fold02: alpha=0.66828, lambda=1.009991 
+## + Fold02: alpha=0.61802, lambda=0.735805 
+## - Fold02: alpha=0.61802, lambda=0.735805 
+## + Fold02: alpha=0.37224, lambda=6.209096 
+## - Fold02: alpha=0.37224, lambda=6.209096 
+## + Fold02: alpha=0.52984, lambda=0.065341 
+## - Fold02: alpha=0.52984, lambda=0.065341 
+## + Fold02: alpha=0.87468, lambda=0.001909 
+## - Fold02: alpha=0.87468, lambda=0.001909 
+## + Fold02: alpha=0.58175, lambda=0.337892 
+## - Fold02: alpha=0.58175, lambda=0.337892 
+## + Fold02: alpha=0.83977, lambda=0.908596 
+## - Fold02: alpha=0.83977, lambda=0.908596 
+## + Fold02: alpha=0.31245, lambda=0.003359 
+## - Fold02: alpha=0.31245, lambda=0.003359 
+## + Fold02: alpha=0.70829, lambda=0.034809 
+## - Fold02: alpha=0.70829, lambda=0.034809 
+## + Fold02: alpha=0.26502, lambda=0.007416 
+## - Fold02: alpha=0.26502, lambda=0.007416 
+## + Fold02: alpha=0.59434, lambda=0.001646 
+## - Fold02: alpha=0.59434, lambda=0.001646 
+## + Fold02: alpha=0.48129, lambda=0.034593 
+## - Fold02: alpha=0.48129, lambda=0.034593 
+## + Fold02: alpha=0.26503, lambda=0.001753 
+## - Fold02: alpha=0.26503, lambda=0.001753 
+## + Fold02: alpha=0.56459, lambda=0.007476 
+## - Fold02: alpha=0.56459, lambda=0.007476 
+## + Fold02: alpha=0.91319, lambda=0.001598 
+## - Fold02: alpha=0.91319, lambda=0.001598 
+## + Fold02: alpha=0.90187, lambda=0.409992 
+## - Fold02: alpha=0.90187, lambda=0.409992 
+## + Fold02: alpha=0.27417, lambda=0.014285 
+## - Fold02: alpha=0.27417, lambda=0.014285 
+## + Fold02: alpha=0.32148, lambda=0.002420 
+## - Fold02: alpha=0.32148, lambda=0.002420 
+## + Fold02: alpha=0.98564, lambda=0.001867 
+## - Fold02: alpha=0.98564, lambda=0.001867 
+## + Fold02: alpha=0.61999, lambda=2.724001 
+## - Fold02: alpha=0.61999, lambda=2.724001 
+## + Fold02: alpha=0.93731, lambda=0.873704 
+## - Fold02: alpha=0.93731, lambda=0.873704 
+## + Fold02: alpha=0.46653, lambda=1.532489 
+## - Fold02: alpha=0.46653, lambda=1.532489 
+## + Fold02: alpha=0.40683, lambda=6.810803 
+## - Fold02: alpha=0.40683, lambda=6.810803 
+## + Fold02: alpha=0.65923, lambda=0.002484 
+## - Fold02: alpha=0.65923, lambda=0.002484 
+## + Fold02: alpha=0.15235, lambda=0.002384 
+## - Fold02: alpha=0.15235, lambda=0.002384 
+## + Fold02: alpha=0.57287, lambda=1.305689 
+## - Fold02: alpha=0.57287, lambda=1.305689 
+## + Fold02: alpha=0.23873, lambda=1.148283 
+## - Fold02: alpha=0.23873, lambda=1.148283 
+## + Fold02: alpha=0.96236, lambda=0.001063 
+## - Fold02: alpha=0.96236, lambda=0.001063 
+## + Fold02: alpha=0.60137, lambda=1.092669 
+## - Fold02: alpha=0.60137, lambda=1.092669 
+## + Fold02: alpha=0.51503, lambda=0.698377 
+## - Fold02: alpha=0.51503, lambda=0.698377 
+## + Fold02: alpha=0.40257, lambda=0.285530 
+## - Fold02: alpha=0.40257, lambda=0.285530 
+## + Fold02: alpha=0.88025, lambda=0.074420 
+## - Fold02: alpha=0.88025, lambda=0.074420 
+## + Fold02: alpha=0.36409, lambda=0.004006 
+## - Fold02: alpha=0.36409, lambda=0.004006 
+## + Fold02: alpha=0.28824, lambda=0.001052 
+## - Fold02: alpha=0.28824, lambda=0.001052 
+## + Fold02: alpha=0.17065, lambda=0.057590 
+## - Fold02: alpha=0.17065, lambda=0.057590 
+## + Fold02: alpha=0.17217, lambda=0.082459 
+## - Fold02: alpha=0.17217, lambda=0.082459 
+## + Fold02: alpha=0.48204, lambda=0.032682 
+## - Fold02: alpha=0.48204, lambda=0.032682 
+## + Fold02: alpha=0.25296, lambda=0.064286 
+## - Fold02: alpha=0.25296, lambda=0.064286 
+## + Fold02: alpha=0.21625, lambda=0.604003 
+## - Fold02: alpha=0.21625, lambda=0.604003 
+## + Fold02: alpha=0.67438, lambda=0.001607 
+## - Fold02: alpha=0.67438, lambda=0.001607 
+## + Fold02: alpha=0.04766, lambda=0.023884 
+## - Fold02: alpha=0.04766, lambda=0.023884 
+## + Fold02: alpha=0.70085, lambda=1.353373 
+## - Fold02: alpha=0.70085, lambda=1.353373 
+## + Fold02: alpha=0.35189, lambda=1.820349 
+## - Fold02: alpha=0.35189, lambda=1.820349 
+## + Fold02: alpha=0.40894, lambda=0.008320 
+## - Fold02: alpha=0.40894, lambda=0.008320 
+## + Fold02: alpha=0.82095, lambda=0.023713 
+## - Fold02: alpha=0.82095, lambda=0.023713 
+## + Fold02: alpha=0.91886, lambda=2.203063 
+## - Fold02: alpha=0.91886, lambda=2.203063 
+## + Fold02: alpha=0.28253, lambda=2.141949 
+## - Fold02: alpha=0.28253, lambda=2.141949 
+## + Fold02: alpha=0.96110, lambda=0.014049 
+## - Fold02: alpha=0.96110, lambda=0.014049 
+## + Fold02: alpha=0.72839, lambda=0.003674 
+## - Fold02: alpha=0.72839, lambda=0.003674 
+## + Fold02: alpha=0.68638, lambda=0.555515 
+## - Fold02: alpha=0.68638, lambda=0.555515 
+## + Fold02: alpha=0.05284, lambda=0.002488 
+## - Fold02: alpha=0.05284, lambda=0.002488 
+## + Fold02: alpha=0.39522, lambda=0.001323 
+## - Fold02: alpha=0.39522, lambda=0.001323 
+## + Fold02: alpha=0.47785, lambda=7.957189 
+## - Fold02: alpha=0.47785, lambda=7.957189 
+## + Fold02: alpha=0.56025, lambda=0.001337 
+## - Fold02: alpha=0.56025, lambda=0.001337 
+## + Fold02: alpha=0.69826, lambda=0.020604 
+## - Fold02: alpha=0.69826, lambda=0.020604 
+## + Fold02: alpha=0.91568, lambda=3.721357 
+## - Fold02: alpha=0.91568, lambda=3.721357 
+## + Fold02: alpha=0.61835, lambda=0.254204 
+## - Fold02: alpha=0.61835, lambda=0.254204 
+## + Fold02: alpha=0.42842, lambda=0.012884 
+## - Fold02: alpha=0.42842, lambda=0.012884 
+## + Fold02: alpha=0.54208, lambda=0.753336 
+## - Fold02: alpha=0.54208, lambda=0.753336 
+## + Fold02: alpha=0.05848, lambda=1.793411 
+## - Fold02: alpha=0.05848, lambda=1.793411 
+## + Fold02: alpha=0.26086, lambda=0.016579 
+## - Fold02: alpha=0.26086, lambda=0.016579 
+## + Fold02: alpha=0.39715, lambda=0.082662 
+## - Fold02: alpha=0.39715, lambda=0.082662 
+## + Fold02: alpha=0.19774, lambda=0.523354 
+## - Fold02: alpha=0.19774, lambda=0.523354 
+## + Fold02: alpha=0.83193, lambda=0.316222 
+## - Fold02: alpha=0.83193, lambda=0.316222 
+## + Fold02: alpha=0.15289, lambda=0.323312 
+## - Fold02: alpha=0.15289, lambda=0.323312 
+## + Fold02: alpha=0.80342, lambda=6.552722 
+## - Fold02: alpha=0.80342, lambda=6.552722 
+## + Fold02: alpha=0.54683, lambda=0.040994 
+## - Fold02: alpha=0.54683, lambda=0.040994 
+## + Fold03: alpha=0.40947, lambda=0.381599 
+## - Fold03: alpha=0.40947, lambda=0.381599 
+## + Fold03: alpha=0.01047, lambda=0.004588 
+## - Fold03: alpha=0.01047, lambda=0.004588 
+## + Fold03: alpha=0.18385, lambda=0.293152 
+## - Fold03: alpha=0.18385, lambda=0.293152 
+## + Fold03: alpha=0.84273, lambda=0.016224 
+## - Fold03: alpha=0.84273, lambda=0.016224 
+## + Fold03: alpha=0.23116, lambda=0.668596 
+## - Fold03: alpha=0.23116, lambda=0.668596 
+## + Fold03: alpha=0.23910, lambda=0.035556 
+## - Fold03: alpha=0.23910, lambda=0.035556 
+## + Fold03: alpha=0.07669, lambda=6.069734 
+## - Fold03: alpha=0.07669, lambda=6.069734 
+## + Fold03: alpha=0.24572, lambda=5.963581 
+## - Fold03: alpha=0.24572, lambda=5.963581 
+## + Fold03: alpha=0.73214, lambda=0.681664 
+## - Fold03: alpha=0.73214, lambda=0.681664 
+## + Fold03: alpha=0.84745, lambda=0.009915 
+## - Fold03: alpha=0.84745, lambda=0.009915 
+## + Fold03: alpha=0.49753, lambda=0.007205 
+## - Fold03: alpha=0.49753, lambda=0.007205 
+## + Fold03: alpha=0.38791, lambda=0.204418 
+## - Fold03: alpha=0.38791, lambda=0.204418 
+## + Fold03: alpha=0.24645, lambda=0.010880 
+## - Fold03: alpha=0.24645, lambda=0.010880 
+## + Fold03: alpha=0.11110, lambda=0.116946 
+## - Fold03: alpha=0.11110, lambda=0.116946 
+## + Fold03: alpha=0.38999, lambda=1.155720 
+## - Fold03: alpha=0.38999, lambda=1.155720 
+## + Fold03: alpha=0.57194, lambda=0.004440 
+## - Fold03: alpha=0.57194, lambda=0.004440 
+## + Fold03: alpha=0.21689, lambda=0.037348 
+## - Fold03: alpha=0.21689, lambda=0.037348 
+## + Fold03: alpha=0.44477, lambda=0.068417 
+## - Fold03: alpha=0.44477, lambda=0.068417 
+## + Fold03: alpha=0.21799, lambda=2.437477 
+## - Fold03: alpha=0.21799, lambda=2.437477 
+## + Fold03: alpha=0.50230, lambda=4.095965 
+## - Fold03: alpha=0.50230, lambda=4.095965 
+## + Fold03: alpha=0.35390, lambda=2.761990 
+## - Fold03: alpha=0.35390, lambda=2.761990 
+## + Fold03: alpha=0.64999, lambda=0.424674 
+## - Fold03: alpha=0.64999, lambda=0.424674 
+## + Fold03: alpha=0.37471, lambda=5.105919 
+## - Fold03: alpha=0.37471, lambda=5.105919 
+## + Fold03: alpha=0.35545, lambda=0.102506 
+## - Fold03: alpha=0.35545, lambda=0.102506 
+## + Fold03: alpha=0.53369, lambda=0.176134 
+## - Fold03: alpha=0.53369, lambda=0.176134 
+## + Fold03: alpha=0.74033, lambda=0.020225 
+## - Fold03: alpha=0.74033, lambda=0.020225 
+## + Fold03: alpha=0.22110, lambda=0.022331 
+## - Fold03: alpha=0.22110, lambda=0.022331 
+## + Fold03: alpha=0.41275, lambda=0.001170 
+## - Fold03: alpha=0.41275, lambda=0.001170 
+## + Fold03: alpha=0.26569, lambda=0.090657 
+## - Fold03: alpha=0.26569, lambda=0.090657 
+## + Fold03: alpha=0.62997, lambda=2.502837 
+## - Fold03: alpha=0.62997, lambda=2.502837 
+## + Fold03: alpha=0.18383, lambda=0.001034 
+## - Fold03: alpha=0.18383, lambda=0.001034 
+## + Fold03: alpha=0.86364, lambda=0.001869 
+## - Fold03: alpha=0.86364, lambda=0.001869 
+## + Fold03: alpha=0.74657, lambda=0.004289 
+## - Fold03: alpha=0.74657, lambda=0.004289 
+## + Fold03: alpha=0.66828, lambda=1.009991 
+## - Fold03: alpha=0.66828, lambda=1.009991 
+## + Fold03: alpha=0.61802, lambda=0.735805 
+## - Fold03: alpha=0.61802, lambda=0.735805 
+## + Fold03: alpha=0.37224, lambda=6.209096 
+## - Fold03: alpha=0.37224, lambda=6.209096 
+## + Fold03: alpha=0.52984, lambda=0.065341 
+## - Fold03: alpha=0.52984, lambda=0.065341 
+## + Fold03: alpha=0.87468, lambda=0.001909 
+## - Fold03: alpha=0.87468, lambda=0.001909 
+## + Fold03: alpha=0.58175, lambda=0.337892 
+## - Fold03: alpha=0.58175, lambda=0.337892 
+## + Fold03: alpha=0.83977, lambda=0.908596 
+## - Fold03: alpha=0.83977, lambda=0.908596 
+## + Fold03: alpha=0.31245, lambda=0.003359 
+## - Fold03: alpha=0.31245, lambda=0.003359 
+## + Fold03: alpha=0.70829, lambda=0.034809 
+## - Fold03: alpha=0.70829, lambda=0.034809 
+## + Fold03: alpha=0.26502, lambda=0.007416 
+## - Fold03: alpha=0.26502, lambda=0.007416 
+## + Fold03: alpha=0.59434, lambda=0.001646 
+## - Fold03: alpha=0.59434, lambda=0.001646 
+## + Fold03: alpha=0.48129, lambda=0.034593 
+## - Fold03: alpha=0.48129, lambda=0.034593 
+## + Fold03: alpha=0.26503, lambda=0.001753 
+## - Fold03: alpha=0.26503, lambda=0.001753 
+## + Fold03: alpha=0.56459, lambda=0.007476 
+## - Fold03: alpha=0.56459, lambda=0.007476 
+## + Fold03: alpha=0.91319, lambda=0.001598 
+## - Fold03: alpha=0.91319, lambda=0.001598 
+## + Fold03: alpha=0.90187, lambda=0.409992 
+## - Fold03: alpha=0.90187, lambda=0.409992 
+## + Fold03: alpha=0.27417, lambda=0.014285 
+## - Fold03: alpha=0.27417, lambda=0.014285 
+## + Fold03: alpha=0.32148, lambda=0.002420 
+## - Fold03: alpha=0.32148, lambda=0.002420 
+## + Fold03: alpha=0.98564, lambda=0.001867 
+## - Fold03: alpha=0.98564, lambda=0.001867 
+## + Fold03: alpha=0.61999, lambda=2.724001 
+## - Fold03: alpha=0.61999, lambda=2.724001 
+## + Fold03: alpha=0.93731, lambda=0.873704 
+## - Fold03: alpha=0.93731, lambda=0.873704 
+## + Fold03: alpha=0.46653, lambda=1.532489 
+## - Fold03: alpha=0.46653, lambda=1.532489 
+## + Fold03: alpha=0.40683, lambda=6.810803 
+## - Fold03: alpha=0.40683, lambda=6.810803 
+## + Fold03: alpha=0.65923, lambda=0.002484 
+## - Fold03: alpha=0.65923, lambda=0.002484 
+## + Fold03: alpha=0.15235, lambda=0.002384 
+## - Fold03: alpha=0.15235, lambda=0.002384 
+## + Fold03: alpha=0.57287, lambda=1.305689 
+## - Fold03: alpha=0.57287, lambda=1.305689 
+## + Fold03: alpha=0.23873, lambda=1.148283 
+## - Fold03: alpha=0.23873, lambda=1.148283 
+## + Fold03: alpha=0.96236, lambda=0.001063 
+## - Fold03: alpha=0.96236, lambda=0.001063 
+## + Fold03: alpha=0.60137, lambda=1.092669 
+## - Fold03: alpha=0.60137, lambda=1.092669 
+## + Fold03: alpha=0.51503, lambda=0.698377 
+## - Fold03: alpha=0.51503, lambda=0.698377 
+## + Fold03: alpha=0.40257, lambda=0.285530 
+## - Fold03: alpha=0.40257, lambda=0.285530 
+## + Fold03: alpha=0.88025, lambda=0.074420 
+## - Fold03: alpha=0.88025, lambda=0.074420 
+## + Fold03: alpha=0.36409, lambda=0.004006 
+## - Fold03: alpha=0.36409, lambda=0.004006 
+## + Fold03: alpha=0.28824, lambda=0.001052 
+## - Fold03: alpha=0.28824, lambda=0.001052 
+## + Fold03: alpha=0.17065, lambda=0.057590 
+## - Fold03: alpha=0.17065, lambda=0.057590 
+## + Fold03: alpha=0.17217, lambda=0.082459 
+## - Fold03: alpha=0.17217, lambda=0.082459 
+## + Fold03: alpha=0.48204, lambda=0.032682 
+## - Fold03: alpha=0.48204, lambda=0.032682 
+## + Fold03: alpha=0.25296, lambda=0.064286 
+## - Fold03: alpha=0.25296, lambda=0.064286 
+## + Fold03: alpha=0.21625, lambda=0.604003 
+## - Fold03: alpha=0.21625, lambda=0.604003 
+## + Fold03: alpha=0.67438, lambda=0.001607 
+## - Fold03: alpha=0.67438, lambda=0.001607 
+## + Fold03: alpha=0.04766, lambda=0.023884 
+## - Fold03: alpha=0.04766, lambda=0.023884 
+## + Fold03: alpha=0.70085, lambda=1.353373 
+## - Fold03: alpha=0.70085, lambda=1.353373 
+## + Fold03: alpha=0.35189, lambda=1.820349 
+## - Fold03: alpha=0.35189, lambda=1.820349 
+## + Fold03: alpha=0.40894, lambda=0.008320 
+## - Fold03: alpha=0.40894, lambda=0.008320 
+## + Fold03: alpha=0.82095, lambda=0.023713 
+## - Fold03: alpha=0.82095, lambda=0.023713 
+## + Fold03: alpha=0.91886, lambda=2.203063 
+## - Fold03: alpha=0.91886, lambda=2.203063 
+## + Fold03: alpha=0.28253, lambda=2.141949 
+## - Fold03: alpha=0.28253, lambda=2.141949 
+## + Fold03: alpha=0.96110, lambda=0.014049 
+## - Fold03: alpha=0.96110, lambda=0.014049 
+## + Fold03: alpha=0.72839, lambda=0.003674 
+## - Fold03: alpha=0.72839, lambda=0.003674 
+## + Fold03: alpha=0.68638, lambda=0.555515 
+## - Fold03: alpha=0.68638, lambda=0.555515 
+## + Fold03: alpha=0.05284, lambda=0.002488 
+## - Fold03: alpha=0.05284, lambda=0.002488 
+## + Fold03: alpha=0.39522, lambda=0.001323 
+## - Fold03: alpha=0.39522, lambda=0.001323 
+## + Fold03: alpha=0.47785, lambda=7.957189 
+## - Fold03: alpha=0.47785, lambda=7.957189 
+## + Fold03: alpha=0.56025, lambda=0.001337 
+## - Fold03: alpha=0.56025, lambda=0.001337 
+## + Fold03: alpha=0.69826, lambda=0.020604 
+## - Fold03: alpha=0.69826, lambda=0.020604 
+## + Fold03: alpha=0.91568, lambda=3.721357 
+## - Fold03: alpha=0.91568, lambda=3.721357 
+## + Fold03: alpha=0.61835, lambda=0.254204 
+## - Fold03: alpha=0.61835, lambda=0.254204 
+## + Fold03: alpha=0.42842, lambda=0.012884 
+## - Fold03: alpha=0.42842, lambda=0.012884 
+## + Fold03: alpha=0.54208, lambda=0.753336 
+## - Fold03: alpha=0.54208, lambda=0.753336 
+## + Fold03: alpha=0.05848, lambda=1.793411 
+## - Fold03: alpha=0.05848, lambda=1.793411 
+## + Fold03: alpha=0.26086, lambda=0.016579 
+## - Fold03: alpha=0.26086, lambda=0.016579 
+## + Fold03: alpha=0.39715, lambda=0.082662 
+## - Fold03: alpha=0.39715, lambda=0.082662 
+## + Fold03: alpha=0.19774, lambda=0.523354 
+## - Fold03: alpha=0.19774, lambda=0.523354 
+## + Fold03: alpha=0.83193, lambda=0.316222 
+## - Fold03: alpha=0.83193, lambda=0.316222 
+## + Fold03: alpha=0.15289, lambda=0.323312 
+## - Fold03: alpha=0.15289, lambda=0.323312 
+## + Fold03: alpha=0.80342, lambda=6.552722 
+## - Fold03: alpha=0.80342, lambda=6.552722 
+## + Fold03: alpha=0.54683, lambda=0.040994 
+## - Fold03: alpha=0.54683, lambda=0.040994 
+## + Fold04: alpha=0.40947, lambda=0.381599 
+## - Fold04: alpha=0.40947, lambda=0.381599 
+## + Fold04: alpha=0.01047, lambda=0.004588 
+## - Fold04: alpha=0.01047, lambda=0.004588 
+## + Fold04: alpha=0.18385, lambda=0.293152 
+## - Fold04: alpha=0.18385, lambda=0.293152 
+## + Fold04: alpha=0.84273, lambda=0.016224 
+## - Fold04: alpha=0.84273, lambda=0.016224 
+## + Fold04: alpha=0.23116, lambda=0.668596 
+## - Fold04: alpha=0.23116, lambda=0.668596 
+## + Fold04: alpha=0.23910, lambda=0.035556 
+## - Fold04: alpha=0.23910, lambda=0.035556 
+## + Fold04: alpha=0.07669, lambda=6.069734 
+## - Fold04: alpha=0.07669, lambda=6.069734 
+## + Fold04: alpha=0.24572, lambda=5.963581 
+## - Fold04: alpha=0.24572, lambda=5.963581 
+## + Fold04: alpha=0.73214, lambda=0.681664 
+## - Fold04: alpha=0.73214, lambda=0.681664 
+## + Fold04: alpha=0.84745, lambda=0.009915 
+## - Fold04: alpha=0.84745, lambda=0.009915 
+## + Fold04: alpha=0.49753, lambda=0.007205 
+## - Fold04: alpha=0.49753, lambda=0.007205 
+## + Fold04: alpha=0.38791, lambda=0.204418 
+## - Fold04: alpha=0.38791, lambda=0.204418 
+## + Fold04: alpha=0.24645, lambda=0.010880 
+## - Fold04: alpha=0.24645, lambda=0.010880 
+## + Fold04: alpha=0.11110, lambda=0.116946 
+## - Fold04: alpha=0.11110, lambda=0.116946 
+## + Fold04: alpha=0.38999, lambda=1.155720 
+## - Fold04: alpha=0.38999, lambda=1.155720 
+## + Fold04: alpha=0.57194, lambda=0.004440 
+## - Fold04: alpha=0.57194, lambda=0.004440 
+## + Fold04: alpha=0.21689, lambda=0.037348 
+## - Fold04: alpha=0.21689, lambda=0.037348 
+## + Fold04: alpha=0.44477, lambda=0.068417 
+## - Fold04: alpha=0.44477, lambda=0.068417 
+## + Fold04: alpha=0.21799, lambda=2.437477 
+## - Fold04: alpha=0.21799, lambda=2.437477 
+## + Fold04: alpha=0.50230, lambda=4.095965 
+## - Fold04: alpha=0.50230, lambda=4.095965 
+## + Fold04: alpha=0.35390, lambda=2.761990 
+## - Fold04: alpha=0.35390, lambda=2.761990 
+## + Fold04: alpha=0.64999, lambda=0.424674 
+## - Fold04: alpha=0.64999, lambda=0.424674 
+## + Fold04: alpha=0.37471, lambda=5.105919 
+## - Fold04: alpha=0.37471, lambda=5.105919 
+## + Fold04: alpha=0.35545, lambda=0.102506 
+## - Fold04: alpha=0.35545, lambda=0.102506 
+## + Fold04: alpha=0.53369, lambda=0.176134 
+## - Fold04: alpha=0.53369, lambda=0.176134 
+## + Fold04: alpha=0.74033, lambda=0.020225 
+## - Fold04: alpha=0.74033, lambda=0.020225 
+## + Fold04: alpha=0.22110, lambda=0.022331 
+## - Fold04: alpha=0.22110, lambda=0.022331 
+## + Fold04: alpha=0.41275, lambda=0.001170 
+## - Fold04: alpha=0.41275, lambda=0.001170 
+## + Fold04: alpha=0.26569, lambda=0.090657 
+## - Fold04: alpha=0.26569, lambda=0.090657 
+## + Fold04: alpha=0.62997, lambda=2.502837 
+## - Fold04: alpha=0.62997, lambda=2.502837 
+## + Fold04: alpha=0.18383, lambda=0.001034 
+## - Fold04: alpha=0.18383, lambda=0.001034 
+## + Fold04: alpha=0.86364, lambda=0.001869 
+## - Fold04: alpha=0.86364, lambda=0.001869 
+## + Fold04: alpha=0.74657, lambda=0.004289 
+## - Fold04: alpha=0.74657, lambda=0.004289 
+## + Fold04: alpha=0.66828, lambda=1.009991 
+## - Fold04: alpha=0.66828, lambda=1.009991 
+## + Fold04: alpha=0.61802, lambda=0.735805 
+## - Fold04: alpha=0.61802, lambda=0.735805 
+## + Fold04: alpha=0.37224, lambda=6.209096 
+## - Fold04: alpha=0.37224, lambda=6.209096 
+## + Fold04: alpha=0.52984, lambda=0.065341 
+## - Fold04: alpha=0.52984, lambda=0.065341 
+## + Fold04: alpha=0.87468, lambda=0.001909 
+## - Fold04: alpha=0.87468, lambda=0.001909 
+## + Fold04: alpha=0.58175, lambda=0.337892 
+## - Fold04: alpha=0.58175, lambda=0.337892 
+## + Fold04: alpha=0.83977, lambda=0.908596 
+## - Fold04: alpha=0.83977, lambda=0.908596 
+## + Fold04: alpha=0.31245, lambda=0.003359 
+## - Fold04: alpha=0.31245, lambda=0.003359 
+## + Fold04: alpha=0.70829, lambda=0.034809 
+## - Fold04: alpha=0.70829, lambda=0.034809 
+## + Fold04: alpha=0.26502, lambda=0.007416 
+## - Fold04: alpha=0.26502, lambda=0.007416 
+## + Fold04: alpha=0.59434, lambda=0.001646 
+## - Fold04: alpha=0.59434, lambda=0.001646 
+## + Fold04: alpha=0.48129, lambda=0.034593 
+## - Fold04: alpha=0.48129, lambda=0.034593 
+## + Fold04: alpha=0.26503, lambda=0.001753 
+## - Fold04: alpha=0.26503, lambda=0.001753 
+## + Fold04: alpha=0.56459, lambda=0.007476 
+## - Fold04: alpha=0.56459, lambda=0.007476 
+## + Fold04: alpha=0.91319, lambda=0.001598 
+## - Fold04: alpha=0.91319, lambda=0.001598 
+## + Fold04: alpha=0.90187, lambda=0.409992 
+## - Fold04: alpha=0.90187, lambda=0.409992 
+## + Fold04: alpha=0.27417, lambda=0.014285 
+## - Fold04: alpha=0.27417, lambda=0.014285 
+## + Fold04: alpha=0.32148, lambda=0.002420 
+## - Fold04: alpha=0.32148, lambda=0.002420 
+## + Fold04: alpha=0.98564, lambda=0.001867 
+## - Fold04: alpha=0.98564, lambda=0.001867 
+## + Fold04: alpha=0.61999, lambda=2.724001 
+## - Fold04: alpha=0.61999, lambda=2.724001 
+## + Fold04: alpha=0.93731, lambda=0.873704 
+## - Fold04: alpha=0.93731, lambda=0.873704 
+## + Fold04: alpha=0.46653, lambda=1.532489 
+## - Fold04: alpha=0.46653, lambda=1.532489 
+## + Fold04: alpha=0.40683, lambda=6.810803 
+## - Fold04: alpha=0.40683, lambda=6.810803 
+## + Fold04: alpha=0.65923, lambda=0.002484 
+## - Fold04: alpha=0.65923, lambda=0.002484 
+## + Fold04: alpha=0.15235, lambda=0.002384 
+## - Fold04: alpha=0.15235, lambda=0.002384 
+## + Fold04: alpha=0.57287, lambda=1.305689 
+## - Fold04: alpha=0.57287, lambda=1.305689 
+## + Fold04: alpha=0.23873, lambda=1.148283 
+## - Fold04: alpha=0.23873, lambda=1.148283 
+## + Fold04: alpha=0.96236, lambda=0.001063 
+## - Fold04: alpha=0.96236, lambda=0.001063 
+## + Fold04: alpha=0.60137, lambda=1.092669 
+## - Fold04: alpha=0.60137, lambda=1.092669 
+## + Fold04: alpha=0.51503, lambda=0.698377 
+## - Fold04: alpha=0.51503, lambda=0.698377 
+## + Fold04: alpha=0.40257, lambda=0.285530 
+## - Fold04: alpha=0.40257, lambda=0.285530 
+## + Fold04: alpha=0.88025, lambda=0.074420 
+## - Fold04: alpha=0.88025, lambda=0.074420 
+## + Fold04: alpha=0.36409, lambda=0.004006 
+## - Fold04: alpha=0.36409, lambda=0.004006 
+## + Fold04: alpha=0.28824, lambda=0.001052 
+## - Fold04: alpha=0.28824, lambda=0.001052 
+## + Fold04: alpha=0.17065, lambda=0.057590 
+## - Fold04: alpha=0.17065, lambda=0.057590 
+## + Fold04: alpha=0.17217, lambda=0.082459 
+## - Fold04: alpha=0.17217, lambda=0.082459 
+## + Fold04: alpha=0.48204, lambda=0.032682 
+## - Fold04: alpha=0.48204, lambda=0.032682 
+## + Fold04: alpha=0.25296, lambda=0.064286 
+## - Fold04: alpha=0.25296, lambda=0.064286 
+## + Fold04: alpha=0.21625, lambda=0.604003 
+## - Fold04: alpha=0.21625, lambda=0.604003 
+## + Fold04: alpha=0.67438, lambda=0.001607 
+## - Fold04: alpha=0.67438, lambda=0.001607 
+## + Fold04: alpha=0.04766, lambda=0.023884 
+## - Fold04: alpha=0.04766, lambda=0.023884 
+## + Fold04: alpha=0.70085, lambda=1.353373 
+## - Fold04: alpha=0.70085, lambda=1.353373 
+## + Fold04: alpha=0.35189, lambda=1.820349 
+## - Fold04: alpha=0.35189, lambda=1.820349 
+## + Fold04: alpha=0.40894, lambda=0.008320 
+## - Fold04: alpha=0.40894, lambda=0.008320 
+## + Fold04: alpha=0.82095, lambda=0.023713 
+## - Fold04: alpha=0.82095, lambda=0.023713 
+## + Fold04: alpha=0.91886, lambda=2.203063 
+## - Fold04: alpha=0.91886, lambda=2.203063 
+## + Fold04: alpha=0.28253, lambda=2.141949 
+## - Fold04: alpha=0.28253, lambda=2.141949 
+## + Fold04: alpha=0.96110, lambda=0.014049 
+## - Fold04: alpha=0.96110, lambda=0.014049 
+## + Fold04: alpha=0.72839, lambda=0.003674 
+## - Fold04: alpha=0.72839, lambda=0.003674 
+## + Fold04: alpha=0.68638, lambda=0.555515 
+## - Fold04: alpha=0.68638, lambda=0.555515 
+## + Fold04: alpha=0.05284, lambda=0.002488 
+## - Fold04: alpha=0.05284, lambda=0.002488 
+## + Fold04: alpha=0.39522, lambda=0.001323 
+## - Fold04: alpha=0.39522, lambda=0.001323 
+## + Fold04: alpha=0.47785, lambda=7.957189 
+## - Fold04: alpha=0.47785, lambda=7.957189 
+## + Fold04: alpha=0.56025, lambda=0.001337 
+## - Fold04: alpha=0.56025, lambda=0.001337 
+## + Fold04: alpha=0.69826, lambda=0.020604 
+## - Fold04: alpha=0.69826, lambda=0.020604 
+## + Fold04: alpha=0.91568, lambda=3.721357 
+## - Fold04: alpha=0.91568, lambda=3.721357 
+## + Fold04: alpha=0.61835, lambda=0.254204 
+## - Fold04: alpha=0.61835, lambda=0.254204 
+## + Fold04: alpha=0.42842, lambda=0.012884 
+## - Fold04: alpha=0.42842, lambda=0.012884 
+## + Fold04: alpha=0.54208, lambda=0.753336 
+## - Fold04: alpha=0.54208, lambda=0.753336 
+## + Fold04: alpha=0.05848, lambda=1.793411 
+## - Fold04: alpha=0.05848, lambda=1.793411 
+## + Fold04: alpha=0.26086, lambda=0.016579 
+## - Fold04: alpha=0.26086, lambda=0.016579 
+## + Fold04: alpha=0.39715, lambda=0.082662 
+## - Fold04: alpha=0.39715, lambda=0.082662 
+## + Fold04: alpha=0.19774, lambda=0.523354 
+## - Fold04: alpha=0.19774, lambda=0.523354 
+## + Fold04: alpha=0.83193, lambda=0.316222 
+## - Fold04: alpha=0.83193, lambda=0.316222 
+## + Fold04: alpha=0.15289, lambda=0.323312 
+## - Fold04: alpha=0.15289, lambda=0.323312 
+## + Fold04: alpha=0.80342, lambda=6.552722 
+## - Fold04: alpha=0.80342, lambda=6.552722 
+## + Fold04: alpha=0.54683, lambda=0.040994 
+## - Fold04: alpha=0.54683, lambda=0.040994 
+## + Fold05: alpha=0.40947, lambda=0.381599 
+## - Fold05: alpha=0.40947, lambda=0.381599 
+## + Fold05: alpha=0.01047, lambda=0.004588 
+## - Fold05: alpha=0.01047, lambda=0.004588 
+## + Fold05: alpha=0.18385, lambda=0.293152 
+## - Fold05: alpha=0.18385, lambda=0.293152 
+## + Fold05: alpha=0.84273, lambda=0.016224 
+## - Fold05: alpha=0.84273, lambda=0.016224 
+## + Fold05: alpha=0.23116, lambda=0.668596 
+## - Fold05: alpha=0.23116, lambda=0.668596 
+## + Fold05: alpha=0.23910, lambda=0.035556 
+## - Fold05: alpha=0.23910, lambda=0.035556 
+## + Fold05: alpha=0.07669, lambda=6.069734 
+## - Fold05: alpha=0.07669, lambda=6.069734 
+## + Fold05: alpha=0.24572, lambda=5.963581 
+## - Fold05: alpha=0.24572, lambda=5.963581 
+## + Fold05: alpha=0.73214, lambda=0.681664 
+## - Fold05: alpha=0.73214, lambda=0.681664 
+## + Fold05: alpha=0.84745, lambda=0.009915 
+## - Fold05: alpha=0.84745, lambda=0.009915 
+## + Fold05: alpha=0.49753, lambda=0.007205 
+## - Fold05: alpha=0.49753, lambda=0.007205 
+## + Fold05: alpha=0.38791, lambda=0.204418 
+## - Fold05: alpha=0.38791, lambda=0.204418 
+## + Fold05: alpha=0.24645, lambda=0.010880 
+## - Fold05: alpha=0.24645, lambda=0.010880 
+## + Fold05: alpha=0.11110, lambda=0.116946 
+## - Fold05: alpha=0.11110, lambda=0.116946 
+## + Fold05: alpha=0.38999, lambda=1.155720 
+## - Fold05: alpha=0.38999, lambda=1.155720 
+## + Fold05: alpha=0.57194, lambda=0.004440 
+## - Fold05: alpha=0.57194, lambda=0.004440 
+## + Fold05: alpha=0.21689, lambda=0.037348 
+## - Fold05: alpha=0.21689, lambda=0.037348 
+## + Fold05: alpha=0.44477, lambda=0.068417 
+## - Fold05: alpha=0.44477, lambda=0.068417 
+## + Fold05: alpha=0.21799, lambda=2.437477 
+## - Fold05: alpha=0.21799, lambda=2.437477 
+## + Fold05: alpha=0.50230, lambda=4.095965 
+## - Fold05: alpha=0.50230, lambda=4.095965 
+## + Fold05: alpha=0.35390, lambda=2.761990 
+## - Fold05: alpha=0.35390, lambda=2.761990 
+## + Fold05: alpha=0.64999, lambda=0.424674 
+## - Fold05: alpha=0.64999, lambda=0.424674 
+## + Fold05: alpha=0.37471, lambda=5.105919 
+## - Fold05: alpha=0.37471, lambda=5.105919 
+## + Fold05: alpha=0.35545, lambda=0.102506 
+## - Fold05: alpha=0.35545, lambda=0.102506 
+## + Fold05: alpha=0.53369, lambda=0.176134 
+## - Fold05: alpha=0.53369, lambda=0.176134 
+## + Fold05: alpha=0.74033, lambda=0.020225 
+## - Fold05: alpha=0.74033, lambda=0.020225 
+## + Fold05: alpha=0.22110, lambda=0.022331 
+## - Fold05: alpha=0.22110, lambda=0.022331 
+## + Fold05: alpha=0.41275, lambda=0.001170 
+## - Fold05: alpha=0.41275, lambda=0.001170 
+## + Fold05: alpha=0.26569, lambda=0.090657 
+## - Fold05: alpha=0.26569, lambda=0.090657 
+## + Fold05: alpha=0.62997, lambda=2.502837 
+## - Fold05: alpha=0.62997, lambda=2.502837 
+## + Fold05: alpha=0.18383, lambda=0.001034 
+## - Fold05: alpha=0.18383, lambda=0.001034 
+## + Fold05: alpha=0.86364, lambda=0.001869 
+## - Fold05: alpha=0.86364, lambda=0.001869 
+## + Fold05: alpha=0.74657, lambda=0.004289 
+## - Fold05: alpha=0.74657, lambda=0.004289 
+## + Fold05: alpha=0.66828, lambda=1.009991 
+## - Fold05: alpha=0.66828, lambda=1.009991 
+## + Fold05: alpha=0.61802, lambda=0.735805 
+## - Fold05: alpha=0.61802, lambda=0.735805 
+## + Fold05: alpha=0.37224, lambda=6.209096 
+## - Fold05: alpha=0.37224, lambda=6.209096 
+## + Fold05: alpha=0.52984, lambda=0.065341 
+## - Fold05: alpha=0.52984, lambda=0.065341 
+## + Fold05: alpha=0.87468, lambda=0.001909 
+## - Fold05: alpha=0.87468, lambda=0.001909 
+## + Fold05: alpha=0.58175, lambda=0.337892 
+## - Fold05: alpha=0.58175, lambda=0.337892 
+## + Fold05: alpha=0.83977, lambda=0.908596 
+## - Fold05: alpha=0.83977, lambda=0.908596 
+## + Fold05: alpha=0.31245, lambda=0.003359 
+## - Fold05: alpha=0.31245, lambda=0.003359 
+## + Fold05: alpha=0.70829, lambda=0.034809 
+## - Fold05: alpha=0.70829, lambda=0.034809 
+## + Fold05: alpha=0.26502, lambda=0.007416 
+## - Fold05: alpha=0.26502, lambda=0.007416 
+## + Fold05: alpha=0.59434, lambda=0.001646 
+## - Fold05: alpha=0.59434, lambda=0.001646 
+## + Fold05: alpha=0.48129, lambda=0.034593 
+## - Fold05: alpha=0.48129, lambda=0.034593 
+## + Fold05: alpha=0.26503, lambda=0.001753 
+## - Fold05: alpha=0.26503, lambda=0.001753 
+## + Fold05: alpha=0.56459, lambda=0.007476 
+## - Fold05: alpha=0.56459, lambda=0.007476 
+## + Fold05: alpha=0.91319, lambda=0.001598 
+## - Fold05: alpha=0.91319, lambda=0.001598 
+## + Fold05: alpha=0.90187, lambda=0.409992 
+## - Fold05: alpha=0.90187, lambda=0.409992 
+## + Fold05: alpha=0.27417, lambda=0.014285 
+## - Fold05: alpha=0.27417, lambda=0.014285 
+## + Fold05: alpha=0.32148, lambda=0.002420 
+## - Fold05: alpha=0.32148, lambda=0.002420 
+## + Fold05: alpha=0.98564, lambda=0.001867 
+## - Fold05: alpha=0.98564, lambda=0.001867 
+## + Fold05: alpha=0.61999, lambda=2.724001 
+## - Fold05: alpha=0.61999, lambda=2.724001 
+## + Fold05: alpha=0.93731, lambda=0.873704 
+## - Fold05: alpha=0.93731, lambda=0.873704 
+## + Fold05: alpha=0.46653, lambda=1.532489 
+## - Fold05: alpha=0.46653, lambda=1.532489 
+## + Fold05: alpha=0.40683, lambda=6.810803 
+## - Fold05: alpha=0.40683, lambda=6.810803 
+## + Fold05: alpha=0.65923, lambda=0.002484 
+## - Fold05: alpha=0.65923, lambda=0.002484 
+## + Fold05: alpha=0.15235, lambda=0.002384 
+## - Fold05: alpha=0.15235, lambda=0.002384 
+## + Fold05: alpha=0.57287, lambda=1.305689 
+## - Fold05: alpha=0.57287, lambda=1.305689 
+## + Fold05: alpha=0.23873, lambda=1.148283 
+## - Fold05: alpha=0.23873, lambda=1.148283 
+## + Fold05: alpha=0.96236, lambda=0.001063 
+## - Fold05: alpha=0.96236, lambda=0.001063 
+## + Fold05: alpha=0.60137, lambda=1.092669 
+## - Fold05: alpha=0.60137, lambda=1.092669 
+## + Fold05: alpha=0.51503, lambda=0.698377 
+## - Fold05: alpha=0.51503, lambda=0.698377 
+## + Fold05: alpha=0.40257, lambda=0.285530 
+## - Fold05: alpha=0.40257, lambda=0.285530 
+## + Fold05: alpha=0.88025, lambda=0.074420 
+## - Fold05: alpha=0.88025, lambda=0.074420 
+## + Fold05: alpha=0.36409, lambda=0.004006 
+## - Fold05: alpha=0.36409, lambda=0.004006 
+## + Fold05: alpha=0.28824, lambda=0.001052 
+## - Fold05: alpha=0.28824, lambda=0.001052 
+## + Fold05: alpha=0.17065, lambda=0.057590 
+## - Fold05: alpha=0.17065, lambda=0.057590 
+## + Fold05: alpha=0.17217, lambda=0.082459 
+## - Fold05: alpha=0.17217, lambda=0.082459 
+## + Fold05: alpha=0.48204, lambda=0.032682 
+## - Fold05: alpha=0.48204, lambda=0.032682 
+## + Fold05: alpha=0.25296, lambda=0.064286 
+## - Fold05: alpha=0.25296, lambda=0.064286 
+## + Fold05: alpha=0.21625, lambda=0.604003 
+## - Fold05: alpha=0.21625, lambda=0.604003 
+## + Fold05: alpha=0.67438, lambda=0.001607 
+## - Fold05: alpha=0.67438, lambda=0.001607 
+## + Fold05: alpha=0.04766, lambda=0.023884 
+## - Fold05: alpha=0.04766, lambda=0.023884 
+## + Fold05: alpha=0.70085, lambda=1.353373 
+## - Fold05: alpha=0.70085, lambda=1.353373 
+## + Fold05: alpha=0.35189, lambda=1.820349 
+## - Fold05: alpha=0.35189, lambda=1.820349 
+## + Fold05: alpha=0.40894, lambda=0.008320 
+## - Fold05: alpha=0.40894, lambda=0.008320 
+## + Fold05: alpha=0.82095, lambda=0.023713 
+## - Fold05: alpha=0.82095, lambda=0.023713 
+## + Fold05: alpha=0.91886, lambda=2.203063 
+## - Fold05: alpha=0.91886, lambda=2.203063 
+## + Fold05: alpha=0.28253, lambda=2.141949 
+## - Fold05: alpha=0.28253, lambda=2.141949 
+## + Fold05: alpha=0.96110, lambda=0.014049 
+## - Fold05: alpha=0.96110, lambda=0.014049 
+## + Fold05: alpha=0.72839, lambda=0.003674 
+## - Fold05: alpha=0.72839, lambda=0.003674 
+## + Fold05: alpha=0.68638, lambda=0.555515 
+## - Fold05: alpha=0.68638, lambda=0.555515 
+## + Fold05: alpha=0.05284, lambda=0.002488 
+## - Fold05: alpha=0.05284, lambda=0.002488 
+## + Fold05: alpha=0.39522, lambda=0.001323 
+## - Fold05: alpha=0.39522, lambda=0.001323 
+## + Fold05: alpha=0.47785, lambda=7.957189 
+## - Fold05: alpha=0.47785, lambda=7.957189 
+## + Fold05: alpha=0.56025, lambda=0.001337 
+## - Fold05: alpha=0.56025, lambda=0.001337 
+## + Fold05: alpha=0.69826, lambda=0.020604 
+## - Fold05: alpha=0.69826, lambda=0.020604 
+## + Fold05: alpha=0.91568, lambda=3.721357 
+## - Fold05: alpha=0.91568, lambda=3.721357 
+## + Fold05: alpha=0.61835, lambda=0.254204 
+## - Fold05: alpha=0.61835, lambda=0.254204 
+## + Fold05: alpha=0.42842, lambda=0.012884 
+## - Fold05: alpha=0.42842, lambda=0.012884 
+## + Fold05: alpha=0.54208, lambda=0.753336 
+## - Fold05: alpha=0.54208, lambda=0.753336 
+## + Fold05: alpha=0.05848, lambda=1.793411 
+## - Fold05: alpha=0.05848, lambda=1.793411 
+## + Fold05: alpha=0.26086, lambda=0.016579 
+## - Fold05: alpha=0.26086, lambda=0.016579 
+## + Fold05: alpha=0.39715, lambda=0.082662 
+## - Fold05: alpha=0.39715, lambda=0.082662 
+## + Fold05: alpha=0.19774, lambda=0.523354 
+## - Fold05: alpha=0.19774, lambda=0.523354 
+## + Fold05: alpha=0.83193, lambda=0.316222 
+## - Fold05: alpha=0.83193, lambda=0.316222 
+## + Fold05: alpha=0.15289, lambda=0.323312 
+## - Fold05: alpha=0.15289, lambda=0.323312 
+## + Fold05: alpha=0.80342, lambda=6.552722 
+## - Fold05: alpha=0.80342, lambda=6.552722 
+## + Fold05: alpha=0.54683, lambda=0.040994 
+## - Fold05: alpha=0.54683, lambda=0.040994 
+## + Fold06: alpha=0.40947, lambda=0.381599 
+## - Fold06: alpha=0.40947, lambda=0.381599 
+## + Fold06: alpha=0.01047, lambda=0.004588 
+## - Fold06: alpha=0.01047, lambda=0.004588 
+## + Fold06: alpha=0.18385, lambda=0.293152 
+## - Fold06: alpha=0.18385, lambda=0.293152 
+## + Fold06: alpha=0.84273, lambda=0.016224 
+## - Fold06: alpha=0.84273, lambda=0.016224 
+## + Fold06: alpha=0.23116, lambda=0.668596 
+## - Fold06: alpha=0.23116, lambda=0.668596 
+## + Fold06: alpha=0.23910, lambda=0.035556 
+## - Fold06: alpha=0.23910, lambda=0.035556 
+## + Fold06: alpha=0.07669, lambda=6.069734 
+## - Fold06: alpha=0.07669, lambda=6.069734 
+## + Fold06: alpha=0.24572, lambda=5.963581 
+## - Fold06: alpha=0.24572, lambda=5.963581 
+## + Fold06: alpha=0.73214, lambda=0.681664 
+## - Fold06: alpha=0.73214, lambda=0.681664 
+## + Fold06: alpha=0.84745, lambda=0.009915 
+## - Fold06: alpha=0.84745, lambda=0.009915 
+## + Fold06: alpha=0.49753, lambda=0.007205 
+## - Fold06: alpha=0.49753, lambda=0.007205 
+## + Fold06: alpha=0.38791, lambda=0.204418 
+## - Fold06: alpha=0.38791, lambda=0.204418 
+## + Fold06: alpha=0.24645, lambda=0.010880 
+## - Fold06: alpha=0.24645, lambda=0.010880 
+## + Fold06: alpha=0.11110, lambda=0.116946 
+## - Fold06: alpha=0.11110, lambda=0.116946 
+## + Fold06: alpha=0.38999, lambda=1.155720 
+## - Fold06: alpha=0.38999, lambda=1.155720 
+## + Fold06: alpha=0.57194, lambda=0.004440 
+## - Fold06: alpha=0.57194, lambda=0.004440 
+## + Fold06: alpha=0.21689, lambda=0.037348 
+## - Fold06: alpha=0.21689, lambda=0.037348 
+## + Fold06: alpha=0.44477, lambda=0.068417 
+## - Fold06: alpha=0.44477, lambda=0.068417 
+## + Fold06: alpha=0.21799, lambda=2.437477 
+## - Fold06: alpha=0.21799, lambda=2.437477 
+## + Fold06: alpha=0.50230, lambda=4.095965 
+## - Fold06: alpha=0.50230, lambda=4.095965 
+## + Fold06: alpha=0.35390, lambda=2.761990 
+## - Fold06: alpha=0.35390, lambda=2.761990 
+## + Fold06: alpha=0.64999, lambda=0.424674 
+## - Fold06: alpha=0.64999, lambda=0.424674 
+## + Fold06: alpha=0.37471, lambda=5.105919 
+## - Fold06: alpha=0.37471, lambda=5.105919 
+## + Fold06: alpha=0.35545, lambda=0.102506 
+## - Fold06: alpha=0.35545, lambda=0.102506 
+## + Fold06: alpha=0.53369, lambda=0.176134 
+## - Fold06: alpha=0.53369, lambda=0.176134 
+## + Fold06: alpha=0.74033, lambda=0.020225 
+## - Fold06: alpha=0.74033, lambda=0.020225 
+## + Fold06: alpha=0.22110, lambda=0.022331 
+## - Fold06: alpha=0.22110, lambda=0.022331 
+## + Fold06: alpha=0.41275, lambda=0.001170 
+## - Fold06: alpha=0.41275, lambda=0.001170 
+## + Fold06: alpha=0.26569, lambda=0.090657 
+## - Fold06: alpha=0.26569, lambda=0.090657 
+## + Fold06: alpha=0.62997, lambda=2.502837 
+## - Fold06: alpha=0.62997, lambda=2.502837 
+## + Fold06: alpha=0.18383, lambda=0.001034 
+## - Fold06: alpha=0.18383, lambda=0.001034 
+## + Fold06: alpha=0.86364, lambda=0.001869 
+## - Fold06: alpha=0.86364, lambda=0.001869 
+## + Fold06: alpha=0.74657, lambda=0.004289 
+## - Fold06: alpha=0.74657, lambda=0.004289 
+## + Fold06: alpha=0.66828, lambda=1.009991 
+## - Fold06: alpha=0.66828, lambda=1.009991 
+## + Fold06: alpha=0.61802, lambda=0.735805 
+## - Fold06: alpha=0.61802, lambda=0.735805 
+## + Fold06: alpha=0.37224, lambda=6.209096 
+## - Fold06: alpha=0.37224, lambda=6.209096 
+## + Fold06: alpha=0.52984, lambda=0.065341 
+## - Fold06: alpha=0.52984, lambda=0.065341 
+## + Fold06: alpha=0.87468, lambda=0.001909 
+## - Fold06: alpha=0.87468, lambda=0.001909 
+## + Fold06: alpha=0.58175, lambda=0.337892 
+## - Fold06: alpha=0.58175, lambda=0.337892 
+## + Fold06: alpha=0.83977, lambda=0.908596 
+## - Fold06: alpha=0.83977, lambda=0.908596 
+## + Fold06: alpha=0.31245, lambda=0.003359 
+## - Fold06: alpha=0.31245, lambda=0.003359 
+## + Fold06: alpha=0.70829, lambda=0.034809 
+## - Fold06: alpha=0.70829, lambda=0.034809 
+## + Fold06: alpha=0.26502, lambda=0.007416 
+## - Fold06: alpha=0.26502, lambda=0.007416 
+## + Fold06: alpha=0.59434, lambda=0.001646 
+## - Fold06: alpha=0.59434, lambda=0.001646 
+## + Fold06: alpha=0.48129, lambda=0.034593 
+## - Fold06: alpha=0.48129, lambda=0.034593 
+## + Fold06: alpha=0.26503, lambda=0.001753 
+## - Fold06: alpha=0.26503, lambda=0.001753 
+## + Fold06: alpha=0.56459, lambda=0.007476 
+## - Fold06: alpha=0.56459, lambda=0.007476 
+## + Fold06: alpha=0.91319, lambda=0.001598 
+## - Fold06: alpha=0.91319, lambda=0.001598 
+## + Fold06: alpha=0.90187, lambda=0.409992 
+## - Fold06: alpha=0.90187, lambda=0.409992 
+## + Fold06: alpha=0.27417, lambda=0.014285 
+## - Fold06: alpha=0.27417, lambda=0.014285 
+## + Fold06: alpha=0.32148, lambda=0.002420 
+## - Fold06: alpha=0.32148, lambda=0.002420 
+## + Fold06: alpha=0.98564, lambda=0.001867 
+## - Fold06: alpha=0.98564, lambda=0.001867 
+## + Fold06: alpha=0.61999, lambda=2.724001 
+## - Fold06: alpha=0.61999, lambda=2.724001 
+## + Fold06: alpha=0.93731, lambda=0.873704 
+## - Fold06: alpha=0.93731, lambda=0.873704 
+## + Fold06: alpha=0.46653, lambda=1.532489 
+## - Fold06: alpha=0.46653, lambda=1.532489 
+## + Fold06: alpha=0.40683, lambda=6.810803 
+## - Fold06: alpha=0.40683, lambda=6.810803 
+## + Fold06: alpha=0.65923, lambda=0.002484 
+## - Fold06: alpha=0.65923, lambda=0.002484 
+## + Fold06: alpha=0.15235, lambda=0.002384 
+## - Fold06: alpha=0.15235, lambda=0.002384 
+## + Fold06: alpha=0.57287, lambda=1.305689 
+## - Fold06: alpha=0.57287, lambda=1.305689 
+## + Fold06: alpha=0.23873, lambda=1.148283 
+## - Fold06: alpha=0.23873, lambda=1.148283 
+## + Fold06: alpha=0.96236, lambda=0.001063 
+## - Fold06: alpha=0.96236, lambda=0.001063 
+## + Fold06: alpha=0.60137, lambda=1.092669 
+## - Fold06: alpha=0.60137, lambda=1.092669 
+## + Fold06: alpha=0.51503, lambda=0.698377 
+## - Fold06: alpha=0.51503, lambda=0.698377 
+## + Fold06: alpha=0.40257, lambda=0.285530 
+## - Fold06: alpha=0.40257, lambda=0.285530 
+## + Fold06: alpha=0.88025, lambda=0.074420 
+## - Fold06: alpha=0.88025, lambda=0.074420 
+## + Fold06: alpha=0.36409, lambda=0.004006 
+## - Fold06: alpha=0.36409, lambda=0.004006 
+## + Fold06: alpha=0.28824, lambda=0.001052 
+## - Fold06: alpha=0.28824, lambda=0.001052 
+## + Fold06: alpha=0.17065, lambda=0.057590 
+## - Fold06: alpha=0.17065, lambda=0.057590 
+## + Fold06: alpha=0.17217, lambda=0.082459 
+## - Fold06: alpha=0.17217, lambda=0.082459 
+## + Fold06: alpha=0.48204, lambda=0.032682 
+## - Fold06: alpha=0.48204, lambda=0.032682 
+## + Fold06: alpha=0.25296, lambda=0.064286 
+## - Fold06: alpha=0.25296, lambda=0.064286 
+## + Fold06: alpha=0.21625, lambda=0.604003 
+## - Fold06: alpha=0.21625, lambda=0.604003 
+## + Fold06: alpha=0.67438, lambda=0.001607 
+## - Fold06: alpha=0.67438, lambda=0.001607 
+## + Fold06: alpha=0.04766, lambda=0.023884 
+## - Fold06: alpha=0.04766, lambda=0.023884 
+## + Fold06: alpha=0.70085, lambda=1.353373 
+## - Fold06: alpha=0.70085, lambda=1.353373 
+## + Fold06: alpha=0.35189, lambda=1.820349 
+## - Fold06: alpha=0.35189, lambda=1.820349 
+## + Fold06: alpha=0.40894, lambda=0.008320 
+## - Fold06: alpha=0.40894, lambda=0.008320 
+## + Fold06: alpha=0.82095, lambda=0.023713 
+## - Fold06: alpha=0.82095, lambda=0.023713 
+## + Fold06: alpha=0.91886, lambda=2.203063 
+## - Fold06: alpha=0.91886, lambda=2.203063 
+## + Fold06: alpha=0.28253, lambda=2.141949 
+## - Fold06: alpha=0.28253, lambda=2.141949 
+## + Fold06: alpha=0.96110, lambda=0.014049 
+## - Fold06: alpha=0.96110, lambda=0.014049 
+## + Fold06: alpha=0.72839, lambda=0.003674 
+## - Fold06: alpha=0.72839, lambda=0.003674 
+## + Fold06: alpha=0.68638, lambda=0.555515 
+## - Fold06: alpha=0.68638, lambda=0.555515 
+## + Fold06: alpha=0.05284, lambda=0.002488 
+## - Fold06: alpha=0.05284, lambda=0.002488 
+## + Fold06: alpha=0.39522, lambda=0.001323 
+## - Fold06: alpha=0.39522, lambda=0.001323 
+## + Fold06: alpha=0.47785, lambda=7.957189 
+## - Fold06: alpha=0.47785, lambda=7.957189 
+## + Fold06: alpha=0.56025, lambda=0.001337 
+## - Fold06: alpha=0.56025, lambda=0.001337 
+## + Fold06: alpha=0.69826, lambda=0.020604 
+## - Fold06: alpha=0.69826, lambda=0.020604 
+## + Fold06: alpha=0.91568, lambda=3.721357 
+## - Fold06: alpha=0.91568, lambda=3.721357 
+## + Fold06: alpha=0.61835, lambda=0.254204 
+## - Fold06: alpha=0.61835, lambda=0.254204 
+## + Fold06: alpha=0.42842, lambda=0.012884 
+## - Fold06: alpha=0.42842, lambda=0.012884 
+## + Fold06: alpha=0.54208, lambda=0.753336 
+## - Fold06: alpha=0.54208, lambda=0.753336 
+## + Fold06: alpha=0.05848, lambda=1.793411 
+## - Fold06: alpha=0.05848, lambda=1.793411 
+## + Fold06: alpha=0.26086, lambda=0.016579 
+## - Fold06: alpha=0.26086, lambda=0.016579 
+## + Fold06: alpha=0.39715, lambda=0.082662 
+## - Fold06: alpha=0.39715, lambda=0.082662 
+## + Fold06: alpha=0.19774, lambda=0.523354 
+## - Fold06: alpha=0.19774, lambda=0.523354 
+## + Fold06: alpha=0.83193, lambda=0.316222 
+## - Fold06: alpha=0.83193, lambda=0.316222 
+## + Fold06: alpha=0.15289, lambda=0.323312 
+## - Fold06: alpha=0.15289, lambda=0.323312 
+## + Fold06: alpha=0.80342, lambda=6.552722 
+## - Fold06: alpha=0.80342, lambda=6.552722 
+## + Fold06: alpha=0.54683, lambda=0.040994 
+## - Fold06: alpha=0.54683, lambda=0.040994 
+## + Fold07: alpha=0.40947, lambda=0.381599 
+## - Fold07: alpha=0.40947, lambda=0.381599 
+## + Fold07: alpha=0.01047, lambda=0.004588 
+## - Fold07: alpha=0.01047, lambda=0.004588 
+## + Fold07: alpha=0.18385, lambda=0.293152 
+## - Fold07: alpha=0.18385, lambda=0.293152 
+## + Fold07: alpha=0.84273, lambda=0.016224 
+## - Fold07: alpha=0.84273, lambda=0.016224 
+## + Fold07: alpha=0.23116, lambda=0.668596 
+## - Fold07: alpha=0.23116, lambda=0.668596 
+## + Fold07: alpha=0.23910, lambda=0.035556 
+## - Fold07: alpha=0.23910, lambda=0.035556 
+## + Fold07: alpha=0.07669, lambda=6.069734 
+## - Fold07: alpha=0.07669, lambda=6.069734 
+## + Fold07: alpha=0.24572, lambda=5.963581 
+## - Fold07: alpha=0.24572, lambda=5.963581 
+## + Fold07: alpha=0.73214, lambda=0.681664 
+## - Fold07: alpha=0.73214, lambda=0.681664 
+## + Fold07: alpha=0.84745, lambda=0.009915 
+## - Fold07: alpha=0.84745, lambda=0.009915 
+## + Fold07: alpha=0.49753, lambda=0.007205 
+## - Fold07: alpha=0.49753, lambda=0.007205 
+## + Fold07: alpha=0.38791, lambda=0.204418 
+## - Fold07: alpha=0.38791, lambda=0.204418 
+## + Fold07: alpha=0.24645, lambda=0.010880 
+## - Fold07: alpha=0.24645, lambda=0.010880 
+## + Fold07: alpha=0.11110, lambda=0.116946 
+## - Fold07: alpha=0.11110, lambda=0.116946 
+## + Fold07: alpha=0.38999, lambda=1.155720 
+## - Fold07: alpha=0.38999, lambda=1.155720 
+## + Fold07: alpha=0.57194, lambda=0.004440 
+## - Fold07: alpha=0.57194, lambda=0.004440 
+## + Fold07: alpha=0.21689, lambda=0.037348 
+## - Fold07: alpha=0.21689, lambda=0.037348 
+## + Fold07: alpha=0.44477, lambda=0.068417 
+## - Fold07: alpha=0.44477, lambda=0.068417 
+## + Fold07: alpha=0.21799, lambda=2.437477 
+## - Fold07: alpha=0.21799, lambda=2.437477 
+## + Fold07: alpha=0.50230, lambda=4.095965 
+## - Fold07: alpha=0.50230, lambda=4.095965 
+## + Fold07: alpha=0.35390, lambda=2.761990 
+## - Fold07: alpha=0.35390, lambda=2.761990 
+## + Fold07: alpha=0.64999, lambda=0.424674 
+## - Fold07: alpha=0.64999, lambda=0.424674 
+## + Fold07: alpha=0.37471, lambda=5.105919 
+## - Fold07: alpha=0.37471, lambda=5.105919 
+## + Fold07: alpha=0.35545, lambda=0.102506 
+## - Fold07: alpha=0.35545, lambda=0.102506 
+## + Fold07: alpha=0.53369, lambda=0.176134 
+## - Fold07: alpha=0.53369, lambda=0.176134 
+## + Fold07: alpha=0.74033, lambda=0.020225 
+## - Fold07: alpha=0.74033, lambda=0.020225 
+## + Fold07: alpha=0.22110, lambda=0.022331 
+## - Fold07: alpha=0.22110, lambda=0.022331 
+## + Fold07: alpha=0.41275, lambda=0.001170 
+## - Fold07: alpha=0.41275, lambda=0.001170 
+## + Fold07: alpha=0.26569, lambda=0.090657 
+## - Fold07: alpha=0.26569, lambda=0.090657 
+## + Fold07: alpha=0.62997, lambda=2.502837 
+## - Fold07: alpha=0.62997, lambda=2.502837 
+## + Fold07: alpha=0.18383, lambda=0.001034 
+## - Fold07: alpha=0.18383, lambda=0.001034 
+## + Fold07: alpha=0.86364, lambda=0.001869 
+## - Fold07: alpha=0.86364, lambda=0.001869 
+## + Fold07: alpha=0.74657, lambda=0.004289 
+## - Fold07: alpha=0.74657, lambda=0.004289 
+## + Fold07: alpha=0.66828, lambda=1.009991 
+## - Fold07: alpha=0.66828, lambda=1.009991 
+## + Fold07: alpha=0.61802, lambda=0.735805 
+## - Fold07: alpha=0.61802, lambda=0.735805 
+## + Fold07: alpha=0.37224, lambda=6.209096 
+## - Fold07: alpha=0.37224, lambda=6.209096 
+## + Fold07: alpha=0.52984, lambda=0.065341 
+## - Fold07: alpha=0.52984, lambda=0.065341 
+## + Fold07: alpha=0.87468, lambda=0.001909 
+## - Fold07: alpha=0.87468, lambda=0.001909 
+## + Fold07: alpha=0.58175, lambda=0.337892 
+## - Fold07: alpha=0.58175, lambda=0.337892 
+## + Fold07: alpha=0.83977, lambda=0.908596 
+## - Fold07: alpha=0.83977, lambda=0.908596 
+## + Fold07: alpha=0.31245, lambda=0.003359 
+## - Fold07: alpha=0.31245, lambda=0.003359 
+## + Fold07: alpha=0.70829, lambda=0.034809 
+## - Fold07: alpha=0.70829, lambda=0.034809 
+## + Fold07: alpha=0.26502, lambda=0.007416 
+## - Fold07: alpha=0.26502, lambda=0.007416 
+## + Fold07: alpha=0.59434, lambda=0.001646 
+## - Fold07: alpha=0.59434, lambda=0.001646 
+## + Fold07: alpha=0.48129, lambda=0.034593 
+## - Fold07: alpha=0.48129, lambda=0.034593 
+## + Fold07: alpha=0.26503, lambda=0.001753 
+## - Fold07: alpha=0.26503, lambda=0.001753 
+## + Fold07: alpha=0.56459, lambda=0.007476 
+## - Fold07: alpha=0.56459, lambda=0.007476 
+## + Fold07: alpha=0.91319, lambda=0.001598 
+## - Fold07: alpha=0.91319, lambda=0.001598 
+## + Fold07: alpha=0.90187, lambda=0.409992 
+## - Fold07: alpha=0.90187, lambda=0.409992 
+## + Fold07: alpha=0.27417, lambda=0.014285 
+## - Fold07: alpha=0.27417, lambda=0.014285 
+## + Fold07: alpha=0.32148, lambda=0.002420 
+## - Fold07: alpha=0.32148, lambda=0.002420 
+## + Fold07: alpha=0.98564, lambda=0.001867 
+## - Fold07: alpha=0.98564, lambda=0.001867 
+## + Fold07: alpha=0.61999, lambda=2.724001 
+## - Fold07: alpha=0.61999, lambda=2.724001 
+## + Fold07: alpha=0.93731, lambda=0.873704 
+## - Fold07: alpha=0.93731, lambda=0.873704 
+## + Fold07: alpha=0.46653, lambda=1.532489 
+## - Fold07: alpha=0.46653, lambda=1.532489 
+## + Fold07: alpha=0.40683, lambda=6.810803 
+## - Fold07: alpha=0.40683, lambda=6.810803 
+## + Fold07: alpha=0.65923, lambda=0.002484 
+## - Fold07: alpha=0.65923, lambda=0.002484 
+## + Fold07: alpha=0.15235, lambda=0.002384 
+## - Fold07: alpha=0.15235, lambda=0.002384 
+## + Fold07: alpha=0.57287, lambda=1.305689 
+## - Fold07: alpha=0.57287, lambda=1.305689 
+## + Fold07: alpha=0.23873, lambda=1.148283 
+## - Fold07: alpha=0.23873, lambda=1.148283 
+## + Fold07: alpha=0.96236, lambda=0.001063 
+## - Fold07: alpha=0.96236, lambda=0.001063 
+## + Fold07: alpha=0.60137, lambda=1.092669 
+## - Fold07: alpha=0.60137, lambda=1.092669 
+## + Fold07: alpha=0.51503, lambda=0.698377 
+## - Fold07: alpha=0.51503, lambda=0.698377 
+## + Fold07: alpha=0.40257, lambda=0.285530 
+## - Fold07: alpha=0.40257, lambda=0.285530 
+## + Fold07: alpha=0.88025, lambda=0.074420 
+## - Fold07: alpha=0.88025, lambda=0.074420 
+## + Fold07: alpha=0.36409, lambda=0.004006 
+## - Fold07: alpha=0.36409, lambda=0.004006 
+## + Fold07: alpha=0.28824, lambda=0.001052 
+## - Fold07: alpha=0.28824, lambda=0.001052 
+## + Fold07: alpha=0.17065, lambda=0.057590 
+## - Fold07: alpha=0.17065, lambda=0.057590 
+## + Fold07: alpha=0.17217, lambda=0.082459 
+## - Fold07: alpha=0.17217, lambda=0.082459 
+## + Fold07: alpha=0.48204, lambda=0.032682 
+## - Fold07: alpha=0.48204, lambda=0.032682 
+## + Fold07: alpha=0.25296, lambda=0.064286 
+## - Fold07: alpha=0.25296, lambda=0.064286 
+## + Fold07: alpha=0.21625, lambda=0.604003 
+## - Fold07: alpha=0.21625, lambda=0.604003 
+## + Fold07: alpha=0.67438, lambda=0.001607 
+## - Fold07: alpha=0.67438, lambda=0.001607 
+## + Fold07: alpha=0.04766, lambda=0.023884 
+## - Fold07: alpha=0.04766, lambda=0.023884 
+## + Fold07: alpha=0.70085, lambda=1.353373 
+## - Fold07: alpha=0.70085, lambda=1.353373 
+## + Fold07: alpha=0.35189, lambda=1.820349 
+## - Fold07: alpha=0.35189, lambda=1.820349 
+## + Fold07: alpha=0.40894, lambda=0.008320 
+## - Fold07: alpha=0.40894, lambda=0.008320 
+## + Fold07: alpha=0.82095, lambda=0.023713 
+## - Fold07: alpha=0.82095, lambda=0.023713 
+## + Fold07: alpha=0.91886, lambda=2.203063 
+## - Fold07: alpha=0.91886, lambda=2.203063 
+## + Fold07: alpha=0.28253, lambda=2.141949 
+## - Fold07: alpha=0.28253, lambda=2.141949 
+## + Fold07: alpha=0.96110, lambda=0.014049 
+## - Fold07: alpha=0.96110, lambda=0.014049 
+## + Fold07: alpha=0.72839, lambda=0.003674 
+## - Fold07: alpha=0.72839, lambda=0.003674 
+## + Fold07: alpha=0.68638, lambda=0.555515 
+## - Fold07: alpha=0.68638, lambda=0.555515 
+## + Fold07: alpha=0.05284, lambda=0.002488 
+## - Fold07: alpha=0.05284, lambda=0.002488 
+## + Fold07: alpha=0.39522, lambda=0.001323 
+## - Fold07: alpha=0.39522, lambda=0.001323 
+## + Fold07: alpha=0.47785, lambda=7.957189 
+## - Fold07: alpha=0.47785, lambda=7.957189 
+## + Fold07: alpha=0.56025, lambda=0.001337 
+## - Fold07: alpha=0.56025, lambda=0.001337 
+## + Fold07: alpha=0.69826, lambda=0.020604 
+## - Fold07: alpha=0.69826, lambda=0.020604 
+## + Fold07: alpha=0.91568, lambda=3.721357 
+## - Fold07: alpha=0.91568, lambda=3.721357 
+## + Fold07: alpha=0.61835, lambda=0.254204 
+## - Fold07: alpha=0.61835, lambda=0.254204 
+## + Fold07: alpha=0.42842, lambda=0.012884 
+## - Fold07: alpha=0.42842, lambda=0.012884 
+## + Fold07: alpha=0.54208, lambda=0.753336 
+## - Fold07: alpha=0.54208, lambda=0.753336 
+## + Fold07: alpha=0.05848, lambda=1.793411 
+## - Fold07: alpha=0.05848, lambda=1.793411 
+## + Fold07: alpha=0.26086, lambda=0.016579 
+## - Fold07: alpha=0.26086, lambda=0.016579 
+## + Fold07: alpha=0.39715, lambda=0.082662 
+## - Fold07: alpha=0.39715, lambda=0.082662 
+## + Fold07: alpha=0.19774, lambda=0.523354 
+## - Fold07: alpha=0.19774, lambda=0.523354 
+## + Fold07: alpha=0.83193, lambda=0.316222 
+## - Fold07: alpha=0.83193, lambda=0.316222 
+## + Fold07: alpha=0.15289, lambda=0.323312 
+## - Fold07: alpha=0.15289, lambda=0.323312 
+## + Fold07: alpha=0.80342, lambda=6.552722 
+## - Fold07: alpha=0.80342, lambda=6.552722 
+## + Fold07: alpha=0.54683, lambda=0.040994 
+## - Fold07: alpha=0.54683, lambda=0.040994 
+## + Fold08: alpha=0.40947, lambda=0.381599 
+## - Fold08: alpha=0.40947, lambda=0.381599 
+## + Fold08: alpha=0.01047, lambda=0.004588 
+## - Fold08: alpha=0.01047, lambda=0.004588 
+## + Fold08: alpha=0.18385, lambda=0.293152 
+## - Fold08: alpha=0.18385, lambda=0.293152 
+## + Fold08: alpha=0.84273, lambda=0.016224 
+## - Fold08: alpha=0.84273, lambda=0.016224 
+## + Fold08: alpha=0.23116, lambda=0.668596 
+## - Fold08: alpha=0.23116, lambda=0.668596 
+## + Fold08: alpha=0.23910, lambda=0.035556 
+## - Fold08: alpha=0.23910, lambda=0.035556 
+## + Fold08: alpha=0.07669, lambda=6.069734 
+## - Fold08: alpha=0.07669, lambda=6.069734 
+## + Fold08: alpha=0.24572, lambda=5.963581 
+## - Fold08: alpha=0.24572, lambda=5.963581 
+## + Fold08: alpha=0.73214, lambda=0.681664 
+## - Fold08: alpha=0.73214, lambda=0.681664 
+## + Fold08: alpha=0.84745, lambda=0.009915 
+## - Fold08: alpha=0.84745, lambda=0.009915 
+## + Fold08: alpha=0.49753, lambda=0.007205 
+## - Fold08: alpha=0.49753, lambda=0.007205 
+## + Fold08: alpha=0.38791, lambda=0.204418 
+## - Fold08: alpha=0.38791, lambda=0.204418 
+## + Fold08: alpha=0.24645, lambda=0.010880 
+## - Fold08: alpha=0.24645, lambda=0.010880 
+## + Fold08: alpha=0.11110, lambda=0.116946 
+## - Fold08: alpha=0.11110, lambda=0.116946 
+## + Fold08: alpha=0.38999, lambda=1.155720 
+## - Fold08: alpha=0.38999, lambda=1.155720 
+## + Fold08: alpha=0.57194, lambda=0.004440 
+## - Fold08: alpha=0.57194, lambda=0.004440 
+## + Fold08: alpha=0.21689, lambda=0.037348 
+## - Fold08: alpha=0.21689, lambda=0.037348 
+## + Fold08: alpha=0.44477, lambda=0.068417 
+## - Fold08: alpha=0.44477, lambda=0.068417 
+## + Fold08: alpha=0.21799, lambda=2.437477 
+## - Fold08: alpha=0.21799, lambda=2.437477 
+## + Fold08: alpha=0.50230, lambda=4.095965 
+## - Fold08: alpha=0.50230, lambda=4.095965 
+## + Fold08: alpha=0.35390, lambda=2.761990 
+## - Fold08: alpha=0.35390, lambda=2.761990 
+## + Fold08: alpha=0.64999, lambda=0.424674 
+## - Fold08: alpha=0.64999, lambda=0.424674 
+## + Fold08: alpha=0.37471, lambda=5.105919 
+## - Fold08: alpha=0.37471, lambda=5.105919 
+## + Fold08: alpha=0.35545, lambda=0.102506 
+## - Fold08: alpha=0.35545, lambda=0.102506 
+## + Fold08: alpha=0.53369, lambda=0.176134 
+## - Fold08: alpha=0.53369, lambda=0.176134 
+## + Fold08: alpha=0.74033, lambda=0.020225 
+## - Fold08: alpha=0.74033, lambda=0.020225 
+## + Fold08: alpha=0.22110, lambda=0.022331 
+## - Fold08: alpha=0.22110, lambda=0.022331 
+## + Fold08: alpha=0.41275, lambda=0.001170 
+## - Fold08: alpha=0.41275, lambda=0.001170 
+## + Fold08: alpha=0.26569, lambda=0.090657 
+## - Fold08: alpha=0.26569, lambda=0.090657 
+## + Fold08: alpha=0.62997, lambda=2.502837 
+## - Fold08: alpha=0.62997, lambda=2.502837 
+## + Fold08: alpha=0.18383, lambda=0.001034 
+## - Fold08: alpha=0.18383, lambda=0.001034 
+## + Fold08: alpha=0.86364, lambda=0.001869 
+## - Fold08: alpha=0.86364, lambda=0.001869 
+## + Fold08: alpha=0.74657, lambda=0.004289 
+## - Fold08: alpha=0.74657, lambda=0.004289 
+## + Fold08: alpha=0.66828, lambda=1.009991 
+## - Fold08: alpha=0.66828, lambda=1.009991 
+## + Fold08: alpha=0.61802, lambda=0.735805 
+## - Fold08: alpha=0.61802, lambda=0.735805 
+## + Fold08: alpha=0.37224, lambda=6.209096 
+## - Fold08: alpha=0.37224, lambda=6.209096 
+## + Fold08: alpha=0.52984, lambda=0.065341 
+## - Fold08: alpha=0.52984, lambda=0.065341 
+## + Fold08: alpha=0.87468, lambda=0.001909 
+## - Fold08: alpha=0.87468, lambda=0.001909 
+## + Fold08: alpha=0.58175, lambda=0.337892 
+## - Fold08: alpha=0.58175, lambda=0.337892 
+## + Fold08: alpha=0.83977, lambda=0.908596 
+## - Fold08: alpha=0.83977, lambda=0.908596 
+## + Fold08: alpha=0.31245, lambda=0.003359 
+## - Fold08: alpha=0.31245, lambda=0.003359 
+## + Fold08: alpha=0.70829, lambda=0.034809 
+## - Fold08: alpha=0.70829, lambda=0.034809 
+## + Fold08: alpha=0.26502, lambda=0.007416 
+## - Fold08: alpha=0.26502, lambda=0.007416 
+## + Fold08: alpha=0.59434, lambda=0.001646 
+## - Fold08: alpha=0.59434, lambda=0.001646 
+## + Fold08: alpha=0.48129, lambda=0.034593 
+## - Fold08: alpha=0.48129, lambda=0.034593 
+## + Fold08: alpha=0.26503, lambda=0.001753 
+## - Fold08: alpha=0.26503, lambda=0.001753 
+## + Fold08: alpha=0.56459, lambda=0.007476 
+## - Fold08: alpha=0.56459, lambda=0.007476 
+## + Fold08: alpha=0.91319, lambda=0.001598 
+## - Fold08: alpha=0.91319, lambda=0.001598 
+## + Fold08: alpha=0.90187, lambda=0.409992 
+## - Fold08: alpha=0.90187, lambda=0.409992 
+## + Fold08: alpha=0.27417, lambda=0.014285 
+## - Fold08: alpha=0.27417, lambda=0.014285 
+## + Fold08: alpha=0.32148, lambda=0.002420 
+## - Fold08: alpha=0.32148, lambda=0.002420 
+## + Fold08: alpha=0.98564, lambda=0.001867 
+## - Fold08: alpha=0.98564, lambda=0.001867 
+## + Fold08: alpha=0.61999, lambda=2.724001 
+## - Fold08: alpha=0.61999, lambda=2.724001 
+## + Fold08: alpha=0.93731, lambda=0.873704 
+## - Fold08: alpha=0.93731, lambda=0.873704 
+## + Fold08: alpha=0.46653, lambda=1.532489 
+## - Fold08: alpha=0.46653, lambda=1.532489 
+## + Fold08: alpha=0.40683, lambda=6.810803 
+## - Fold08: alpha=0.40683, lambda=6.810803 
+## + Fold08: alpha=0.65923, lambda=0.002484 
+## - Fold08: alpha=0.65923, lambda=0.002484 
+## + Fold08: alpha=0.15235, lambda=0.002384 
+## - Fold08: alpha=0.15235, lambda=0.002384 
+## + Fold08: alpha=0.57287, lambda=1.305689 
+## - Fold08: alpha=0.57287, lambda=1.305689 
+## + Fold08: alpha=0.23873, lambda=1.148283 
+## - Fold08: alpha=0.23873, lambda=1.148283 
+## + Fold08: alpha=0.96236, lambda=0.001063 
+## - Fold08: alpha=0.96236, lambda=0.001063 
+## + Fold08: alpha=0.60137, lambda=1.092669 
+## - Fold08: alpha=0.60137, lambda=1.092669 
+## + Fold08: alpha=0.51503, lambda=0.698377 
+## - Fold08: alpha=0.51503, lambda=0.698377 
+## + Fold08: alpha=0.40257, lambda=0.285530 
+## - Fold08: alpha=0.40257, lambda=0.285530 
+## + Fold08: alpha=0.88025, lambda=0.074420 
+## - Fold08: alpha=0.88025, lambda=0.074420 
+## + Fold08: alpha=0.36409, lambda=0.004006 
+## - Fold08: alpha=0.36409, lambda=0.004006 
+## + Fold08: alpha=0.28824, lambda=0.001052 
+## - Fold08: alpha=0.28824, lambda=0.001052 
+## + Fold08: alpha=0.17065, lambda=0.057590 
+## - Fold08: alpha=0.17065, lambda=0.057590 
+## + Fold08: alpha=0.17217, lambda=0.082459 
+## - Fold08: alpha=0.17217, lambda=0.082459 
+## + Fold08: alpha=0.48204, lambda=0.032682 
+## - Fold08: alpha=0.48204, lambda=0.032682 
+## + Fold08: alpha=0.25296, lambda=0.064286 
+## - Fold08: alpha=0.25296, lambda=0.064286 
+## + Fold08: alpha=0.21625, lambda=0.604003 
+## - Fold08: alpha=0.21625, lambda=0.604003 
+## + Fold08: alpha=0.67438, lambda=0.001607 
+## - Fold08: alpha=0.67438, lambda=0.001607 
+## + Fold08: alpha=0.04766, lambda=0.023884 
+## - Fold08: alpha=0.04766, lambda=0.023884 
+## + Fold08: alpha=0.70085, lambda=1.353373 
+## - Fold08: alpha=0.70085, lambda=1.353373 
+## + Fold08: alpha=0.35189, lambda=1.820349 
+## - Fold08: alpha=0.35189, lambda=1.820349 
+## + Fold08: alpha=0.40894, lambda=0.008320 
+## - Fold08: alpha=0.40894, lambda=0.008320 
+## + Fold08: alpha=0.82095, lambda=0.023713 
+## - Fold08: alpha=0.82095, lambda=0.023713 
+## + Fold08: alpha=0.91886, lambda=2.203063 
+## - Fold08: alpha=0.91886, lambda=2.203063 
+## + Fold08: alpha=0.28253, lambda=2.141949 
+## - Fold08: alpha=0.28253, lambda=2.141949 
+## + Fold08: alpha=0.96110, lambda=0.014049 
+## - Fold08: alpha=0.96110, lambda=0.014049 
+## + Fold08: alpha=0.72839, lambda=0.003674 
+## - Fold08: alpha=0.72839, lambda=0.003674 
+## + Fold08: alpha=0.68638, lambda=0.555515 
+## - Fold08: alpha=0.68638, lambda=0.555515 
+## + Fold08: alpha=0.05284, lambda=0.002488 
+## - Fold08: alpha=0.05284, lambda=0.002488 
+## + Fold08: alpha=0.39522, lambda=0.001323 
+## - Fold08: alpha=0.39522, lambda=0.001323 
+## + Fold08: alpha=0.47785, lambda=7.957189 
+## - Fold08: alpha=0.47785, lambda=7.957189 
+## + Fold08: alpha=0.56025, lambda=0.001337 
+## - Fold08: alpha=0.56025, lambda=0.001337 
+## + Fold08: alpha=0.69826, lambda=0.020604 
+## - Fold08: alpha=0.69826, lambda=0.020604 
+## + Fold08: alpha=0.91568, lambda=3.721357 
+## - Fold08: alpha=0.91568, lambda=3.721357 
+## + Fold08: alpha=0.61835, lambda=0.254204 
+## - Fold08: alpha=0.61835, lambda=0.254204 
+## + Fold08: alpha=0.42842, lambda=0.012884 
+## - Fold08: alpha=0.42842, lambda=0.012884 
+## + Fold08: alpha=0.54208, lambda=0.753336 
+## - Fold08: alpha=0.54208, lambda=0.753336 
+## + Fold08: alpha=0.05848, lambda=1.793411 
+## - Fold08: alpha=0.05848, lambda=1.793411 
+## + Fold08: alpha=0.26086, lambda=0.016579 
+## - Fold08: alpha=0.26086, lambda=0.016579 
+## + Fold08: alpha=0.39715, lambda=0.082662 
+## - Fold08: alpha=0.39715, lambda=0.082662 
+## + Fold08: alpha=0.19774, lambda=0.523354 
+## - Fold08: alpha=0.19774, lambda=0.523354 
+## + Fold08: alpha=0.83193, lambda=0.316222 
+## - Fold08: alpha=0.83193, lambda=0.316222 
+## + Fold08: alpha=0.15289, lambda=0.323312 
+## - Fold08: alpha=0.15289, lambda=0.323312 
+## + Fold08: alpha=0.80342, lambda=6.552722 
+## - Fold08: alpha=0.80342, lambda=6.552722 
+## + Fold08: alpha=0.54683, lambda=0.040994 
+## - Fold08: alpha=0.54683, lambda=0.040994 
+## + Fold09: alpha=0.40947, lambda=0.381599 
+## - Fold09: alpha=0.40947, lambda=0.381599 
+## + Fold09: alpha=0.01047, lambda=0.004588 
+## - Fold09: alpha=0.01047, lambda=0.004588 
+## + Fold09: alpha=0.18385, lambda=0.293152 
+## - Fold09: alpha=0.18385, lambda=0.293152 
+## + Fold09: alpha=0.84273, lambda=0.016224 
+## - Fold09: alpha=0.84273, lambda=0.016224 
+## + Fold09: alpha=0.23116, lambda=0.668596 
+## - Fold09: alpha=0.23116, lambda=0.668596 
+## + Fold09: alpha=0.23910, lambda=0.035556 
+## - Fold09: alpha=0.23910, lambda=0.035556 
+## + Fold09: alpha=0.07669, lambda=6.069734 
+## - Fold09: alpha=0.07669, lambda=6.069734 
+## + Fold09: alpha=0.24572, lambda=5.963581 
+## - Fold09: alpha=0.24572, lambda=5.963581 
+## + Fold09: alpha=0.73214, lambda=0.681664 
+## - Fold09: alpha=0.73214, lambda=0.681664 
+## + Fold09: alpha=0.84745, lambda=0.009915 
+## - Fold09: alpha=0.84745, lambda=0.009915 
+## + Fold09: alpha=0.49753, lambda=0.007205 
+## - Fold09: alpha=0.49753, lambda=0.007205 
+## + Fold09: alpha=0.38791, lambda=0.204418 
+## - Fold09: alpha=0.38791, lambda=0.204418 
+## + Fold09: alpha=0.24645, lambda=0.010880 
+## - Fold09: alpha=0.24645, lambda=0.010880 
+## + Fold09: alpha=0.11110, lambda=0.116946 
+## - Fold09: alpha=0.11110, lambda=0.116946 
+## + Fold09: alpha=0.38999, lambda=1.155720 
+## - Fold09: alpha=0.38999, lambda=1.155720 
+## + Fold09: alpha=0.57194, lambda=0.004440 
+## - Fold09: alpha=0.57194, lambda=0.004440 
+## + Fold09: alpha=0.21689, lambda=0.037348 
+## - Fold09: alpha=0.21689, lambda=0.037348 
+## + Fold09: alpha=0.44477, lambda=0.068417 
+## - Fold09: alpha=0.44477, lambda=0.068417 
+## + Fold09: alpha=0.21799, lambda=2.437477 
+## - Fold09: alpha=0.21799, lambda=2.437477 
+## + Fold09: alpha=0.50230, lambda=4.095965 
+## - Fold09: alpha=0.50230, lambda=4.095965 
+## + Fold09: alpha=0.35390, lambda=2.761990 
+## - Fold09: alpha=0.35390, lambda=2.761990 
+## + Fold09: alpha=0.64999, lambda=0.424674 
+## - Fold09: alpha=0.64999, lambda=0.424674 
+## + Fold09: alpha=0.37471, lambda=5.105919 
+## - Fold09: alpha=0.37471, lambda=5.105919 
+## + Fold09: alpha=0.35545, lambda=0.102506 
+## - Fold09: alpha=0.35545, lambda=0.102506 
+## + Fold09: alpha=0.53369, lambda=0.176134 
+## - Fold09: alpha=0.53369, lambda=0.176134 
+## + Fold09: alpha=0.74033, lambda=0.020225 
+## - Fold09: alpha=0.74033, lambda=0.020225 
+## + Fold09: alpha=0.22110, lambda=0.022331 
+## - Fold09: alpha=0.22110, lambda=0.022331 
+## + Fold09: alpha=0.41275, lambda=0.001170 
+## - Fold09: alpha=0.41275, lambda=0.001170 
+## + Fold09: alpha=0.26569, lambda=0.090657 
+## - Fold09: alpha=0.26569, lambda=0.090657 
+## + Fold09: alpha=0.62997, lambda=2.502837 
+## - Fold09: alpha=0.62997, lambda=2.502837 
+## + Fold09: alpha=0.18383, lambda=0.001034 
+## - Fold09: alpha=0.18383, lambda=0.001034 
+## + Fold09: alpha=0.86364, lambda=0.001869 
+## - Fold09: alpha=0.86364, lambda=0.001869 
+## + Fold09: alpha=0.74657, lambda=0.004289 
+## - Fold09: alpha=0.74657, lambda=0.004289 
+## + Fold09: alpha=0.66828, lambda=1.009991 
+## - Fold09: alpha=0.66828, lambda=1.009991 
+## + Fold09: alpha=0.61802, lambda=0.735805 
+## - Fold09: alpha=0.61802, lambda=0.735805 
+## + Fold09: alpha=0.37224, lambda=6.209096 
+## - Fold09: alpha=0.37224, lambda=6.209096 
+## + Fold09: alpha=0.52984, lambda=0.065341 
+## - Fold09: alpha=0.52984, lambda=0.065341 
+## + Fold09: alpha=0.87468, lambda=0.001909 
+## - Fold09: alpha=0.87468, lambda=0.001909 
+## + Fold09: alpha=0.58175, lambda=0.337892 
+## - Fold09: alpha=0.58175, lambda=0.337892 
+## + Fold09: alpha=0.83977, lambda=0.908596 
+## - Fold09: alpha=0.83977, lambda=0.908596 
+## + Fold09: alpha=0.31245, lambda=0.003359 
+## - Fold09: alpha=0.31245, lambda=0.003359 
+## + Fold09: alpha=0.70829, lambda=0.034809 
+## - Fold09: alpha=0.70829, lambda=0.034809 
+## + Fold09: alpha=0.26502, lambda=0.007416 
+## - Fold09: alpha=0.26502, lambda=0.007416 
+## + Fold09: alpha=0.59434, lambda=0.001646 
+## - Fold09: alpha=0.59434, lambda=0.001646 
+## + Fold09: alpha=0.48129, lambda=0.034593 
+## - Fold09: alpha=0.48129, lambda=0.034593 
+## + Fold09: alpha=0.26503, lambda=0.001753 
+## - Fold09: alpha=0.26503, lambda=0.001753 
+## + Fold09: alpha=0.56459, lambda=0.007476 
+## - Fold09: alpha=0.56459, lambda=0.007476 
+## + Fold09: alpha=0.91319, lambda=0.001598 
+## - Fold09: alpha=0.91319, lambda=0.001598 
+## + Fold09: alpha=0.90187, lambda=0.409992 
+## - Fold09: alpha=0.90187, lambda=0.409992 
+## + Fold09: alpha=0.27417, lambda=0.014285 
+## - Fold09: alpha=0.27417, lambda=0.014285 
+## + Fold09: alpha=0.32148, lambda=0.002420 
+## - Fold09: alpha=0.32148, lambda=0.002420 
+## + Fold09: alpha=0.98564, lambda=0.001867 
+## - Fold09: alpha=0.98564, lambda=0.001867 
+## + Fold09: alpha=0.61999, lambda=2.724001 
+## - Fold09: alpha=0.61999, lambda=2.724001 
+## + Fold09: alpha=0.93731, lambda=0.873704 
+## - Fold09: alpha=0.93731, lambda=0.873704 
+## + Fold09: alpha=0.46653, lambda=1.532489 
+## - Fold09: alpha=0.46653, lambda=1.532489 
+## + Fold09: alpha=0.40683, lambda=6.810803 
+## - Fold09: alpha=0.40683, lambda=6.810803 
+## + Fold09: alpha=0.65923, lambda=0.002484 
+## - Fold09: alpha=0.65923, lambda=0.002484 
+## + Fold09: alpha=0.15235, lambda=0.002384 
+## - Fold09: alpha=0.15235, lambda=0.002384 
+## + Fold09: alpha=0.57287, lambda=1.305689 
+## - Fold09: alpha=0.57287, lambda=1.305689 
+## + Fold09: alpha=0.23873, lambda=1.148283 
+## - Fold09: alpha=0.23873, lambda=1.148283 
+## + Fold09: alpha=0.96236, lambda=0.001063 
+## - Fold09: alpha=0.96236, lambda=0.001063 
+## + Fold09: alpha=0.60137, lambda=1.092669 
+## - Fold09: alpha=0.60137, lambda=1.092669 
+## + Fold09: alpha=0.51503, lambda=0.698377 
+## - Fold09: alpha=0.51503, lambda=0.698377 
+## + Fold09: alpha=0.40257, lambda=0.285530 
+## - Fold09: alpha=0.40257, lambda=0.285530 
+## + Fold09: alpha=0.88025, lambda=0.074420 
+## - Fold09: alpha=0.88025, lambda=0.074420 
+## + Fold09: alpha=0.36409, lambda=0.004006 
+## - Fold09: alpha=0.36409, lambda=0.004006 
+## + Fold09: alpha=0.28824, lambda=0.001052 
+## - Fold09: alpha=0.28824, lambda=0.001052 
+## + Fold09: alpha=0.17065, lambda=0.057590 
+## - Fold09: alpha=0.17065, lambda=0.057590 
+## + Fold09: alpha=0.17217, lambda=0.082459 
+## - Fold09: alpha=0.17217, lambda=0.082459 
+## + Fold09: alpha=0.48204, lambda=0.032682 
+## - Fold09: alpha=0.48204, lambda=0.032682 
+## + Fold09: alpha=0.25296, lambda=0.064286 
+## - Fold09: alpha=0.25296, lambda=0.064286 
+## + Fold09: alpha=0.21625, lambda=0.604003 
+## - Fold09: alpha=0.21625, lambda=0.604003 
+## + Fold09: alpha=0.67438, lambda=0.001607 
+## - Fold09: alpha=0.67438, lambda=0.001607 
+## + Fold09: alpha=0.04766, lambda=0.023884 
+## - Fold09: alpha=0.04766, lambda=0.023884 
+## + Fold09: alpha=0.70085, lambda=1.353373 
+## - Fold09: alpha=0.70085, lambda=1.353373 
+## + Fold09: alpha=0.35189, lambda=1.820349 
+## - Fold09: alpha=0.35189, lambda=1.820349 
+## + Fold09: alpha=0.40894, lambda=0.008320 
+## - Fold09: alpha=0.40894, lambda=0.008320 
+## + Fold09: alpha=0.82095, lambda=0.023713 
+## - Fold09: alpha=0.82095, lambda=0.023713 
+## + Fold09: alpha=0.91886, lambda=2.203063 
+## - Fold09: alpha=0.91886, lambda=2.203063 
+## + Fold09: alpha=0.28253, lambda=2.141949 
+## - Fold09: alpha=0.28253, lambda=2.141949 
+## + Fold09: alpha=0.96110, lambda=0.014049 
+## - Fold09: alpha=0.96110, lambda=0.014049 
+## + Fold09: alpha=0.72839, lambda=0.003674 
+## - Fold09: alpha=0.72839, lambda=0.003674 
+## + Fold09: alpha=0.68638, lambda=0.555515 
+## - Fold09: alpha=0.68638, lambda=0.555515 
+## + Fold09: alpha=0.05284, lambda=0.002488 
+## - Fold09: alpha=0.05284, lambda=0.002488 
+## + Fold09: alpha=0.39522, lambda=0.001323 
+## - Fold09: alpha=0.39522, lambda=0.001323 
+## + Fold09: alpha=0.47785, lambda=7.957189 
+## - Fold09: alpha=0.47785, lambda=7.957189 
+## + Fold09: alpha=0.56025, lambda=0.001337 
+## - Fold09: alpha=0.56025, lambda=0.001337 
+## + Fold09: alpha=0.69826, lambda=0.020604 
+## - Fold09: alpha=0.69826, lambda=0.020604 
+## + Fold09: alpha=0.91568, lambda=3.721357 
+## - Fold09: alpha=0.91568, lambda=3.721357 
+## + Fold09: alpha=0.61835, lambda=0.254204 
+## - Fold09: alpha=0.61835, lambda=0.254204 
+## + Fold09: alpha=0.42842, lambda=0.012884 
+## - Fold09: alpha=0.42842, lambda=0.012884 
+## + Fold09: alpha=0.54208, lambda=0.753336 
+## - Fold09: alpha=0.54208, lambda=0.753336 
+## + Fold09: alpha=0.05848, lambda=1.793411 
+## - Fold09: alpha=0.05848, lambda=1.793411 
+## + Fold09: alpha=0.26086, lambda=0.016579 
+## - Fold09: alpha=0.26086, lambda=0.016579 
+## + Fold09: alpha=0.39715, lambda=0.082662 
+## - Fold09: alpha=0.39715, lambda=0.082662 
+## + Fold09: alpha=0.19774, lambda=0.523354 
+## - Fold09: alpha=0.19774, lambda=0.523354 
+## + Fold09: alpha=0.83193, lambda=0.316222 
+## - Fold09: alpha=0.83193, lambda=0.316222 
+## + Fold09: alpha=0.15289, lambda=0.323312 
+## - Fold09: alpha=0.15289, lambda=0.323312 
+## + Fold09: alpha=0.80342, lambda=6.552722 
+## - Fold09: alpha=0.80342, lambda=6.552722 
+## + Fold09: alpha=0.54683, lambda=0.040994 
+## - Fold09: alpha=0.54683, lambda=0.040994 
+## + Fold10: alpha=0.40947, lambda=0.381599 
+## - Fold10: alpha=0.40947, lambda=0.381599 
+## + Fold10: alpha=0.01047, lambda=0.004588 
+## - Fold10: alpha=0.01047, lambda=0.004588 
+## + Fold10: alpha=0.18385, lambda=0.293152 
+## - Fold10: alpha=0.18385, lambda=0.293152 
+## + Fold10: alpha=0.84273, lambda=0.016224 
+## - Fold10: alpha=0.84273, lambda=0.016224 
+## + Fold10: alpha=0.23116, lambda=0.668596 
+## - Fold10: alpha=0.23116, lambda=0.668596 
+## + Fold10: alpha=0.23910, lambda=0.035556 
+## - Fold10: alpha=0.23910, lambda=0.035556 
+## + Fold10: alpha=0.07669, lambda=6.069734 
+## - Fold10: alpha=0.07669, lambda=6.069734 
+## + Fold10: alpha=0.24572, lambda=5.963581 
+## - Fold10: alpha=0.24572, lambda=5.963581 
+## + Fold10: alpha=0.73214, lambda=0.681664 
+## - Fold10: alpha=0.73214, lambda=0.681664 
+## + Fold10: alpha=0.84745, lambda=0.009915 
+## - Fold10: alpha=0.84745, lambda=0.009915 
+## + Fold10: alpha=0.49753, lambda=0.007205 
+## - Fold10: alpha=0.49753, lambda=0.007205 
+## + Fold10: alpha=0.38791, lambda=0.204418 
+## - Fold10: alpha=0.38791, lambda=0.204418 
+## + Fold10: alpha=0.24645, lambda=0.010880 
+## - Fold10: alpha=0.24645, lambda=0.010880 
+## + Fold10: alpha=0.11110, lambda=0.116946 
+## - Fold10: alpha=0.11110, lambda=0.116946 
+## + Fold10: alpha=0.38999, lambda=1.155720 
+## - Fold10: alpha=0.38999, lambda=1.155720 
+## + Fold10: alpha=0.57194, lambda=0.004440 
+## - Fold10: alpha=0.57194, lambda=0.004440 
+## + Fold10: alpha=0.21689, lambda=0.037348 
+## - Fold10: alpha=0.21689, lambda=0.037348 
+## + Fold10: alpha=0.44477, lambda=0.068417 
+## - Fold10: alpha=0.44477, lambda=0.068417 
+## + Fold10: alpha=0.21799, lambda=2.437477 
+## - Fold10: alpha=0.21799, lambda=2.437477 
+## + Fold10: alpha=0.50230, lambda=4.095965 
+## - Fold10: alpha=0.50230, lambda=4.095965 
+## + Fold10: alpha=0.35390, lambda=2.761990 
+## - Fold10: alpha=0.35390, lambda=2.761990 
+## + Fold10: alpha=0.64999, lambda=0.424674 
+## - Fold10: alpha=0.64999, lambda=0.424674 
+## + Fold10: alpha=0.37471, lambda=5.105919 
+## - Fold10: alpha=0.37471, lambda=5.105919 
+## + Fold10: alpha=0.35545, lambda=0.102506 
+## - Fold10: alpha=0.35545, lambda=0.102506 
+## + Fold10: alpha=0.53369, lambda=0.176134 
+## - Fold10: alpha=0.53369, lambda=0.176134 
+## + Fold10: alpha=0.74033, lambda=0.020225 
+## - Fold10: alpha=0.74033, lambda=0.020225 
+## + Fold10: alpha=0.22110, lambda=0.022331 
+## - Fold10: alpha=0.22110, lambda=0.022331 
+## + Fold10: alpha=0.41275, lambda=0.001170 
+## - Fold10: alpha=0.41275, lambda=0.001170 
+## + Fold10: alpha=0.26569, lambda=0.090657 
+## - Fold10: alpha=0.26569, lambda=0.090657 
+## + Fold10: alpha=0.62997, lambda=2.502837 
+## - Fold10: alpha=0.62997, lambda=2.502837 
+## + Fold10: alpha=0.18383, lambda=0.001034 
+## - Fold10: alpha=0.18383, lambda=0.001034 
+## + Fold10: alpha=0.86364, lambda=0.001869 
+## - Fold10: alpha=0.86364, lambda=0.001869 
+## + Fold10: alpha=0.74657, lambda=0.004289 
+## - Fold10: alpha=0.74657, lambda=0.004289 
+## + Fold10: alpha=0.66828, lambda=1.009991 
+## - Fold10: alpha=0.66828, lambda=1.009991 
+## + Fold10: alpha=0.61802, lambda=0.735805 
+## - Fold10: alpha=0.61802, lambda=0.735805 
+## + Fold10: alpha=0.37224, lambda=6.209096 
+## - Fold10: alpha=0.37224, lambda=6.209096 
+## + Fold10: alpha=0.52984, lambda=0.065341 
+## - Fold10: alpha=0.52984, lambda=0.065341 
+## + Fold10: alpha=0.87468, lambda=0.001909 
+## - Fold10: alpha=0.87468, lambda=0.001909 
+## + Fold10: alpha=0.58175, lambda=0.337892 
+## - Fold10: alpha=0.58175, lambda=0.337892 
+## + Fold10: alpha=0.83977, lambda=0.908596 
+## - Fold10: alpha=0.83977, lambda=0.908596 
+## + Fold10: alpha=0.31245, lambda=0.003359 
+## - Fold10: alpha=0.31245, lambda=0.003359 
+## + Fold10: alpha=0.70829, lambda=0.034809 
+## - Fold10: alpha=0.70829, lambda=0.034809 
+## + Fold10: alpha=0.26502, lambda=0.007416 
+## - Fold10: alpha=0.26502, lambda=0.007416 
+## + Fold10: alpha=0.59434, lambda=0.001646 
+## - Fold10: alpha=0.59434, lambda=0.001646 
+## + Fold10: alpha=0.48129, lambda=0.034593 
+## - Fold10: alpha=0.48129, lambda=0.034593 
+## + Fold10: alpha=0.26503, lambda=0.001753 
+## - Fold10: alpha=0.26503, lambda=0.001753 
+## + Fold10: alpha=0.56459, lambda=0.007476 
+## - Fold10: alpha=0.56459, lambda=0.007476 
+## + Fold10: alpha=0.91319, lambda=0.001598 
+## - Fold10: alpha=0.91319, lambda=0.001598 
+## + Fold10: alpha=0.90187, lambda=0.409992 
+## - Fold10: alpha=0.90187, lambda=0.409992 
+## + Fold10: alpha=0.27417, lambda=0.014285 
+## - Fold10: alpha=0.27417, lambda=0.014285 
+## + Fold10: alpha=0.32148, lambda=0.002420 
+## - Fold10: alpha=0.32148, lambda=0.002420 
+## + Fold10: alpha=0.98564, lambda=0.001867 
+## - Fold10: alpha=0.98564, lambda=0.001867 
+## + Fold10: alpha=0.61999, lambda=2.724001 
+## - Fold10: alpha=0.61999, lambda=2.724001 
+## + Fold10: alpha=0.93731, lambda=0.873704 
+## - Fold10: alpha=0.93731, lambda=0.873704 
+## + Fold10: alpha=0.46653, lambda=1.532489 
+## - Fold10: alpha=0.46653, lambda=1.532489 
+## + Fold10: alpha=0.40683, lambda=6.810803 
+## - Fold10: alpha=0.40683, lambda=6.810803 
+## + Fold10: alpha=0.65923, lambda=0.002484 
+## - Fold10: alpha=0.65923, lambda=0.002484 
+## + Fold10: alpha=0.15235, lambda=0.002384 
+## - Fold10: alpha=0.15235, lambda=0.002384 
+## + Fold10: alpha=0.57287, lambda=1.305689 
+## - Fold10: alpha=0.57287, lambda=1.305689 
+## + Fold10: alpha=0.23873, lambda=1.148283 
+## - Fold10: alpha=0.23873, lambda=1.148283 
+## + Fold10: alpha=0.96236, lambda=0.001063 
+## - Fold10: alpha=0.96236, lambda=0.001063 
+## + Fold10: alpha=0.60137, lambda=1.092669 
+## - Fold10: alpha=0.60137, lambda=1.092669 
+## + Fold10: alpha=0.51503, lambda=0.698377 
+## - Fold10: alpha=0.51503, lambda=0.698377 
+## + Fold10: alpha=0.40257, lambda=0.285530 
+## - Fold10: alpha=0.40257, lambda=0.285530 
+## + Fold10: alpha=0.88025, lambda=0.074420 
+## - Fold10: alpha=0.88025, lambda=0.074420 
+## + Fold10: alpha=0.36409, lambda=0.004006 
+## - Fold10: alpha=0.36409, lambda=0.004006 
+## + Fold10: alpha=0.28824, lambda=0.001052 
+## - Fold10: alpha=0.28824, lambda=0.001052 
+## + Fold10: alpha=0.17065, lambda=0.057590 
+## - Fold10: alpha=0.17065, lambda=0.057590 
+## + Fold10: alpha=0.17217, lambda=0.082459 
+## - Fold10: alpha=0.17217, lambda=0.082459 
+## + Fold10: alpha=0.48204, lambda=0.032682 
+## - Fold10: alpha=0.48204, lambda=0.032682 
+## + Fold10: alpha=0.25296, lambda=0.064286 
+## - Fold10: alpha=0.25296, lambda=0.064286 
+## + Fold10: alpha=0.21625, lambda=0.604003 
+## - Fold10: alpha=0.21625, lambda=0.604003 
+## + Fold10: alpha=0.67438, lambda=0.001607 
+## - Fold10: alpha=0.67438, lambda=0.001607 
+## + Fold10: alpha=0.04766, lambda=0.023884 
+## - Fold10: alpha=0.04766, lambda=0.023884 
+## + Fold10: alpha=0.70085, lambda=1.353373 
+## - Fold10: alpha=0.70085, lambda=1.353373 
+## + Fold10: alpha=0.35189, lambda=1.820349 
+## - Fold10: alpha=0.35189, lambda=1.820349 
+## + Fold10: alpha=0.40894, lambda=0.008320 
+## - Fold10: alpha=0.40894, lambda=0.008320 
+## + Fold10: alpha=0.82095, lambda=0.023713 
+## - Fold10: alpha=0.82095, lambda=0.023713 
+## + Fold10: alpha=0.91886, lambda=2.203063 
+## - Fold10: alpha=0.91886, lambda=2.203063 
+## + Fold10: alpha=0.28253, lambda=2.141949 
+## - Fold10: alpha=0.28253, lambda=2.141949 
+## + Fold10: alpha=0.96110, lambda=0.014049 
+## - Fold10: alpha=0.96110, lambda=0.014049 
+## + Fold10: alpha=0.72839, lambda=0.003674 
+## - Fold10: alpha=0.72839, lambda=0.003674 
+## + Fold10: alpha=0.68638, lambda=0.555515 
+## - Fold10: alpha=0.68638, lambda=0.555515 
+## + Fold10: alpha=0.05284, lambda=0.002488 
+## - Fold10: alpha=0.05284, lambda=0.002488 
+## + Fold10: alpha=0.39522, lambda=0.001323 
+## - Fold10: alpha=0.39522, lambda=0.001323 
+## + Fold10: alpha=0.47785, lambda=7.957189 
+## - Fold10: alpha=0.47785, lambda=7.957189 
+## + Fold10: alpha=0.56025, lambda=0.001337 
+## - Fold10: alpha=0.56025, lambda=0.001337 
+## + Fold10: alpha=0.69826, lambda=0.020604 
+## - Fold10: alpha=0.69826, lambda=0.020604 
+## + Fold10: alpha=0.91568, lambda=3.721357 
+## - Fold10: alpha=0.91568, lambda=3.721357 
+## + Fold10: alpha=0.61835, lambda=0.254204 
+## - Fold10: alpha=0.61835, lambda=0.254204 
+## + Fold10: alpha=0.42842, lambda=0.012884 
+## - Fold10: alpha=0.42842, lambda=0.012884 
+## + Fold10: alpha=0.54208, lambda=0.753336 
+## - Fold10: alpha=0.54208, lambda=0.753336 
+## + Fold10: alpha=0.05848, lambda=1.793411 
+## - Fold10: alpha=0.05848, lambda=1.793411 
+## + Fold10: alpha=0.26086, lambda=0.016579 
+## - Fold10: alpha=0.26086, lambda=0.016579 
+## + Fold10: alpha=0.39715, lambda=0.082662 
+## - Fold10: alpha=0.39715, lambda=0.082662 
+## + Fold10: alpha=0.19774, lambda=0.523354 
+## - Fold10: alpha=0.19774, lambda=0.523354 
+## + Fold10: alpha=0.83193, lambda=0.316222 
+## - Fold10: alpha=0.83193, lambda=0.316222 
+## + Fold10: alpha=0.15289, lambda=0.323312 
+## - Fold10: alpha=0.15289, lambda=0.323312 
+## + Fold10: alpha=0.80342, lambda=6.552722 
+## - Fold10: alpha=0.80342, lambda=6.552722 
+## + Fold10: alpha=0.54683, lambda=0.040994 
+## - Fold10: alpha=0.54683, lambda=0.040994
+```
+
+```
+## Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo, : There were missing values in resampled performance measures.
+```
+
+```
+## Aggregating results
+## Selecting tuning parameters
+## Fitting alpha = 0.0585, lambda = 1.79 on full training set
+```
+
+---
+
+# Elastic net with caret
+We can figure out the best set of tuning parameters by looking at `bestTune`
+
+```r
+elastic_net_model$bestTune
+```
+
+```
+##        alpha   lambda
+## 4 0.05847849 1.793411
+```
+
+Here we selected something close to ridge regression
+
+---
+
+# Elastic net with caret
+
+
+```r
+plot(elastic_net_model)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Non-parametric regression: Regression Trees
+
+.hi-blue[Regression trees] sequentially split the feature space into subspaces where the function is estimated as the average outcome for units with features in that subspace
+
+--
+
+These are called .hi-blue[trees] because the splitting is sequential, one feature at a time, so when you plot all the splits it begins to look like an upside down tree where
+
+Each split is called a .hi-blue[node], and the first split is called your .hi-blue[root node]
+
+Each terminal point of your tree is called a .hi-blue[leaf node]
+
+--
+
+Trees effectively partition the space into a bunch of hyperrectangles in a way that reduces RSS
+
+---
+
+# Growing a regression tree
+
+How do we grow our regression tree?
+
+1. Let `\(g(x) = \bar{y}\)` and let the sum of squared errors be 
+`$$Q(g) = \sum_{i=1}^N(y_i-g(x_i))^2 = \sum_{i=1}^N (y_i - \bar{y})^2$$`
+
+2. For a feature `\(j\)` and split point `\(s\)` consider splitting the data depending on whether `\(x_{i,j} \leq s\)` or `\(x_{i,j} &gt; s\)`, and let `\(\bar{y}_{left}\)` and `\(\bar{y}_{right}\)` be the average values in the two subspaces
+
+3. If `\(x_j \leq t\)` let `\(g_{j,t}(x) = \bar{y}_{left}\)` else `\(g_{j,t}(x) =\bar{y}_{right}\)`
+4. Find the `\(j^*,s^* = argmin_{j,s} Q(g_{j,s}(\cdot))\)`
+
+---
+
+# Growing a regression tree
+
+This gives us the covariate `\(j^*\)` to split, and where to split it into separate subspaces `\(s^*\)` in order to minimize the sum of squared errors
+
+This first split will end up being our root node
+
+We then continue this process for each of the subspaces, splitting on the best covariates and creating new nodes and growing our tree
+
+--
+
+This is called a .hi-blue[greedy] approach because we are selecting the best split at each step instead of looking ahead
+
+---
+
+# What do regression trees look like?
+
+Whats the probability of kyphosis after surgery given age and the starting vertabrae?
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/regression_tree.png"&gt;
+&lt;/div&gt;
+
+The left shows the tree diagram
+
+The middle shows the actual regression function
+
+The right shows a 2d projection of the regression function where darker colors are higher probabilities
+
+---
+
+# Regularizing regression trees
+
+If we just followed the regression tree algorithm we could minimize error by splitting until there is just one observation in each feature subspace, this will have perfect in-sample prediction but terrible out-of-sample prediction
+
+--
+
+We solve this problem similar to how we did linear regression: we penalize complexity (the number of leaves)
+
+`$$Q(g) + \lambda \cdot \#leaves$$`
+
+The penalty (if large enough) will keep the tree from having too many nodes
+
+---
+
+# Cross-validating trees
+
+How do we choose `\(\lambda\)`? Basically the same way as we did for linear regression
+
+- Create a grid of `\(\lambda\)`s
+- For each `\(\lambda\)`:
+    - Split data into `\(k\)` mutually-exclusive folds of about equal size, usually choose `\(k=5,10\)`
+    - For `\(j=1,...,k\)`
+        - Grow the tree using all folds but fold `\(j\)`
+        - Predict out-of-sample on fold `\(j\)`
+    - Compute squared prediction error across the `\(k\)` folds: `\(Q(\lambda) = \sum_{j=1}^k \sum_{i \in \text{fold j}} \left(y_i - g(j,\lambda)\right)\)`
+- Choose `\(\hat{\lambda}_{min} = argmin_{\lambda} Q(\lambda)\)`
+
+---
+
+# Pruning trees
+
+Using this simple cross-validation approach may stop growing the tree too early, one split may not help immediately, but it may help us find future profitable splits 
+    - This is a drawback of a greedy algorithm
+
+This suggests that one way we can improve is by .hi-blue[pruning] the tree
+
+1. Grow a big tree, select some rule to stop like 5 observations per leaf, or a very small `\(\lambda\)`
+2. Prune branches or leaves that don't improve the prediction by a sufficient amount
+
+---
+
+# Pruning trees: examples
+
+The simplest way to prune is called .hi-blue[reduced error pruning]
+
+It works as follows
+
+1. Starting at the leaves, remove each node
+2. Check if prediction accuracy on the validation sample is the same or better
+3. If 2 is true, remove the node
+4. Continue until we cannot improve the tree any further
+
+This is simple and fast
+
+There are other more complex ways to prune (e.g. cost complexity)
+
+---
+
+# Bagging predictors
+
+Single trees typically are not great predictors 
+
+--
+
+One way to improve upon a single tree is to bootstrap aggregate (bag) a prediction
+
+--
+
+This generally reduces variance and helps with avoiding overfitting
+
+--
+
+Bagging is easy:
+
+1. Bootstrap resample B datasets
+2. Estimate a tree on each dataset (can use data-driven cross-validation, pruning, whatever)
+3. Average all the predictions: `\(\frac{1}{B}\sum_{j=1}^B g_j(x)\)`
+
+--
+
+This only matters because trees are non-linear,  
+so bagging smooths out the end predictions
+
+---
+
+# Random forests
+
+The problem with bagging is that the `\(B\)` bagged estimated are correlated
+
+Important regressors will always appear near the top of the tree in the bootstrapped samples
+
+This means all the trees will look similar
+
+Predictions won't actually be as good as you might think
+
+How can we break this correlation?
+
+---
+
+# Random forests
+
+Randomly select only `\(L\)` out of `\(K\)` features: feature bagging
+
+--
+
+How big should `\(L\)` be?
+
+--
+
+Not obvious, no real theoretical guidance
+
+--
+
+For classification problems `\(\sqrt{K}\)` is recommended
+
+For regression `\(K/3\)` is recommended
+
+---
+
+# Boosted trees
+
+.hi-blue[Boosting] is another method to improve prediction from weak learners (better than random chance predictors)
+
+--
+
+We can improve on a regression tree by repeatedly applying shallow trees to residualized data
+
+Let `\(g(x|X,Y)\)` be a simple regression tree
+
+--
+
+Define the residual as `\(\varepsilon{1i} = Y_i - g_1(X_i|X,Y)\)`
+
+--
+
+With a boosted tree we then estimate a regression tree on the new data `\((X,\varepsilon_{1})\)`
+
+---
+
+# Boosted trees
+
+Repeat this process many times to get a set of `\(g\)`s
+
+--
+
+These give you an additive approximation to the actual regression tree:
+`$$\sum_{m=1}^M g_m(x|X,\varepsilon_{m-1}) = \sum_{k=1}^K h_k(x_k) \text{ where } \varepsilon_0 = Y$$`
+
+--
+
+By continually residualizing and re-estimating, its like we are adding functions `\(h_k\)` sequentially to our regression
+
+--
+
+When boosting, we typically use shallow trees of only around 4-8 splits, but we grow many, many trees
+
+--
+
+We generally fix tree depth but select number of trees in a quasi-cross-validation procedure
+
+---
+
+# Trees examples: Preliminaries
+
+We need `ISLR` to get our dataset, `tree` to do the regression tree, `MASS` for our random forest dataset, and `randomForest` to estimate a random forest
+
+We will be working with the carseats dataset
+
+
+```r
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(ISLR, tree, randomForest, gbm, tidyverse)
+set.seed(123)
+```
+
+
+---
+
+# Supervised learning examples: Preliminaries
+
+
+```r
+carseats &lt;- Carseats %&gt;% as_tibble()
+carseats
+```
+
+```
+## # A tibble: 400 x 11
+##    Sales CompPrice Income Advertising Population Price ShelveLoc   Age Education Urban US   
+##    &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt;
+##  1  9.5        138     73          11        276   120 Bad          42        17 Yes   Yes  
+##  2 11.2        111     48          16        260    83 Good         65        10 Yes   Yes  
+##  3 10.1        113     35          10        269    80 Medium       59        12 Yes   Yes  
+##  4  7.4        117    100           4        466    97 Medium       55        14 Yes   Yes  
+##  5  4.15       141     64           3        340   128 Bad          38        13 Yes   No   
+##  6 10.8        124    113          13        501    72 Bad          78        16 No    Yes  
+##  7  6.63       115    105           0         45   108 Medium       71        15 Yes   No   
+##  8 11.8        136     81          15        425   120 Good         67        10 Yes   Yes  
+##  9  6.54       132    110           0        108   124 Medium       76        10 No    No   
+## 10  4.69       132    113           0        131   124 Medium       76        17 No    Yes  
+## # … with 390 more rows
+```
+
+---
+
+# Supervised learning example: estimating a tree
+
+Lets estimate our regression tree with car sales as the outcome
+
+
+```r
+tree_carseats &lt;- tree(Sales ~ ., data = carseats)
+summary(tree_carseats)
+```
+
+```
+## 
+## Regression tree:
+## tree(formula = Sales ~ ., data = carseats)
+## Variables actually used in tree construction:
+## [1] "ShelveLoc"   "Price"       "Age"         "Income"      "Population"  "Advertising"
+## Number of terminal nodes:  17 
+## Residual mean deviance:  2.878 = 1102 / 383 
+## Distribution of residuals:
+##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+## -4.98700 -1.23000 -0.06125  0.00000  1.22500  4.75400
+```
+
+---
+
+# Supervised learning example: the tree
+
+
+```r
+plot(tree_carseats)
+text(tree_carseats, pretty = 0)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Supervised learning example: the tree
+
+
+```r
+set.seed(101)
+train &lt;- sample(1:nrow(carseats), 320)
+tree_carseats &lt;- tree(Sales ~ ., carseats, subset = train)
+plot(tree_carseats)
+text(tree_carseats, pretty = 0)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Supervised learning example: the tree's error
+
+
+```r
+tree_pred &lt;- predict(tree_carseats, carseats[-train,])
+mse &lt;- mean((carseats[-train,]$Sales - tree_pred)^2)
+mse
+```
+
+```
+## [1] 5.040445
+```
+
+---
+
+# Supervised learning example: cross-validation
+
+
+```r
+cv_carseats = cv.tree(tree_carseats)
+plot(cv_carseats)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Supervised learning example: pruning
+
+
+```r
+set.seed(123)
+prune_carseats &lt;- prune.tree(tree_carseats, best = 10)
+plot(prune_carseats)
+text(prune_carseats, pretty = 0)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Supervised learning example: pruning
+
+
+```r
+tree_pred_prune = predict(prune_carseats, carseats[-train,])
+mse_prune &lt;- mean((carseats[-train,]$Sales - tree_pred_prune)^2)
+mse
+```
+
+```
+## [1] 5.040445
+```
+
+```r
+mse_prune
+```
+
+```
+## [1] 5.905862
+```
+
+---
+
+# Supervised learning example: random forests
+
+
+```r
+set.seed(101)
+train = sample(1:nrow(carseats), 320)
+rf_carseats = randomForest(Sales~., data = carseats, subset = train)
+rf_carseats
+```
+
+```
+## 
+## Call:
+##  randomForest(formula = Sales ~ ., data = carseats, subset = train) 
+##                Type of random forest: regression
+##                      Number of trees: 500
+## No. of variables tried at each split: 3
+## 
+##           Mean of squared residuals: 2.779889
+##                     % Var explained: 64.79
+```
+
+```r
+mse
+```
+
+```
+## [1] 5.040445
+```
+
+```r
+mse_prune
+```
+
+```
+## [1] 5.905862
+```
+
+---
+
+# Random forests: variable importance
+
+
+```r
+varImpPlot(rf_carseats)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-29-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Random forests: tuning feature bagging
+
+
+```r
+oob_err = double(10)
+test_err = double(10)
+for (mtry in 1:10) {
+  set.seed(101)
+  fit = randomForest(Sales~., data = carseats, subset = train, mtry = mtry, ntree = 350)
+  oob_err[mtry] = mean(fit$mse)
+  pred = predict(fit, carseats[-train,])
+  test_err[mtry] = with(carseats[-train,], mean( (Sales - pred)^2 ))
+}
+```
+
+---
+
+# Random forests: tuning feature bagging
+
+
+```r
+matplot(1:mtry, cbind(test.err, oob.err), pch = 23, col = c("red", "blue"), type = "b", ylab = "Mean Squared Error")
+legend("topright", legend = c("OOB", "Test"), pch = 23, col = c("red", "blue"))
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-31-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Boosted trees
+
+
+```r
+boost_carseats = gbm(Sales~., data = carseats[train,], 
+                     distribution = "gaussian", n.trees = 10000, shrinkage = 0.01, interaction.depth = 4)
+summary(boost_carseats)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-32-1.png" style="display: block; margin: auto;" /&gt;
+
+```
+##                     var    rel.inf
+## Price             Price 29.4259366
+## ShelveLoc     ShelveLoc 23.2557766
+## CompPrice     CompPrice 13.2196144
+## Age                 Age 10.0723335
+## Income           Income  7.5246307
+## Advertising Advertising  7.2502481
+## Population   Population  5.7258635
+## Education     Education  2.4757019
+## US                   US  0.6202035
+## Urban             Urban  0.4296911
+```
+
+---
+
+# Boosted trees, the important variables
+
+
+```r
+plot(boost_carseats, i = "Price")
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-33-1.png" style="display: block; margin: auto;" /&gt;
+
+```r
+plot(boost_carseats, i = "CompPrice")
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-33-2.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Boosted trees, prediction error
+
+
+```r
+n_trees = seq(from = 100, to = 10000, by = 100)
+predmat = predict(boost_carseats, newdata = carseats[-train,], n.trees = n_trees)
+boost_err = with(carseats[-train,], apply( (predmat - Sales)^2, 2, mean) )
+plot(n_trees, boost_err, pch = 23, ylab = "Mean Squared Error", xlab = "# Trees", main = "Boosting Test Error")
+abline(h = min(test_err), col = "red")
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-34-1.png" style="display: block; margin: auto;" /&gt;
+
+
+
+
+---
+
+# Econ-specific stuff
+
+Often times we may want to predict using FEs
+
+Aproblem with LASSO is that it may only select a few of them (recall they're just a vector of dummy variables)
+
+How do we force LASSO to either select all or none?
+
+.hi-blue[Group LASSO]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "GitHub",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  /* Replace <script> tags in slides area to make them executable
+   *
+   * Runs after post-processing of markdown source into slides and replaces only
+   * <script>s on the last slide of continued slides using the .has-continuation
+   * class added by xaringan. Finally, any <script>s in the slides area that
+   * aren't executed are commented out.
+   */
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container:not(.has-continuation) script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+  var scriptsNotExecuted = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container.has-continuation script'
+  );
+  if (!scriptsNotExecuted.length) return;
+  for (var i = 0; i < scriptsNotExecuted.length; i++) {
+    var comment = document.createComment(scriptsNotExecuted[i].outerHTML)
+    scriptsNotExecuted[i].parentElement.replaceChild(comment, scriptsNotExecuted[i])
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

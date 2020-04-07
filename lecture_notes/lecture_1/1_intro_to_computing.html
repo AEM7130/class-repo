@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Lecture 1</title>
     <meta charset="utf-8" />
     <meta name="author" content="Ivan Rudik" />
+    <script src="1_intro_to_computing_files/header-attrs-2.1/header-attrs.js"></script>
     <link href="1_intro_to_computing_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="1_intro_to_computing_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link href="1_intro_to_computing_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
@@ -36,11 +37,6 @@ Necessary things to download to follow along today and in the future:
 --
 
 For this lecture you will need the following Julia packages
-
-
-```julia
-using Plots, ForwardDiff, Distributions, BenchmarkTools
-```
 
 
 ---
@@ -204,7 +200,7 @@ println("β-hat is $(round(bbeta_hat[1],digits=3)) and the true β is $(round(bb
 ```
 
 ```
-## β-hat is 3.325 and the true β is 3.142.
+## β-hat is 3.261 and the true β is 3.142.
 ```
 
 ---
@@ -317,7 +313,7 @@ Now plot `\(q_d\)` and `\(q(p)\)`
 
 # Example 2
 
-&lt;img src="1_intro_to_computing_files/figure-html/unnamed-chunk-4-J1.png" width="800" /&gt;
+&lt;img src="1_intro_to_computing_files/figure-html/unnamed-chunk-3-J1.png" width="800" /&gt;
 
 
 ---
@@ -507,17 +503,17 @@ acreage, expected_price = find_root_fi(1, 0.1)
 ```
 
 ```
-## Intermediate acreage guess: 1.125
-## Intermediate acreage guess: 1.086
-## Intermediate acreage guess: 1.097
-## Intermediate acreage guess: 1.094
-## Intermediate acreage guess: 1.095
-## Intermediate acreage guess: 1.094
-## Intermediate acreage guess: 1.094
+## Intermediate acreage guess: 1.115
+## Intermediate acreage guess: 1.081
+## Intermediate acreage guess: 1.09
+## Intermediate acreage guess: 1.088
+## Intermediate acreage guess: 1.088
+## Intermediate acreage guess: 1.088
+## Intermediate acreage guess: 1.088
 ```
 
 ```
-## (1.0944707255507848, 1.1889414511015697)
+## (1.0881121665408178, 1.1762243330816355)
 ```
 
 ```julia
@@ -525,7 +521,7 @@ println("The optimal number of acres to plant is $(round(acreage, digits = 3))."
 ```
 
 ```
-## The optimal number of acres to plant is 1.094.
+## The optimal number of acres to plant is 1.088.
 ```
 
 ```julia
@@ -533,7 +529,7 @@ println("The expected price is $(round(expected_price, digits = 3)).")
 ```
 
 ```
-## The expected price is 1.189.
+## The expected price is 1.176.
 ```
 
 ---
@@ -1852,7 +1848,7 @@ integrate_function(f, 0, 10, 1000)
 ```
 
 ```
-## 341.72507813471555
+## 332.8366621231986
 ```
 
 Pretty close!
@@ -2202,7 +2198,7 @@ println("Cramer's rule solved in $cramer_time seconds and used $cramer_allocatio
 ```
 
 ```
-## Cramer's rule solved in 0.2546825 seconds and used 16196512 kilobytes of memory.
+## Cramer's rule solved in 0.035798151 seconds and used 16196512 kilobytes of memory.
 ```
 
 ```julia
@@ -2210,7 +2206,7 @@ println("LU solved in $(lu_time) seconds and used $(lu_allocation) kilobytes of 
 ```
 
 ```
-## LU solved in 0.949662062 seconds and used 81904 kilobytes of memory.
+## LU solved in 0.000109433 seconds and used 81904 kilobytes of memory.
 ```
 
 ```julia
@@ -2218,7 +2214,7 @@ println("LU's relative speedup is $(cramer_time/lu_time) and relative decrease i
 ```
 
 ```
-## LU's relative speedup is 0.26818224102122756 and relative decrease in memory is 197.7499511623364.
+## LU's relative speedup is 327.1239114343937 and relative decrease in memory is 197.7499511623364.
 ```
 
 ---
