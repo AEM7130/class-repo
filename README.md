@@ -36,16 +36,14 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 ## Grading 
 
 - Class participation: 10%
-- Presentation of a numerical paper: 10%
-- Final project proposal: 15%
-- Final project: 25%
+- Presentation of a numerical paper: 15%
+- Final project: 35%
 - Problem sets: 40%
 
 ## Important dates
 
 - [Final project proposals due: March 13](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html)
-- Final project presentations: April 29
-- Final project paper due: April 30
+- Final project due: May 7
 
 ## Assignments
 
@@ -61,9 +59,9 @@ In addition to submitting problem sets you will be required to do a reproduction
 
 ### Final project ([proposal link here (no longer required)](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html))
 
-There is a final project for the course, due at the end of the semester. You may select one of two options:
+There is a final project for the course, due at the end of the semester. For the project you may either write a paper of up to 7 pages, or record a presentation of up to 20 minutes. You may select one of two options:
 
-1. Begin a new computationally-driven research paper. The paper should
+1. Begin a new computationally-driven research project. The project should
     1. Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.
     2. Analytically develop the model, provide proofs for theoretical results if there are any.
     3. Describe how you solve or estimate the model.
@@ -74,10 +72,9 @@ There is a final project for the course, due at the end of the semester. You may
     3. Have preliminary results.
     4. If using alternative techniques, compare outcomes or performance against the original methodology in the paper.
 
-The paper should be up to 7 pages in length and is due the day after the final class. 
 
 ### [Computational paper presentations](https://rawcdn.githack.com/AEM7130/spring-2020/fb175a76affc956dd0cf1fe681dc1dc0c979eb71/paper_presentation/paper_presentation.html)
-Starting near the middle of the course, one student a week will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. More information will come later in the course.
+Starting near the middle of the course, one student a week will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. You may present the paper in class or record a video and submit it on Canvas.
 
 ## Course Schedule
 
@@ -133,7 +130,7 @@ Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT
 
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
-### March 4: Solving discrete time dynamic models
+### April 8: Solving discrete time dynamic models
 
 **Theory**: value function iteration, policy iteration, time iteration
 
@@ -149,7 +146,7 @@ Lemoine, Derek and Christian Traeger (2014) “Watch Your Step: Optimal policy i
 
 Springborn, Michael and James N. Sanchirico (2013) “A density projection approach for non-trivial information dynamics: Adaptive management of stochastic natural resources,” Journal of Environmental Economics and Management, Vol. 66, No. 3, pp. 609–624.
 
-### March 11: Continuous time optimal control
+### April 15: Continuous time optimal control
 
 **Theory**: maximum principle, hamiltonians
 
@@ -159,7 +156,7 @@ Caputo, Michael Ralph (2005) Foundations of dynamic economic analysis: optimal c
 
 Anderson, Soren T, Ryan Kellogg, and Stephen W Salant (2018) “Hotelling under pressure,” Journal of Political Economy, Vol. 126, No. 3, pp. 984–1026.
 
-### March 18: Solving continuous time dynamic models
+### April 22: Solving continuous time dynamic models
 
 **Theory**: shooting, backwards shooting
 
@@ -175,23 +172,9 @@ Lemoine, Derek and Ivan Rudik (2017) “Steering the climate system: using inert
 
 Maler, Karl Goran, Anastasios Xepapadeas, and Aart De Zeeuw (2003) “The Economics of Shallow Lakes,” Environmental and Resource Economics, Vol. 26, No. 4, pp. 603–624.
 
-### March 25: Efficient methods for expectations in high dimensions
+### April 29: Machine learning
 
-**Theory**: monte carlo, markov chain monte carlo, hamiltonian monte carlo
-
-Betancourt, Michael (2017) “A conceptual introduction to Hamiltonian Monte Carlo,” arXiv preprint arXiv:1701.02434.
-
-Chib, Siddhartha and Edward Greenberg (1995) “Understanding the Metropolis-Hastings Algorithm,” The American Statistician, Vol. 49, No. 4, pp. 327–335.
-
-Chib, Siddhartha and Edward Greenberg (1996) “Markov Chain Monte Carlo Simulation Methods in Econometrics,” Econometric Theory, Vol. 12, No. 3, pp. 409–431.
-
-**Applications**: uncertainty shocks
-
-Orlik, Anna and Laura Veldkamp (2014) “Understanding uncertainty shocks and the role of the black swan.”
-
-### April 8: Machine learning
-
-**Theory**: regularization and sparsity, prediction and model selection
+**Theory**: regularization and sparsity, non-parametric methods, prediction and model selection
 
 [Mullainathan, Sendhil, and Jann Spiess (2017) "Machine learning: an applied econometric approach." Journal of Economic Perspectives 31, No. 2, 87-106.](https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.31.2.87)
 
@@ -203,7 +186,7 @@ Orlik, Anna and Laura Veldkamp (2014) “Understanding uncertainty shocks and th
 
 Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) "Machine learning from schools about energy efficiency." No. w23908. National Bureau of Economic Research.
 
-### April 15: Machine learning
+### May 6: Machine learning
 
 **Theory**: trees, bagging, boosting, ensembles, neural networks
 
@@ -214,9 +197,3 @@ Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous 
 **Applications**: causal trees for heterogeneous treatment effects
 
 Prest, Brian (2020) "Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing." Journal of the Association of Environmental and Resource Economists 7, no. 1, pp. 103-143.
-
-### April 22: Cloud computing
-
-**Applications**: google compute engine, amazon elastic compute cloud
-
-### April 29: Final project presentations
