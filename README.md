@@ -130,7 +130,7 @@ Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT
 
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
-### April 8: Solving discrete time dynamic models
+### April 8: [Solving discrete time dynamic models](https://rawcdn.githack.com/AEM7130/spring-2020/e84319aafa0ccf0b882dd802973d1cd494fb2af5/lecture_notes/lecture_7/7_solution_methods.html)
 
 **Theory**: value function iteration, policy iteration, time iteration
 
