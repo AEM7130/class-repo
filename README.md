@@ -172,7 +172,7 @@ Lemoine, Derek and Ivan Rudik (2017) “Steering the climate system: using inert
 
 Maler, Karl Goran, Anastasios Xepapadeas, and Aart De Zeeuw (2003) “The Economics of Shallow Lakes,” Environmental and Resource Economics, Vol. 26, No. 4, pp. 603–624.
 
-### April 29: Machine learning
+### April 29: [Machine learning](https://rawcdn.githack.com/AEM7130/spring-2020/c9b3ba72b1d4472a3f4dccce04d22d61eaf49ea7/lecture_notes/lecture_10/10_machine_learning.html)
 
 **Theory**: regularization and sparsity, non-parametric methods, prediction and model selection
 
@@ -186,7 +186,7 @@ Maler, Karl Goran, Anastasios Xepapadeas, and Aart De Zeeuw (2003) “The Econom
 
 Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) "Machine learning from schools about energy efficiency." No. w23908. National Bureau of Economic Research.
 
-### May 6: Machine learning
+### May 6: [Machine learning](https://rawcdn.githack.com/AEM7130/spring-2020/c9b3ba72b1d4472a3f4dccce04d22d61eaf49ea7/lecture_notes/lecture_10/10_machine_learning.html)
 
 **Theory**: trees, bagging, boosting, ensembles, neural networks
 
