@@ -55,7 +55,7 @@ In addition to submitting problem sets you will be required to do a reproduction
 - [Problem set 1](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/1_ps/1_ps.ipynb): Due Feb 17
 - [Problem set 2](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/2_ps/2_ps.ipynb): Due March 1
 - [Problem set 3](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/3_ps/3_ps_approx.ipynb): Due March 22
-- Problem set 4: TBD
+- [Problem set 4](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/3_ps/3_ps_approx.ipynb): Due May 1
 
 ### Final project ([proposal link here (no longer required)](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html))
 
