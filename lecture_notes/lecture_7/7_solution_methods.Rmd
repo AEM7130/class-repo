@@ -22,6 +22,7 @@ output:
 2. Value function iteration
 3. Fixed point iteration
 4. Time iteration
+5. VFI + discretization
 
 ---
 
