@@ -758,7 +758,7 @@ coefficients = zeros(params_fpi.num_points)
 
 # Step 3: Select a convergence rule
 
-Rule: maximum change in value on the grid < 0.001%
+Rule: maximum change in consumption on the grid < 0.001%
 
 ---
 
@@ -828,9 +828,9 @@ basis_inverse = basis_matrix\I
 
 ---
 
-# Step 4b: Evaluate the continuation value
+# Step 4b: Evaluate the policy function
 
-To loop and maximize the Bellman at each grid point we need a function `eval_policy_function(coefficients, capital, params_fpi)` that lets us evaluate the continuation value given a vector of coefficients `coefficients`, a vector of capital nodes `capital`, and the parameters `params_fpi` to scale capital back into $[-1,1]$
+To loop and maximize the Bellman at each grid point we need a function `eval_policy_function(coefficients, capital, params_fpi)` that lets us evaluate the policy function given a vector of coefficients `coefficients`, a vector of capital nodes `capital`, and the parameters `params_fpi` to scale capital back into $[-1,1]$
 
 --
 
@@ -841,7 +841,7 @@ It needs to:
 
 ---
 
-# Step 4b: Evaluate the continuation value
+# Step 4b: Evaluate the policy function
 
 Here's a simple way to do it:
 
@@ -911,8 +911,7 @@ function solve_fpi(params_fpi, basis_inverse, basis_matrix, grid, capital_grid, 
     error = 1e10
     iteration = 1
     consumption = similar(coefficients)
-    consumption_prev = similar(coefficients)
-    coefficients_prev = similar(coefficients)
+    consumption_prev, coefficients_prev = similar(coefficients), similar(coefficients)
     coefficients_store = Vector{Vector}(undef, 1)
     coefficients_store[1] = coefficients
     while error > params_fpi.tolerance
@@ -923,8 +922,7 @@ function solve_fpi(params_fpi, basis_inverse, basis_matrix, grid, capital_grid, 
             coefficients = basis_inverse*consumption
         end
         error = maximum(abs.((consumption - consumption_prev)./(consumption_prev)))
-        coefficients_prev = deepcopy(coefficients)
-        consumption_prev = deepcopy(consumption)
+        coefficients_prev, consumption_prev = deepcopy(coefficients), deepcopy(consumption)
         if mod(iteration, 5) == 0
             println("Maximum Error of $(error) on iteration $(iteration).")
             append!(coefficients_store, [coefficients])
@@ -1165,11 +1163,9 @@ especially as the number of dimensions grows
 # Method 3: Time iteration
 
 .hi-blue[Step 5:] While convergence criterion $>$ tolerance **(outer loop)**
-  + Select a rule for convergence
-  + Construct the grid and basis matrix
-  + While convergence criterion $>$ tolerance **(inner loop)**
-    + Start iteration $p$
-    + Substitute $C(k^j_{t+1};b^{(p)})$ into both sides
+  + Start iteration $p$
+  + For each grid point **(inner loop)**
+    + Substitute $C(k^j_{t+1};b^{(p)})$ in for $t+1$ consumption
     + Recover the $c^{(p+1)}(k^j_t) \in \mathbb{R}$ scalar values that satisfy the equation
   + Fit the polynomial to the values and recover a new vector of coefficients $\hat{b}^{(p+1)}$
   + Compute the vector of coefficients $b^{(p+1)}$ for iteration $p+1$ by
