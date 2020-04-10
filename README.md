@@ -132,7 +132,7 @@ Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide
 
 ### April 8: [Solving discrete time dynamic models](https://rawcdn.githack.com/AEM7130/spring-2020/e84319aafa0ccf0b882dd802973d1cd494fb2af5/lecture_notes/lecture_7/7_solution_methods.html)
 
-**Theory**: value function iteration, policy iteration, time iteration
+**Theory**: value function iteration, policy iteration, time iteration, VFI + discretization
 
 Aruoba, S Boragan, Jesus Fernandez-Villaverde, and Juan F Rubio-Ramirez (2006) “Comparing solution methods for dynamic equilibrium economies,” Journal of Economic Dynamics and Control, Vol. 30, No. 12, pp. 2477–2508.
 
