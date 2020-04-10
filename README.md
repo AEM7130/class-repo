@@ -54,8 +54,8 @@ In addition to submitting problem sets you will be required to do a reproduction
 
 - [Problem set 1](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/1_ps/1_ps.ipynb): Due Feb 17
 - [Problem set 2](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/2_ps/2_ps.ipynb): Due March 1
-- [Problem set 3](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/3_ps/3_ps_approx.ipynb): Due March 22
-- Problem set 4: TBD
+- [Problem set 3](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/3_ps/3_ps.ipynb): Due March 22
+- [Problem set 4](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/4_ps/4_ps.ipynb): Due May 1
 
 ### Final project ([proposal link here (no longer required)](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html))
 
@@ -130,7 +130,7 @@ Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT
 
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
-### April 8: Solving discrete time dynamic models
+### April 8: [Solving discrete time dynamic models](https://rawcdn.githack.com/AEM7130/spring-2020/e84319aafa0ccf0b882dd802973d1cd494fb2af5/lecture_notes/lecture_7/7_solution_methods.html)
 
 **Theory**: value function iteration, policy iteration, time iteration
 
@@ -172,7 +172,7 @@ Lemoine, Derek and Ivan Rudik (2017) “Steering the climate system: using inert
 
 Maler, Karl Goran, Anastasios Xepapadeas, and Aart De Zeeuw (2003) “The Economics of Shallow Lakes,” Environmental and Resource Economics, Vol. 26, No. 4, pp. 603–624.
 
-### April 29: Machine learning
+### April 29: [Machine learning](https://rawcdn.githack.com/AEM7130/spring-2020/c9b3ba72b1d4472a3f4dccce04d22d61eaf49ea7/lecture_notes/lecture_10/10_machine_learning.html)
 
 **Theory**: regularization and sparsity, non-parametric methods, prediction and model selection
 
@@ -186,7 +186,7 @@ Maler, Karl Goran, Anastasios Xepapadeas, and Aart De Zeeuw (2003) “The Econom
 
 Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) "Machine learning from schools about energy efficiency." No. w23908. National Bureau of Economic Research.
 
-### May 6: Machine learning
+### May 6: [Machine learning](https://rawcdn.githack.com/AEM7130/spring-2020/c9b3ba72b1d4472a3f4dccce04d22d61eaf49ea7/lecture_notes/lecture_10/10_machine_learning.html)
 
 **Theory**: trees, bagging, boosting, ensembles, neural networks
 
