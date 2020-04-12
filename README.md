@@ -130,7 +130,7 @@ Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT
 
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
-### April 8: [Solving discrete time dynamic models](https://rawcdn.githack.com/AEM7130/spring-2020/e84319aafa0ccf0b882dd802973d1cd494fb2af5/lecture_notes/lecture_7/7_solution_methods.html)
+### April 8, 15: [Solving discrete time dynamic models](https://rawcdn.githack.com/AEM7130/spring-2020/e84319aafa0ccf0b882dd802973d1cd494fb2af5/lecture_notes/lecture_7/7_solution_methods.html)
 
 **Theory**: value function iteration, policy iteration, time iteration, VFI + discretization
 
@@ -140,25 +140,17 @@ Cai, Yongyang and Kenneth L Judd (2014) Advances in Numerical Dynamic Programmin
 
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
-**Applications**: climate change, bioeconomics
+**Applications**: climate change, bioeconomics, 
 
 Lemoine, Derek and Christian Traeger (2014) “Watch Your Step: Optimal policy in a tipping climate,” American Economic Journal: Economic Policy, Vol. 6, No. 1.
 
 Springborn, Michael and James N. Sanchirico (2013) “A density projection approach for non-trivial information dynamics: Adaptive management of stochastic natural resources,” Journal of Environmental Economics and Management, Vol. 66, No. 3, pp. 609–624.
 
-### April 15: Continuous time optimal control
+### April 22: [Continuous time optimal control](https://github.com/AEM7130/spring-2020/blob/master/lecture_notes/lecture_8/8_optimal_control.html)
 
-**Theory**: maximum principle, hamiltonians
+**Theory**: maximum principle, hamiltonians, shooting, backwards shooting
 
 Caputo, Michael Ralph (2005) Foundations of dynamic economic analysis: optimal control theory and applications: Cambridge University Press.
-
-**Applications**: oil extraction
-
-Anderson, Soren T, Ryan Kellogg, and Stephen W Salant (2018) “Hotelling under pressure,” Journal of Political Economy, Vol. 126, No. 3, pp. 984–1026.
-
-### April 22: Solving continuous time dynamic models
-
-**Theory**: shooting, backwards shooting
 
 Brunner, Martin and Holger Strulik (2002) “Solution of perfect foresight saddlepoint problems: A simple method and applications,” Journal of Economic Dynamics and Control, Vol. 26, No. 5, pp. 737–753.
 
@@ -166,34 +158,40 @@ Judd (1998, Chapter 10)
 
 Trimborn, Timo, Karl-Josef Koch, and Thomas M. Steger (2008) “Multidimensional Transitional Dynamics: a Simple Numerical Procedure,” Macroeconomic Dynamics, Vol. 12, No. 03, pp. 301– 319.
 
-**Applications**: climate change, shallow lakes
+**Applications**: oil extraction, climate change, shallow lakes
 
 Lemoine, Derek and Ivan Rudik (2017) “Steering the climate system: using inertia to lower the cost of policy,” American Economic Review, Vol. 107, No. 10, pp. 2947–57.
 
 Maler, Karl Goran, Anastasios Xepapadeas, and Aart De Zeeuw (2003) “The Economics of Shallow Lakes,” Environmental and Resource Economics, Vol. 26, No. 4, pp. 603–624.
 
-### April 29: [Machine learning](https://rawcdn.githack.com/AEM7130/spring-2020/c9b3ba72b1d4472a3f4dccce04d22d61eaf49ea7/lecture_notes/lecture_10/10_machine_learning.html)
+Anderson, Soren T, Ryan Kellogg, and Stephen W Salant (2018) “Hotelling under pressure,” Journal of Political Economy, Vol. 126, No. 3, pp. 984–1026.
 
-**Theory**: regularization and sparsity, non-parametric methods, prediction and model selection
+### April 29: [Advanced methods for discrete time models](https://rawcdn.githack.com/AEM7130/spring-2020/2bc4cf4b4329fad81bc1d9408c951877af1dfb70/lecture_notes/lecture_9/9_advanced_methods.html)
 
-[Mullainathan, Sendhil, and Jann Spiess (2017) "Machine learning: an applied econometric approach." Journal of Economic Perspectives 31, No. 2, 87-106.](https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.31.2.87)
+**Theory**: 
 
-[Athey, S., & Imbens, G. W. (2019) Machine Learning Methods Economists Should Know About.](https://www.gsb.stanford.edu/gsb-cmis/gsb-cmis-download-auth/476281)
+Carroll, Christopher D. (2006) “The method of endogenous gridpoints for solving dynamic stochastic optimization problems,” Economics Letters, Vol. 91, No. 3, pp. 312–320.
 
-[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 3, 4 and 7.](https://web.stanford.edu/~hastie/ElemStatLearn/)
+Maliar, Lilia and Serguei Maliar (2014) Numerical Methods for Large-Scale Dynamic Economic
+Models, Vol. 3: Elsevier B.V. pp.325–477.
 
-**Applications**: LASSO for counterfactuals
+Puterman, Martin L. and Moon Chirl Shin (1978) “Modified Policy Iteration Algorithms for Dis- counted Markov Decision Problems,” Management Science, Vol. 24, No. 11, pp. pp. 1127–1137.
 
-Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) "Machine learning from schools about energy efficiency." No. w23908. National Bureau of Economic Research.
 
 ### May 6: [Machine learning](https://rawcdn.githack.com/AEM7130/spring-2020/c9b3ba72b1d4472a3f4dccce04d22d61eaf49ea7/lecture_notes/lecture_10/10_machine_learning.html)
 
-**Theory**: trees, bagging, boosting, ensembles, neural networks
+**Theory**: linear models, non-parametric models, regularization, cross-validation, boosting, bagging
 
 [Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 8, 9, 10, and 15.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous causal effects." Proceedings of the National Academy of Sciences 113, no. 27, pp. 7353-7360.
 
-**Applications**: causal trees for heterogeneous treatment effects
+[Mullainathan, Sendhil, and Jann Spiess (2017) "Machine learning: an applied econometric approach." Journal of Economic Perspectives 31, No. 2, 87-106.](https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.31.2.87)
+
+[Athey, S., & Imbens, G. W. (2019) Machine Learning Methods Economists Should Know About.](https://www.gsb.stanford.edu/gsb-cmis/gsb-cmis-download-auth/476281)
+
+**Applications**: LASSO for counterfactuals, causal trees for heterogeneous treatment effects
+
+Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) "Machine learning from schools about energy efficiency." No. w23908. National Bureau of Economic Research.
 
 Prest, Brian (2020) "Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing." Journal of the Association of Environmental and Resource Economists 7, no. 1, pp. 103-143.
