@@ -146,7 +146,7 @@ Lemoine, Derek and Christian Traeger (2014) “Watch Your Step: Optimal policy i
 
 Springborn, Michael and James N. Sanchirico (2013) “A density projection approach for non-trivial information dynamics: Adaptive management of stochastic natural resources,” Journal of Environmental Economics and Management, Vol. 66, No. 3, pp. 609–624.
 
-### April 22: [Continuous time optimal control](https://github.com/AEM7130/spring-2020/blob/master/lecture_notes/lecture_8/8_optimal_control.html)
+### April 22: [Continuous time optimal control](https://rawcdn.githack.com/AEM7130/spring-2020/a3e23dae6d910b41729a05358685e2265a6d5409/lecture_notes/lecture_8/8_optimal_control.html)
 
 **Theory**: maximum principle, hamiltonians, shooting, backwards shooting
 
@@ -168,7 +168,7 @@ Anderson, Soren T, Ryan Kellogg, and Stephen W Salant (2018) “Hotelling under 
 
 ### April 29: [Advanced methods for discrete time models](https://rawcdn.githack.com/AEM7130/spring-2020/2bc4cf4b4329fad81bc1d9408c951877af1dfb70/lecture_notes/lecture_9/9_advanced_methods.html)
 
-**Theory**: 
+**Theory**: regression, endogenous grids, envelope condition method, modified policy iteration
 
 Carroll, Christopher D. (2006) “The method of endogenous gridpoints for solving dynamic stochastic optimization problems,” Economics Letters, Vol. 91, No. 3, pp. 312–320.
 
