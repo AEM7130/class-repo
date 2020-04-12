@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 9</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Ivan Rudik" />
+    <script src="9_advanced_methods_files/header-attrs-2.1/header-attrs.js"></script>
+    <link href="9_advanced_methods_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="9_advanced_methods_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="9_advanced_methods_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="my-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Lecture 9
+## Advanced Methods for Numerical Dynamic Models
+### Ivan Rudik
+### AEM 7130
+
+---
+
+
+# Roadmap
+
+1. Regression
+2. Endogenous grid method
+3. Envelope condition method
+4. Modified policy iteration
+
+---
+
+# Chebyshev regression
+
+Chebyshev regression works just like normal regression
+
+--
+
+For a degree `\(n\)` polynomial approximation, we choose `\(m &gt; n+1\)` grid points
+
+--
+
+We then build our basis function matrix `\(\Psi\)`, but instead of being `\(n \times n\)` it is `\(m \times n\)`
+
+--
+
+Finally we use the standard least-squares equation
+`$$c = (\Psi'\Psi)^{-1}\Psi'y$$`
+
+--
+
+Fun fact: `\((\Psi'\Psi)^{-1}\Psi'\)` is a pseudoinverse called the Moore-Penrose matrix inverse
+
+--
+
+We can apply Chebyshev regression to even our regular tensor approaches, this has the advantage of dropping higher order terms which often oscillate due to error, giving us a smoother approximation
+
+---
+
+# Chebyshev regression: practice
+
+Go back to our original VFI example and convert it to a regression approach
+
+
+```julia
+using LinearAlgebra
+using Optim 
+using Plots
+params = (alpha = 0.75, beta = 0.95, eta = 2,
+                steady_state = (0.75*0.95)^(1/(1 - 0.75)), k_0 = (0.75*0.95)^(1/(1 - 0.75))*.75,
+                capital_upper = (0.75*0.95)^(1/(1 - 0.75))*1.5, capital_lower = (0.75*0.95)^(1/(1 - 0.75))/2,
+                num_basis = 7, num_points = 9, tolerance = 0.0001, fin_diff = 1e-6, mpi_start = 5);
+
+coefficients = zeros(params.num_basis);
+coefficients[1:2] = [100 5];
+```
+
+---
+
+# Chebyshev regression: practice
+
+
+```julia
+cheb_nodes(n) = cos.(pi * (2*(1:n) .- 1)./(2n))
+```
+
+```
+## cheb_nodes (generic function with 1 method)
+```
+
+```julia
+grid = cheb_nodes(params.num_points) # [-1, 1] grid
+```
+
+```
+## 9-element Array{Float64,1}:
+##   0.984807753012208    
+##   0.8660254037844387   
+##   0.6427876096865394   
+##   0.3420201433256688   
+##   6.123233995736766e-17
+##  -0.3420201433256687   
+##  -0.6427876096865394   
+##  -0.8660254037844387   
+##  -0.984807753012208
+```
+
+```julia
+expand_grid(grid, params) = (1 .+ grid)*(params.capital_upper - params.capital_lower)/2 .+ params.capital_lower
+```
+
+```
+## expand_grid (generic function with 1 method)
+```
+
+```julia
+capital_grid = expand_grid(grid, params)
+```
+
+```
+## 9-element Array{Float64,1}:
+##  0.3846146682813062 
+##  0.3693086795455801 
+##  0.3405428302079919 
+##  0.3017867062373766 
+##  0.2577148681640623 
+##  0.21364303009074814
+##  0.17488690612013272
+##  0.1461210567825446 
+##  0.13081506804681853
+```
+
+---
+
+# Chebyshev regression: practice
+
+
+```julia
+# Chebyshev polynomial function
+function cheb_polys(x, n)
+    if n == 0
+        return 1                    # T_0(x) = 1
+    elseif n == 1
+        return x                    # T_1(x) = x
+    else
+        cheb_recursion(x, n) =
+            2x.*cheb_polys.(x, n - 1) .- cheb_polys.(x, n - 2)
+        return cheb_recursion(x, n) # T_n(x) = 2xT_{n-1}(x) - T_{n-2}(x)
+    end
+end;
+
+basis_matrix = [cheb_polys.(grid, n) for n = 0:params.num_basis - 1];
+basis_matrix = hcat(basis_matrix...);
+basis_inverse = inv(basis_matrix'*basis_matrix)*(basis_matrix'); # pre-compute pseudoinverse for regressions
+```
+
+```
+## 7×9 Array{Float64,2}:
+##  0.111111   0.111111      0.111111   …   0.111111    0.111111      0.111111
+##  0.218846   0.19245       0.142842      -0.142842   -0.19245      -0.218846
+##  0.208821   0.111111     -0.0385885     -0.0385885   0.111111      0.208821
+##  0.19245   -5.15976e-17  -0.19245        0.19245     5.02235e-18  -0.19245 
+##  0.170232  -0.111111     -0.208821      -0.208821   -0.111111      0.170232
+##  0.142842  -0.19245      -0.0760045  …   0.0760045   0.19245      -0.142842
+##  0.111111  -0.222222      0.111111       0.111111   -0.222222      0.111111
+```
+
+---
+
+# Chebyshev regression: practice
+
+
+```julia
+shrink_grid(capital) = 2*(capital - params.capital_lower)/(params.capital_upper - params.capital_lower) - 1;
+eval_value_function(coefficients, capital, params) = 
+    coefficients' * [cheb_polys.(shrink_grid(capital), n) for n = 0:params.num_basis - 1];
+```
+
+---
+
+# Chebyshev regression: practice
+
+
+```julia
+function loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+    max_value = -.0*ones(params.num_points);
+    consumption_store = -.0*ones(params.num_points);
+
+    for (iteration, capital) in enumerate(capital_grid)
+        function bellman(consumption)
+            capital_next = capital^params.alpha - consumption
+            cont_value = eval_value_function(coefficients, capital_next, params)
+            value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
+            return -value_out
+        end;
+
+        results = optimize(bellman, 0.00*capital^params.alpha, 0.99*capital^params.alpha)
+        max_value[iteration] = -Optim.minimum(results)
+        consumption_store[iteration] = Optim.minimizer(results)
+    end
+
+    return max_value, consumption_store
+end;
+```
+
+---
+
+# Chebyshev regression: practice
+
+
+```julia
+function solve_vfi_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+
+    max_value = -.0*ones(params.num_points);
+    error = 1e10;
+    value_prev = .1*ones(params.num_points);
+    coefficients_store = Vector{Vector}(undef, 1)
+    coefficients_store[1] = coefficients
+    iteration = 1
+
+    while error &gt; params.tolerance
+        max_value, consumption_store = loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+        coefficients = basis_inverse*max_value
+        error = maximum(abs.((max_value - value_prev)./(value_prev)))
+        value_prev = deepcopy(max_value)
+        if mod(iteration, 5) == 0
+            println("Maximum Error of $(error) on iteration $(iteration).")
+            append!(coefficients_store, [coefficients])
+        end
+        iteration += 1
+    end
+
+    return coefficients, max_value, coefficients_store
+end;
+```
+---
+
+# Chebyshev regression: practice
+
+
+```julia
+@time solution_coeffs, max_value, intermediate_coefficients =
+    solve_vfi_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+```
+
+```
+## Maximum Error of 0.33656462321563774 on iteration 5.
+## Maximum Error of 15.324437748784836 on iteration 10.
+## Maximum Error of 0.19176452946373068 on iteration 15.
+## Maximum Error of 0.07999511358219019 on iteration 20.
+## Maximum Error of 0.04557549396818246 on iteration 25.
+## Maximum Error of 0.029268260045591604 on iteration 30.
+## Maximum Error of 0.02000715481671002 on iteration 35.
+## Maximum Error of 0.014198326541472671 on iteration 40.
+## Maximum Error of 0.01032384690730612 on iteration 45.
+## Maximum Error of 0.007632084134370365 on iteration 50.
+## Maximum Error of 0.005708492913566279 on iteration 55.
+## Maximum Error of 0.004305925733500575 on iteration 60.
+## Maximum Error of 0.003268177593053356 on iteration 65.
+## Maximum Error of 0.0024920065993268197 on iteration 70.
+## Maximum Error of 0.001906769094882636 on iteration 75.
+## Maximum Error of 0.0014628021447215872 on iteration 80.
+## Maximum Error of 0.0011244465442097609 on iteration 85.
+## Maximum Error of 0.0008656712708535016 on iteration 90.
+## Maximum Error of 0.0006672266517799315 on iteration 95.
+## Maximum Error of 0.000514733393872197 on iteration 100.
+## Maximum Error of 0.00039736548359291897 on iteration 105.
+## Maximum Error of 0.0003069220419160947 on iteration 110.
+## Maximum Error of 0.00023716109578189316 on iteration 115.
+## Maximum Error of 0.00018331403775124916 on iteration 120.
+## Maximum Error of 0.00014172736178274148 on iteration 125.
+## Maximum Error of 0.00010959565499938588 on iteration 130.
+##   1.291874 seconds (10.23 M allocations: 263.315 MiB, 5.71% gc time)
+```
+
+```
+## ([-194.51557325731727, 14.142103107652218, -2.664422302437508, 0.5749555213582767, -0.13337383271706216, 0.03456984924260453, -0.008457437727766859], [-182.67782728820958, -183.55636277379747, -185.34986962790688, -188.12961711272533, -191.9763675748714, -196.87361104938898, -202.5141893283177, -207.98861711009968, -211.57369745053845], Array{T,1} where T[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [36.80824360742953, 8.65502391314503, -1.4832883088225293, 0.31548230941630884, -0.07041795249656246, 0.015491954698059196, -0.0031249287075838517], [-15.489112132969481, 12.459720560253224, -2.3788570165631624, 0.5220670595504693, -0.12339307775844421, 0.03086802153716839, -0.00702524850731967], [-56.14914213042879, 13.653300398415219, -2.5872932212827315, 0.5617619282534481, -0.1316736705756778, 0.03392533675690679, -0.008112597032665647], [-87.56105719304846, 14.000160018116759, -2.642105564447988, 0.571081278711894, -0.13292760400928927, 0.03441677445977476, -0.008364457877918952], [-111.84446197783173, 14.101017029856141, -2.657927389947883, 0.573807823982623, -0.1332412706281012, 0.034526597222960476, -0.008430772885018811], [-130.62706192298643, 14.130236142660216, -2.6625399953997935, 0.5746203316572256, -0.13333474637691367, 0.034557277217572846, -0.008449714776368467], [-145.15842871089086, 14.138678576070816, -2.6638782789057345, 0.5748583874456621, -0.13336245582572914, 0.03456620363025209, -0.008455204294218532], [-156.40186295227755, 14.141115170781816, -2.6642652585234075, 0.5749274575028451, -0.13337054025394224, 0.03456879532539858, -0.008456792812715719], [-165.10162644541984, 14.141818128829755, -2.664376990277084, 0.5749474217843868, -0.13337288189922347, 0.03456954498561515, -0.008457251630840545]  …  [-191.03462199910504, 14.142103093996859, -2.664422300265933, 0.5749555209700219, -0.13337383267147374, 0.034569849228034855, -0.008457437718856653], [-191.89971736884232, 14.142103103713517, -2.664422301811129, 0.5749555212463093, -0.13337383270392422, 0.03456984923841233, -0.008457437725191141], [-192.56911167429843, 14.14210310651621, -2.6644223022568596, 0.5749555213259399, -0.13337383271327496, 0.03456984924143214, -0.008457437727035], [-193.08707622731038, 14.142103107324651, -2.6644223023854323, 0.5749555213489188, -0.13337383271596792, 0.034569849242267026, -0.008457437727564354], [-193.487867324668, 14.142103107557851, -2.664422302422551, 0.5749555213555837, -0.1333738327167424, 0.03456984924251927, -0.008457437727695805], [-193.79799183570455, 14.142103107625054, -2.664422302433209, 0.5749555213575164, -0.1333738327169911, 0.034569849242593875, -0.0084574377277562], [-194.03796027059087, 14.142103107644495, -2.6644223024362788, 0.5749555213580493, -0.13337383271706216, 0.034569849242608086, -0.008457437727766859], [-194.22364327110608, 14.14210310765003, -2.6644223024371456, 0.5749555213582056, -0.13337383271706926, 0.0345698492426223, -0.008457437727759753], [-194.3673212373222, 14.142103107651693, -2.6644223024374014, 0.5749555213582624, -0.13337383271707637, 0.034569849242618744, -0.008457437727763306], [-194.4784965087188, 14.142103107652154, -2.6644223024374867, 0.5749555213582696, -0.13337383271707637, 0.0345698492426223, -0.008457437727766859]])
+```
+
+
+---
+
+# Chebyshev regression: practice
+
+
+```julia
+function simulate_model(params, solution_coeffs, time_horizon = 100)
+    capital_store = zeros(time_horizon + 1)
+    consumption_store = zeros(time_horizon)
+    capital_store[1] = params.k_0
+
+    for t = 1:time_horizon
+        capital = capital_store[t]
+        
+        function bellman(consumption)
+            capital_next = capital^params.alpha - consumption
+            cont_value = eval_value_function(solution_coeffs, capital_next, params)
+            value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
+            return -value_out
+        end;
+
+        results = optimize(bellman, 0.0, capital^params.alpha)
+        consumption_store[t] = Optim.minimizer(results)
+        capital_store[t+1] = capital^params.alpha - consumption_store[t]
+    end
+
+    return consumption_store, capital_store
+end;
+```
+
+---
+
+# Chebyshev regression: practice
+
+&lt;img src="9_advanced_methods_files/figure-html/unnamed-chunk-9-J1.png" width="667" /&gt;
+
+---
+
+# Endogenous grid method (Carroll, 2006)
+
+Suppose now we are working with a model with an inelastic labor supply with logarithmic utility `\(\eta=1\)`,
+and capital that fully depreciates
+
+--
+
+Leisure does not enter the utility function nor does labor enter the production function, i.e. `\(B = 0, l = 1\)`
+
+--
+
+This yields closed form solutions to the model
+`\begin{align}
+ 	k_{t+1} &amp;= \beta \alpha \theta_t k_t^\alpha \notag\\
+ 	c_t &amp;= (1-\beta\alpha)\theta_t k_t^\alpha
+\end{align}`
+
+--
+
+The endogenous grid method was introduced by Carroll (2006) for value function iteration
+
+---
+
+# Endogenous grid method (Carroll, 2006)
+
+The idea behind EGM is .hi-blue[super simple]
+
+--
+
+instead of constructing a grid on the current states, construct the grid on .hi-red[future states] (making current states endogenous)
+
+--
+
+This works to our advantage because typically it is easier to solve for `\(k\)` given `\(k'\)` than the reverse
+
+--
+
+Let's see how this works
+
+---
+
+# Endogenous grid method
+
+1. Choose a grid `\(\left\{k_m',\theta_m\right\}_{m=1,...,M}\)` on which the value function is approximated
+2. Choose nodes `\(\epsilon_j\)` and weights `\(\omega_j\)`, `\(j=1,...,J\)` for approximating integrals.
+3. Compute next period productivity, `\(\theta'_{m,j} = \theta_m^\rho exp(\epsilon_j)\)`.
+4. Solve for `\(b\)` and `\(\left\{ c_m,k_m \right\}\)` such that
+  + (inner loop) The quantities `\(\left\{c_m,k_m	\right\}\)` solve the following given `\(V(k'_m,\theta'_m)\)`:
+      - `\(u'(c_m) = \beta E\left[ V_k(k'_m,\theta'_{m,j}) \right]\)`,
+      - `\(c_m + k'_m = \theta_m f(k_m) + (1-\delta)k_m\)`
+  + (outer loop) The value function `\(\hat{V}(k,\theta;b)\)` solves the following given `\(\{ c_m,k'_m \}\)`:
+      - `\(\hat{V}(k_m,\theta_m;b) = u(c_m) + \beta \sum_{j=1}^J \omega_j \left[\hat{V}(k'_m,\theta'_{m,j};b)\right]\)`
+
+---
+
+# Endogenous grid method
+
+.hi-blue[Focus the inner loop of VFI:]  
++ (inner loop) The quantities `\(\left\{c_m,k_m	\right\}\)` solve the following given `\(V(k'_m,\theta'_m)\)`:
+    - `\(u'(c_m) = \beta E\left[ V_k(k'_m,\theta'_{m,j}) \right]\)`,
+    - `\(c_m + k'_m = \theta_m f(k_m) + (1-\delta)k_m\)`
+
+Notice that the values of `\(k'\)` are fixed since they are grid points
+
+--
+
+This means that we can pre-compute the expectations of the value function and value function derivatives and let `\(W(k',\theta) = E[V(k',\theta';b)]\)`
+
+--
+
+We can then use the consumption FOC to solve for consumption, `\(c = [\beta W_k(k',\theta)]^{-1/\gamma}\)` and then rewrite the resource constraint as,
+`$$(1-\delta)k + \theta k^\alpha = [\beta W_k(k',\theta)]^{-1/\gamma} + k'$$`
+
+---
+
+# Endogenous grid method
+
+This is easier to solve than the necessary conditions we would get out of standard value function iteration
+`$$(k'-(1-\delta)k - \theta k^\alpha)^{-\gamma} = \beta W_k(k',\theta')$$`
+
+--
+
+Why?
+
+--
+
+We do not need to do any interpolation ( `\(k'\)` is on our grid)
+
+--
+
+We do not need to approximate a conditional expectation (already did it before hand and can do it with very high accuracy since it is a one time cost)
+
+--
+
+Can we make the algorithm better?
+
+---
+
+# Endogenous grid method: turbo speed
+
+Let's make a change of variables
+`$$Y \equiv (1-\delta)k + \theta k^\alpha = c + k'$$`
+
+--
+
+so we can rewrite the Bellman as
+`\begin{gather}
+	V(Y,\theta) = \max_{k'} \left\{ \frac{c^{1-\gamma}-1}{1-\gamma} + \beta E\left[ V(Y',\theta') \right] \right\} \notag\\
+	\text{s.t.} \,\,\, c = Y - k' \notag\\
+	Y' = (1-\delta)k' + \theta'(k')^\alpha \notag
+\end{gather}`
+
+---
+
+# Endogenous grid method: turbo speed
+
+This yields the FOC
+`$$u'(c) = \beta E\left[ V_Y(Y',\theta') (1-\delta + \alpha\theta'(k')^{\alpha-1}) \right]$$`
+
+--
+
+`\(Y'\)` is a simple function of `\(k'\)` (our grid points) so we can compute it, and the entire conditional expectation on the RHS, directly from the endogenous grid points
+
+---
+
+# Endogenous grid method: turbo speed
+
+`$$u'(c) = \beta E\left[ V_Y(Y',\theta') (1-\delta + \alpha\theta'(k')^{\alpha-1}) \right]$$`
+
+This allows us to compute `\(c\)` from the FOC
+
+--
+
+Then from `\(c\)` we can compute `\(Y = c + k'\)` and then `\(V(Y,\theta)\)` from the Bellman
+
+--
+
+At no point did we need to use a numerical solver
+
+--
+
+Once we have converged on some `\(\hat{V}^*\)` we then solve for `\(k\)` via `\(Y = (1-\delta)k + \theta k^\alpha\)` which does require a solver, but only once and after we have recovered our value function approximant
+
+---
+
+# Endogenous grid method: practice
+
+Let's solve our previous basic growth model using EGM
+
+
+```julia
+coefficients = zeros(params.num_basis);
+coefficients[1:2] = [100 5];
+```
+
+---
+
+# Endogenous grid method: practice
+
+
+```julia
+function loop_grid_egm(params, capital_grid, coefficients)
+
+    max_value = similar(capital_grid)
+    capital_store = similar(capital_grid)
+
+    for (iteration, capital_next) in enumerate(capital_grid)
+
+        function bellman(consumption)
+            cont_value = eval_value_function(coefficients, capital_next, params)
+            value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
+            return value_out
+        end;
+        value_deriv = (eval_value_function(coefficients, capital_next + params.fin_diff, params) -
+            eval_value_function(coefficients, capital_next - params.fin_diff, params))/(2params.fin_diff)
+        consumption = (params.beta*value_deriv)^(-1/params.eta)
+        max_value[iteration] = bellman(consumption)
+        capital_store[iteration] = (capital_next + consumption)^(1/params.alpha)
+    end
+
+    grid = shrink_grid.(capital_store)
+    basis_matrix = [cheb_polys.(grid, n) for n = 0:params.num_basis - 1];
+    basis_matrix = hcat(basis_matrix...)
+    return basis_matrix, capital_store, max_value
+
+end
+```
+
+```
+## loop_grid_egm (generic function with 1 method)
+```
+
+---
+
+# Endogenous grid method: practice
+
+
+```julia
+function solve_egm(params, capital_grid, coefficients)
+    iteration = 1
+    error = 1e10;
+    max_value = -.0*ones(params.num_points);
+    value_prev = .1*ones(params.num_points);
+    coefficients_store = Vector{Vector}(undef, 1)
+    coefficients_store[1] = coefficients
+    while error &gt; params.tolerance
+        coefficients_prev = deepcopy(coefficients)
+        current_poly, current_capital, max_value =
+            loop_grid_egm(params, capital_grid, coefficients)
+        coefficients = current_poly\max_value
+        error = maximum(abs.((max_value - value_prev)./(value_prev)))
+        value_prev = deepcopy(max_value)
+        if mod(iteration, 5) == 0
+            println("Maximum Error of $(error) on iteration $(iteration).")
+            append!(coefficients_store, [coefficients])
+        end
+        iteration += 1
+    end
+
+    return coefficients, max_value, coefficients_store
+end
+```
+
+```
+## solve_egm (generic function with 1 method)
+```
+No need to pass basis function matrices or `\([-1,1]\)` grid since we will be constructing an endogenous grid on time `\(t\)` capital
+
+---
+
+# Endogenous grid method: practice
+
+
+```julia
+@time solution_coeffs, max_value, intermediate_coefficients = solve_egm(params, capital_grid, coefficients)
+```
+
+```
+## Maximum Error of 0.33984199435067963 on iteration 5.
+## Maximum Error of 10.28228426259625 on iteration 10.
+## Maximum Error of 0.20342072898478147 on iteration 15.
+## Maximum Error of 0.08237320856358903 on iteration 20.
+## Maximum Error of 0.046523511041692764 on iteration 25.
+## Maximum Error of 0.029761367850834913 on iteration 30.
+## Maximum Error of 0.020301746199301834 on iteration 35.
+## Maximum Error of 0.014389171942232297 on iteration 40.
+## Maximum Error of 0.01045397323252693 on iteration 45.
+## Maximum Error of 0.007723897658857289 on iteration 50.
+## Maximum Error of 0.005774836832528466 on iteration 55.
+## Maximum Error of 0.004354692320749045 on iteration 60.
+## Maximum Error of 0.0033044754036150193 on iteration 65.
+## Maximum Error of 0.002519276072894919 on iteration 70.
+## Maximum Error of 0.0019273992634744547 on iteration 75.
+## Maximum Error of 0.001478492015157928 on iteration 80.
+## Maximum Error of 0.0011364271043177812 on iteration 85.
+## Maximum Error of 0.0008748474878850943 on iteration 90.
+## Maximum Error of 0.0006742714538897201 on iteration 95.
+## Maximum Error of 0.0005201515925775415 on iteration 100.
+## Maximum Error of 0.00040153842119404194 on iteration 105.
+## Maximum Error of 0.0003101393367841497 on iteration 110.
+## Maximum Error of 0.00023964365585580044 on iteration 115.
+## Maximum Error of 0.00018523086045281527 on iteration 120.
+## Maximum Error of 0.00014320808976682231 on iteration 125.
+## Maximum Error of 0.0001107399191269295 on iteration 130.
+##   2.064447 seconds (5.18 M allocations: 200.512 MiB, 7.63% gc time)
+```
+
+```
+## ([-194.52555937604447, 14.166836739171053, -2.6599927533392957, 0.5620085823805405, -0.13623903900038273, 0.04258691877256677, -0.008536910652811033], [-180.80823807132842, -181.83458341075567, -183.952326734301, -187.32795562906455, -192.0503518916273, -198.03098517334493, -205.00341570482266, -211.93775709652613, -216.53192927927338], Array{T,1} where T[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [36.86590610645256, 8.558371652066075, -1.4244049058963655, 0.2872774922449595, -0.05894579838444914, 0.010642877317697029, -0.001084398849272573], [-15.45226318448849, 12.42148735261438, -2.3655568384687133, 0.5201475082045134, -0.12858494440347468, 0.03366833372397094, -0.005241936153686127], [-56.12509956707445, 13.639306047234095, -2.5743696075395515, 0.5540556560756441, -0.1378223565067074, 0.04108471079584791, -0.007590831330153151], [-87.55047268649535, 14.005626324587846, -2.6316545095697617, 0.5589799444677412, -0.1369113084780319, 0.04226173793812341, -0.008264238025017155], [-111.84260740912815, 14.118159833460524, -2.6509270655786255, 0.5609126272964362, -0.13641913220397578, 0.04248986848755322, -0.008454610368634456], [-130.62959392214242, 14.152274751637945, -2.657205713605079, 0.5616557231076046, -0.13628726214315165, 0.0425564465931976, -0.008512038106084623], [-145.16324319742094, 14.16249698984575, -2.659153009002298, 0.561900742476371, -0.13625265182013088, 0.04257758176362099, -0.008529457108926589], [-156.4080447060223, 14.165545015438951, -2.6597417971673476, 0.561976222040452, -0.13624300537285097, 0.042584108127029785, -0.008534687528422603], [-165.1087358944165, 14.166452402125685, -2.659917980621525, 0.5619989291474783, -0.13624021020015503, 0.042586079102739316, -0.008536248734654478]  …  [-191.04427238141147, 14.166836715584276, -2.659992748757065, 0.5620085817861078, -0.13623903907695747, 0.04258691872228626, -0.008536910609460992], [-191.90945119063343, 14.16683673215253, -2.659992751976867, 0.5620085822012717, -0.13623903902187515, 0.04258691875903936, -0.008536910639564596], [-192.5789100589751, 14.16683673708064, -2.659992752936234, 0.5620085823268696, -0.13623903901050272, 0.04258691876876872, -0.00853691064725394], [-193.09692456921678, 14.166836738540836, -2.659992753215465, 0.5620085823650882, -0.13623903899989745, 0.04258691877157533, -0.008536910652130227], [-193.49775432243365, 14.166836738977368, -2.659992753306976, 0.5620085823768057, -0.13623903900347165, 0.04258691877279656, -0.008536910651110044], [-193.80790874460422, 14.166836739106959, -2.6599927533278107, 0.5620085823766829, -0.1362390390049913, 0.04258691877377383, -0.008536910650502246], [-194.04790032414994, 14.16683673914702, -2.6599927533361383, 0.5620085823772174, -0.13623903900220113, 0.04258691877401455, -0.008536910652545674], [-194.2336012335607, 14.166836739160571, -2.65999275334381, 0.5620085823775877, -0.13623903899954407, 0.04258691877298768, -0.00853691065262382], [-194.37729305733086, 14.16683673916826, -2.6599927533374736, 0.5620085823768958, -0.13623903899987413, 0.042586918774404424, -0.008536910653333467], [-194.48847905144493, 14.166836739166262, -2.65999275334518, 0.5620085823769944, -0.13623903900383266, 0.04258691877478358, -0.008536910649934266]])
+```
+
+
+---
+
+# Endogenous grid method: practice
+
+
+
+---
+
+# Endogenous grid method: practice
+
+&lt;img src="9_advanced_methods_files/figure-html/unnamed-chunk-15-J1.png" width="667" /&gt;
+
+---
+
+# Envelope condition method
+
+We can simplify rootfinding in an alternative way than an endogenous grid for infinite horizon problems
+
+--
+
+The idea here is that we want to use the envelope conditions instead of FOCs to construct policy functions
+
+--
+
+These will end up being easier to solve and sometimes we can solve them in closed form
+
+---
+
+# Envelope condition method
+
+For our old basic growth model problem (fully depreciating capital, no tech) the envelope condition (combined with the consumption FOC) is given by
+`$$V_k(k) = u'(c)f'(k)$$`
+
+--
+
+Notice that the envelope condition is an intratemporal condition,  
+it only depends on time `\(t\)` variables
+
+--
+
+We can use it to solve for `\(c\)` as a function of current variables
+`$$c = \left( \frac{V_k(k)}{\alpha k^{\alpha-1}} \right)^{-1/\eta}$$`
+
+--
+
+We can then recover `\(k'\)` from the budget constraint given our current state
+
+--
+
+We never need to use a solver at any point in time!
+
+---
+
+# Envelope condition method
+
+The algorithm is
+1. Choose a grid `\(\left\{k_m\right\}_{m=1,...,M}\)` on which the value function is approximated
+2. Solve for `\(b\)` and `\(\left\{ c_m,k'_m \right\}\)` such that
+  - (inner loop) The quantities `\(\left\{c_m,k'_m	\right\}\)` solve the following given `\(V(k_m)\)`:
+    + `\(V_k(k_m) = u'(c_m)f'(k_m)\)`,
+    + `\(c_m + k'_m = f(k_m)\)`
+  - (outer loop) The value function `\(\hat{V}(k;b)\)` solves the following given `\(\{ c_m,k_m \}\)`:
+    + `\(\hat{V}(k_m;b) = u(c_m) + \beta \sum_{j=1}^J \omega_j \left[\hat{V}(k'_m;b)\right]\)`
+
+---
+
+# Envelope condition method
+
+In more complex settings (e.g. elastic labor supply) we will not necessarily be able to solve for policies without a solver
+
+--
+
+However we will generally be able to solve a system of conditions via function iteration to recover the optimal controls as a function of current states and future states that are perfectly known at the current time
+
+--
+
+Thus at no point in time during the value function approximation algorithm do we need to interpolate off the grid or approximate expectations: this yields large speed and accuracy gains
+
+---
+
+# Envelope condition method: practice
+
+
+```julia
+function loop_grid_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+
+    max_value = similar(capital_grid);
+
+    for (iteration, capital) in enumerate(capital_grid)
+
+        function bellman(consumption)
+            capital_next = capital^params.alpha - consumption
+            cont_value = eval_value_function(coefficients, capital_next, params)
+            value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
+            return value_out
+        end;
+
+        value_deriv = (eval_value_function(coefficients, capital + params.fin_diff, params) -
+            eval_value_function(coefficients, capital - params.fin_diff, params))/(2params.fin_diff)
+        consumption = (value_deriv/(params.alpha*capital^(params.alpha-1)))^(-1/params.eta)
+        consumption = min(consumption, capital^params.alpha)
+        max_value[iteration] = bellman(consumption)
+
+    end
+
+    return max_value
+end
+```
+
+```
+## loop_grid_ecm (generic function with 1 method)
+```
+
+
+---
+
+# Envelope condition method: practice
+
+
+```julia
+function solve_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+    iteration = 1
+    error = 1e10;
+    max_value = similar(capital_grid);
+    value_prev = .1*ones(params.num_points);
+    coefficients_store = Vector{Vector}(undef, 1)
+    coefficients_store[1] = coefficients
+    while error &gt; params.tolerance
+        coefficients_prev = deepcopy(coefficients)
+        max_value = loop_grid_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+        coefficients = basis_inverse*max_value
+        error = maximum(abs.((max_value - value_prev)./(value_prev)))
+        value_prev = deepcopy(max_value)
+        if mod(iteration, 5) == 0
+            println("Maximum Error of $(error) on iteration $(iteration).")
+            append!(coefficients_store, [coefficients])
+        end
+        iteration += 1
+    end
+    return coefficients, max_value, coefficients_store
+end
+```
+
+```
+## solve_ecm (generic function with 1 method)
+```
+
+---
+
+# Envelope condition method: practice
+
+
+```julia
+@time solution_coeffs, max_value, intermediate_coefficients =
+    solve_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+```
+
+```
+## Maximum Error of 0.35270640275290116 on iteration 5.
+## Maximum Error of 8.805965931377644 on iteration 10.
+## Maximum Error of 0.18965888767404476 on iteration 15.
+## Maximum Error of 0.07943447581998832 on iteration 20.
+## Maximum Error of 0.04532030555733413 on iteration 25.
+## Maximum Error of 0.029127245675450643 on iteration 30.
+## Maximum Error of 0.01992067971552436 on iteration 35.
+## Maximum Error of 0.014141682933473048 on iteration 40.
+## Maximum Error of 0.010285041765191065 on iteration 45.
+## Maximum Error of 0.007604645927814628 on iteration 50.
+## Maximum Error of 0.005688645480334269 on iteration 55.
+## Maximum Error of 0.00429132835259861 on iteration 60.
+## Maximum Error of 0.0032573086764123263 on iteration 65.
+## Maximum Error of 0.0024838391761790304 on iteration 70.
+## Maximum Error of 0.0019005891584954057 on iteration 75.
+## Maximum Error of 0.0014581015347963073 on iteration 80.
+## Maximum Error of 0.0011208568927165048 on iteration 85.
+## Maximum Error of 0.0008629216689646948 on iteration 90.
+## Maximum Error of 0.0006651156043508113 on iteration 95.
+## Maximum Error of 0.0005131097078957133 on iteration 100.
+## Maximum Error of 0.0003961149285499355 on iteration 105.
+## Maximum Error of 0.0003059578507143229 on iteration 110.
+## Maximum Error of 0.00023641708773243825 on iteration 115.
+## Maximum Error of 0.00018273956992138018 on iteration 120.
+## Maximum Error of 0.00014128358475064856 on iteration 125.
+## Maximum Error of 0.00010925270804786391 on iteration 130.
+##   0.253970 seconds (1.70 M allocations: 35.238 MiB, 5.05% gc time)
+```
+
+```
+## ([-194.51663856762866, 14.142059626812973, -2.664463531537166, 0.5749537630089065, -0.1333848278759362, 0.034552619788090766, -0.008477622130847351], [-182.67900799006134, -183.55743856886917, -185.35095723871075, -188.1306849498443, -191.9773875264776, -196.87462516021884, -202.5152252915006, -207.98965674114675, -211.5747636418288], Array{T,1} where T[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [36.20763531278537, 9.37790470628342, -1.730525595689448, 0.38019575407806006, -0.08826706521877714, 0.020049659769192374, -0.004993109121124828], [-16.074849209918227, 12.738304053050184, -2.4370364694637185, 0.5336634990679796, -0.12658653295666156, 0.031838394948532134, -0.007955781171359533], [-56.5939675740482, 13.734806168154769, -2.601280701671241, 0.5639243480680403, -0.13190557442398188, 0.034005458126298294, -0.008348190717191173], [-87.8999894965129, 14.024019597603296, -2.6461793626603054, 0.5717217855282399, -0.13297136042060131, 0.034409825415730566, -0.00844156906861393], [-112.10482475627079, 14.107923488094329, -2.659158174030871, 0.5740061556388518, -0.13326337881105843, 0.034511848691916924, -0.008467173940198691], [-130.82793105182407, 14.13220048440656, -2.6629280370279673, 0.5746782905881318, -0.13334936394549857, 0.034540821363513885, -0.008474586619705349], [-145.3136800881602, 14.139213604456174, -2.664019854902506, 0.5748740412145779, -0.13337454233341361, 0.03454920749511814, -0.008476743122731278], [-156.52194095796318, 14.14123822252835, -2.6643354279021807, 0.5749307325528861, -0.13338185399186742, 0.03455163408044015, -0.008477368107602246], [-165.19452435841202, 14.141822572570355, -2.664426555227955, 0.5749471142112412, -0.13338396905266947, 0.03455233521274792, -0.008477548785666755]  …  [-191.04655408645928, 14.142059615410894, -2.664463529759388, 0.5749537626904058, -0.13338482783399996, 0.03455261977337898, -0.008477622128577167], [-191.90894881534598, 14.14205962352382, -2.664463531023948, 0.574953762918696, -0.13338482786294037, 0.03455261978734825, -0.008477622128470585], [-192.57625341653878, 14.142059625862792, -2.6644635313915046, 0.5749537629787937, -0.13338482787456485, 0.03455261978536939, -0.008477622131600526], [-193.09260099626715, 14.14205962653952, -2.6644635314956986, 0.5749537630006429, -0.13338482787577277, 0.03455261978677626, -0.008477622131845663], [-193.49214091053216, 14.142059626735168, -2.6644635315255414, 0.5749537630062278, -0.13338482787653305, 0.03455261978908908, -0.008477622130381945], [-193.80129727994577, 14.142059626792694, -2.6644635315306715, 0.5749537630093045, -0.13338482787388273, 0.034552619789295136, -0.008477622129998252], [-194.04051658530418, 14.142059626806152, -2.664463531537926, 0.5749537630073291, -0.13338482787682437, 0.034552619788076555, -0.008477622131824347], [-194.22561992366795, 14.142059626812554, -2.6644635315367324, 0.574953763009276, -0.13338482787472827, 0.034552619788154715, -0.008477622131181306], [-194.36884935836179, 14.14205962681261, -2.6644635315374288, 0.5749537630094181, -0.13338482787622752, 0.03455261978821156, -0.008477622130591556], [-194.47967756461586, 14.142059626814685, -2.664463531534359, 0.5749537630109529, -0.133384827873833, 0.03455261978907842, -0.008477622129731799]])
+```
+
+---
+
+# Envelope condition method: practice
+
+
+```julia
+function simulate_model(params, solution_coeffs, time_horizon = 100)
+    capital_store = zeros(time_horizon + 1)
+    consumption_store = zeros(time_horizon)
+    capital_store[1] = params.k_0
+
+    for t = 1:time_horizon
+        capital = capital_store[t]
+
+        function bellman(consumption)
+            capital_next = capital^params.alpha - consumption
+            cont_value = eval_value_function(solution_coeffs, capital_next, params)
+            value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
+            return -value_out
+        end;
+
+        results = optimize(bellman, 0.0, capital^params.alpha)
+        consumption_store[t] = Optim.minimizer(results)
+        capital_store[t+1] = capital^params.alpha - consumption_store[t]
+    end
+
+    return consumption_store, capital_store
+end;
+```
+---
+
+# Envelope condition method: practice
+
+
+```julia
+time_horizon = 100;
+consumption, capital = simulate_model(params, solution_coeffs, time_horizon);
+plot(1:time_horizon, consumption, color = :red, linewidth = 4.0, label = "Consumption", legend = :right, size = (500, 300));
+plot!(1:time_horizon, capital[1:end-1], color = :blue, linewidth = 4.0, linestyle = :dash, label = "Capital");
+plot!(1:time_horizon, params.steady_state*ones(time_horizon), color = :purple, linewidth = 2.0, linestyle = :dot, label = "Analytic Steady State")
+```
+
+&lt;img src="9_advanced_methods_files/figure-html/unnamed-chunk-20-J1.png" width="667" /&gt;
+
+---
+
+# Modified policy iteration
+
+When doing VFI what is the most expensive part of the algorithm?
+
+--
+
+The maximization step!
+
+--
+
+If we can reduce how often we need to maximize the Bellman we can significantly improve speed
+
+--
+
+It turns out that between VFI iterations, the optimal policy does not change all that much
+
+--
+
+This means that we may be able to skip the maximization step and re-use our old policy function to get new values for polynomial fitting
+
+--
+
+This is called **modified policy iteration**
+
+---
+
+# Modified policy iteration
+
+It only change step 5 of VFI:
+5. While convergence criterion `\(&gt;\)` tolerance
+  + Start iteration `\(p\)`
+  + Solve the right hand side of the Bellman equation
+  + Recover the maximized values, conditional on `\(\Gamma(k_{t+1};b^{(p)})\)`
+  + Fit the polynomial to the values and recover a new vector of coefficients `\(\hat{b}^{(p+1)}\)`.
+  + Compute `\(b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}\)` where `\(\gamma \in (0,1).\)`
+  + While MPI stop criterion `\(&gt;\)` tolerance
+      - Use policies from last VFI iteration to re-fit the polynomial (no maximizing!)
+      - Compute `\(b^{(p+1)}\)` for iteration `\(p+1\)` by `\(b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}\)` where `\(\gamma \in (0,1).\)`
+
+---
+
+# Modified policy iteration
+
+Stop criteron can be a few things:
+1. Fixed number of iterations
+2. Stop when change in value function is sufficient small, QuantEcon suggests stopping MPI when
+`$$\max(V_p(x;c) - V_{p-1}(x;c)) -  \min(V_p(x;c) - V_{p-1}(x;c)) &lt; \epsilon(1-\beta)\beta$$`
+where the max and min are over the values on the grid
+
+--
+
+Also note: you should probably start MPI after a few VFI iterations unless you have a good initial guess
+
+--
+
+If your early policy functions are bad then starting MPI too early will blow up your problem
+
+---
+
+# Modified policy iteration
+
+
+```julia
+function solve_vfi_regress_mpi(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+    max_value = -.0*ones(params.num_points);
+    error = 1e10;
+    value_prev = .1*ones(params.num_points);
+    value_prev_outer = .1*ones(params.num_points);
+    coefficients_store = Vector{Vector}(undef, 1)
+    coefficients_store[1] = coefficients
+    iteration = 1
+    while error &gt; params.tolerance
+        max_value, consumption_store =
+            loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+        coefficients = basis_inverse*max_value
+        if iteration &gt; params.mpi_start # modified policy iteration loop
+            mpi_iteration = 1
+            while maximum(abs.(max_value - value_prev)) - 
+                    minimum(abs.(max_value - value_prev)) &gt; 
+                    (1 - params.beta)/params.beta*params.tolerance
+                value_prev = deepcopy(max_value)
+```
+
+---
+
+# Modified policy iteration
+
+
+```julia
+              function bellman(consumption, capital)
+                    capital_next = capital^params.alpha - consumption
+                    cont_value = eval_value_function(coefficients, capital_next, params)
+                    value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
+                    return value_out
+                end
+                max_value = bellman.(consumption_store, capital_grid) # greedy policy
+                coefficients = basis_inverse*max_value
+                if mod(mpi_iteration, 5) == 0
+                    println("MPI iteration $mpi_iteration on VFI iteration $iteration.")
+                end
+                mpi_iteration += 1
+            end
+        end
+        error = maximum(abs.((max_value .- value_prev_outer)./(value_prev_outer)))
+        value_prev_outer = deepcopy(max_value)
+
+        if mod(iteration, 5) == 0
+            println("Maximum Error of $(error) on iteration $(iteration).")
+            append!(coefficients_store, [coefficients])
+        end
+        iteration += 1
+    end
+    return coefficients, max_value, coefficients_store
+end;
+```
+
+
+---
+
+# Modified policy iteration
+
+
+
+---
+
+# Modified policy iteration
+
+
+```julia
+@time solution_coeffs, max_value, intermediate_coefficients =
+    solve_vfi_regress_mpi(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+```
+
+```
+## Maximum Error of 0.33656462321563774 on iteration 5.
+## MPI iteration 5 on VFI iteration 6.
+## MPI iteration 10 on VFI iteration 6.
+## MPI iteration 15 on VFI iteration 6.
+## MPI iteration 20 on VFI iteration 6.
+## MPI iteration 25 on VFI iteration 6.
+## MPI iteration 30 on VFI iteration 6.
+## MPI iteration 35 on VFI iteration 6.
+## MPI iteration 40 on VFI iteration 6.
+## MPI iteration 45 on VFI iteration 6.
+## MPI iteration 50 on VFI iteration 6.
+## MPI iteration 55 on VFI iteration 6.
+## MPI iteration 60 on VFI iteration 6.
+## MPI iteration 65 on VFI iteration 6.
+## MPI iteration 70 on VFI iteration 6.
+## MPI iteration 5 on VFI iteration 7.
+## MPI iteration 10 on VFI iteration 7.
+## MPI iteration 15 on VFI iteration 7.
+## MPI iteration 20 on VFI iteration 7.
+## MPI iteration 25 on VFI iteration 7.
+## MPI iteration 30 on VFI iteration 7.
+## MPI iteration 35 on VFI iteration 7.
+## MPI iteration 40 on VFI iteration 7.
+## MPI iteration 45 on VFI iteration 7.
+## MPI iteration 5 on VFI iteration 8.
+## MPI iteration 10 on VFI iteration 8.
+## MPI iteration 15 on VFI iteration 8.
+## MPI iteration 20 on VFI iteration 8.
+## MPI iteration 25 on VFI iteration 8.
+## MPI iteration 5 on VFI iteration 9.
+## Maximum Error of 7.737001338457933e-5 on iteration 10.
+##   0.529742 seconds (2.16 M allocations: 71.685 MiB, 7.61% gc time)
+```
+
+```
+## ([-194.98995841282607, 14.142106197487607, -2.664423038043388, 0.5749556857068541, -0.1333738673380651, 0.03456986150437302, -0.008457442239677704], [-183.1522099703733, -184.03074561068007, -185.8242527851062, -188.60400078686658, -192.45075202502377, -197.34799657552367, -202.98857616632353, -208.46300527605544, -212.04808651948235], Array{T,1} where T[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [36.80824360742953, 8.65502391314503, -1.4832883088225293, 0.31548230941630884, -0.07041795249656246, 0.015491954698059196, -0.0031249287075838517], [-194.98995841282607, 14.142106197487607, -2.664423038043388, 0.5749556857068541, -0.1333738673380651, 0.03456986150437302, -0.008457442239677704]])
+```
+
+---
+
+# Modified policy iteration
+
+&lt;img src="9_advanced_methods_files/figure-html/unnamed-chunk-25-J1.png" width="667" /&gt;
+
+---
+
+# Modified policy iteration
+
+What was your speed up?
+
+I got **6 times**: 0.6s `\(\rightarrow\)` 0.1s
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  /* Replace <script> tags in slides area to make them executable
+   *
+   * Runs after post-processing of markdown source into slides and replaces only
+   * <script>s on the last slide of continued slides using the .has-continuation
+   * class added by xaringan. Finally, any <script>s in the slides area that
+   * aren't executed are commented out.
+   */
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container:not(.has-continuation) script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+  var scriptsNotExecuted = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container.has-continuation script'
+  );
+  if (!scriptsNotExecuted.length) return;
+  for (var i = 0; i < scriptsNotExecuted.length; i++) {
+    var comment = document.createComment(scriptsNotExecuted[i].outerHTML)
+    scriptsNotExecuted[i].parentElement.replaceChild(comment, scriptsNotExecuted[i])
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

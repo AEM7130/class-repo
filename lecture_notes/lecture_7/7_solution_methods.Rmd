@@ -186,14 +186,14 @@ using LinearAlgebra
 using Optim
 using Plots
 params = (alpha = 0.75, 
-beta = 0.95, 
-eta = 2,
-steady_state = (0.75*0.95)^(1/(1 - 0.75)), 
-k_0 = (0.75*0.95)^(1/(1 - 0.75))/2,
-capital_upper = (0.75*0.95)^(1/(1 - 0.75))*1.01, 
-capital_lower = (0.75*0.95)^(1/(1 - 0.75))/2,
-num_points = 7, 
-tolerance = 0.0001)
+          beta = 0.95, 
+          eta = 2,
+          steady_state = (0.75*0.95)^(1/(1 - 0.75)), 
+          k_0 = (0.75*0.95)^(1/(1 - 0.75))/2,
+          capital_upper = (0.75*0.95)^(1/(1 - 0.75))*1.01, 
+          capital_lower = (0.75*0.95)^(1/(1 - 0.75))/2,
+          num_points = 7, 
+          tolerance = 0.0001)
 ```
 
 
@@ -278,15 +278,15 @@ Use `cheb_polys` to construct the basis matrix
 ```{julia}
 # Chebyshev polynomial function
 function cheb_polys(x, n)
-if n == 0
-return 1                    # T_0(x) = 1
-elseif n == 1
-return x                    # T_1(x) = x
-else
-cheb_recursion(x, n) =
-2x.*cheb_polys.(x, n - 1) .- cheb_polys.(x, n - 2)
-return cheb_recursion(x, n) # T_n(x) = 2xT_{n-1}(x) - T_{n-2}(x)
-end
+    if n == 0
+        return 1                    # T_0(x) = 1
+    elseif n == 1
+        return x                    # T_1(x) = x
+    else
+        cheb_recursion(x, n) =
+            2x.*cheb_polys.(x, n - 1) .- cheb_polys.(x, n - 2)
+        return cheb_recursion(x, n) # T_n(x) = 2xT_{n-1}(x) - T_{n-2}(x)
+    end
 end;
 ```
 
@@ -326,7 +326,7 @@ Here's a simple way to do it:
 ```{julia}
 shrink_grid(capital) = 2*(capital - params.capital_lower)/(params.capital_upper - params.capital_lower) - 1;
 eval_value_function(coefficients, capital, params) = 
-coefficients' * [cheb_polys.(shrink_grid(capital), n) for n = 0:params.num_points - 1];
+    coefficients' * [cheb_polys.(shrink_grid(capital), n) for n = 0:params.num_points - 1];
 ```
 
 The top function inherits `params` from the bottom function
@@ -355,23 +355,23 @@ return vector of maximized values
 
 ```{julia}
 function loop_grid(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
-max_value = similar(coefficients); # initialized max value vector
-
-# Inner loop over grid points
-for (iteration, capital) in enumerate(capital_grid)
-
-# Define Bellman as a closure
-function bellman(consumption)
-capital_next = capital^params.alpha - consumption # Next period state
-cont_value = eval_value_function(coefficients, capital_next, params) # Continuation value
-value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value # Utility + continuation value
-return -value_out
-end;
-
-results = optimize(bellman, 0.00*capital^params.alpha, 0.99*capital^params.alpha) # maximize Bellman
-max_value[iteration] = -Optim.minimum(results) # Store max value in vector
-end
-return max_value
+    max_value = similar(coefficients); # initialized max value vector
+    
+    # Inner loop over grid points
+    for (iteration, capital) in enumerate(capital_grid)
+    
+        # Define Bellman as a closure
+        function bellman(consumption)
+            capital_next = capital^params.alpha - consumption # Next period state
+            cont_value = eval_value_function(coefficients, capital_next, params) # Continuation value
+            value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value # Utility + continuation value
+            return -value_out
+        end;
+        
+        results = optimize(bellman, 0.00*capital^params.alpha, 0.99*capital^params.alpha) # maximize Bellman
+        max_value[iteration] = -Optim.minimum(results) # Store max value in vector
+    end
+    return max_value
 end
 ```
 
@@ -381,24 +381,24 @@ end
 
 ```{julia}
 function solve_vfi(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
-iteration = 1
-error = 1e10;
-max_value = similar(coefficients);
-value_prev = .1*ones(params.num_points);
-coefficients_store = Vector{Vector}(undef, 1)
-coefficients_store[1] = coefficients
-while error > params.tolerance # Outer loop iterating on Bellman eq
-max_value = loop_grid(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients) # Inner loop
-coefficients = basis_inverse*max_value # \Psi \ y, recover coefficients
-error = maximum(abs.((max_value - value_prev)./(value_prev))) # compute error
-value_prev = deepcopy(max_value) # save previous values
-if mod(iteration, 5) == 0
-println("Maximum Error of $(error) on iteration $(iteration).")
-append!(coefficients_store, [coefficients])
-end
-iteration += 1
-end
-return coefficients, max_value, coefficients_store
+    iteration = 1
+    error = 1e10;
+    max_value = similar(coefficients);
+    value_prev = .1*ones(params.num_points);
+    coefficients_store = Vector{Vector}(undef, 1)
+    coefficients_store[1] = coefficients
+    while error > params.tolerance # Outer loop iterating on Bellman eq
+        max_value = loop_grid(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients) # Inner loop
+        coefficients = basis_inverse*max_value # \Psi \ y, recover coefficients
+        error = maximum(abs.((max_value - value_prev)./(value_prev))) # compute error
+        value_prev = deepcopy(max_value) # save previous values
+        if mod(iteration, 5) == 0
+            println("Maximum Error of $(error) on iteration $(iteration).")
+            append!(coefficients_store, [coefficients])
+        end
+        iteration += 1
+    end
+    return coefficients, max_value, coefficients_store
 end
 ```
 
@@ -408,7 +408,7 @@ end
 
 ```{julia}
 solution_coeffs, max_value, intermediate_coefficients =
-solve_vfi(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+    solve_vfi(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
 ```
 
 ---
@@ -424,7 +424,7 @@ solution = similar(intermediate_coefficients);
 
 # Compute optimal value at all capital grid points
 for (iteration, coeffs) in enumerate(intermediate_coefficients)
-solution[iteration] = [coeffs' * [cheb_polys.(capital, n) for n = 0:params.num_points - 1] for capital in eval_points];
+    solution[iteration] = [coeffs' * [cheb_polys.(capital, n) for n = 0:params.num_points - 1] for capital in eval_points];
 end
 ```
 
@@ -434,15 +434,15 @@ end
 
 ```{julia, echo = FALSE}
 plot(capital_levels, solution[2],
-grid = false,
-legend = false,
-size = (600, 400),
-xlabel = "Capital",
-ylabel = "Value",
-tickfontsize = 14,
-guidefontsize = 14,
-ylims = (minimum(hcat(solution[2:end]...)) , maximum(hcat(solution[2:end]...))),
-linewidth = 4)
+    grid = false,
+    legend = false,
+    size = (600, 400),
+    xlabel = "Capital",
+    ylabel = "Value",
+    tickfontsize = 14,
+    guidefontsize = 14,
+    ylims = (minimum(hcat(solution[2:end]...)) , maximum(hcat(solution[2:end]...))),
+    linewidth = 4)
 ```
 
 ---
@@ -451,7 +451,7 @@ linewidth = 4)
 
 ```{julia, echo = FALSE}
 plot!(capital_levels, solution[3],
-linewidth = 4)
+    linewidth = 4)
 ```
 
 ---
@@ -462,7 +462,7 @@ linewidth = 4)
 using Plots
 gr();
 plot!(capital_levels, solution[5],
-linewidth = 4)
+    linewidth = 4)
 ```
 
 ---
@@ -473,7 +473,7 @@ linewidth = 4)
 using Plots
 gr();
 plot!(capital_levels, solution[7],
-linewidth = 4)
+    linewidth = 4)
 ```
 
 ---
@@ -482,7 +482,7 @@ linewidth = 4)
 
 ```{julia, echo = FALSE}
 plot!(capital_levels, solution[9],
-linewidth = 4)
+    linewidth = 4)
 ```
 
 ---
@@ -491,7 +491,7 @@ linewidth = 4)
 
 ```{julia, echo = FALSE}
 plot!(capital_levels, solution[11],
-linewidth = 4)
+    linewidth = 4)
 ```
 
 ---
@@ -500,7 +500,7 @@ linewidth = 4)
 
 ```{julia, echo = FALSE}
 plot!(capital_levels, solution[15],
-linewidth = 4)
+    linewidth = 4)
 ```
 
 ---
@@ -509,7 +509,7 @@ linewidth = 4)
 
 ```{julia, echo = FALSE}
 plot!(capital_levels, solution[20],
-linewidth = 4)
+    linewidth = 4)
 ```
 
 ---
@@ -518,7 +518,7 @@ linewidth = 4)
 
 ```{julia, echo = FALSE}
 plot!(capital_levels, solution[end],
-linewidth = 4)
+    linewidth = 4)
 ```
 
 ---
@@ -527,14 +527,14 @@ linewidth = 4)
 
 ```{julia, echo = FALSE}
 plot(capital_levels, solution[end],
-grid = false,
-legend = false,
-size = (600, 400),
-xlabel = "Capital",
-ylabel = "Value",
-tickfontsize = 14,
-guidefontsize = 14,
-linewidth = 4)
+    grid = false,
+    legend = false,
+    size = (600, 400),
+    xlabel = "Capital",
+    ylabel = "Value",
+    tickfontsize = 14,
+    guidefontsize = 14,
+    linewidth = 4)
 ```
 
 ---
@@ -543,25 +543,25 @@ linewidth = 4)
 
 ```{julia}
 function simulate_model(params, solution_coeffs, time_horizon = 100)
-capital_store = zeros(time_horizon + 1)
-consumption_store = zeros(time_horizon)
-capital_store[1] = params.k_0
-
-for t = 1:time_horizon
-capital = capital_store[t]
-function bellman(consumption)
-capital_next = capital^params.alpha - consumption
-capital_next_scaled = shrink_grid(capital_next)
-cont_value = solution_coeffs' * [cheb_polys.(capital_next_scaled, n) for n = 0:params.num_points - 1]
-value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
-return -value_out
-end;
-
-results = optimize(bellman, 0.0, capital^params.alpha)
-consumption_store[t] = Optim.minimizer(results)
-capital_store[t+1] = capital^params.alpha - consumption_store[t]
-end
-return consumption_store, capital_store
+    capital_store = zeros(time_horizon + 1)
+    consumption_store = zeros(time_horizon)
+    capital_store[1] = params.k_0
+    
+    for t = 1:time_horizon
+        capital = capital_store[t]
+        function bellman(consumption)
+            capital_next = capital^params.alpha - consumption
+            capital_next_scaled = shrink_grid(capital_next)
+            cont_value = solution_coeffs' * [cheb_polys.(capital_next_scaled, n) for n = 0:params.num_points - 1]
+            value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
+            return -value_out
+        end;
+        
+        results = optimize(bellman, 0.0, capital^params.alpha)
+        consumption_store[t] = Optim.minimizer(results)
+        capital_store[t+1] = capital^params.alpha - consumption_store[t]
+    end
+    return consumption_store, capital_store
 end;
 ```
 
@@ -588,18 +588,18 @@ consumption = similar(capital_levels);
 
 # Compute optimal consumption at all capital grid points
 for (iteration, capital) in enumerate(capital_levels)
-
-function bellman(consumption)
-capital_next = capital^params.alpha - consumption
-capital_next_scaled = shrink_grid(capital_next)
-cont_value = solution_coeffs' * [cheb_polys.(capital_next_scaled, n) for n = 0:params.num_points - 1]
-value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
-return -value_out
-end
-
-results = optimize(bellman, 0., capital^params.alpha)
-
-consumption[iteration] = Optim.minimizer(results)
+    
+    function bellman(consumption)
+        capital_next = capital^params.alpha - consumption
+        capital_next_scaled = shrink_grid(capital_next)
+        cont_value = solution_coeffs' * [cheb_polys.(capital_next_scaled, n) for n = 0:params.num_points - 1]
+        value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
+        return -value_out
+    end
+    
+    results = optimize(bellman, 0., capital^params.alpha)
+    
+    consumption[iteration] = Optim.minimizer(results)
 end;
 ```
 
@@ -609,14 +609,14 @@ end;
 
 ```{julia, echo = FALSE}
 plot(capital_levels, consumption,
-grid = false,
-legend = false,
-size = (600, 400),
-xlabel = "Capital",
-ylabel = "Consumption",
-tickfontsize = 14,
-guidefontsize = 14,
-linewidth = 4)
+    grid = false,
+    legend = false,
+    size = (600, 400),
+    xlabel = "Capital",
+    ylabel = "Consumption",
+    tickfontsize = 14,
+    guidefontsize = 14,
+    linewidth = 4)
 ```
 
 
@@ -1612,8 +1612,7 @@ params_dis = (alpha = 0.75, beta = 0.95, eta = 2,
 ```{julia}
 function iterate_value(grid, params) 
     grid_size = size(grid, 1)
-    V = zeros(grid_size, 1)
-    V_prev = zeros(grid_size, 1)
+    V, V_prev = zeros(grid_size, 1), zeros(grid_size, 1)
     V_store = Array{Float64}(undef, grid_size, params.max_iterations)
     max_diff = 1e10
     it = 1
@@ -1622,8 +1621,7 @@ function iterate_value(grid, params)
             # possible consumption values (output + remaining capital - capital next period)
             c_vec = grid_point.^params.alpha .- grid
             value_max = -Inf
-            # loop over possible consumption values and find the one that maximizes
-            # the right hand side of the Bellman, search over ones with positive consumption
+            # find consumption that maximizes the right hand side of the Bellman, search over ones with positive consumption
             for (it_inner, consumption) in enumerate(c_vec[c_vec .> 0]) # iterate across possible consumption values
                 value_temp = consumption^(1 - params.eta)/(1 - params.eta) + params.beta*V[it_inner]
                 value_max = max(value_temp, value_max)

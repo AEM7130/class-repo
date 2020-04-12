@@ -712,7 +712,7 @@ Let $g(x|X,Y)$ be a simple regression tree
 
 --
 
-Define the residual as $\varepsilon{1i} = Y_i - g_1(X_i|X,Y)$
+Define the residual as $\varepsilon_{1i} = Y_i - g_1(X_i|X,Y)$
 
 --
 
@@ -745,7 +745,7 @@ We generally fix tree depth but select number of trees in a quasi-cross-validati
 
 # Trees examples: Preliminaries
 
-We need `ISLR` to get our dataset, `tree` to do the regression tree, `MASS` for our random forest dataset, and `randomForest` to estimate a random forest
+We need `ISLR` for our tree data, `tree` to do the regression tree, `randomForest` to estimate a random forest, and `gbm` to estimate a boosted forest
 
 We will be working with the carseats dataset
 ```{r, echo = FALSE}
@@ -885,7 +885,7 @@ for (mtry in 1:10) {
 # Random forests: tuning feature bagging
 
 ```{r, fig.align = 'center'}
-matplot(1:mtry, cbind(test.err, oob.err), pch = 23, col = c("red", "blue"), type = "b", ylab = "Mean Squared Error")
+matplot(1:mtry, cbind(test_err, oob_err), pch = 23, col = c("red", "blue"), type = "b", ylab = "Mean Squared Error")
 legend("topright", legend = c("OOB", "Test"), pch = 23, col = c("red", "blue"))
 ```
 

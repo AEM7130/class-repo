@@ -1848,8 +1848,7 @@ params_dis = (alpha = 0.75, beta = 0.95, eta = 2,
 ```julia
 function iterate_value(grid, params) 
     grid_size = size(grid, 1)
-    V = zeros(grid_size, 1)
-    V_prev = zeros(grid_size, 1)
+    V, V_prev = zeros(grid_size, 1), zeros(grid_size, 1)
     V_store = Array{Float64}(undef, grid_size, params.max_iterations)
     max_diff = 1e10
     it = 1
@@ -1858,8 +1857,7 @@ function iterate_value(grid, params)
             # possible consumption values (output + remaining capital - capital next period)
             c_vec = grid_point.^params.alpha .- grid
             value_max = -Inf
-            # loop over possible consumption values and find the one that maximizes
-            # the right hand side of the Bellman, search over ones with positive consumption
+            # find consumption that maximizes the right hand side of the Bellman, search over ones with positive consumption
             for (it_inner, consumption) in enumerate(c_vec[c_vec .&gt; 0]) # iterate across possible consumption values
                 value_temp = consumption^(1 - params.eta)/(1 - params.eta) + params.beta*V[it_inner]
                 value_max = max(value_temp, value_max)
@@ -1957,7 +1955,7 @@ value, v_store = @time iterate_value(grid, params_dis)
 ## Current maximum value difference at iteration 200 is 0.00042797776669090126.
 ## Current maximum value difference at iteration 210 is 0.0002562460981039294.
 ## Current maximum value difference at iteration 220 is 0.00015342400445206295.
-##   0.168674 seconds (454.98 k allocations: 25.277 MiB, 6.21% gc time)
+##   0.150962 seconds (455.00 k allocations: 25.278 MiB, 6.89% gc time)
 ```
 
 ```
@@ -2013,7 +2011,7 @@ value, v_store = @time iterate_value(grid, params_dis)
 ## Current maximum value difference at iteration 200 is 0.00035505432774129986.
 ## Current maximum value difference at iteration 210 is 0.00021258414147951044.
 ## Current maximum value difference at iteration 220 is 0.0001272819782229817.
-##   0.148251 seconds (159.38 k allocations: 132.604 MiB, 19.68% gc time)
+##   0.151063 seconds (159.38 k allocations: 132.604 MiB, 19.39% gc time)
 ```
 
 ```

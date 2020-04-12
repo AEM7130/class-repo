@@ -347,6 +347,9 @@ We need `tidyverse` to work with the data, `glmnet` to do the ML, , `caret` to d
 
 We will be working with the mtcars dataset
 
+```
+## Loading required package: pacman
+```
 
 ```r
 if (!require("pacman")) install.packages("pacman")
@@ -2532,7 +2535,8 @@ elastic_net_model &lt;- train(mpg ~ .,
 ```
 
 ```
-## Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo, : There were missing values in resampled performance measures.
+## Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo, :
+## There were missing values in resampled performance measures.
 ```
 
 ```
@@ -2763,7 +2767,7 @@ Let `\(g(x|X,Y)\)` be a simple regression tree
 
 --
 
-Define the residual as `\(\varepsilon{1i} = Y_i - g_1(X_i|X,Y)\)`
+Define the residual as `\(\varepsilon_{1i} = Y_i - g_1(X_i|X,Y)\)`
 
 --
 
@@ -2796,7 +2800,7 @@ We generally fix tree depth but select number of trees in a quasi-cross-validati
 
 # Trees examples: Preliminaries
 
-We need `ISLR` to get our dataset, `tree` to do the regression tree, `MASS` for our random forest dataset, and `randomForest` to estimate a random forest
+We need `ISLR` for our tree data, `tree` to do the regression tree, `randomForest` to estimate a random forest, and `gbm` to estimate a boosted forest
 
 We will be working with the carseats dataset
 
@@ -2820,19 +2824,19 @@ carseats
 
 ```
 ## # A tibble: 400 x 11
-##    Sales CompPrice Income Advertising Population Price ShelveLoc   Age Education Urban US   
-##    &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt;
-##  1  9.5        138     73          11        276   120 Bad          42        17 Yes   Yes  
-##  2 11.2        111     48          16        260    83 Good         65        10 Yes   Yes  
-##  3 10.1        113     35          10        269    80 Medium       59        12 Yes   Yes  
-##  4  7.4        117    100           4        466    97 Medium       55        14 Yes   Yes  
-##  5  4.15       141     64           3        340   128 Bad          38        13 Yes   No   
-##  6 10.8        124    113          13        501    72 Bad          78        16 No    Yes  
-##  7  6.63       115    105           0         45   108 Medium       71        15 Yes   No   
-##  8 11.8        136     81          15        425   120 Good         67        10 Yes   Yes  
-##  9  6.54       132    110           0        108   124 Medium       76        10 No    No   
-## 10  4.69       132    113           0        131   124 Medium       76        17 No    Yes  
-## # … with 390 more rows
+##    Sales CompPrice Income Advertising Population Price ShelveLoc   Age Education
+##    &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1  9.5        138     73          11        276   120 Bad          42        17
+##  2 11.2        111     48          16        260    83 Good         65        10
+##  3 10.1        113     35          10        269    80 Medium       59        12
+##  4  7.4        117    100           4        466    97 Medium       55        14
+##  5  4.15       141     64           3        340   128 Bad          38        13
+##  6 10.8        124    113          13        501    72 Bad          78        16
+##  7  6.63       115    105           0         45   108 Medium       71        15
+##  8 11.8        136     81          15        425   120 Good         67        10
+##  9  6.54       132    110           0        108   124 Medium       76        10
+## 10  4.69       132    113           0        131   124 Medium       76        17
+## # … with 390 more rows, and 2 more variables: Urban &lt;fct&gt;, US &lt;fct&gt;
 ```
 
 ---
@@ -2852,7 +2856,8 @@ summary(tree_carseats)
 ## Regression tree:
 ## tree(formula = Sales ~ ., data = carseats)
 ## Variables actually used in tree construction:
-## [1] "ShelveLoc"   "Price"       "Age"         "Income"      "Population"  "Advertising"
+## [1] "ShelveLoc"   "Price"       "Age"         "Income"      "Population" 
+## [6] "Advertising"
 ## Number of terminal nodes:  17 
 ## Residual mean deviance:  2.878 = 1102 / 383 
 ## Distribution of residuals:
@@ -3025,7 +3030,7 @@ for (mtry in 1:10) {
 
 
 ```r
-matplot(1:mtry, cbind(test.err, oob.err), pch = 23, col = c("red", "blue"), type = "b", ylab = "Mean Squared Error")
+matplot(1:mtry, cbind(test_err, oob_err), pch = 23, col = c("red", "blue"), type = "b", ylab = "Mean Squared Error")
 legend("topright", legend = c("OOB", "Test"), pch = 23, col = c("red", "blue"))
 ```
 

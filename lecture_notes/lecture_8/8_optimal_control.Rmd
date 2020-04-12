@@ -1,0 +1,1243 @@
+---
+title: "Lecture 8"
+subtitle: "Continuous time dynamic models"
+author: Ivan Rudik
+date: AEM 7130
+output:
+  xaringan::moon_reader:
+    css: ['default', 'metropolis', 'metropolis-fonts', 'my-css.css']
+    # self_contained: true
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+
+
+---
+
+# Roadmap
+
+1. The theory behind continuous time models
+2. Numerical methods for solving continuous time model
+
+
+---
+
+# Model setup
+
+Consider a problem where each period an agent obtains flow utility $J(x(t),u(t))$,  
+where $x$ is our state and $u$ is our control
+
+--
+
+Suppose there is a finite horizon with a terminal time $T$
+
+--
+
+The agent's objective is to maximize the total payoff, subject to the transitions of the states
+\begin{align}
+	&\max_{u,x_T} \int_0^T\, J(x(t),u(t))\,dt \label{eq:main_eq} \\
+	&\text{subject to:    } \dot{x}(t) = g(x(t),u(t)), \, x(0) = x_0, \, x(T) = x_T 
+\end{align}
+
+This is an open-loop solution so we optimize our entire policy trajectory from time $t=0$
+
+---
+
+# Hamiltonians
+
+In a dynamic optimization problem, we will have an auxiliary function that yields the first-order conditions
+
+--
+
+This function is called the *Hamiltonian*
+$$H(x(t),u(t),\lambda(t)) \equiv J(x(t),u(t)) + \lambda(t)g(x(t),u(t))$$
+
+---
+
+# Hamiltonians
+
+Pontryagin's Maximum Principle states that the following conditions are necessary for an optimal solution,
+\begin{align}
+  \frac{\partial H(x(t),u(t),\lambda(t))}{\partial u} &= 0 \,\, \forall t \in [0,T] \tag{Maximality} \\
+  \frac{\partial H(x(t),u(t),\lambda(t))}{\partial x} &= -\dot{\lambda}(t) \tag{Co-state} \\
+  \frac{\partial H(x(t),u(t),\lambda(t))}{\partial \lambda} &= \dot{x}(t) \tag{State transitions} \\
+  x(0) &= x_0 \tag{Initial condition} \\
+  \lambda(T) &= 0 \tag{Transversality}
+\end{align}
+
+What do these conditions mean? 
+
+---
+
+# Necessary conditions
+
+
+First, what is the Hamiltonian?
+
+--
+
+The contribution of that instant $t$ to overall utility via the change in flow utility and the change in the state (which affects future flow utilities)
+
+--
+
+The decisionmaker can use her control to increase the contemporaneous flow utility and reap immediate rewards, or to alter the state variable to increase future rewards
+
+---
+
+# Necessary conditions
+
+The .hi-blue[maximality condition]: in every instant, we select the control so that we can no longer increase our total payoff
+
+--
+
+It effectively sets the net marginal benefits of the control to zero
+
+--
+
+The state transition expression is just a definition
+
+
+--
+
+Taking the derivative of the Hamiltonian with respect to the shadow value, just like a Lagrangian, yields this constraint back
+
+--
+
+This leaves the .hi-blue[co-state condition]
+
+--
+
+It defines how the shadow value of our state transition, called the *co-state variable*, evolves over time
+
+---
+
+# Necessary conditions
+
+What is the co-state?
+
+--
+
+The additional future value of having one more unit of our state variable
+
+--
+
+Suppose we increase today's stock of $x$ by one unit and this increases the instantaneous change in our value $(H)$
+
+--
+
+Then the shadow value of that stock $(\lambda)$ must decrease along an optimal trajectory
+
+--
+
+Why?
+
+---
+
+# Necessary conditions
+
+If it didn't, we could increase value by accumulating more of the stock variable  
+$\rightarrow$ what we were doing cannot be optimal
+
+We can re-write the co-state equation as
+$$\frac{\partial J}{\partial x} + \lambda(t) \frac{\partial g}{\partial x} + \dot{\lambda}(t) = 0$$
+
+
+--
+
+We must have that the a unit of the stock's value must change (third term), so that is exactly offsets the change in value from increasing the stock in the immediate instant of time
+
+--
+
+The immediate value is made up of the actual utility payoff (first term),  
+and the future utility payoff payoff from how increasing the stock today affects the stock in the future (second term)
+
+---
+
+# Necessary conditions
+
+These necessary conditions give us the shape of the optimal path but they do not tell us what the optimal path actually is
+
+--
+
+Many different paths are consistent with these differential equations, depends on the constant of integration
+
+--
+
+We need additional optimality conditions to use as constraints to impose the optimal path
+
+---
+
+# Pinning down the optimal path
+
+We have effectively two ODEs, one for $\dot{\lambda}(t)$ and one for $\dot{x}(t)$
+
+--
+
+We need two constraints
+
+--
+
+.hi-blue[Constraint 1:] Initial condition on the state
+
+--
+
+This directly pins down where the state path starts
+
+--
+
+We need to pin down the co-state path
+
+--
+
+We do this using .hi-blue[transverality conditions]
+
+---
+
+# Pinning down the optimal path
+
+In general there are four types of transversality conditions
+
+--
+
+The first two are for free initial or terminal time problems,  
+these are problems where the agent can select when the problem starts or ends
+
+--
+
+The second two are for pinning down the initial and terminal state variables if they're free
+
+--
+
+Usually terminal conditions free and initial conditions are not
+
+---
+
+# Pinning down the optimal path
+
+If the agent can select the time $T$ when the problem ends, what do we know about the Hamiltonian at time $T$?
+
+--
+
+It must be zero, why?
+
+--
+
+The Hamiltonian tells us how the value of the problem is changing
+
+--
+
+If $H$ were positive, the value is increasing and the agent can do better by delaying ending the problem
+
+--
+
+If $H$ were negative, the value is decreasing and the agent can do better by ending the problem earlier
+
+---
+
+# Pinning down the optimal path
+
+If the terminal state is free, the transversality condition is that its shadow value must be zero
+
+--
+
+Why?
+
+--
+
+If it were positive the policymaker could profitably deviate by altering the level of the stock. Finally, these are all necessary conditions of the problem. 
+
+---
+
+# Discounting
+
+We discount the future using exponential discounting $\rightarrow$ now time can directly affect value
+
+--
+
+Assume that time does not directly affect instantaneous payoffs or the transitions equations
+
+--
+
+Then our value is $J(x(t),u(t),t) = e^{-rt}\,V(x(t),u(t))$
+
+--
+
+$J$ yields the present, time $0$ value of the change in value at time $t$
+
+--
+
+$J$ is the *present value* and $V$ is the *current value*
+
+--
+
+Present value refers to the value with respect to a specific period that we call the present
+
+
+---
+
+# Current value terms
+
+Our previous necessary conditions apply to present value Hamiltonians,  
+but let us analyze a current value Hamiltonian to avoid including time terms,
+$$H^{cv}(x(t),u(t),\mu(t)) \equiv e^{rt} H(x(t),u(t),\lambda(t),t) = e^{rt} J(x(t),u(t),t) + e^{rt}\lambda(t)g(x(t),u(t))$$
+
+$\mu(t)$ is the shadow value $\lambda$ brought into current value terms: $\mu(t) = e^{rt} \lambda(t)$
+
+--
+
+We can then re-write our necessary conditions in current value by substituting in for the shadow value
+(which implies that $\dot{\lambda}(t) = -re^{-rt}\mu(t) + e^{-rt}\dot{\mu}(t)$), and for $\partial H / \partial x  = e^{-rt}\,\partial H^{cv}/\partial x$ into our co-state condition
+$$e^{-rt}\frac{\partial H^{cv}(x(t),u(t),\mu(t))}{\partial x} = e^{-rt}\left[r\mu(t) - \dot{\mu}(t)\right]$$
+
+---
+
+# Current value
+
+$$e^{-rt}\frac{\partial H^{cv}(x(t),u(t),\mu(t))}{\partial x} = e^{-rt}\left[r\mu(t) - \dot{\mu}(t)\right]$$
+
+--
+
+Before, the present value form of the co-state condition required the change in the present shadow value precisely equal the effect of the state variable on instantaneous value
+
+--
+
+In current value form, the co-state condition recognizes that the change in the present shadow value is comprised of two parts:
+
+1. The change in the current shadow value
+2. The reduction in present value purely from the passage of time
+
+--
+
+If discounting is high (large $r$), then the current shadow value must change quicker in order to compensate the policymaker for leaving stock for the future
+
+<!-- --- -->
+
+<!-- # Euler equations -->
+
+<!-- We can obtain an Euler equation which describes the optimal trajectory in two steps -->
+
+<!-- 1. Differentiate the maximality condition with respect to time to get a condition for the time derivative of our co-state variable -->
+<!-- 2. Solve the maximality condition and its time derivative for the co-state and the time derivative of the co-state, then plug this into the co-state condition -->
+
+<!-- -- -->
+
+<!-- This tells us how our control variable evolves over time, while our transition equation tells us how our state variable evolves over time -->
+
+<!-- -- -->
+
+<!-- Now lets do some applications of the theory -->
+
+<!-- --- -->
+
+<!-- # Hotelling extraction -->
+
+<!-- The Hotelling model has conventionally been solved in continuous time -->
+
+<!-- -- -->
+
+<!-- An oil extracting firm has stock $x(t)$ at time $t$ -->
+
+<!-- -- -->
+
+<!-- It decides on how much to extract, $q(t)$ at time $t$ to maximize the discounted stream of profits over some time horizon $T$ -->
+
+<!-- -- -->
+
+<!-- The initial amount in the oil reservoir is $x_0 > 0$ -->
+
+<!-- -- -->
+
+<!-- The stock at any point in time evolves according to -->
+<!-- $$x(t) = x_0 - \int_0^t q(s) ds \Rightarrow \dot{x}(t) = -q(t)$$ -->
+
+<!-- -- -->
+
+<!-- At time $T$, the firm can decide how much oil to leave in the ground, so $x_T$ is a free variable, but there's no value to leaving it in the ground -->
+
+<!-- --- -->
+
+<!-- # Hotelling extraction -->
+
+<!-- The firm has a profit function $\pi(q(t),x(t))$ that depends on the amount of extraction and how much oil is left in the ground $$\pi_q(q,x) > 0 \qquad \pi_x(q,x) > 0$$ -->
+
+<!-- -- -->
+
+<!-- Let $\pi_{qq}(q,x) < 0$ and let $r$ be the discount rate -->
+
+<!-- --- -->
+
+<!-- # Hotelling extraction -->
+
+<!-- The firm's problem is -->
+<!-- \begin{align} -->
+<!-- 	\max_{q(t),x_T} \int_0^T \pi(q(t),x(t)) e^{-rt} dt \notag \\ -->
+<!-- 	\text{subject to:} \,\,\,\,\, \dot{x}(t) = -q(t), x(0) = x_0, x(T) = x_T \notag -->
+<!-- \end{align} -->
+
+<!-- -- -->
+
+<!-- Ignoring constraints for ease of exposition, the firm's Hamiltonian is -->
+<!-- $$H(t,x,q,\lambda) = \pi(q,x)e^{-rt} - \lambda q$$ -->
+
+<!-- --- -->
+
+<!-- # Hotelling extraction -->
+
+<!-- The necessary conditions for an optimal trajectory are, -->
+<!-- \begin{align} -->
+<!-- 	H_q(t,x,q,\lambda) &= \pi_q(q,x)e^{-rt} - \lambda = 0 \tag{maximality condition} \\ -->
+<!-- 	-\pi_x(q,x)e^{-rt} &= \dot{\lambda}(t) \tag{co-state condition} \\ -->
+<!-- 	\dot{x}(t) &= -q(t) \tag{state transition} \\ -->
+<!-- 	x(0) &= x_0 \tag{initial condition} \\ -->
+<!-- 	\lambda(T) &= 0 \tag{transversality condition} -->
+<!-- \end{align} -->
+
+<!-- -- -->
+
+<!-- $\lambda(t)$ is the present value of the shadow price of the oil at time $t$ -->
+
+<!-- --- -->
+
+<!-- # Hotelling extraction -->
+
+<!-- $$\lambda(T) = 0$$ -->
+
+<!-- This means the transversality conditions is that along an optimal path, the value of any remaining oil in the reservoir is worthless -->
+
+<!-- -- -->
+
+<!-- $$\pi_q(q,x)e^{-rt} - \lambda = 0$$ -->
+
+<!-- The maximality condition tells us that along an optimal path,   -->
+<!-- the present value of the marginal profit of extraction must equal the shadow price -->
+
+<!-- -- -->
+
+<!-- The firm must be indifferent between extracting another unit (increasing profit at time $t$) -->
+<!-- or leaving it in the ground (with value $\lambda(t)$ from future extraction) -->
+
+<!-- --- -->
+
+<!-- # Hotelling rule -->
+
+<!-- Consider a current value expression -->
+
+<!-- -- -->
+
+<!-- Define $\mu(t) = e^{rt} \lambda(t)$ as the current value shadow price, and that $\dot{\mu}(t) = r\lambda(t)e^{rt} + \dot{\lambda}(t) e^{rt}$ -->
+
+<!-- -- -->
+
+<!-- If we substitute in the definition of $\mu(t)$ and the co-state condition above, we have that, -->
+<!-- $$\frac{\dot{\mu}(t)}{\mu(t)} = r - \frac{\pi_x(q(t),x(t))}{\mu(t)} < r \tag{generalized Hotelling rule}$$ -->
+
+<!-- --- -->
+
+<!-- # Hotelling rule -->
+
+<!-- $$\frac{\dot{\mu}(t)}{\mu(t)} = r - \frac{\pi_x(q(t),x(t))}{\mu(t)} < r \tag{generalized Hotelling rule}$$ -->
+
+<!-- If the extraction cost depends on the stock, the shadow price of the oil can be rising or falling, we can intepret this as a no-arbitrage condition -->
+
+<!-- -- -->
+
+<!-- The firm can extract an additional unit of oil today and invest the revenues to earn $(1+r)\pi_q(t) = (1+r)\mu(t)$ tomorrow, but by depleting the stock, the firm loses $\pi_x$ tomorrow -->
+
+<!-- -- -->
+
+<!-- Alternatively, the firm can leave that unit of oil in the ground and extract tomorrow, yielding a marginal profit tomorrow of $\pi_q(t+1) = \mu(t+1)$ -->
+
+<!-- -- -->
+
+<!-- Along an optimal trajectory the firm cannot arbitrage so we must have that $\mu(t+1) = (1+r) \mu(t) - \pi_x$ -->
+
+<!-- --- -->
+
+<!-- # Hotelling rule -->
+
+<!-- $$\mu(t+1) = (1+r) \mu(t) - \pi_x$$ -->
+
+<!-- We can rearrange the expression to obtain the generalized Hotelling rule -->
+
+<!-- -- -->
+
+<!-- If $\pi_x(q,x)$ = 0, then the right hand side simplifies to just $r$ -->
+
+<!-- -- -->
+
+<!-- This is the conventional Hotelling rule stating that the shadow price, and thus marginal profit, must rise at the rate of interest -->
+
+<!-- -- -->
+
+<!-- The firm must be indifferent between extracting today or tomorrow,so profits must rise at the rate of interest to offset gains from extracting today and investing at rate $r$ -->
+
+---
+
+# Numerical methods for continuous time models
+
+Continuous time models are systems of ODEs
+
+--
+
+A first-order ordinary differential equation has the form
+\begin{align}
+	dy/dt = f(y,t) \notag
+\end{align}
+
+--
+
+Where $f:\mathbb{R}^{n+1}\rightarrow\mathbb{R}^n$ 
+
+--
+
+The unknown is the function $y(t):[t_0,T] \rightarrow \mathbb{R}^n$
+
+--
+
+$n$ determines the number of differential equations that we have
+
+---
+
+# Numerical methods for continuous time models
+
+The differential equation will give us the shape of the path that is the solution, but not where that path lies in our state space
+
+--
+
+We need additional conditions to pin down $y(t)$, how we pin down $y(t)$ is what defines the different types of problems we have
+
+--
+
+If we pin down $y(t_0) = y_0$ or $y(T) = y_T$ we have an initial value problem
+
+--
+
+IVPs are defined by the function being pinned down at one end or the other
+
+---
+
+# Numerical methods for continuous time models
+
+
+In one dimension we must pin down the function with either an initial or terminal condition so they are all IVPs by default
+
+--
+
+If $n>1$ then we can have a *boundary value problem* where we impose $n$ conditions on $y$
+\begin{align}
+	g_i(y(t_0)) = 0, \,\,\,\,\, i=1,...,.n', \notag \\
+	g_i(y(T)) = 0, \,\,\,\,\, i=n'+1,...,n \notag
+\end{align}
+where $g:\mathbb{R}^n\rightarrow\mathbb{R}^n$
+
+---
+
+# Numerical methods for continuous time models
+
+In general we have that
+\begin{align}
+	g_i(y(t_i)) = 0 \notag
+\end{align}
+
+for some set of points $t_i$, $t_0 \leq t_i \leq T$, $1 \leq i \leq n$
+
+--
+
+Often we set $T = \infty$ so we will need some condition in the limit: $\lim_{t\rightarrow\infty}y(t)$
+
+
+---
+
+# Numerical methods for continuous time models
+
+Note two more things:
+
+1. We are implicitly assuming that these $n$ conditions are independent, otherwise we will not have a unique solution
+2. IVPs and BVP are fundamentally different: IVPs are problems where the auxiliary conditions that pin down the solution are all at one point, in BVPs they can be at different points, this has significant implications for how we can solve the problems
+
+---
+
+# Numerical methods for continuous time models
+
+If we have higher-order ODEs we can use a simple change of variables
+\begin{align}
+	d^2y/dx^2 = g(dy/dx,y,x) \notag
+\end{align}
+for $x,y\in\mathbb{R}$
+
+--
+
+Define $z=dy/dx$ and then we can study the alternative system
+\begin{align}
+	dy/dx = z \qquad dz/dx = g(z,y,x) \notag
+\end{align}
+of two first-order ODEs
+
+--
+
+In general you can always transform a $n$th-order ODE into $n$ first-order ODEs
+
+---
+
+# Finite difference methods for IVPs
+
+We solve IVPs using finite-difference methods
+
+--
+
+Consider the following IVP
+$$y'=f(t,y), \qquad y(t_0) = y_0$$
+
+--
+
+A finite-difference method solves this IVP by first specifying a grid/mesh over $t$: $t_0 < t_1 < ... < t_i < ...$
+
+--
+
+Assume the grid is uniformly spaced: $t_i = t_0 + ih, \, i=0,1,...,N$ where $h$ is the mesh size
+
+--
+
+Our goal is to find for each $t_i$, a value $Y_i$ that closely approximates $y(t_i)$
+
+---
+
+# Finite difference methods for IVPs
+
+To do this, we replace our differential equation with a difference system on the grid
+
+--
+
+For example we might have $Y_{i+1} = F(Y_i, Y_{i-1},...,t_{i+1},t_i,...)$
+
+--
+
+We then solve the difference equation for the $Y$'s in sequence where the initial $Y_0$ is fixed by the initial condition $Y_0 = y_0$
+
+--
+
+This approximates the solution only at the grid points, but then we can interpolate using standard procedures to get the approximate solution off the grid points
+
+---
+
+# Euler's method
+
+The workhorse finite-difference method is Euler's method
+
+--
+
+Euler's method is the difference equation
+$$Y_{i+1} = Y_i + hf(t_i,Y_i)$$
+where $Y_0$ is given by the initial condition
+
+---
+
+# Euler's method
+
+<div align="center">
+  <img src="figures/euler_geometry.png" height=225>
+</div>
+
+
+Suppose the current iterate is $P=(t_i,Y_i)$ and $y(t)$ is the true solution
+
+--
+
+At $P$, $y'(t_i)$ is the tangent vector $\vec{PQ}$
+
+--
+
+Euler's method follows that direction until $t=t_{i+1}$ at $Q$
+
+--
+
+The Euler estimate of $y(t_{i+1})$ is then $Y^E_{i+1}$
+
+---
+
+# Euler's method
+
+This sounds very similar to Newton's method, because it is
+
+--
+
+Euler's method can be motivated by a similar Taylor approximation argument
+
+--
+
+If $y(t)$ is the true solution, the second order Taylor expansion around $t_i$ is
+$$y(t_{i+1}) = y(t_i) + hy'(t_i) + \frac{h^2}{2}y''(\xi)$$
+for some $\xi \in [t_i,t_{i+1}]$
+
+--
+
+If we drop the second order term and assume $f(t_i,Y_i) = y'(t_i)$ and $Y_i = y(t_i)$ we have exactly Euler's formula
+
+--
+
+For small $h$, $y(x)$ should be a close approximation to the solution of the truncated Taylor expansion,so $Y_i$ should be a good approximation to $y(t_i)$
+
+---
+
+# Euler's method
+
+This approach approximated $y(t)$ with a linear function with slope $f(t_i,Y_i)$ on the interval $[t_i,t_{i+1}]$
+
+--
+
+We can motivate Euler's method with an integration argument instead of a Taylor expansion argument
+
+--
+
+The fundamental theorem of calculus tells us that
+$$y(t_{i+1}) = y(t_i) + \int_{t_i}^{t_{i+1}} f(s,y(s)) ds$$
+
+---
+
+# Euler's method
+
+$$y(t_{i+1}) = y(t_i) + \int_{t_i}^{t_{i+1}} f(s,y(s)) ds$$
+
+If we approximate the integral with $hf(t_i,y(t_i))$, a box of width $h$ and height $f(t_i,y(t_i))$, then $y(t_{i+1}) = y(t_i) + hf(t_i,y(t_i))$ which implies the Euler method difference equation above if $Y_i = y(t_i)$
+
+--
+
+Thus this also approximate $y(t)$ with a linear function over each subinterval with slope $f(t_i,Y_i)$
+
+--
+
+As $h$ decreases, we would expect the solutions to become more accurate
+
+--
+
+As $h\rightarrow0$, we are back in the ODE world
+
+---
+
+# Euler's method errors
+
+Consider a system, $y'(t) = y(t), y(0) = 1$
+
+--
+
+The solution to this is simply $y(t) = e^t$
+
+--
+
+The Euler method gives us a difference equation of $Y_{i+1} = Y_i + hY_i = (1+h)Y_i$
+
+--
+
+This difference equation has solution $Y_i = (1+h)^i$ and implies the approximation is $Y(t) = (1+h)^{t/h}$
+
+---
+
+# Euler's method errors
+
+Thus the relative error between the two is
+$$log(|Y(t)/y(t)|) = \frac{t}{h}log(1+h) - t = \frac{t}{h}(h-h^2+...)-t = -th + ...$$
+where excluded terms have order higher than $h$
+
+--
+
+Thus the relative error in the Euler approximation has order $h$ and as $h$ goes to zero so does the approximation error
+
+--
+
+In general we can show that Euler's method has linear convergence
+
+*Suppose the solution to $y'(t) = f(t,y(t)), y(t_0) = y_0$ is $C^3$ on $[t_0,T]$, that $f$ is $C^2$ , and that $f_y$ and $f_{yy}$ are bounded for all $y$ and $t_0\leq t \leq T$. Then the error of the Euler scheme with step size $h$ is $O(h)$*
+
+---
+
+# Implicit Euler method
+
+We expanded $y$ around $t_i$, but we could always expand around $t_{i+1}$ so that we have
+$$y(t_i) = y(t_{i+1}) - hy'(t_{i+1}) = y(t_{i+1}) - hf(t_{i+1},y(t_{i+1}))$$
+
+--
+
+This yields the implicit Euler method
+$$Y_{i+1} = Y_i + hf(t_{i+1},Y_{i+1})$$
+
+--
+
+Notice that now $Y_{i+1}$ is only implicitly defined in terms of $t_i$ and $Y_i$ so we will need to solve a non-linear equation in $Y_{i+1}$
+
+---
+
+# Implicit Euler method
+
+This seems not great, before we simply computed $Y_{i+1}$ from values known at $i$ but now we have to perform a rootfinding problem
+
+--
+
+However, $Y_{i+1}$ does not simply depend on only $Y_i$ and $t_{i+1}$ but also $f$ at $t_{i+1}$
+
+--
+
+Thus the implicit Euler method will get us better approximation properties, often times much better
+
+--
+
+Because of this we can typically use larger $h$'s with the implicit Euler method
+
+---
+
+# Runge-Kutta methods
+
+Runge-Kutta methods take Euler methods but adapts $f$
+
+--
+
+In the standard Euler approach we implicitly assume that the slope at $(t_{i+1},Y^E_{i+1})$ is the same as the slope at $(t_{i},Y^E_{i})$ which is a bad assumption unless $y$ is linear
+
+--
+
+For example if $y$ is concave we will overshoot the true value
+
+--
+
+We could instead use the slope at $(t_{i+1},Y^E_{i+1})$ but this will give the same problem but in the opposite direction, we will undershoot
+
+---
+
+# Runge-Kutta methods
+
+Runge-Kutta methods recognizes these two facts
+
+--
+
+A first-order Runge-Kutta method will take the average of these two slopes to arrive at the formula
+$$Y_{i+1} = Y_i + \frac{h}{2}\left[f(t_i,Y_i) + f(t_{i+1},Y_{i+1}) \right]$$
+
+--
+
+This converges quadratically to the true solution in $h$, but now uses two evaluations per step
+
+--
+
+This has the same flavor as forward vs central finite differences
+
+--
+
+There are higher order Runge-Kutta rules that have even more desirable properties outlined in Judd (1998)
+
+
+---
+
+# Boundary Value Problems
+
+IVPs are easy to solve because the solution depends only on local conditions so we can use local solution algorithms which are convenient
+
+--
+
+BVPs have auxiliary conditions that are imposed at different points in time so we lose the local nature of the problem and our solutions must now be global in nature
+
+---
+
+# Boundary Value Problems
+
+
+Consider the following BVP
+\begin{align}
+	\dot{x} = f(x,y,t) \notag\\
+	\dot{y} = g(x,y,t) \notag\\
+	x(t_0) = x_0, \,\,\,\, y(T) = y_T \notag
+\end{align}
+
+where $x\in\mathbb{R}^n,y\in\mathbb{R}^m$
+
+--
+
+We cannot use standard IVP approaches because at $t_0$ or $T$ we only know the value of either $x$ or $y$ but not both
+
+--
+
+Thus we cannot find the next value of both of them using only local information: we need alternative approaches
+
+---
+
+# Boundary Value Problems: Shooting
+
+The core method for solving BVPs is called .hi-blue[shooting]
+
+--
+
+The idea behind shooting is that we guess the value of $y(t_0)$, and use an IVP method to see what that means about $y(T)$
+
+--
+
+For any given guess, we generally won't hit the terminal condition exactly and might not even be that close
+
+--
+
+But we do get some information from where we end up at $y(T)$ and can use that information to update our guesses for $y(t_0)$ until we are sufficiently close to $y_T$
+
+--
+
+There are two components to a shooting method
+
+---
+
+# Shooting
+
+First we guess some $y(0) = y_0$ and then solve the IVP problem with methods we've already used
+\begin{align}
+	\dot{x} = f(x,y,t) \notag\\
+	\dot{y} = g(x,y,t) \notag\\
+	x(t_0) = x_0, \,\,\,\, y(0) = y_0 \notag
+\end{align}
+to find some $y(T)$ which we call $Y(T,y_0)$ since it depends on our initial guess $y_0$
+
+--
+
+Second we need to find the *right* $y_0$
+
+--
+
+We want to find a $y_0$ such that $y_T = Y(T,y_0)$
+
+--
+
+This is a nonlinear equation in $y_0$ so we need to solve nonlinear equations
+
+---
+
+# Shooting
+
+We can write the algorithm as
+1. Initialize: Guess $y_0^i$. Choose a stopping criterion $\epsilon > 0$
+2. Solve the IVP for $x(T), y(T)$ given the initial condition $y_0 = y_0^i$
+3. If $||y(T) - y_T|| < \epsilon$, STOP. Else choose $y_0^{i+1}$ based on the previous values of $y$ and go back to step 1
+
+---
+
+# Shooting
+
+This is an example of a two layer algorithm
+
+--
+
+The inner layer (step 1) uses an IVP method that solves $Y(T,y_0)$ for any $y_0$
+
+--
+
+This can be Euler, Runge-Kutta or anything else
+
+--
+
+In the outer layer (step 2) we solve the nonlinear equation $Y(T,y_0) = y_T$
+
+--
+
+We can use any nonlinear solver here, typically we do this by defining a subroutine that computes $Y(T,y_0)-y_T$ as a function of $y_0$ and then sends that subroutine to a rootfinding program
+
+---
+
+# Example: Lifecycle model
+
+A simple lifecycle model is given by
+\begin{align}
+	\max_{c(t)} \int_0^T e^{-rt} u(c(t)) dt \notag\\
+	s.t. \,\,\,\, \dot{A}(t) = f(A(t)) + w(t) - c(t) \notag \\
+	A(0) = A(T) = 0. \notag
+\end{align}
+$u(c(t))$ is utility from consumption, $w(t)$ is the wage rate, $A(t)$ are assets and $f(A(t))$ is the return on invested assets
+
+--
+
+We assume that assets are initially and terminally zero where the latter would come about naturally from a transversality condition
+
+---
+
+# Example: Lifecycle model
+
+The Hamiltonian is
+$$H = u(c(t)) + \lambda(t)\left[ f(A(t)) + w(t) - c(t) \right]$$
+
+--
+
+and the co-state condition is given by
+$$\dot{\lambda}(t) = r\lambda(t) - \lambda(t) f'(A(t))$$
+--
+
+The maximum principle implies that $u'(c(t)) = \lambda(t)$
+
+---
+
+# Example: Lifecycle model
+
+This gives us a two equation system of differential equations (1 for the $A$ transition, 1 for the costate condition) and the boundary conditions on $A$ are what pin down the problem
+
+--
+
+The issue here is that we never know $A$ and $\lambda$ at either $t=0$ or $t=T$
+
+--
+
+We can use the maximum principle to convert the costate condition into a condition on consumption
+$$\dot{c}(t) = -\frac{u'(c(t))}{u''(c(t))}\left[f'(A(t)) - r\right]$$
+
+---
+
+# Example: Lifecycle model
+
+The Figure shows the phase diagram assuming that $f'(A) > r$ for all $A$
+<div align="center">
+  <img src="figures/lifecycle_phase.png" height=350>
+</div>
+
+If $A(T) < 0$ when we guess $c(0) = c_H$, but $A(T) > 0$ when we guess $c(0) = c_L$, we know the correct guess lies in between and we can solve for it using the bisection method
+
+---
+
+# Reverse shooting for $\infty$ horizon problems
+
+The standard infinite horizon optimal control problem is
+\begin{align}
+	\max_{u(t)} \int_{0}^\infty e^{-rt} \pi(x(t),u(t)) dt \notag\\
+	s.t. \,\,\,\, \dot{x}(t) = f(x(t),u(t)) \notag\\
+	x(0) = x_0. \notag
+\end{align}
+
+--
+
+We still have $x(0) = x_0$ as before, but we no longer have the terminal condition
+
+--
+
+We replace it with a transversality condition that $\lim_{t\rightarrow\infty} e^{-rt} |\lambda(t)^Tx(t)| \leq \infty$
+
+---
+
+# Reverse shooting for $\infty$ horizon problems
+
+Shooting methods do not really work for infinite horizon problems since we need to integrate the problem over a very long time horizon and so $x(T)$ will be particularly sensitive to $\lambda(0)$ when $T$ is large
+
+--
+
+The primary issue is that the terminal state, because of the long time horizon, is very sensitive to the initial guess
+
+--
+
+But this implies something very convenient: that the initial state corresponding to any terminal state is not very sensitive to the value of the terminal state
+
+--
+
+Thus what we will do is not guess the value of the initial condition and integrate forward, we will guess the terminal condition and integrate .hi-blue[backward]
+
+---
+
+# Example: Reverse shooting for $\infty$ horizon problems
+
+Consider the simplest growth model
+\begin{align}
+	\max_{c(t)} \int_0^\infty e^{-rt} u(c(t)) dt \notag\\
+	\dot{k}(t) = f(k(t)) - c(t) \notag\\
+	s.t. \,\,\,\, k(0) = k_0, \notag
+\end{align}
+where $c$ is consumption, $k$ is the capital stock, and $f$ is production
+
+---
+
+# Example: Reverse shooting for $\infty$ horizon problems
+
+We can use Pontryagin's necessary conditions to get that consumption and capital are governed by the following differential equations
+\begin{align}
+	\dot{c}(t) = -\frac{u'(c(t))}{u''(c(t))}(f'(k) - r) \notag\\
+	\dot{k}(t) = f(k(t)) -c(t), \notag
+\end{align}
+with boundary conditions,
+\begin{align}
+	k(0) = k_0, \,\,\,\, 0 < \lim_{t\rightarrow\infty}|k(t)| \leq \infty \notag
+\end{align}
+
+---
+
+# Example: Reverse shooting for $\infty$ horizon problems
+
+Assume $u$ and $f$ are concave, the Figure shows the phase diagram for the problem
+
+<div align="center">
+  <img src="figures/shooting_phase.png" height=350>
+</div>
+
+We have a steady state at $k=k^*$, this occurs when $f'(k(t)) = r$ and $c^* = f(k^*)$
+
+---
+
+# Example: Reverse shooting for $\infty$ horizon problems
+
+For this problem there exists a stable manifold $M_S$ and an unstable manifold $M_U$  
+so that the steady state is .hi-blue[saddle point stable]
+
+--
+
+Both are invariant manifolds because any system that starts on either of these manifolds
+will continue to move along the manifold
+
+--
+
+However $M_S$ is stable because it will converge to the steady state while $M_U$ diverges away from the steady state
+
+---
+
+# Example: Reverse shooting for $\infty$ horizon problems
+
+Lets first use standard shooting to try to compute the stable manifold
+
+--
+
+We want $k$ and $c$ to equal their steady state values at $t=\infty$, but we can't quite do that so we search for a $c(0)$ so that $(c(t),k(t))$ has a path that is close to the steady state
+
+--
+
+Suppose we start with $k_0 < k^*$, if we guess $c(0)$ too big we will cross the $k$ isoquant and have a falling capital stock, but if we guess $c(0)$ too small we will get a path that crosses the $c$ isoquant and results in a falling consumption level
+
+
+---
+
+# Example: Reverse shooting for $\infty$ horizon problems
+
+This gives us our algorithm
+1. Initialize: set $c_H = f(k_0)$ and set $c_L = 0$, choose a stopping criterion $\epsilon > 0$
+2. Set $c_0 = \frac{1}{2}(c_L + c_H)$
+3. Solve the IVP with initial conditions $c(0) = c_0, k(0) = k_0$. Stop the IVP at the first $t$ when $\dot{c}(t) < 0$ or $\dot{k}(t) < 0$, denote this $T$
+4. If $|c(T) - c^*| < \epsilon$, STOP. If $\dot{c}(t) < 0$, set $c_L = c_0$, else set $c_H = c_0$. Go to step 2.
+
+---
+
+# Example: Reverse shooting for $\infty$ horizon problems
+
+This algorithm makes sense but the phase diagram shows why it will have trouble finding the stable manifold
+
+--
+
+Any small deviation from $M_S$ is magnified and results in a path that increasingly gets far away from $M_S$
+
+--
+
+Unless we happen to pick a point precisely on the stable manifold we will move away from it, so it is hard to search for the solution since changes in our guesses will lead to wild changes in terminal values
+
+---
+
+# Example: Reverse shooting for $\infty$ horizon problems
+
+Now suppose we wanted to find a path on $M_U$,
+notice that the flow pushes points *toward* $M_U$ so the deviations are smushed together
+
+--
+
+If we wanted to compute a path that lies near the unstable manifold, we could simply pick a point near the steady state as the initial condition and integrate the system
+
+--
+
+We don't actually want to solve for a path on $M_U$ but this gives us some insight
+
+---
+
+# Example: Reverse shooting for $\infty$ horizon problems
+
+We want to change the system so that the stable manifold becomes the unstable manifold
+
+--
+
+We can do this easily by reversing time
+\begin{align}
+	\dot{c}(t) = \frac{u'(c(t))}{u''(c(t))}(f'(k) - r) \notag\\
+	\dot{k}(t) = -(f(k(t)) -c(t)) \notag
+\end{align}
+
+--
+
+This yields the same phase diagram but with the arrows turned $180^\circ$ so the stable manifold forward in time is now the unstable manifold reverse in time
+
+--
+
+This allows us to exploit how paths tend to converge toward the stable manifold while going away from the steady state
+
+---
+
+# Reverse shooting for $\infty$ horizon problems
+
+<div align="center">
+  <img src="figures/reverse_shooting_phase.png" height=550>
+</div>
+
+---
+
+# Stable manifold interpretation
+
+The stable manifold of the original system has an important interpretation
+
+--
+
+This is an autonomous problem so time plays no direct role besides through discounting
+
+--
+
+Thus the optimal consumption at some time $t$ depends only on the capital stock
+
+--
+
+We can express this as a policy function $C(k)$ such that $c(t) = C(k(t))$
+
+--
+
+Optimality requires that the capital stock converge to the steady state, and the only optimal $(c(t),k(t))$ pairs are on the stable manifold so the stable manifold .hi-blue[is the policy function] $C(k)$
+
+<!-- -- -->
+
+<!-- This implies that the following is also satisfied -->
+<!-- \begin{align} -->
+<!-- 	C'(k) = \frac{\partial c(t)}{\partial k(t)} = \frac{\dot{c}(t)}{\dot{k}(t)} = \frac{u'(C(k))}{u''(C(k))}\frac{r-f'(k)}{f(k)-C(k)} -->
+<!-- \end{align} -->
+
+<!-- which can be rearranged so that -->
+<!-- \begin{align} -->
+<!-- 	C'(k)(f(k)-C(k)) - \frac{u'(C(k))}{u''(C(k))}(r-f'(k)) = 0 -->
+<!-- \end{align} -->
+
+<!-- --- -->
+
+<!-- # Stable manifold interpretation -->
+
+<!-- We can now compute the stable manifold of the original system -->
+
+<!-- -- -->
+
+<!-- Beginning at the steady state $k^*$, $C'(k^*)$ reduces to $0/0$ but we can use l'Hopital's rule to show that -->
+<!-- $$C'(k^*) = -\frac{f''(k^*)}{f'(k^*)-C'(k^*)}\frac{u'(C(k))}{u''(C(k))}$$ -->
+
+<!-- -- -->
+
+<!-- This is quadratic in $C'(k^*)$ -->
+
+<!-- -- -->
+
+<!-- Consumption should be increasing in $k$ so we can pick the positive root of the system and get -->
+<!-- $$C'(k^*) = \frac{f'(k^*)}{2}\left(1+ \sqrt{1+ 4 \frac{u'(c^*)}{u''(c^*)} \frac{f''(k^*)}{f'(k^*)f'(k^*)}} \right)$$ -->
+
+<!-- --- -->
+
+<!-- # Stable manifold interpretation    -->
+
+<!-- We can calculate $C(k)$ by solving two IVPs -->
+
+<!-- -- -->
+
+<!-- First, for $k > k^*$ we can start at some $k=k^*+h$ using the approximation to our initial condition -->
+
+<!-- $$C(k^*+h) = c^* + hC'(k^*)$$ -->
+<!-- and then use some IVP method on the stable manifold equation to compute $C(k)$ for $k=k^*+nh$ for n=2,3,4.... -->
+
+<!-- -- -->
+
+<!-- For $k < k^*$ we do the opposite -->
+
+<!-- -- -->
+
+<!-- We then have an approximation to $C(k)$ for $k$ above and below $k^*$ -->
