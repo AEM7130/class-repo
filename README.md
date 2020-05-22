@@ -7,6 +7,8 @@
 
 **Prerequisites**: ECON 6090 and ECON 6170
 
+**Credit Hours: 3
+
 **Programs**: You will need to install the following programs on your computer
 
 - [Git](https://git-scm.com/downloads)
@@ -75,6 +77,10 @@ There is a final project for the course, due at the end of the semester. For the
 
 ### [Computational paper presentations](https://rawcdn.githack.com/AEM7130/spring-2020/fb175a76affc956dd0cf1fe681dc1dc0c979eb71/paper_presentation/paper_presentation.html)
 Starting near the middle of the course, one student a week will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. You may present the paper in class or record a video and submit it on Canvas.
+
+### Integrity of credit
+
+I expect every student in this course to abide by the Cornell University Code of Academic Integrity. I strongly encourage collaboration in this course, but each student is responsible for making sure that she or he follows the rules laid out in this syllabus, and with those stated in the Code of Academic Integrity. Any student found to have violated the stated policies on problem sets and papers will receive a zero for that assignment. Multiple violations in a semester may result in failure of the course. The Code of Academic Integrity is available for review here: https://cuinfo.cornell.edu/aic.cfm.
 
 ## Course Schedule
 
