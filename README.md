@@ -1,4 +1,4 @@
-# AEM 7130 Syllabus
+# AEM 7130 Environmental and Resource Economics
 **Time**: Wednesday 4:30-7:00
 
 **Location**: Warren 113
