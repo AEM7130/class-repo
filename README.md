@@ -1,9 +1,9 @@
-# AEM 7130 Environmental and Resource Economics
+# AEM 7130 Dynamic Optimization
 **Time**: Wednesday 4:30-7:00
 
 **Location**: Warren 113
 
-**Office Hours**: Tuesday 1:30-3:00
+**Office Hours**: M/W 2:45-4:00
 
 **Prerequisites**: ECON 6090 and ECON 6170
 
@@ -12,8 +12,7 @@
 **Programs**: You will need to install the following programs on your computer
 
 - [Git](https://git-scm.com/downloads)
-- [Julia or JuliaPro](https://julialang.org/downloads/)
-- [Jupyter/Anaconda](https://www.anaconda.com/download/)
+- [JuliaPro](https://julialang.org/downloads/)
 
 
 ## Course Objective
@@ -29,7 +28,7 @@ I expect every student in this course to abide by the Cornell University Code of
 
 ## Readings
 
-Some theory on dynamics will draw from Karp and Traeger (2013). Nocedal and Wright (2006) is highly useful as a detailed reference for optimization. Judd (1998) and Miranda and Fackler (2002) take a more detailed look at the fundamental numerical methods in economics. Judd (1998), Miranda and Fackler (2002), and Nocedal and Wright (2006) are available as eBooks in the library and Karp and Traeger (2013) will be available on Canvas or from the authors' websites. Please look at 
+Some theory on dynamics will draw from Karp and Traeger (2013). Nocedal and Wright (2006) is highly useful as a detailed reference for optimization. Judd (1998) and Miranda and Fackler (2002) take a more detailed look at the fundamental numerical methods in economics. Judd (1998), Miranda and Fackler (2002), and Nocedal and Wright (2006) are available as eBooks in the library and Karp and Traeger (2013) will be available on Canvas or from the authors' websites. Please look at
 [Learning Julia](https://julialang.org/learning/) or go over the first few [QuantEcon Julia lectures](https://quantecon.org) for a brief introduction to coding in Julia. The remainder of the required readings will be from journal articles or excerpts from texts which will be accessible online and posted on GitHub a week before class.
 
 Judd, Kenneth L. (1998) Numerical Methods in Economics, Cambridge, MA: MIT Press.
@@ -40,7 +39,7 @@ Miranda, Mario J. and Paul L. Fackler (2002) Applied Computational Economics and
 
 Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 2nd edition.
 
-## Grading 
+## Grading
 
 - Class participation: 10%
 - Presentation of a numerical paper: 15%
@@ -64,24 +63,17 @@ In addition to submitting problem sets you will be required to do a reproduction
 - [Problem set 3](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/3_ps/3_ps.ipynb): Due March 22
 - [Problem set 4](https://github.com/AEM7130/spring-2020/blob/master/problem_sets/4_ps/4_ps.ipynb): Due May 1
 
-### Final project ([proposal link here (no longer required)](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html))
+### Final project ([proposal link here](https://rawcdn.githack.com/AEM7130/spring-2020/d000f13df86fd714351820c2af9a511a32404395/final_project/project_proposal.html))
 
-There is a final project for the course, due at the end of the semester. For the project you may either write a paper of up to 7 pages, or record a presentation of up to 20 minutes. You may select one of two options:
+There is a final project for the course, due at the end of the semester, where each student will submit the beginning of a computationally-driven research paper. A proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results. The paper is due the day after the final class. It should be at least 10 pages including tables and graphs and should:
 
-1. Begin a new computationally-driven research project. The project should
-    1. Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.
-    2. Analytically develop the model, provide proofs for theoretical results if there are any.
-    3. Describe how you solve or estimate the model.
-    4. If possible, have preliminary results.
-2. Expand an existing paper by bringing in machine learning techniques, advanced numerical techniques, or a remotely sensed geospatial dataset. This can be your own paper (e.g. your current second year paper in progress), or an existing published paper where reproduction data and code are available online. The paper should
-    1. Briefly summarize the existing paper.
-    2. Describe the new techniques or data your are bringing to the table in detail.
-    3. Have preliminary results.
-    4. If using alternative techniques, compare outcomes or performance against the original methodology in the paper.
-
+1. Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.
+2. Analytically develop the model, provide proofs for theoretical results if there are any.
+3. Describe how you solve the model.
+4. Have preliminary results.
 
 ### [Computational paper presentations](https://rawcdn.githack.com/AEM7130/spring-2020/fb175a76affc956dd0cf1fe681dc1dc0c979eb71/paper_presentation/paper_presentation.html)
-Starting near the middle of the course, one student a week will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. You may present the paper in class or record a video and submit it on Canvas.
+Starting near the middle of the course, one student a week will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. More information will come later in the course.
 
 ## Course Schedule
 
@@ -137,9 +129,9 @@ Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT
 
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
-### April 8, 15: [Solving discrete time dynamic models](https://rawcdn.githack.com/AEM7130/spring-2020/137ba8b439b11d41170e5bf1d996fab754fee702/lecture_notes/lecture_7/7_solution_methods.html)
+### March 4: Approximating value and policy functions for discrete time models
 
-**Theory**: value function iteration, policy iteration, time iteration, VFI + discretization
+**Theory**: value function iteration, policy iteration, time iteration
 
 Aruoba, S Boragan, Jesus Fernandez-Villaverde, and Juan F Rubio-Ramirez (2006) “Comparing solution methods for dynamic equilibrium economies,” Journal of Economic Dynamics and Control, Vol. 30, No. 12, pp. 2477–2508.
 
@@ -147,17 +139,23 @@ Cai, Yongyang and Kenneth L Judd (2014) Advances in Numerical Dynamic Programmin
 
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
-**Applications**: climate change, bioeconomics, 
+**Applications**: climate change, bioeconomics
 
 Lemoine, Derek and Christian Traeger (2014) “Watch Your Step: Optimal policy in a tipping climate,” American Economic Journal: Economic Policy, Vol. 6, No. 1.
 
-Springborn, Michael and James N. Sanchirico (2013) “A density projection approach for non-trivial information dynamics: Adaptive management of stochastic natural resources,” Journal of Environmental Economics and Management, Vol. 66, No. 3, pp. 609–624.
+### March 11: Continuous time optimal control
 
-### April 22: [Continuous time optimal control](https://rawcdn.githack.com/AEM7130/spring-2020/a3e23dae6d910b41729a05358685e2265a6d5409/lecture_notes/lecture_8/8_optimal_control.html)
-
-**Theory**: maximum principle, hamiltonians, shooting, backwards shooting
+**Theory**: maximum principle, hamiltonians
 
 Caputo, Michael Ralph (2005) Foundations of dynamic economic analysis: optimal control theory and applications: Cambridge University Press.
+
+**Applications**: oil extraction
+
+Anderson, Soren T, Ryan Kellogg, and Stephen W Salant (2018) “Hotelling under pressure,” Journal of Political Economy, Vol. 126, No. 3, pp. 984–1026.
+
+### March 18: Solving ordinary differential equations for continuous time models
+
+**Theory**: shooting, backwards shooting
 
 Brunner, Martin and Holger Strulik (2002) “Solution of perfect foresight saddlepoint problems: A simple method and applications,” Journal of Economic Dynamics and Control, Vol. 26, No. 5, pp. 737–753.
 
@@ -165,40 +163,50 @@ Judd (1998, Chapter 10)
 
 Trimborn, Timo, Karl-Josef Koch, and Thomas M. Steger (2008) “Multidimensional Transitional Dynamics: a Simple Numerical Procedure,” Macroeconomic Dynamics, Vol. 12, No. 03, pp. 301– 319.
 
-**Applications**: oil extraction, climate change, shallow lakes
+**Applications**: climate change
 
 Lemoine, Derek and Ivan Rudik (2017) “Steering the climate system: using inertia to lower the cost of policy,” American Economic Review, Vol. 107, No. 10, pp. 2947–57.
 
-Maler, Karl Goran, Anastasios Xepapadeas, and Aart De Zeeuw (2003) “The Economics of Shallow Lakes,” Environmental and Resource Economics, Vol. 26, No. 4, pp. 603–624.
+### March 25: Solving (dynamic) spatial equilibrium models
 
-Anderson, Soren T, Ryan Kellogg, and Stephen W Salant (2018) “Hotelling under pressure,” Journal of Political Economy, Vol. 126, No. 3, pp. 984–1026.
+**Theory**: exact hat algebra, dynamic hat algebra
 
-### April 29: [Advanced methods for discrete time models](https://rawcdn.githack.com/AEM7130/spring-2020/2bc4cf4b4329fad81bc1d9408c951877af1dfb70/lecture_notes/lecture_9/9_advanced_methods.html)
+Dekle, Robert, Jonathan Eaton, and Samuel Kortum. "Global rebalancing with gravity: Measuring the burden of adjustment." IMF Staff Papers 55, no. 3 (2008): 511-540.
 
-**Theory**: regression, endogenous grids, envelope condition method, modified policy iteration
+Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. "Trade and labor market dynamics: General equilibrium analysis of the china trade shock." Econometrica 87, no. 3 (2019): 741-835.
 
-Carroll, Christopher D. (2006) “The method of endogenous gridpoints for solving dynamic stochastic optimization problems,” Economics Letters, Vol. 91, No. 3, pp. 312–320.
+**Applications**: sea level rise
 
-Maliar, Lilia and Serguei Maliar (2014) Numerical Methods for Large-Scale Dynamic Economic
-Models, Vol. 3: Elsevier B.V. pp.325–477.
+Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities.""
 
-Puterman, Martin L. and Moon Chirl Shin (1978) “Modified Policy Iteration Algorithms for Dis- counted Markov Decision Problems,” Management Science, Vol. 24, No. 11, pp. pp. 1127–1137.
+### April 8: Machine learning
 
-
-### May 6: [Machine learning](https://rawcdn.githack.com/AEM7130/spring-2020/c9b3ba72b1d4472a3f4dccce04d22d61eaf49ea7/lecture_notes/lecture_10/10_machine_learning.html)
-
-**Theory**: linear models, non-parametric models, regularization, cross-validation, boosting, bagging
-
-[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 8, 9, 10, and 15.](https://web.stanford.edu/~hastie/ElemStatLearn/)
-
-Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous causal effects." Proceedings of the National Academy of Sciences 113, no. 27, pp. 7353-7360.
+**Theory**: regularization and sparsity, prediction and model selection
 
 [Mullainathan, Sendhil, and Jann Spiess (2017) "Machine learning: an applied econometric approach." Journal of Economic Perspectives 31, No. 2, 87-106.](https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.31.2.87)
 
 [Athey, S., & Imbens, G. W. (2019) Machine Learning Methods Economists Should Know About.](https://www.gsb.stanford.edu/gsb-cmis/gsb-cmis-download-auth/476281)
 
-**Applications**: LASSO for counterfactuals, causal trees for heterogeneous treatment effects
+[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 3, 4 and 7.](https://web.stanford.edu/~hastie/ElemStatLearn/)
+
+**Applications**: LASSO for counterfactuals
 
 Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) "Machine learning from schools about energy efficiency." No. w23908. National Bureau of Economic Research.
 
+### April 15: Machine learning
+
+**Theory**: trees, bagging, boosting, ensembles, neural networks
+
+[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 8, 9, 10, and 15.](https://web.stanford.edu/~hastie/ElemStatLearn/)
+
+Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous causal effects." Proceedings of the National Academy of Sciences 113, no. 27, pp. 7353-7360.
+
+**Applications**: causal trees for heterogeneous treatment effects
+
 Prest, Brian (2020) "Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing." Journal of the Association of Environmental and Resource Economists 7, no. 1, pp. 103-143.
+
+### April 22: Cloud computing
+
+**Applications**: google compute engine, amazon elastic compute cloud
+
+### April 29: Final project presentations
