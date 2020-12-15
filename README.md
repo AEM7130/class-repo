@@ -173,11 +173,13 @@ Lemoine, Derek and Ivan Rudik (2017) “Steering the climate system: using inert
 
 Dekle, Robert, Jonathan Eaton, and Samuel Kortum. "Global rebalancing with gravity: Measuring the burden of adjustment." IMF Staff Papers 55, no. 3 (2008): 511-540.
 
+Costinot, Arnaud, and Andrés Rodríguez-Clare. "Trade theory with numbers: Quantifying the consequences of globalization." In Handbook of international economics, vol. 4, pp. 197-261. Elsevier, 2014.
+
 Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. "Trade and labor market dynamics: General equilibrium analysis of the china trade shock." Econometrica 87, no. 3 (2019): 741-835.
 
 **Applications**: sea level rise
 
-Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities.""
+Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities."
 
 ### April 8: Machine learning
 
