@@ -77,7 +77,7 @@ Starting near the middle of the course, one student a week will present either a
 
 ## Course Schedule
 
-### [January 22: Intro to computing](https://rawcdn.githack.com/AEM7130/spring-2020/623a189abe90d1ec9fcd81644852d4123ceb1bd1/lecture_notes/lecture_1/1_intro_to_computing.html)
+### Week 1: [Intro to computing](https://rawcdn.githack.com/AEM7130/spring-2020/623a189abe90d1ec9fcd81644852d4123ceb1bd1/lecture_notes/lecture_1/1_intro_to_computing.html)
 
 **Theory**: floats, ints, read/write, memory, truncation, rounding, error propagation, matrix inversion, differentiation, integration
 
@@ -85,7 +85,7 @@ Judd (1998, Chapters 2, 3 and 7)
 
 Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
-### January 29: [Coding, reproducibility, and the shell](https://rawcdn.githack.com/AEM7130/spring-2020/8a2fbf6e67e90bc64f4abd23800c7d46fa512240/lecture_notes/lecture_2/2a_coding.html)
+### Week 2: [Coding, reproducibility, and the shell](https://rawcdn.githack.com/AEM7130/spring-2020/8a2fbf6e67e90bc64f4abd23800c7d46fa512240/lecture_notes/lecture_2/2a_coding.html)
 
 **Applications**: shell scripts, generic coding, reproducible coding, speed in julia, workflow
 
@@ -97,7 +97,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 [QuantEcon Lectures](https://quantecon.org/)
 
-### February 5: [Version control](https://rawcdn.githack.com/AEM7130/spring-2020/93def05f54a61f2d5c871ec48503d39e5a4ae293/lecture_notes/lecture_3/3_git.html)
+### Week 3: [Version control](https://rawcdn.githack.com/AEM7130/spring-2020/93def05f54a61f2d5c871ec48503d39e5a4ae293/lecture_notes/lecture_3/3_git.html)
 
 **Applications**: git, github, issues, pull requests
 
@@ -105,7 +105,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 [SEERE Lab wiki](https://github.com/cornell-seere/lab-information/wiki)
 
-### February 12: [Rootfinding and optimization](https://rawcdn.githack.com/AEM7130/spring-2020/cd4786fa16d1820620fc6d1d3f86c7e8aa41167b/lecture_notes/lecture_4/4_optimization.html)
+### Week 4: [Rootfinding and optimization](https://rawcdn.githack.com/AEM7130/spring-2020/cd4786fa16d1820620fc6d1d3f86c7e8aa41167b/lecture_notes/lecture_4/4_optimization.html)
 
 **Theory**: iterative methods, newton methods, gaussian methods, global solvers
 
@@ -119,7 +119,7 @@ Nocedal and Wright (2006, Chapters 2-6)
 
 Donaldson, Dave, and Richard Hornbeck. "Railroads and American economic growth: A “market access” approach." The Quarterly Journal of Economics 131, no. 2 (2016): 799-858.
 
-### February 19: [Discrete time dynamic programming](https://rawcdn.githack.com/AEM7130/spring-2020/3fceafa72b63d046aad7d456b694cb45f8ea1ab4/lecture_notes/lecture_5/5_dynamics.html)
+### Week 5: [Discrete time dynamic programming](https://rawcdn.githack.com/AEM7130/spring-2020/3fceafa72b63d046aad7d456b694cb45f8ea1ab4/lecture_notes/lecture_5/5_dynamics.html)
 
 **Theory**: markov chains, principle of optimality
 
@@ -127,13 +127,13 @@ Adda, Jerome and Russell W Cooper (2003) Dynamic Economics: Quantitative Methods
 
 Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT press.
 
-### February 26: [Function approximation](https://rawcdn.githack.com/AEM7130/spring-2020/c4d0cfecbe312575ef356857a0bd63722d36e506/lecture_notes/lecture_6/6_projection.html)
+### Week 6: [Function approximation](https://rawcdn.githack.com/AEM7130/spring-2020/c4d0cfecbe312575ef356857a0bd63722d36e506/lecture_notes/lecture_6/6_projection.html)
 
 **Theory**: discretization, pseudospectral methods, finite element methods
 
 Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
 
-### March 4: Approximating value and policy functions for discrete time models
+### Week 7: Approximating value and policy functions for discrete time models
 
 **Theory**: value function iteration, policy iteration, time iteration
 
@@ -147,7 +147,7 @@ Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide
 
 Lemoine, Derek and Christian Traeger (2014) “Watch Your Step: Optimal policy in a tipping climate,” American Economic Journal: Economic Policy, Vol. 6, No. 1.
 
-### March 11: Continuous time optimal control
+### Week 8: Continuous time optimal control
 
 **Theory**: maximum principle, hamiltonians
 
@@ -157,7 +157,7 @@ Caputo, Michael Ralph (2005) Foundations of dynamic economic analysis: optimal c
 
 Anderson, Soren T, Ryan Kellogg, and Stephen W Salant (2018) “Hotelling under pressure,” Journal of Political Economy, Vol. 126, No. 3, pp. 984–1026.
 
-### March 18: Solving ordinary differential equations for continuous time models
+### Week 9: Solving ordinary differential equations for continuous time models
 
 **Theory**: shooting, backwards shooting
 
@@ -171,7 +171,7 @@ Trimborn, Timo, Karl-Josef Koch, and Thomas M. Steger (2008) “Multidimensional
 
 Lemoine, Derek and Ivan Rudik (2017) “Steering the climate system: using inertia to lower the cost of policy,” American Economic Review, Vol. 107, No. 10, pp. 2947–57.
 
-### March 25: Solving (dynamic) spatial equilibrium models
+### Week 10: Solving (dynamic) spatial equilibrium models
 
 **Theory**: exact hat algebra, dynamic hat algebra
 
@@ -185,7 +185,7 @@ Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. "Trade and labor mar
 
 Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities."
 
-### April 8: Machine learning
+### Week 11: Machine learning
 
 **Theory**: regularization and sparsity, prediction and model selection
 
@@ -199,7 +199,7 @@ Balboni, Clare (2020) "In harm's way? infrastructure investments and the persist
 
 Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) "Machine learning from schools about energy efficiency." No. w23908. National Bureau of Economic Research.
 
-### April 15: Machine learning
+### Week 12: Machine learning
 
 **Theory**: trees, bagging, boosting, ensembles, neural networks
 
@@ -211,8 +211,8 @@ Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous 
 
 Prest, Brian (2020) "Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing." Journal of the Association of Environmental and Resource Economists 7, no. 1, pp. 103-143.
 
-### April 22: Cloud computing
+### Week 13: Cloud computing
 
 **Applications**: google compute engine, amazon elastic compute cloud
 
-### April 29: Final project presentations
+### Week 14: Final project presentations
