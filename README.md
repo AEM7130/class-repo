@@ -123,53 +123,51 @@ Donaldson, Dave, and Richard Hornbeck. "Railroads and American economic growth: 
 
 **Theory**: markov chains, principle of optimality
 
-Adda, Jerome and Russell W Cooper (2003) Dynamic Economics: Quantitative Methods and Applications: MIT press.
+Adda, Jerome, Russell Cooper, and Russell W. Cooper. Dynamic economics: quantitative methods and applications. MIT press, 2003.
 
-Ljungqvist, Lars and Thomas J Sargent (2004) Recursive Macroeconomic Theory: MIT press.
+Ljungqvist, Lars, and Thomas J. Sargent. Recursive macroeconomic theory. MIT press, 2018.
 
 ### Week 6: [Function approximation](https://rawcdn.githack.com/AEM7130/spring-2020/c4d0cfecbe312575ef356857a0bd63722d36e506/lecture_notes/lecture_6/6_projection.html)
 
 **Theory**: discretization, pseudospectral methods, finite element methods
 
-Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
+Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfheide. "Solution and estimation methods for DSGE models." In Handbook of macroeconomics, vol. 2, pp. 527-724. Elsevier, 2016.
 
 ### Week 7: Approximating value and policy functions for discrete time models
 
 **Theory**: value function iteration, policy iteration, time iteration
 
-Aruoba, S Boragan, Jesus Fernandez-Villaverde, and Juan F Rubio-Ramirez (2006) “Comparing solution methods for dynamic equilibrium economies,” Journal of Economic Dynamics and Control, Vol. 30, No. 12, pp. 2477–2508.
+Aruoba, S. Borağan, Jesus Fernandez-Villaverde, and Juan F. Rubio-Ramirez. "Comparing solution methods for dynamic equilibrium economies." Journal of Economic dynamics and Control 30, no. 12 (2006): 2477-2508.
 
-Cai, Yongyang and Kenneth L Judd (2014) Advances in Numerical Dynamic Programming and New Applications, Vol. 3: Elsevier B.V. pp.479–516.
+Cai, Yongyang, and Kenneth L. Judd. "Advances in numerical dynamic programming and new applications." In Handbook of computational economics, vol. 3, pp. 479-516. Elsevier, 2014.
 
-Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez, and Frank Schorfheide (2016) “Solution and estimation methods for DSGE models,” Handbook of Macroeconomics, Vol. 2, pp. 527–724.
+Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfheide. "Solution and estimation methods for DSGE models." In Handbook of macroeconomics, vol. 2, pp. 527-724. Elsevier, 2016.
 
 **Applications**: climate change, bioeconomics
 
-Lemoine, Derek and Christian Traeger (2014) “Watch Your Step: Optimal policy in a tipping climate,” American Economic Journal: Economic Policy, Vol. 6, No. 1.
+Lemoine, Derek, and Christian Traeger. "Watch your step: optimal policy in a tipping climate." American Economic Journal: Economic Policy 6, no. 1 (2014): 137-66.
 
 ### Week 8: Continuous time optimal control
 
 **Theory**: maximum principle, hamiltonians
 
-Caputo, Michael Ralph (2005) Foundations of dynamic economic analysis: optimal control theory and applications: Cambridge University Press.
+Caputo, Michael R. Foundations of dynamic economic analysis: optimal control theory and applications. Cambridge University Press, 2005.
 
 **Applications**: oil extraction
 
-Anderson, Soren T, Ryan Kellogg, and Stephen W Salant (2018) “Hotelling under pressure,” Journal of Political Economy, Vol. 126, No. 3, pp. 984–1026.
+Anderson, Soren T., Ryan Kellogg, and Stephen W. Salant. "Hotelling under pressure." Journal of Political Economy 126, no. 3 (2018): 984-1026.
 
 ### Week 9: Solving ordinary differential equations for continuous time models
 
 **Theory**: shooting, backwards shooting
 
-Brunner, Martin and Holger Strulik (2002) “Solution of perfect foresight saddlepoint problems: A simple method and applications,” Journal of Economic Dynamics and Control, Vol. 26, No. 5, pp. 737–753.
+Brunner, Martin, and Holger Strulik. "Solution of perfect foresight saddlepoint problems: a simple method and applications." Journal of Economic Dynamics and Control 26, no. 5 (2002): 737-753.
 
 Judd (1998, Chapter 10)
 
-Trimborn, Timo, Karl-Josef Koch, and Thomas M. Steger (2008) “Multidimensional Transitional Dynamics: a Simple Numerical Procedure,” Macroeconomic Dynamics, Vol. 12, No. 03, pp. 301– 319.
-
 **Applications**: climate change
 
-Lemoine, Derek and Ivan Rudik (2017) “Steering the climate system: using inertia to lower the cost of policy,” American Economic Review, Vol. 107, No. 10, pp. 2947–57.
+Lemoine, Derek, and Ivan Rudik. "Steering the climate system: using inertia to lower the cost of policy." American Economic Review 107, no. 10 (2017): 2947-57.
 
 ### Week 10: Solving (dynamic) spatial equilibrium models
 
@@ -183,21 +181,23 @@ Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. "Trade and labor mar
 
 **Applications**: sea level rise
 
+Shapiro, Joseph S., and Reed Walker. "Why is pollution from US manufacturing declining? The roles of environmental regulation, productivity, and trade." American Economic Review 108, no. 12 (2018): 3814-54.
+
 Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities."
 
 ### Week 11: Machine learning
 
 **Theory**: regularization and sparsity, prediction and model selection
 
-[Mullainathan, Sendhil, and Jann Spiess (2017) "Machine learning: an applied econometric approach." Journal of Economic Perspectives 31, No. 2, 87-106.](https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.31.2.87)
+[Mullainathan, Sendhil, and Jann Spiess. "Machine learning: an applied econometric approach." Journal of Economic Perspectives 31, no. 2 (2017): 87-106.](https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.31.2.87)
 
-[Athey, S., & Imbens, G. W. (2019) Machine Learning Methods Economists Should Know About.](https://www.gsb.stanford.edu/gsb-cmis/gsb-cmis-download-auth/476281)
+[Athey, Susan, and Guido W. Imbens. "Machine learning methods that economists should know about." Annual Review of Economics 11 (2019): 685-725.](https://www.gsb.stanford.edu/gsb-cmis/gsb-cmis-download-auth/476281)
 
-[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 3, 4 and 7.](https://web.stanford.edu/~hastie/ElemStatLearn/)
+[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. The elements of statistical learning. Vol. 1, no. 10. New York: Springer series in statistics, 2001. Chapters 3, 4 and 7.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 **Applications**: LASSO for counterfactuals
 
-Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram (2017) "Machine learning from schools about energy efficiency." No. w23908. National Bureau of Economic Research.
+Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram. "Machine learning from schools about energy efficiency." Journal of the Association of Environmental and Resource Economists 7, no. 6 (2020): 1181-1217.
 
 ### Week 12: Machine learning
 
@@ -209,7 +209,7 @@ Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous 
 
 **Applications**: causal trees for heterogeneous treatment effects
 
-Prest, Brian (2020) "Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing." Journal of the Association of Environmental and Resource Economists 7, no. 1, pp. 103-143.
+Prest, Brian C. "Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing." Journal of the Association of Environmental and Resource Economists 7, no. 1 (2020): 103-143.
 
 ### Week 13: Cloud computing
 
