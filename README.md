@@ -1,9 +1,9 @@
 # AEM 7130 Dynamic Optimization
-**Time**: Wednesday 4:30-7:00
+**Time**: Monday and Wednesday 2:45-4:00
 
-**Location**: Warren 113
+**Location**: Martha Van Rensselaer Hall G155
 
-**Office Hours**: M/W 2:45-4:00
+**Office Hours**: Tuesday 1:30-2:00, Thursday 1:00-1:30 on Zoom.
 
 **Prerequisites**: ECON 6090 and ECON 6170
 
