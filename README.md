@@ -199,9 +199,11 @@ Balboni, Clare (2020) "In harm's way? infrastructure investments and the persist
 
 [Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. The elements of statistical learning. Vol. 1, no. 10. New York: Springer series in statistics, 2001. Chapters 3, 4 and 7.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
-**Applications**: LASSO for counterfactuals
+**Applications**: LASSO for counterfactuals, boosted trees for prediction
 
 Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram. "Machine learning from schools about energy efficiency." Journal of the Association of Environmental and Resource Economists 7, no. 6 (2020): 1181-1217.
+
+Kleinberg, Jon, Himabindu Lakkaraju, Jure Leskovec, Jens Ludwig, and Sendhil Mullainathan. "Human decisions and machine predictions." The quarterly journal of economics 133, no. 1 (2018): 237-293.
 
 ### Week 12: Machine learning
 
