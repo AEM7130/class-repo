@@ -133,6 +133,10 @@ Ljungqvist, Lars, and Thomas J. Sargent. Recursive macroeconomic theory. MIT pre
 
 Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfheide. "Solution and estimation methods for DSGE models." In Handbook of macroeconomics, vol. 2, pp. 527-724. Elsevier, 2016.
 
+**Application**: agriculture and climate change
+
+Ortiz-Bobea, Ariel, Erwin Knippenberg, and Robert G. Chambers. "Growing climatic sensitivity of US agriculture linked to technological change and regional specialization." Science advances 4, no. 12 (2018): eaat4343.
+
 ### Week 7: Approximating value and policy functions for discrete time models
 
 **Theory**: value function iteration, policy iteration, time iteration
