@@ -1,26 +1,69 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Lecture 1</title>
+    <title>Lecture 01</title>
     <meta charset="utf-8" />
     <meta name="author" content="Ivan Rudik" />
-    <script src="1_intro_to_computing_files/header-attrs-2.1/header-attrs.js"></script>
-    <link href="1_intro_to_computing_files/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="1_intro_to_computing_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
-    <link href="1_intro_to_computing_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <script src="1_intro_to_computing_files/header-attrs/header-attrs.js"></script>
+    <link href="1_intro_to_computing_files/remark-css/default.css" rel="stylesheet" />
+    <link href="1_intro_to_computing_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="1_intro_to_computing_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="1_intro_to_computing_files/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="1_intro_to_computing_files/tile-view/tile-view.js"></script>
+    <link href="1_intro_to_computing_files/panelset/panelset.css" rel="stylesheet" />
+    <script src="1_intro_to_computing_files/panelset/panelset.js"></script>
+    <script src="1_intro_to_computing_files/xaringanExtra-webcam/webcam.js"></script>
+    <script id="xaringanExtra-webcam-options" type="application/json">{"width":"200","height":"200","margin":"1em"}</script>
     <link rel="stylesheet" href="my-css.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Lecture 1
+# Lecture 01
 ## Intro to computing
 ### Ivan Rudik
 ### AEM 7130
 
 ---
 
+exclude: true
+
+```r
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall, tweetrmd
+)
+options(htmltools.dir.version = FALSE)
+knitr::opts_hooks$set(fig.callout = function(options) {
+  if (options$fig.callout) {
+    options$echo &lt;- FALSE
+  }
+knitr::opts_chunk$set(echo = TRUE, fig.align="center")
+  options
+})
+```
+
+
+```
+## Warning: 'xaringanExtra::style_panelset' is deprecated.
+## Use 'style_panelset_tabs' instead.
+## See help("Deprecated")
+```
+
+```
+## Warning in style_panelset_tabs(...): The arguments to `syle_panelset()` changed in xaringanExtra 0.1.0. Please refer to the documentation to update your slides.
+```
+
+```julia
+using Pkg
+Pkg.activate(".")
+Pkg.instantiate()
+Pkg.add("ForwardDiff"); Pkg.add("Distributions"); Pkg.add("BenchmarkTools")
+```
+
+
+---
 
 # Software and stuff
 
@@ -38,6 +81,11 @@ Necessary things to download to follow along today and in the future:
 
 For this lecture you will need the following Julia packages
 
+
+```julia
+import Pkg; Pkg.add("ForwardDiff"); Pkg.add("Distributions"); Pkg.add("BenchmarkTools")
+using ForwardDiff, Distributions, BenchmarkTools
+```
 
 ---
 
@@ -90,7 +138,7 @@ For this lecture you will need the following Julia packages
 # What you have to do
 
 - Come to class
-- 4 computational problem sets + code review
+- 4 computational problem sets
 - Final research project proposal
 - Final research project
 - One presentation of a paper from the literature
@@ -99,9 +147,9 @@ For this lecture you will need the following Julia packages
 
 # Important days / times
 
-- Office hours: Tuesday 1:30-3:00 in Warren 462
-- Final project proposal: March 13
-- Final project paper: April 30
+- Office hours: Tuesday 1:30-2:00, Thursday 1:00-1:30 on Zoom.
+- Final project proposal: March 23
+- Final project paper: May 25
 
 ---
 
@@ -117,35 +165,29 @@ For this lecture you will need the following Julia packages
 
 # Problem sets (10% each)
 
-You .hi-blue[must] use Julia and write .jl scripts, no Jupyter
+You .hi-blue[must] use Julia and write .jl scripts, no Jupyter notebooks
 
 You can work in groups of up to 3
 
 Problem sets will be where you .hi-blue[implement] the techniques we learn in class on your own,
 but we will be doing our fair share of coding in class
 
-You will be randomly assigned to do a reproduction test / code check on someone else's homework
-   - Does the code run?
-   - Could it be coded better?
-   - How could it be made more reproducible?
-   
-Rubric will come later
-
 ---
 
 # Problem sets (10% each)
 
-Why am I making you do this?
+.pull-left[
+Why am I making you do problem sets this way?
 
---
 
-If you want to publish in an AEA journal you need to have good practices,  
-other journals are following suit
+If you want to publish in an AEA journal (amongst others now..) you need to have good practices, other journals are following suit
 
---
+Julia is very good for reproducibility
+]
 
-Making your code reproducible and generic will make  
-you a better co-author to others and your future self
+.pull-right[
+![](1_intro_to_computing_files/figure-html/aea-tweet-1.png)&lt;!-- --&gt;
+]
 
 ---
 
@@ -159,6 +201,8 @@ or can be a new method that we have not covered
 You must consult with me at least 1 week prior to your scheduled presentation
 date to ensure the paper is appropriate for a presentation
 
+The syllabus has some pre-approved papers you can choose from under the **Applications** header
+
 ---
 
 # Final project (25% paper, 15% proposal)
@@ -170,6 +214,8 @@ Proposals will be due about half way through the class
 The only requirement is that the project .hi-blue[cannot be computationally trivial]  
 (i.e. no 600 observation two-way FE papers)
 
+It can be numerical, empirical, whatever
+
 Everyone will present their final projects in the last week of class
 
 More details on the syllabus and to come later
@@ -178,7 +224,7 @@ More details on the syllabus and to come later
 
 # Slides
 
-All slides will be available on the [course GitHub page](https://github.com/AEM7130/spring-2020)
+All slides will be available on the [course GitHub page](https://github.com/AEM7130/class-repo)
 
 --
 
@@ -200,8 +246,20 @@ println("β-hat is $(round(bbeta_hat[1],digits=3)) and the true β is $(round(bb
 ```
 
 ```
-## β-hat is 3.261 and the true β is 3.142.
+## β-hat is 2.906 and the true β is 3.142.
 ```
+
+
+---
+
+class: inverse, center, middle
+name: why
+
+# Why computational methods?
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+
 
 ---
 
@@ -209,7 +267,11 @@ println("β-hat is $(round(bbeta_hat[1],digits=3)) and the true β is $(round(bb
 
 Everything you've done so far has likely been solvable analytically
 
+--
+
 Including OLS: `\(\hat{\beta} = (X'X)^{-1}X'Y\)`
+
+--
 
 .hi-red[Not all economic models have closed-form solutions,
 and others can't have closed-form solutions with losing important economic content]
@@ -269,7 +331,9 @@ Your calculator can do the rest
 Suppose the demand function is now: `\(q(p) = 0.5p^{-0.2} + 0.5p^{-0.5}\)`,
 a weighted average of two CE demand functions
 
-**What price clears the market if** `\(\mathbf{q^*=2}\)`**?**
+In equilibrium, quantity demanded is `\(q^* = 2\)`
+
+.hi-blue[What price clears the market in equilibrium?]
 
 --
 
@@ -279,7 +343,9 @@ First, does a solution exist?
 
 Yes, why?
 
---
+---
+
+# Example 2
 
 `\(q(p)\)` is monotonically increasing
 
@@ -298,7 +364,7 @@ Yes, why?
 
 ```julia
 # We know solution is between .1 and .2
-x = collect(range(.1, stop=.2, length=10)) # generate evenly spaced grid
+x = collect(range(.1, stop = .2, length = 10)) # generate evenly spaced grid
 q_d = ones(size(x)).*2                     # generate equal length vector of qd=2
 
 # Price function
@@ -313,7 +379,7 @@ Now plot `\(q_d\)` and `\(q(p)\)`
 
 # Example 2
 
-&lt;img src="1_intro_to_computing_files/figure-html/unnamed-chunk-3-J1.png" width="800" /&gt;
+&lt;img src="1_intro_to_computing_files/figure-html/unnamed-chunk-6-J1.png" width="800" /&gt;
 
 
 ---
@@ -503,34 +569,38 @@ acreage, expected_price = find_root_fi(1, 0.1)
 ```
 
 ```
-## Intermediate acreage guess: 1.115
-## Intermediate acreage guess: 1.081
-## Intermediate acreage guess: 1.09
-## Intermediate acreage guess: 1.088
-## Intermediate acreage guess: 1.088
-## Intermediate acreage guess: 1.088
-## Intermediate acreage guess: 1.088
+## Intermediate acreage guess: 1.133
+## Intermediate acreage guess: 1.094
+## Intermediate acreage guess: 1.104
+## Intermediate acreage guess: 1.101
+## Intermediate acreage guess: 1.102
+## Intermediate acreage guess: 1.102
+## Intermediate acreage guess: 1.102
 ```
 
 ```
-## (1.0881121665408178, 1.1762243330816355)
-```
-
-```julia
-println("The optimal number of acres to plant is $(round(acreage, digits = 3)).")
-```
-
-```
-## The optimal number of acres to plant is 1.088.
+## (1.1016358481452884, 1.2032716962905767)
 ```
 
 ```julia
-println("The expected price is $(round(expected_price, digits = 3)).")
+println("The optimal number of acres to plant is $(round(acreage, digits = 3)).\nThe expected price is $(round(expected_price, digits = 3)).")
 ```
 
 ```
-## The expected price is 1.176.
+## The optimal number of acres to plant is 1.102.
+## The expected price is 1.203.
 ```
+
+---
+
+class: inverse, center, middle
+name: why
+
+# Quantifying speed and accuracy
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+
 
 ---
 
@@ -580,7 +650,7 @@ Time to find a particular (e.g. maximum) value in an unsorted array
 
 # Big O Notation
 
-`\(\mathbf{O(c^n)}\)`: exponential
+**O(c&lt;sup&gt;x&lt;/sup&gt;):** exponential
 - Time to solve increases exponentially in input x
 - Accuracy changes exponentially in input x
 
@@ -625,6 +695,12 @@ Taylor series for `\(sin(x)\)` around zero:
 `\(sin(x) \approx x - x^3/3! + x^5/5! + O(x^7)\)`
 
 What does `\(O(x^7)\)` mean here?
+
+---
+
+# Big O Notation: Accuracy example
+
+`\(sin(x) \approx x - x^3/3! + x^5/5! + O(x^7)\)`
 
 --
 
@@ -688,7 +764,11 @@ Here are a few examples for fundamental computational methods
 
 The size of the input does not affect execution speed
 
-Example: accessing a specific location in an array
+--
+
+Example: 
+--
+accessing a specific location in an array
 
 ---
 
@@ -698,9 +778,13 @@ Example: accessing a specific location in an array
 
 Execution speed grows linearly in input size
 
-Example: inserting an element into an arbitrary location in a 1 dimensional array
+--
 
-Bigger array `\(\rightarrow\)` need to shift around more elements in memory to accomodate the new element
+Example: 
+--
+inserting an element into an arbitrary location in a 1 dimensional array
+
+Bigger array `\(\rightarrow\)` need to shift around more elements in memory to accommodate the new element
 
 ---
 
@@ -712,7 +796,20 @@ More generally called polynomial time for `\(x^n\)`
 
 Execution speed grows quadratically in input size
 
-Example: .hi-blue[bubble sort], step through a list, compare adjacent elements, swap if in the wrong order
+Example: 
+--
+.hi-blue[bubble sort], step through a list, compare adjacent elements, swap if in the wrong order
+
+---
+
+class: inverse, center, middle
+name: why
+
+# Computer arithmetic
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+
 
 ---
 
@@ -821,6 +918,8 @@ Limitations on storage suggest three facts
 --
 
 .hi-blue[1.] There exists a .hi-blue[machine epsilon] which denotes the smallest relative quantity representible by a computer
+
+--
 
 Machine epsilon is the smallest `\(\epsilon\)` such that
 a machine can always distinguish `$$N+\epsilon &gt; N &gt; N-\epsilon$$`
@@ -977,11 +1076,7 @@ println("16 bit largest float is $(floatmax(Float16))")
 
 ---
 
-# The limits of computers
-
-We can overcome these issues (if they ever arise) with arbitrary precision arithmetic
-
---
+# The limits of computers: time is a flat circle
 
 
 ```julia
@@ -1008,33 +1103,31 @@ println("It loops us around the number line: $(typemin(Int64))")
 ## It loops us around the number line: -9223372036854775808
 ```
 
-```julia
-println("With arbitrary precision we can make it much bigger: $(BigInt(typemax(Int64))*1000000)")
-```
-
-```
-## With arbitrary precision we can make it much bigger: 9223372036854775807000000
-```
-
 ---
 
 # The limits of computers
 
 .hi-red[The scale of your problem matters]
 
+--
+
 If a parameter or variable is &gt; floatmax or &lt; floatmin, you will have a very bad time
+
+--
 
 Scale numbers appropriately (e.g. millions of dollars, not millionths of cents)
 
 ---
 
-# Computer arithmetic
-
-## Error
+# Computer arithmetic: Error
 
 We can only represent a finite number of numbers
 
+--
+
 This means we will have error in our computations
+
+--
 
 Error comes in two major forms:
 
@@ -1089,18 +1182,10 @@ Because errors can propagate and grow as you keep applying an algorithm (e.g. fu
 
 # Error example 1
 
-Consider a simple quadratic: `\(x^2-26x+1=0\)`, the solution is: `\(x = 13-\sqrt{168}\)`
+Consider a simple quadratic: `\(x^2-26x+1=0\)` with solution `\(x = 13-\sqrt{168}\)`
 
 --
 
-
-```julia
-println("Arbitrary precision: 13 - √168 = $(BigFloat(13-sqrt(168)))")
-```
-
-```
-## Arbitrary precision: 13 - √168 = 0.03851860318427924312345567159354686737060546875
-```
 
 ```julia
 println("64 bit: 13 - √168 = $(13-sqrt(168))")
@@ -1132,7 +1217,7 @@ println("16 bit: 13 - √168 = $(convert(Float16,13-sqrt(168)))")
 
 Lets add and subtract some numbers and play around with the associative property of real numbers:
 
-`\(x = (10^{-20} + 1) - 1\)`
+`\(x = (10^{-20} + 1) - 1\)`  
 `\(y = 10^{-20} + (1 - 1)\)`
 
 --
@@ -1149,6 +1234,8 @@ x = (1e-20 + 1) - 1   # initialize x
 y = 1e-20 + (1 - 1)   # initialize y
 x_equals_y = (x == y) # store boolean of whether x == y
 ```
+
+--
 
 
 ```julia
@@ -1185,18 +1272,7 @@ does not always work like you would want
 
 ```julia
 x = (1e-20 + 1) - 1   # initialize x
-```
-
-```
-## 0.0
-```
-
-```julia
 y = 1e-20 + (1 - 1)   # initialize y
-```
-
-```
-## 1.0e-20
 ```
 
 ```julia
@@ -1282,9 +1358,14 @@ isapprox(100000.2 - 100000.1, 0.1)
 
 ---
 
-# Calculus operations
+class: inverse, center, middle
+name: why
 
-## Differentiation
+# Calculus on a machine
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+
 
 ---
 
@@ -1351,35 +1432,19 @@ deriv_x_squared(h,x) = ((x+h)^2 - x^2)/h # derivative function
 
 
 ```julia
-println("The deriviative with h=1e-8 is: $(deriv_x_squared(1e-8,2.))")
+println("
+        The deriviative with h=1e-8 is: $(deriv_x_squared(1e-8,2.))
+        The deriviative with h=1e-12 is: $(deriv_x_squared(1e-12,2.))
+        The deriviative with h=1e-30 is: $(deriv_x_squared(1e-30,2.))
+        The deriviative with h=1e-1 is: $(deriv_x_squared(1e-1,2.))")
 ```
 
 ```
-## The deriviative with h=1e-8 is: 3.999999975690116
-```
-
-```julia
-println("The deriviative with h=1e-12 is: $(deriv_x_squared(1e-12,2.))")
-```
-
-```
-## The deriviative with h=1e-12 is: 4.000355602329364
-```
-
-```julia
-println("The deriviative with h=1e-30 is: $(deriv_x_squared(1e-30,2.))")
-```
-
-```
-## The deriviative with h=1e-30 is: 0.0
-```
-
-```julia
-println("The deriviative with h=1e-1 is: $(deriv_x_squared(1e-1,2.))")
-```
-
-```
-## The deriviative with h=1e-1 is: 4.100000000000001
+## 
+##         The deriviative with h=1e-8 is: 3.999999975690116
+##         The deriviative with h=1e-12 is: 4.000355602329364
+##         The deriviative with h=1e-30 is: 0.0
+##         The deriviative with h=1e-1 is: 4.100000000000001
 ```
 
 ---
@@ -1407,9 +1472,15 @@ we can approximate the limit as well as we possibly can, BUT
 - If `\(h\)` is small then `\(f(x+h)\)` is close to `\(f(x)\)`,  
 we can run into rounding issues like we saw for `\(h=10^{-30}\)`
 
---
+---
+
+# Error, it's there
 
 We can select `\(h\)` in an optimal fashion: `\(h = \max\{|x|,1\}\sqrt{\epsilon}\)`
+
+--
+
+There's proofs for why this is the case but generally testing out different `\(h\)`'s works fine
 
 ---
 
@@ -1440,9 +1511,13 @@ Rearrange to obtain: `\(f'(x) = \frac{f(x+h) - f(x)}{h} + O(h^2)/h\)`
 
 --
 
+`\(f'(x) = \frac{f(x+h) - f(x)}{h} + O(h)\)` because `\(O(h^2)/h = O(h)\)`
+
+--
+
 .hi-blue[Forward differences have linearly growing errors]
 
-`\(f'(x) = \frac{f(x+h) - f(x)}{h} + O(h)\)` because `\(O(h^2)/h = O(h)\)`
+--
 
 If we halve `\(h\)`, we halve the error in our approximation  
 (ignoring rounding/truncation issues)
@@ -1461,6 +1536,8 @@ First, .hi-blue[why] do we have error?
 
 Because we are approximating the slope of a tangent curve at `\(x\)`  
 by a secant curve passing through `\((x,x+h)\)`
+
+--
 
 The secant curve has the average slope of `\(f(x)\)` on `\([x,x+h]\)`
 
@@ -1535,8 +1612,7 @@ and then `\(g(x_1+h,x_2,...)\)` for each `\(x_i\)`
 
 --
 
-Forward differences saves on computing time  
-and operations at the expense of accuracy
+Forward differences saves on # of operations at the expense of accuracy
 
 For high dimensional functions it may be worth the tradeoff
 
@@ -1719,7 +1795,7 @@ println("fff'(x) at $(x[1]) is: $(g(fff,x)[1])") # display gradient value
 
 # Calculus operations
 
-## Integration  (trickier than differentiation)
+Integration, trickier than differentiation
 
 --
 
@@ -1848,7 +1924,7 @@ integrate_function(f, 0, 10, 1000)
 ```
 
 ```
-## 332.8366621231986
+## 323.71417240423045
 ```
 
 Pretty close!
@@ -1861,7 +1937,7 @@ We can also approximate integrals using a technique called .hi-blue[quadrature]
 
 --
 
-With quadrature we effective take weighted sums to approximate integrals
+With quadrature we effectively take weighted sums to approximate integrals
 
 --
 
@@ -1966,7 +2042,7 @@ That's weird! Why do we gain 2 orders of accuracy when increasing one order of a
 2. Clearly the difference between a cubic `\(f(x)\)` and the quadratic approximation in `\([x_{2i-1},x_{2i+1}]\)` is another cubic function
 --
 
-3. You can prove that this cubic function is .hi-blue[odd] with respect to the midpoint `\(\rightarrow\)` integrating over the first subinterval cancels integrating over the second subinterval
+3. This cubic function is .hi-blue[odd] with respect to the midpoint `\(\rightarrow\)` integrating over the first subinterval cancels integrating over the second subinterval
 
 ---
 
@@ -2172,10 +2248,6 @@ function solve_cramer(A, b)
 end
 ```
 
----
-
-# Example: LU vs Cramer
-
 
 ```julia
 n = 100
@@ -2183,7 +2255,9 @@ A = rand(n, n)
 b = rand(n)
 ```
 
---
+---
+
+# Example: LU vs Cramer
 
 Let's see the full results of the competition for a 10x10:
 
@@ -2194,27 +2268,15 @@ cramer_allocation = @allocated solve_cramer(A, b);
 lu_time = @elapsed A\b;
 lu_allocation = @allocated A\b;
 
-println("Cramer's rule solved in $cramer_time seconds and used $cramer_allocation kilobytes of memory.")
+println("Cramer's rule solved in $cramer_time seconds and used $cramer_allocation kilobytes of memory.
+LU solved in $(lu_time) seconds and used $(lu_allocation) kilobytes of memory.
+LU is $(round(cramer_time/lu_time, digits = 0)) times faster and uses $(round(cramer_allocation/lu_allocation, digits = 0)) times less memory.")
 ```
 
 ```
-## Cramer's rule solved in 0.035798151 seconds and used 16196512 kilobytes of memory.
-```
-
-```julia
-println("LU solved in $(lu_time) seconds and used $(lu_allocation) kilobytes of memory.")
-```
-
-```
-## LU solved in 0.000109433 seconds and used 81904 kilobytes of memory.
-```
-
-```julia
-println("LU's relative speedup is $(cramer_time/lu_time) and relative decrease in memory is $(cramer_allocation/lu_allocation).")
-```
-
-```
-## LU's relative speedup is 327.1239114343937 and relative decrease in memory is 197.7499511623364.
+## Cramer's rule solved in 0.037424915 seconds and used 16193280 kilobytes of memory.
+## LU solved in 0.000188991 seconds and used 81872 kilobytes of memory.
+## LU is 198.0 times faster and uses 198.0 times less memory.
 ```
 
 ---
@@ -2476,6 +2538,32 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -2493,17 +2581,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
 
 <script>
 slideshow._releaseMath = function(el) {

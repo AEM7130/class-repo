@@ -34,9 +34,9 @@ function solve_baseline_tvf(ap, mp)
     ################################
     ################################
 
-    actual_economy = matread("../data/test-cdp/Baseline_2000_2007_economy_actual_data.mat")
-    base_year_full = matread("../data/test-cdp/Base_year_full.mat")
-    extract(base_year_full)
+    actual_economy = matread("data/Baseline_2000_2007_economy_actual_data.mat")
+    Base_year = matread("data/Base_year.mat")
+    extract(Base_year)
 
     # actual_economy variables + L0_initial
     μ_baseline = [actual_economy["series_mu"][:,:,t] for t = 1:mp.T-1]
@@ -88,12 +88,12 @@ function solve_baseline_tvf(ap, mp)
     Zs = [ones(mp.J, mp.N) for i = 1:mp.T] # fundamental productivity
     κ_hat = ones(mp.J * mp.N, mp.N) # relative changes in trade costs [exogenous]
 
-    io = base_year_full["io"] # region shares
+    io = Base_year["io"] # region shares
     α = alphas # sector shares in final demand
     γ = gamma # share of value added in output
     Ψ = B # share of structures in structure-labor aggregate
 
-    G = base_year_full["G"]' # share of materials (TRANSPOSE SO WE PULL COLUMNS NOT ROWS)
+    G = Base_year["G"]' # share of materials (TRANSPOSE SO WE PULL COLUMNS NOT ROWS)
     G_vec = [G[:,n:n+mp.J-1] for n = 1:mp.J:size(G,2)] # vector form for quicker algebra
 
 
@@ -114,7 +114,7 @@ function solve_baseline_tvf(ap, mp)
     λ_out[1] = Din00
     xbilat_out[1] = xbilat_baseline[1]
     labor_out = [ones(mp.J, mp.N) for i = 1:mp.T]
-
+    ωs = [wages_baseline[t+1].*labor0[t+1].^Ψ for t in 1:mp.T-1]
     ################################
     # PART 2: given labor supply, solve for temporary
     # equilibrium (static production problem)
@@ -138,7 +138,7 @@ function solve_baseline_tvf(ap, mp)
         λ_0 = λ_baseline[t]
         # set initial guess to be baseline economy value
         ω0 = wages_baseline[t+1].*labor0[t+1].^Ψ
-        ω = ω0
+        ω = ωs[t]
         ω, wages, Phat, rental_rate, phat, VARjn_prime, VALjn_prime, X_prime, λ_prime, xbilat_prime =
             solve_temp_equilibrium(
             ω, ω0, phat, labor, VARjn0, VALjn0, λ, λ_0, λ_1, Sn_prime,
@@ -146,7 +146,7 @@ function solve_baseline_tvf(ap, mp)
             mp, ap
         )
 
-
+        ωs[t] = ω
         λ = λ_prime
         VARjn0 = VARjn_prime
         VALjn0 = VALjn_prime
@@ -158,7 +158,7 @@ function solve_baseline_tvf(ap, mp)
 
     end
 
-    save("../data/counterfactual/base_tvf.jld",
+    save("data/base_tvf.jld",
     "wages", wages_out,
     "λs", λ_out,
     "xbilats", xbilat_out,
@@ -206,8 +206,8 @@ function solve_baseline_cf(ap, mp)
     ################################
     ################################
 
-    mu = matread("../data/test-cdp/mu.mat")
-    base_year = matread("../data/test-cdp/Baseline_2000_2007_economy_actual.mat")
+    mu = matread("data/mu.mat")
+    base_year = matread("data/Baseline_2000_2007_economy_actual.mat")
     extract(base_year)
 
     μs = mu["series_mu_adj"]
@@ -229,17 +229,17 @@ function solve_baseline_cf(ap, mp)
     ################################
     ################################
 
-    initial_H = matread("../data/test-cdp/Baseline_2007.mat")
+    initial_H = matread("data/Baseline_2007.mat")
     H = [reshape(initial_H["Hvectnoshock"][:,t], mp.J + 1, mp.R) for t = 1:mp.T]
-    # H = load("../data/counterfactual/base_cf_climate2.jld")["H"]
+    # H = load("data/base_cf_climate2.jld")["H"]
 
     # # # initial guess for trajectory of changes in utility udot = exp(Vt+1 - V)^1/ν
     # H = [ones((mp.J + 1), mp.R) for i = 1:mp.T]
     # #
 
     # # initial factor price guesses
-    ωs = load("../data/counterfactual/base_cf.jld")["ωs"]
-    # ωs = [ones(mp.J, mp.N) for i = 1:mp.T]
+    #ωs = load("data/base_cf.jld")["ωs"]
+    ωs = [ones(mp.J, mp.N) for i = 1:mp.T]
 
     real_wages = [ones(mp.J, mp.N) for i = 1:mp.T]
     phats = [ones(mp.J, mp.N) for i = 1:mp.T] # initial factor price guesses
@@ -420,11 +420,11 @@ function solve_baseline_cf(ap, mp)
             howard_iter = ap.howard_its + 1
         end
 
-        save("../data/counterfactual/base_cf_TEMP_$(ap.tol_out)_$(ap.tol_in).jld", "H", H, "ωs", ωs)
+        save("data/base_cf_TEMP_$(ap.tol_out)_$(ap.tol_in).jld", "H", H, "ωs", ωs)
 
     end
 
-    save("../data/counterfactual/base_cf.jld", "H", H, "real_wages", real_wages, "ωs", ωs, "wages", wages, "Phats", Phats, "phats", phats, "xbilats", xbilats, "μs", μ, "λs", λs, "labor", labor)
+    save("data/base_cf.jld", "H", H, "real_wages", real_wages, "ωs", ωs, "wages", wages, "Phats", Phats, "phats", phats, "xbilats", xbilats, "μs", μ, "λs", λs, "labor", labor)
 
 end
 
@@ -443,7 +443,7 @@ function combine_baseline(mp_tvf, mp_cf)
     # λs: tvf baseline expenditure shares (JNxNxT)
     # labor: tvf baseline change in labor for mobile regions (JxRxT)
 
-    tvf_data = load("../data/counterfactual/base_tvf.jld")
+    tvf_data = load("data/base_tvf.jld")
 
     ### CONSTANT FUNDAMENTAL BASELINE ECONOMY TIME PATHS
     # μs: cf baseline economy migration shares ((J+1)Rx(J+1)RxT)
@@ -452,15 +452,15 @@ function combine_baseline(mp_tvf, mp_cf)
     # λs: cf baseline expenditure shares (JNxNxT)
     # labor: cf baseline change in labor for mobile regions (JxRxT)
 
-    cf_data = load("../data/counterfactual/base_cf.jld")
+    cf_data = load("data/base_cf.jld")
 
     ### DATA
     # μ: actual economy migration shares ((J+1)Rx(J+1)RxT)
     # labor0:
 
-    μ_actual = matread("../data/test-cdp/mu.mat")["series_mu_adj"]
+    μ_actual = matread("data/mu.mat")["series_mu_adj"]
     μ_actual = [μ_actual[:,:,t] for t = 1:mp_tvf.T-1]
-    L0 = matread("../data/test-cdp/Baseline_2000_2007_economy_actual_data.mat")["L0_initial"]
+    L0 = matread("data/Baseline_2000_2007_economy_actual_data.mat")["L0_initial"]
 
 
     ################################
@@ -494,7 +494,7 @@ function combine_baseline(mp_tvf, mp_cf)
     # baseline change in wages
     wages_baseline = [tvf_data["wages"]; cf_data["wages"][2:end]]
 
-    save("../data/counterfactual/baseline_economy.jld",
+    save("data/baseline_economy.jld",
     "μ_baseline", μ_baseline,
     "xbilat_baseline", xbilat_baseline,
     "λ_baseline", λ_baseline,

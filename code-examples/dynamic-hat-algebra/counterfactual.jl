@@ -67,19 +67,15 @@ function solve_counterfactual_tvf(ap, mp)
     ################################
     ################################
     #
-    baseline_economy = load("../data/counterfactual/baseline_economy.jld")
+    baseline_economy = load("data/Baseline_economy.jld")
     extract(baseline_economy)
-    μ00 = μ_baseline[1]
+    μ00 = baseline_economy["μ_baseline"][1]
 
     #baseline_economy = matread("../data/test-cdp/Baseline_economy.mat")
-    counterfactual_economy = matread("../data/test-cdp/Counterfactual_economy.mat")
-
-    # load baseline economy and base year data
-    # baseline_economy = load("../data/counterfactual/baseline_economy.jld")
-    # extract(baseline_economy)
+    counterfactual_economy = matread("data/Counterfactual_economy.mat")
 
     # Usual initial conditions
-    base_year_full = matread("../data/test-cdp/Base_year_full.mat")
+    base_year_full = matread("data/Base_year.mat")
     extract(base_year_full)
 
 
@@ -127,6 +123,7 @@ function solve_counterfactual_tvf(ap, mp)
     wages_out[1] = ones(mp.J, mp.N)
     λ_out[1] = Din00
     xbilat_out[1] = xbilat_baseline[1]
+    ωs = [wages_baseline[t+1].*labor_baseline[t+1].^Ψ for t in 1:mp.T-1]
 
     # initial phat guess
     phats = [ones(mp.J, mp.N) for i = 1:mp.T] # initial factor price guesses
@@ -138,6 +135,8 @@ function solve_counterfactual_tvf(ap, mp)
     ################################
 
     iter = 1
+
+    println("Starting algorithm.")
 
     while (iter <= ap.maxit) & (ap.Hmax > ap.tol_out)
 
@@ -212,7 +211,7 @@ function solve_counterfactual_tvf(ap, mp)
             λ_0 = λ_baseline[t]
             # set initial guess to be baseline economy value
             ω0 = wages_baseline[t+1].*labor_baseline[t+1].^Ψ
-            ω = ω0
+            ω = ωs[t]
             ω, wages, Phat, rental_rate, phat, VARjn_prime, VALjn_prime, X_prime, λ_prime, xbilat_prime =
                 solve_temp_equilibrium(
                 ω, ω0, phat, labor, VARjn0, VALjn0, λ, λ_0, λ_1, Sn_prime,
@@ -220,11 +219,13 @@ function solve_counterfactual_tvf(ap, mp)
                 mp, ap
             )
 
+
             # Get next period values
             λ = λ_prime
             VARjn0 = VARjn_prime
             VALjn0 = VALjn_prime
 
+            ωs[t] = ω
             wages_out[t+1] = wages
             λ_out[t+1] = λ_prime
             VARjn0_out = VARjn_prime
@@ -288,7 +289,7 @@ function solve_counterfactual_tvf(ap, mp)
 
     end
 
-    save("../data/counterfactual/counterfactual_economy.jld",
+    save("data/counterfactual_economy.jld",
     "wages", wages_out,
     "real_wages", real_wages,
     "λ", λ_out,

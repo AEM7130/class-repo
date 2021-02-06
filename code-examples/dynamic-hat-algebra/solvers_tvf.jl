@@ -26,13 +26,18 @@ function solve_temp_equilibrium(
         ω_new = solve_factor_prices(X_prime, λ_prime, Ψ, γ, labor, VARjn0, VALjn0, mp)
 
         ωmax = maximum(abs.((ω_new .- ω))./ω) # checking tolerance
+
         # new factor prices
         ω1 = ap.damp*ω_new .+ (1 - ap.damp)*ω
 
         ## CDP error criterion
-        ωmax_usa = sum(abs.((ω1[:,1:mp.R] .- ω[:,1:mp.R])).^2)
-        ωmax_row = sum(abs.((ω1[1,mp.R+1:mp.N] .- ω[1,mp.R+1:mp.N])).^2)
-        ωmax = ωmax_usa + ωmax_row
+        # ωmax_usa = sum(abs.((ω1[:,1:mp.R] .- ω[:,1:mp.R])).^2)
+        # ωmax_row = sum(abs.((ω1[1,mp.R+1:mp.N] .- ω[1,mp.R+1:mp.N])).^2)
+        # ωmax = ωmax_usa + ωmax_row
+
+        if mod(itw, 5) == 0
+            println("Factor price error: $(ωmax).")
+        end
 
         ω = ω1
         itw += 1
