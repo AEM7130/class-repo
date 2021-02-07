@@ -16,11 +16,19 @@ knitr::opts_chunk$set(
 
 ## Requirements:
 
-- Due date: March 13
-- Length: 2-3 pages
+- Due date: March 23
+- Length: 1-2 pages
 
 ## Proposal Content:
 
-Your proposal should describe the research question you will answer in your final project and begin linking it to the existing literature. Convey why your research question is interesting and important, and what contributions you expect to make. Think of it as the motivation in an intro (or grant proposal), but without any results yet. This should be about half of your proposal. 
+### Begin a new computationally-driven research project
+
+Your proposal should describe the research question you will answer in your final project and begin linking it to the existing literature. Convey why your research question is interesting and important, and what contributions you expect to make. 
 
 The rest of your proposal should sketch out your model and methods for solving it. Your model can be numerical or empirical. This is just a proposal so you do not need to have a full model or a perfect idea of how to solve it. If you have questions or concerns about your model or methods you can state them at the end of the proposal.
+
+### Expand an existing paper
+
+Your proposal should describe the paper you are going to extend, the new techniques you will use to extend the paper, and why you think this extension is important. 
+
+The rest of your proposal should sketch out your extension and methods for solving it. Your extension can be numerical or empirical. This is just a proposal so you do not need to have a full model or a perfect idea of how to solve it. If you have questions or concerns about your model or methods you can state them at the end of the proposal.

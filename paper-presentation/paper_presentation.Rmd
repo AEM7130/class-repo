@@ -21,9 +21,12 @@ knitr::opts_chunk$set(
     - A computationally-driven empirical paper (e.g. big data, machine learning, satellite data)
     - A methodology paper (e.g. LASSO for instrument selection)
     - A package
-- Up to 10 minutes in length
+- Up to 15 minutes in length
 - Send me the slides by 12:00pm the day you present
 - You must consult with me about what you are presenting at least a week before your scheduled time
+- **Do not cover your slides with tons of math**
+- **Do not cover your slides with tons of math**
+- **Do not cover your slides with tons of math**
 - **Do not cover your slides with tons of math**
 
 ## Presentation Content:
