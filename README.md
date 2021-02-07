@@ -157,7 +157,7 @@ Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfhe
 
 **Applications**: climate change, bioeconomics
 
-Lemoine, Derek, and Christian Traeger. "Watch your step: optimal policy in a tipping climate." American Economic Journal: Economic Policy 6, no. 1 (2014): 137-66.
+Cai, Yongyang, and Thomas S. Lontzek. "The social cost of carbon with economic and climate risks." Journal of Political Economy 127, no. 6 (2019): 2684-2734.
 
 ### Week 8: [Continuous time optimal control](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)
 
