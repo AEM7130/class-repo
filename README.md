@@ -127,6 +127,8 @@ Nocedal and Wright (2006, Chapters 2-6)
 
 Donaldson, Dave, and Richard Hornbeck. "Railroads and American economic growth: A “market access” approach." The Quarterly Journal of Economics 131, no. 2 (2016): 799-858.
 
+Kitagawa, Toru, and Aleksey Tetenov. "Who should be treated? empirical welfare maximization methods for treatment choice." Econometrica 86, no. 2 (2018): 591-616.
+
 ### Week 5: [Discrete time dynamic programming](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.html)
 
 **Theory**: markov chains, principle of optimality
