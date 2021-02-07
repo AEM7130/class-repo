@@ -80,7 +80,7 @@ There is a final project for the course, due at the end of the semester. You may
 
 A 1-2 page proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results.
 
-### Computational paper presentations [instructions here](https://raw.githack.com/AEM7130/class-repo/master/paper_presentation/paper_presentation.html)
+### Computational paper presentations ([instructions here](https://raw.githack.com/AEM7130/class-repo/master/paper-presentation/paper_presentation.html))
 Starting near the middle of the course, one student a class will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. Presentations will be 15 minutes and will use methods from the current or previous week. Presentations should be similar to a regular talk, but with slightly more focus on methods. Example applied papers are below for different sections of the course but you can choose to present another paper with my approval.
 
 ## Course Schedule
