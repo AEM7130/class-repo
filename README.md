@@ -63,7 +63,7 @@ There will be four problem sets. You must submit your code on [GitHub](https://g
 - [Problem set 3](): Due TBD
 - [Problem set 4](): Due TBD
 
-### Final project ([proposal instructions here](https://raw.githack.com/AEM7130/class-repo/master/final-project/project_proposal.html)
+### Final project ([proposal instructions here](https://raw.githack.com/AEM7130/class-repo/master/final-project/project_proposal.html))
 
 There is a final project for the course, due at the end of the semester. You may choose one of two options.
 
