@@ -227,5 +227,6 @@ Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous 
 
 Prest, Brian C. "Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing." Journal of the Association of Environmental and Resource Economists 7, no. 1 (2020): 103-143.
 
+Athey, Susan, and Stefan Wager. "Policy learning with observational data." Econometrica 89, no. 1 (2021): 133-161.
 
 ### Week 13: Final project presentations
