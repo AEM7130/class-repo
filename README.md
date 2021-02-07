@@ -50,30 +50,37 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 ## Important dates
 
 - [Final project proposals due: March 23](XXXXX)
+- Final project presentations: Last week of class
 - Final project due: May 25
 
 ## Assignments
 
 ### Problem sets
-There will be four problem sets. You must submit your code on [GitHub](https://github.com). We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of **three or fewer people**. Each group should turn in one assignment with all members' names at the top of the file. Your grade will be a function of how well your answer the questions, and how reproducible you make your code for a peer code reviewer.
-
-In addition to submitting problem sets you will be required to do a reproduction exercise on your classmates' code. You will be randomly assigned to another classmate's submitted problem set and tasked with seeing whether it reproduces and offer suggestions for reproducibility.
+There will be four problem sets. You must submit your code on [GitHub](https://github.com). We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of **three or fewer people**. Each group should turn in one assignment with all members' names at the top of the file. Your grade will be a function of how well your answer the questions, and the clarity of your code (i.e. I should be able to tell what you're doing).
 
 - [Problem set 1](): Due TBD
 - [Problem set 2](): Due TBD
 - [Problem set 3](): Due TBD
 - [Problem set 4](): Due TBD
 
-### Final project ([proposal link here](XX))
+### Final project ([proposal instructions here](https://raw.githack.com/AEM7130/class-repo/master/final-project/project_proposal.html))
 
-There is a final project for the course, due at the end of the semester, where each student will submit the beginning of a computationally-driven research paper. A 2 page proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results. The paper is due the day after the final class. It should be at least 10 pages including tables and graphs and should:
+There is a final project for the course, due at the end of the semester. You may choose one of two options.
 
-1. Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.
-2. Analytically develop the model, provide proofs for theoretical results if there are any.
-3. Describe how you solve the model.
-4. Have preliminary results.
+1. Begin a new computationally-driven research project. The project should:
+  - Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.
+  - Analytically develop the model, provide proofs for theoretical results if there are any.
+  - Describe how you solve or estimate the model.
+  - If possible, have preliminary results.
+2. Expand an existing paper by bringing in machine learning techniques or advanced numerical techniques (i.e. not just adding MORE fixed effects). This can be your own paper (e.g. your current second year paper in progress), or an existing published paper where reproduction data and code are available online. AEA maintains a repository of data and code for all papers published in AEA journals [here](https://www.openicpsr.org/openicpsr/search/aea/studies). The paper should:
+  - Briefly summarize the existing paper.
+  - Describe the new techniques or data your are bringing to the table in detail.
+  - Have preliminary results.
+  - If using alternative techniques, compare outcomes or performance against the original methodology in the paper.
 
-### [Computational paper presentations](https://rawcdn.githack.com/AEM7130/spring-2020/fb175a76affc956dd0cf1fe681dc1dc0c979eb71/paper_presentation/paper_presentation.html)
+A 1-2 page proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results.
+
+### Computational paper presentations ([instructions here](https://raw.githack.com/AEM7130/class-repo/master/paper-presentation/paper_presentation.html))
 Starting near the middle of the course, one student a class will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. Presentations will be 15 minutes and will use methods from the current or previous week. Presentations should be similar to a regular talk, but with slightly more focus on methods. Example applied papers are below for different sections of the course but you can choose to present another paper with my approval.
 
 ## Course Schedule
