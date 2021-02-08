@@ -52,7 +52,8 @@ knitr::opts_chunk$set(echo = TRUE, fig.align="center")
 ```
 
 ```
-## Warning in style_panelset_tabs(...): The arguments to `syle_panelset()` changed in xaringanExtra 0.1.0. Please refer to the documentation to update your slides.
+## Warning in style_panelset_tabs(...): The arguments to `syle_panelset()` changed in xaringanExtra 0.1.0. Please refer to the
+## documentation to update your slides.
 ```
 
 ```julia
@@ -128,10 +129,9 @@ using ForwardDiff, Distributions, BenchmarkTools
 1. Basic computing and things you need to think about
 2. Coding, version control, reproducibility, workflow
 3. Optimization
-4. Numerical and empirical dynamic modeling
-5. Difficult expectations
+4. Solving dynamic models
+5. Solving spatial models
 6. Machine learning
-7. Cloud computing
 
 ---
 
@@ -147,7 +147,7 @@ using ForwardDiff, Distributions, BenchmarkTools
 
 # Important days / times
 
-- Office hours: Tuesday 1:30-2:00, Thursday 1:00-1:30 on Zoom.
+- Office hours: Tuesday 1:30-2:00, Thursday 1:00-1:30 on Zoom
 - Final project proposal: March 23
 - Final project paper: May 25
 
@@ -207,9 +207,13 @@ The syllabus has some pre-approved papers you can choose from under the **Applic
 
 # Final project (25% paper, 15% proposal)
 
-The final project will be the beginning of a .hi-blue[computationally-driven] research project
+The final project will be the beginning of a .hi-blue[computationally-driven] research project or an extension of an existing paper with new methods
 
 Proposals will be due about half way through the class
+
+---
+
+# Final project (25% paper, 15% proposal)
 
 The only requirement is that the project .hi-blue[cannot be computationally trivial]  
 (i.e. no 600 observation two-way FE papers)
@@ -246,7 +250,7 @@ println("β-hat is $(round(bbeta_hat[1],digits=3)) and the true β is $(round(bb
 ```
 
 ```
-## β-hat is 2.906 and the true β is 3.142.
+## β-hat is 3.065 and the true β is 3.142.
 ```
 
 
@@ -295,7 +299,10 @@ Theory can't tell us the value of economic primitives
 
 # What can we compute?
 
-Theory often relies on strong assumptions like
+Theory often relies on strong assumptions like:
+
+--
+
 - log utility (lose income vs substitution)
 - no transactions costs (important friction)
 - strictly concave objectives (natural phenomena don't follow this)
@@ -347,11 +354,11 @@ Yes, why?
 
 # Example 2
 
-`\(q(p)\)` is monotonically increasing
+`\(q(p)\)` is monotonically decreasing
 
 --
 
-`\(q(p)\)` is less than 2 at `\(p=0.1\)` and greater than 2 at `\(p=0.2\)`
+`\(q(p)\)` is greater than 2 at `\(p=0.1\)` and less than 2 at `\(p=0.2\)`
 
 --
 
@@ -570,16 +577,16 @@ acreage, expected_price = find_root_fi(1, 0.1)
 
 ```
 ## Intermediate acreage guess: 1.133
-## Intermediate acreage guess: 1.094
-## Intermediate acreage guess: 1.104
+## Intermediate acreage guess: 1.093
+## Intermediate acreage guess: 1.103
+## Intermediate acreage guess: 1.1
 ## Intermediate acreage guess: 1.101
-## Intermediate acreage guess: 1.102
-## Intermediate acreage guess: 1.102
-## Intermediate acreage guess: 1.102
+## Intermediate acreage guess: 1.101
+## Intermediate acreage guess: 1.101
 ```
 
 ```
-## (1.1016358481452884, 1.2032716962905767)
+## (1.1008333654930316, 1.2016667309860631)
 ```
 
 ```julia
@@ -587,8 +594,8 @@ println("The optimal number of acres to plant is $(round(acreage, digits = 3)).\
 ```
 
 ```
-## The optimal number of acres to plant is 1.102.
-## The expected price is 1.203.
+## The optimal number of acres to plant is 1.101.
+## The expected price is 1.202.
 ```
 
 ---
@@ -726,27 +733,21 @@ sin_error_3(x) = sin(x) - (x - x^3/6)
 --
 
 
+```julia
+println("Error of fifth-order approximation at x = .001 is: $(sin_error_5(.001))
+Error of third-order approximation at x = .001 is: $(sin_error_3(.001))
+Error of fifth-order approximation at x = .01 is: $(sin_error_5(.01))
+Error of third-order approximation at x = .01 is: $(sin_error_3(.01))
+Error of fifth-order approximation at x = .1 is: $(sin_error_5(.1))
+Error of third-order approximation at x = .1 is: $(sin_error_3(.1))")
+```
+
 ```
 ## Error of fifth-order approximation at x = .001 is: 0.0
-```
-
-```
 ## Error of third-order approximation at x = .001 is: 8.239936510889834e-18
-```
-
-```
 ## Error of fifth-order approximation at x = .01 is: -1.734723475976807e-18
-```
-
-```
 ## Error of third-order approximation at x = .01 is: 8.333316675601665e-13
-```
-
-```
 ## Error of fifth-order approximation at x = .1 is: -1.983851971587569e-11
-```
-
-```
 ## Error of third-order approximation at x = .1 is: 8.331349481138783e-8
 ```
 
@@ -767,7 +768,9 @@ The size of the input does not affect execution speed
 --
 
 Example: 
+
 --
+
 accessing a specific location in an array
 
 ---
@@ -778,10 +781,10 @@ accessing a specific location in an array
 
 Execution speed grows linearly in input size
 
+Example:
+
 --
 
-Example: 
---
 inserting an element into an arbitrary location in a 1 dimensional array
 
 Bigger array `\(\rightarrow\)` need to shift around more elements in memory to accommodate the new element
@@ -797,7 +800,9 @@ More generally called polynomial time for `\(x^n\)`
 Execution speed grows quadratically in input size
 
 Example: 
+
 --
+
 .hi-blue[bubble sort], step through a list, compare adjacent elements, swap if in the wrong order
 
 ---
@@ -1924,7 +1929,7 @@ integrate_function(f, 0, 10, 1000)
 ```
 
 ```
-## 323.71417240423045
+## 341.6592011016046
 ```
 
 Pretty close!
@@ -2274,9 +2279,9 @@ LU is $(round(cramer_time/lu_time, digits = 0)) times faster and uses $(round(cr
 ```
 
 ```
-## Cramer's rule solved in 0.037424915 seconds and used 16193280 kilobytes of memory.
-## LU solved in 0.000188991 seconds and used 81872 kilobytes of memory.
-## LU is 198.0 times faster and uses 198.0 times less memory.
+## Cramer's rule solved in 0.036732678 seconds and used 16193280 kilobytes of memory.
+## LU solved in 0.000147926 seconds and used 81872 kilobytes of memory.
+## LU is 248.0 times faster and uses 198.0 times less memory.
 ```
 
 ---

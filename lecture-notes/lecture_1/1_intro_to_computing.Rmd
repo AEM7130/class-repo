@@ -109,10 +109,9 @@ using ForwardDiff, Distributions, BenchmarkTools
 1. Basic computing and things you need to think about
 2. Coding, version control, reproducibility, workflow
 3. Optimization
-4. Numerical and empirical dynamic modeling
-5. Difficult expectations
+4. Solving dynamic models
+5. Solving spatial models
 6. Machine learning
-7. Cloud computing
 
 ---
 
@@ -128,7 +127,7 @@ using ForwardDiff, Distributions, BenchmarkTools
 
 # Important days / times
 
-- Office hours: Tuesday 1:30-2:00, Thursday 1:00-1:30 on Zoom.
+- Office hours: Tuesday 1:30-2:00, Thursday 1:00-1:30 on Zoom
 - Final project proposal: March 23
 - Final project paper: May 25
 
@@ -192,9 +191,13 @@ The syllabus has some pre-approved papers you can choose from under the **Applic
 
 # Final project (25% paper, 15% proposal)
 
-The final project will be the beginning of a .hi-blue[computationally-driven] research project
+The final project will be the beginning of a .hi-blue[computationally-driven] research project or an extension of an existing paper with new methods
 
 Proposals will be due about half way through the class
+
+---
+
+# Final project (25% paper, 15% proposal)
 
 The only requirement is that the project .hi-blue[cannot be computationally trivial]  
 (i.e. no 600 observation two-way FE papers)
@@ -275,7 +278,10 @@ Theory can't tell us the value of economic primitives
 
 # What can we compute?
 
-Theory often relies on strong assumptions like
+Theory often relies on strong assumptions like:
+
+--
+
 - log utility (lose income vs substitution)
 - no transactions costs (important friction)
 - strictly concave objectives (natural phenomena don't follow this)
@@ -327,11 +333,11 @@ Yes, why?
 
 # Example 2
 
-$q(p)$ is monotonically increasing
+$q(p)$ is monotonically decreasing
 
 --
 
-$q(p)$ is less than 2 at $p=0.1$ and greater than 2 at $p=0.2$
+$q(p)$ is greater than 2 at $p=0.1$ and less than 2 at $p=0.2$
 
 --
 
@@ -674,13 +680,13 @@ sin_error_3(x) = sin(x) - (x - x^3/6)
 
 --
 
-```{julia, echo = FALSE}
-println("Error of fifth-order approximation at x = .001 is: $(sin_error_5(.001))")
-println("Error of third-order approximation at x = .001 is: $(sin_error_3(.001))")
-println("Error of fifth-order approximation at x = .01 is: $(sin_error_5(.01))")
-println("Error of third-order approximation at x = .01 is: $(sin_error_3(.01))")
-println("Error of fifth-order approximation at x = .1 is: $(sin_error_5(.1))")
-println("Error of third-order approximation at x = .1 is: $(sin_error_3(.1))")
+```{julia, echo = TRUE}
+println("Error of fifth-order approximation at x = .001 is: $(sin_error_5(.001))
+Error of third-order approximation at x = .001 is: $(sin_error_3(.001))
+Error of fifth-order approximation at x = .01 is: $(sin_error_5(.01))
+Error of third-order approximation at x = .01 is: $(sin_error_3(.01))
+Error of fifth-order approximation at x = .1 is: $(sin_error_5(.1))
+Error of third-order approximation at x = .1 is: $(sin_error_3(.1))")
 
 ```
 
@@ -701,7 +707,9 @@ The size of the input does not affect execution speed
 --
 
 Example: 
+
 --
+
 accessing a specific location in an array
 
 ---
@@ -712,10 +720,10 @@ accessing a specific location in an array
 
 Execution speed grows linearly in input size
 
+Example:
+
 --
 
-Example: 
---
 inserting an element into an arbitrary location in a 1 dimensional array
 
 Bigger array $\rightarrow$ need to shift around more elements in memory to accommodate the new element
@@ -731,7 +739,9 @@ More generally called polynomial time for $x^n$
 Execution speed grows quadratically in input size
 
 Example: 
+
 --
+
 .hi-blue[bubble sort], step through a list, compare adjacent elements, swap if in the wrong order
 
 ---
