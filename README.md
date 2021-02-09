@@ -85,7 +85,7 @@ Starting near the middle of the course, one student a class will present either 
 
 ## Course Schedule
 
-### Week 1: [Intro to computing](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.html)
+### Week 1: Intro to computing ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.pdf))
 
 **Theory**: floats, ints, read/write, memory, truncation, rounding, error propagation, matrix inversion, differentiation, integration
 
@@ -93,7 +93,7 @@ Judd (1998, Chapters 2, 3 and 7)
 
 Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
-### Week 2: [Coding, reproducibility, and the shell](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.html)
+### Week 2: Coding, reproducibility, and the shell ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.pdf))
 
 **Applications**: shell scripts, generic coding, reproducible coding, speed in julia, workflow
 
@@ -105,7 +105,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 [QuantEcon Lectures](https://quantecon.org/)
 
-### Week 3: [Version control](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.html)
+### Week 3: Version control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.pdf))
 
 **Applications**: git, github, issues, pull requests
 
@@ -113,7 +113,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 [SEERE Lab wiki](https://github.com/cornell-seere/lab-information/wiki)
 
-### Week 4: [Rootfinding and optimization](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.html)
+### Week 4: Rootfinding and optimization ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.pdf))
 
 **Theory**: iterative methods, newton methods, gaussian methods, global solvers
 
@@ -129,7 +129,7 @@ Donaldson, Dave, and Richard Hornbeck. "Railroads and American economic growth: 
 
 Kitagawa, Toru, and Aleksey Tetenov. "Who should be treated? empirical welfare maximization methods for treatment choice." Econometrica 86, no. 2 (2018): 591-616.
 
-### Week 5: [Discrete time dynamic programming](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.html)
+### Week 5: Discrete time dynamic programming ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.pdf))
 
 **Theory**: markov chains, principle of optimality
 
@@ -137,7 +137,7 @@ Adda, Jerome, Russell Cooper, and Russell W. Cooper. Dynamic economics: quantita
 
 Ljungqvist, Lars, and Thomas J. Sargent. Recursive macroeconomic theory. MIT press, 2018.
 
-### Week 6: [Function approximation](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.html)
+### Week 6: Function approximation ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.pdf))
 
 **Theory**: discretization, pseudospectral methods, finite element methods
 
@@ -147,7 +147,7 @@ Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfhe
 
 Ortiz-Bobea, Ariel, Erwin Knippenberg, and Robert G. Chambers. "Growing climatic sensitivity of US agriculture linked to technological change and regional specialization." Science advances 4, no. 12 (2018): eaat4343.
 
-### Week 7: [Approximating value and policy functions for discrete time models](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.html)
+### Week 7: Approximating value and policy functions for discrete time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.pdf))
 
 **Theory**: value function iteration, policy iteration, time iteration
 
@@ -161,7 +161,7 @@ Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfhe
 
 Cai, Yongyang, and Thomas S. Lontzek. "The social cost of carbon with economic and climate risks." Journal of Political Economy 127, no. 6 (2019): 2684-2734.
 
-### Week 8: [Continuous time optimal control](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)
+### Week 8: Continuous time optimal control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
 
 **Theory**: maximum principle, hamiltonians
 
@@ -171,7 +171,7 @@ Caputo, Michael R. Foundations of dynamic economic analysis: optimal control the
 
 Anderson, Soren T., Ryan Kellogg, and Stephen W. Salant. "Hotelling under pressure." Journal of Political Economy 126, no. 3 (2018): 984-1026.
 
-### Week 9: [Solving ordinary differential equations for continuous time models](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)
+### Week 9: Solving ordinary differential equations for continuous time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
 
 **Theory**: shooting, backwards shooting
 
@@ -199,7 +199,7 @@ Shapiro, Joseph S., and Reed Walker. "Why is pollution from US manufacturing dec
 
 Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities."
 
-### Week 11: [Machine learning](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html)
+### Week 11: Machine learning ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.pdf))
 
 **Theory**: regularization and sparsity, prediction and model selection
 
@@ -215,7 +215,7 @@ Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wol
 
 Kleinberg, Jon, Himabindu Lakkaraju, Jure Leskovec, Jens Ludwig, and Sendhil Mullainathan. "Human decisions and machine predictions." The quarterly journal of economics 133, no. 1 (2018): 237-293.
 
-### Week 12: [Machine learning](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html)
+### Week 12: Machine learning ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.pdf))
 
 **Theory**: trees, bagging, boosting, ensembles, neural networks
 
