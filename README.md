@@ -217,11 +217,13 @@ Kleinberg, Jon, Himabindu Lakkaraju, Jure Leskovec, Jens Ludwig, and Sendhil Mul
 
 ### Week 12: Machine learning ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.pdf))
 
-**Theory**: trees, bagging, boosting, ensembles, neural networks
+**Theory**: trees, bagging, boosting, ML for synthetic control
 
 [Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 8, 9, 10, and 15.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous causal effects." Proceedings of the National Academy of Sciences 113, no. 27, pp. 7353-7360.
+
+[Hollingsworth, Alex, and Coady Wing. "Tactics for design and inference in synthetic control studies: An applied example using high-dimensional data." (2020).](https://doi.org/10.31235/osf.io/fc9xt)
 
 **Applications**: causal trees for heterogeneous treatment effects
 
