@@ -209,24 +209,28 @@ Balboni, Clare (2020) "In harm's way? infrastructure investments and the persist
 
 [Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. The elements of statistical learning. Vol. 1, no. 10. New York: Springer series in statistics, 2001. Chapters 3, 4 and 7.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
-**Applications**: LASSO for counterfactuals, boosted trees for prediction
+**Applications**: ML for asset pricing, boosted trees for prediction
 
-Burlig, Fiona, Christopher Knittel, David Rapson, Mar Reguant, and Catherine Wolfram. "Machine learning from schools about energy efficiency." Journal of the Association of Environmental and Resource Economists 7, no. 6 (2020): 1181-1217.
+Gu, Shihao, Bryan Kelly, and Dacheng Xiu. "Empirical asset pricing via machine learning." The Review of Financial Studies 33, no. 5 (2020): 2223-2273.
 
 Kleinberg, Jon, Himabindu Lakkaraju, Jure Leskovec, Jens Ludwig, and Sendhil Mullainathan. "Human decisions and machine predictions." The quarterly journal of economics 133, no. 1 (2018): 237-293.
 
 ### Week 12: Machine learning ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.pdf))
 
-**Theory**: trees, bagging, boosting, ensembles, neural networks
+**Theory**: trees, bagging, boosting, ML for synthetic control
 
 [Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 8, 9, 10, and 15.](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous causal effects." Proceedings of the National Academy of Sciences 113, no. 27, pp. 7353-7360.
 
-**Applications**: causal trees for heterogeneous treatment effects
+[Hollingsworth, Alex, and Coady Wing. "Tactics for design and inference in synthetic control studies: An applied example using high-dimensional data." (2020).](https://doi.org/10.31235/osf.io/fc9xt)
+
+**Applications**: causal trees for heterogeneous treatment effects, ridge-ish regression for returns
 
 Prest, Brian C. "Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing." Journal of the Association of Environmental and Resource Economists 7, no. 1 (2020): 103-143.
 
 Athey, Susan, and Stefan Wager. "Policy learning with observational data." Econometrica 89, no. 1 (2021): 133-161.
+
+Kozak, Serhiy, Stefan Nagel, and Shrihari Santosh. "Shrinking the cross-section." Journal of Financial Economics 135, no. 2 (2020): 271-292.
 
 ### Week 13: Final project presentations
