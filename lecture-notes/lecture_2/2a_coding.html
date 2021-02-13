@@ -31,7 +31,7 @@ name: toc
 
 Necessary things to do:
 
-- Windows users: Install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and a Unix distribution
+- Windows users: Install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and a Unix distribution or use https://repl.it
 
 - Install [Julia](https://julialang.org/downloads/)
 
@@ -40,6 +40,16 @@ Necessary things to do:
 --
 
 These slides are based on Software Carpentry, notes by Grant Mcdermott, QuantEcon, Julia documentation, etc
+
+---
+
+class: inverse, center, middle
+name: shell
+
+# The shell
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
 
 ---
 
@@ -133,6 +143,7 @@ $ ls
 ```
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -154,6 +165,7 @@ $ ls
 ```
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -165,13 +177,14 @@ $ ls -l # long form command
 ```
 
 ```
-## total 360
-## -rw-r--r--@ 1 ir229  staff   43236 Jan 29 14:39 2a_coding.Rmd
-## -rw-r--r--@ 1 ir229  staff  107662 Jan 29 14:37 2a_coding.html
-## drwxr-xr-x  7 ir229  staff     224 Jan 29 14:39 2a_coding_files
-## drwxr-xr-x  9 ir229  staff     288 Jan 28 15:22 figures
-## -rw-r--r--@ 1 ir229  staff    6573 Jan 22 12:44 my-css.css
-## drwxr-xr-x  8 ir229  staff     256 Jan 29 14:39 sandbox
+## total 12784
+## -rw-r--r--@  1 ir229  staff    44337 Feb 13 14:37 2a_coding.Rmd
+## -rw-r--r--@  1 ir229  staff   111330 Feb 13 14:37 2a_coding.html
+## -rw-r--r--@  1 ir229  staff  6179593 Feb  8 20:09 2a_coding.pdf
+## drwxr-xr-x   6 ir229  staff      192 Feb 13 14:37 2a_coding_files
+## drwxr-xr-x   8 ir229  staff      256 Dec  9 14:07 figures
+## -rw-r--r--@  1 ir229  staff     8257 Feb  8 12:08 my-css.css
+## drwxr-xr-x  10 ir229  staff      320 Feb 13 14:14 sandbox
 ```
 
 ---
@@ -189,13 +202,14 @@ $ ls -lSh
 ```
 
 ```
-## total 360
-## -rw-r--r--@ 1 ir229  staff   105K Jan 29 14:37 2a_coding.html
-## -rw-r--r--@ 1 ir229  staff    42K Jan 29 14:39 2a_coding.Rmd
-## -rw-r--r--@ 1 ir229  staff   6.4K Jan 22 12:44 my-css.css
-## drwxr-xr-x  9 ir229  staff   288B Jan 28 15:22 figures
-## drwxr-xr-x  8 ir229  staff   256B Jan 29 14:39 sandbox
-## drwxr-xr-x  7 ir229  staff   224B Jan 29 14:39 2a_coding_files
+## total 12784
+## -rw-r--r--@  1 ir229  staff   5.9M Feb  8 20:09 2a_coding.pdf
+## -rw-r--r--@  1 ir229  staff   109K Feb 13 14:37 2a_coding.html
+## -rw-r--r--@  1 ir229  staff    43K Feb 13 14:37 2a_coding.Rmd
+## -rw-r--r--@  1 ir229  staff   8.1K Feb  8 12:08 my-css.css
+## drwxr-xr-x  10 ir229  staff   320B Feb 13 14:14 sandbox
+## drwxr-xr-x   8 ir229  staff   256B Dec  9 14:07 figures
+## drwxr-xr-x   6 ir229  staff   192B Feb 13 14:37 2a_coding_files
 ```
 
 ---
@@ -218,29 +232,29 @@ $ ls -lSh ~/Desktop/git
 
 ```
 ## total 0
-## drwxr-xr-x  98 ir229  staff   3.1K Mar  2  2018 rec_markets
-## drwxr-xr-x  64 ir229  staff   2.0K Nov 15  2018 lrr-mcmc-dice
-## drwxr-xr-x@ 45 ir229  staff   1.4K Mar  4  2018 rc_paper
-## drwxr-xr-x  44 ir229  staff   1.4K May 20  2019 steering-the-climate-system
-## drwxr-xr-x  40 ir229  staff   1.3K Dec  1  2018 hr_recs
-## drwxr-xr-x  30 ir229  staff   960B Jul 19  2019 robust-control-jl
-## drwxr-xr-x  26 ir229  staff   832B May 20  2019 dynamic-stochastic-dice
-## drwxr-xr-x  26 ir229  staff   832B Jan 19 16:10 optimal-climate-policy
-## drwxr-xr-x  24 ir229  staff   768B Mar 12  2019 ND-Flaring
-## drwxr-xr-x  24 ir229  staff   768B Sep 30 20:43 optimal-climate-policy-aej
-## drwxr-xr-x  19 ir229  staff   608B Jan 15 18:23 irudik.github.io
-## drwxr-xr-x  15 ir229  staff   480B Jan 24 11:00 hurricane_forecasts
-## drwxr-xr-x  14 ir229  staff   448B Jan 27 13:59 seere-lab
-## drwxr-xr-x  11 ir229  staff   352B Apr 29  2019 drillinginfo-data-import
-## drwxr-xr-x  11 ir229  staff   352B Jan 21 21:11 ed_rubin_class
-## drwxr-xr-x  11 ir229  staff   352B Aug 18 17:13 growth-versus-levels
-## drwxr-xr-x  11 ir229  staff   352B Jan 20 12:51 purple_air
-## drwxr-xr-x  10 ir229  staff   320B May 20  2019 external-impacts-rps
-## drwxr-xr-x  10 ir229  staff   320B Sep 17 19:23 nascar_and_lead
-## drwxr-xr-x   9 ir229  staff   288B Oct 27 18:05 aem-7xxx
+## drwxr-xr-x  63 ir229  staff   2.0K Feb 12 14:23 climate-trade
+## drwxr-xr-x  32 ir229  staff   1.0K Aug 26 13:01 computational-tools-workshop
+## drwxr-xr-x  30 ir229  staff   960B Nov  8 15:07 0.ARCHIVE
+## drwxr-xr-x  26 ir229  staff   832B Feb 12 20:45 aem4510
+## drwxr-xr-x  19 ir229  staff   608B Dec 28 16:29 enviro-transport
+## drwxr-xr-x  19 ir229  staff   608B Jan 26 10:40 irudik.github.io
+## drwxr-xr-x  19 ir229  staff   608B Jan 31 10:19 lead-education
+## drwxr-xr-x  18 ir229  staff   576B Dec 18 14:27 biodiversity
+## drwxr-xr-x  18 ir229  staff   576B Nov  4 13:52 lead-birth
+## drwxr-xr-x  17 ir229  staff   544B Apr  2  2020 Hurricane_forecast
+## drwxr-xr-x  15 ir229  staff   480B May 20  2019 lab-information.wiki
+## drwxr-xr-x  15 ir229  staff   480B Apr  9  2020 nri
+## drwxr-xr-x  14 ir229  staff   448B Dec  2 12:18 nyc-birds
+## drwxr-xr-x  13 ir229  staff   416B Nov 14 14:02 aem6510
+## drwxr-xr-x  13 ir229  staff   416B Mar  2  2020 purple_air
+## drwxr-xr-x  12 ir229  staff   384B Dec  2 16:57 zaminfluence
+## drwxr-xr-x  11 ir229  staff   352B Jun  7  2020 ethanol-ozone
+## drwxr-xr-x   9 ir229  staff   288B Jul 15  2019 repo-template
+## drwxr-xr-x   8 ir229  staff   256B May 20  2019 dropbox-template
+## drwxr-xr-x   6 ir229  staff   192B May 20  2019 lab-information
 ## drwxr-xr-x   6 ir229  staff   192B May  7  2019 workflow
-## drwxr-xr-x   5 ir229  staff   160B Jan 19 15:42 aem7130
-## drwxr-xr-x   5 ir229  staff   160B Feb  1  2018 climate-learning-hpc
+## drwxr-xr-x   5 ir229  staff   160B Feb  6 16:01 aem7130
+## drwxr-xr-x   3 ir229  staff    96B Jan 22 10:54 test-blogdown
 ```
 
 ---
@@ -672,7 +686,7 @@ $ pwd
 ```
 
 ```
-## /Users/ir229/Desktop/git/aem7130/spring-2020/lecture_notes/lecture_2
+## /Users/ir229/Desktop/git/aem7130/class-repo/lecture-notes/lecture_2
 ```
 
 ---
@@ -727,11 +741,11 @@ $ ls -lSh /Users
 
 ```
 ## total 0
-## drwxr-xr-x+ 79 ir229          staff      2.5K Jan 26 12:52 ir229
+## drwxr-xr-x+ 87 ir229          staff      2.7K Feb 12 12:42 ir229
 ## drwxr-xr-x+ 15 ag-wt94-doc10  11103514   480B Jan 10  2018 ag-wt94-doc10
-## drwxr-xr-x+ 12 Guest          _guest     384B Nov 27  2017 Guest
+## drwxr-xr-x+ 12 201            _guest     384B Nov 27  2017 Guest
 ## drwxr-xr-x  11 cals_oit       staff      352B Jan  9  2018 cals_oit
-## drwxrwxrwt   7 root           wheel      224B Jun 28  2019 Shared
+## drwxrwxrwt   7 root           wheel      224B Jul  3  2020 Shared
 ## drwxr-xr-x   5 ir229          admin      160B Dec 16  2018 ivan
 ## drwxr-xr-x   3 root           staff       96B Nov 17  2017 root
 ```
@@ -750,23 +764,26 @@ $ ls -lSh /Users/ir229
 ```
 
 ```
-## total 8
-## drwx------+ 841 ir229  staff    26K Jan 29 11:59 Downloads
-## drwx------+  71 ir229  staff   2.2K Sep 23 18:25 Library
-## -rw-r--r--@   1 ir229  staff   1.0K Nov 25 13:39 artelys_lic_trial_artelys_knitro_academic_bb-8b-8e-28-3d.txt
-## drwx------@  25 ir229  staff   800B Jan 27 14:00 Dropbox
-## drwxr-xr-x   21 ir229  staff   672B Jan 17  2019 reveal.js
-## drwx------+   9 ir229  staff   288B Jan 28 07:53 Documents
-## drwx------+   7 ir229  staff   224B Jan 28 15:22 Desktop
-## drwxr-xr-x    7 ir229  staff   224B Jan 26 12:49 HEG
-## drwxr-xr-x    7 ir229  staff   224B Jan 26 12:50 wekafiles
-## drwx------+   4 ir229  staff   128B Dec 21  2017 Music
-## drwxr-xr-x+   4 ir229  staff   128B Nov 17  2017 Public
-## drwx------@   3 ir229  staff    96B Nov 24  2017 Applications
-## drwx------@   3 ir229  staff    96B Apr 10  2019 Google Drive
-## drwx------+   3 ir229  staff    96B Nov 17  2017 Movies
-## drwx------+   3 ir229  staff    96B Dec 21  2017 Pictures
-## drwx------    2 ir229  staff    64B Jan 29  2018 Box Sync
+## total 56
+## drwx------+ 903 ir229  staff       28K Feb 13 12:04 Downloads
+## -rw-r--r--    1 ir229  staff       16K Dec 29 09:23 Manifest.toml
+## drwx------+  79 ir229  staff      2.5K Sep  9 13:27 Library
+## -rw-r--r--@   1 ir229  staff      1.0K Nov 25  2019 artelys_lic_trial_artelys_knitro_academic_bb-8b-8e-28-3d.txt
+## drwx------@  31 ir229  staff      992B Dec 14 12:06 Dropbox
+## drwxr-xr-x   21 ir229  staff      672B Jan 17  2019 reveal.js
+## drwx------+   9 ir229  staff      288B Feb  8 20:17 Documents
+## drwx------+   7 ir229  staff      224B Feb  6 13:12 Desktop
+## drwxr-xr-x    7 ir229  staff      224B Jan 26  2020 HEG
+## drwxr-xr-x    7 ir229  staff      224B Jan 26  2020 wekafiles
+## -rw-r--r--    1 ir229  staff      189B Dec 29 09:23 Project.toml
+## drwx------    4 ir229  staff      128B Sep  3 21:03 Box Sync
+## drwx------+   4 ir229  staff      128B Apr  4  2020 Movies
+## drwx------+   4 ir229  staff      128B Dec 21  2017 Music
+## drwxr-xr-x+   4 ir229  staff      128B Nov 17  2017 Public
+## drwx------@   3 ir229  staff       96B Nov 24  2017 Applications
+## drwx------@   3 ir229  staff       96B Apr 10  2019 Google Drive
+## drwx------+   3 ir229  staff       96B Dec 21  2017 Pictures
+## drwxr-xr-x    3 ir229  11103514    96B Aug 19 16:31 opt
 ```
 
 ---
@@ -823,9 +840,9 @@ $ pwd
 
 ```
 ## /Users/ir229
-## /Users/ir229/Desktop/git/aem7130/spring-2020/lecture_notes/lecture_2
-## /Users/ir229/Desktop/git/aem7130/spring-2020/lecture_notes
-## /Users/ir229/Desktop/git/aem7130/spring-2020/lecture_notes
+## /Users/ir229/Desktop/git/aem7130/class-repo/lecture-notes/lecture_2
+## /Users/ir229/Desktop/git/aem7130/class-repo/lecture-notes
+## /Users/ir229/Desktop/git/aem7130/class-repo/lecture-notes
 ```
 
 --
@@ -843,6 +860,7 @@ $ ls -a
 ## .Rhistory
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -866,8 +884,8 @@ $ pwd
 ```
 
 ```
-## /Users/ir229/Desktop/git/aem7130/spring-2020/lecture_notes/lecture_2
-## /Users/ir229/Desktop/git/aem7130/spring-2020
+## /Users/ir229/Desktop/git/aem7130/class-repo/lecture-notes/lecture_2
+## /Users/ir229/Desktop/git/aem7130/class-repo
 ```
 
 --
@@ -880,7 +898,8 @@ $ pwd
 ```
 
 ```
-## /Users/ir229/Desktop/git/aem7130/spring-2020
+## bash: line 0: cd: /Users/ir229/Desktop/git/aem7130/spring-2020: No such file or directory
+## /Users/ir229/Desktop/git/aem7130/class-repo/lecture-notes/lecture_2
 ```
 
 ---
@@ -923,6 +942,7 @@ $ ls
 ```
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -992,12 +1012,19 @@ $ ls
 ## 123test directory
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
 ## sandbox
 ## test_directory
 ```
+
+---
+
+# Creating files and directories
+
+If you really, really, want to use spaces in names you'll have to do one of two things, enclose in quotes or backslash the space
 
 
 ```bash
@@ -1010,6 +1037,7 @@ $ ls
 ## 123test directory 2
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -1021,6 +1049,7 @@ $ ls
 ```
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -1042,16 +1071,37 @@ $ mv test_directory/test.txt ..
 $ ls ..
 ```
 
+The first argument is the (relative) path of the file you want to move, the second argument is where you're moving it to
+
+---
+
+# Moving files and directories
+
+
+```bash
+$ mv test_directory/test.txt ..
+$ ls ..
+```
+
 ```
 ## figures
 ## lecture_1
+## lecture_10
 ## lecture_2
+## lecture_3
+## lecture_4
+## lecture_5
+## lecture_6
+## lecture_7
+## lecture_8
+## lecture_9
 ## test.txt
 ```
 
-The first argument is the (relative) path of the file you want to move, the second argument is where you're moving it to
-
 We moved the test.txt file from  `test_directory` to the parent directory
+
+
+
 
 ---
 
@@ -1119,6 +1169,7 @@ $ ls
 ```
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -1144,6 +1195,7 @@ $ ls
 ## rmdir: test_directory: Directory not empty
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -1170,6 +1222,7 @@ $ ls
 ```
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -1198,6 +1251,19 @@ $ ls test_directory
 ## test_copy.txt
 ```
 
+---
+
+# Copying files and directories
+
+
+
+```bash
+$ mkdir test_directory
+$ touch test_directory/test_copy.txt
+$ cp test_directory/test_copy.txt .
+$ ls test_directory
+```
+
 ```bash
 $ ls
 ```
@@ -1205,6 +1271,7 @@ $ ls
 ```
 ## 2a_coding.Rmd
 ## 2a_coding.html
+## 2a_coding.pdf
 ## 2a_coding_files
 ## figures
 ## my-css.css
@@ -1233,7 +1300,15 @@ $ ls .. test_directory
 ## ..:
 ## figures
 ## lecture_1
+## lecture_10
 ## lecture_2
+## lecture_3
+## lecture_4
+## lecture_5
+## lecture_6
+## lecture_7
+## lecture_8
+## lecture_9
 ## test_directory
 ## 
 ## test_directory:
@@ -1312,6 +1387,10 @@ We can rename multiple files in an easier way using `rename` (`brew install rena
 
 We can change all of our txt files to csvs, `-s` indicates that the first argument is to be the text we are changing, and the second argument is the text we are changing it to, the third argument is the location of the files we are renaming
 
+---
+
+# Renaming multiple files
+
 
 ```bash
 $ ls copy_directory
@@ -1334,6 +1413,8 @@ $ ls copy_directory
 ## file2.csv
 ## file3.csv
 ```
+
+We can change all of our txt files to csvs, `-s` indicates that the first argument is to be the text we are changing, and the second argument is the text we are changing it to, the third argument is the location of the files we are renaming
 
 ---
 
@@ -1381,7 +1462,10 @@ The shell really shines when you try to combine multiple commands into one
 
 Lets play around with the `sandbox` directory and count the number of words in `animals.txt` using `wc`
 
---
+
+---
+
+# Word count
 
 
 ```bash
@@ -1393,7 +1477,9 @@ $ wc sandbox/animals.txt
 ## animals.txt
 ## classes
 ## hey_jude.txt
+## lengths.txt
 ## lucy_in_the_sky.txt
+## shell_script.sh
 ## trees.txt
 ##        0       7      33 sandbox/animals.txt
 ```
@@ -1414,9 +1500,10 @@ $ wc sandbox/*.txt
 ```
 ##        0       7      33 sandbox/animals.txt
 ##       29     195     979 sandbox/hey_jude.txt
+##        6      12     167 sandbox/lengths.txt
 ##       45     220    1191 sandbox/lucy_in_the_sky.txt
-##        0       8      46 sandbox/trees.txt
-##       74     430    2249 total
+##       16      24     174 sandbox/trees.txt
+##       96     458    2544 total
 ```
 
 ---
@@ -1439,6 +1526,7 @@ $ ls sandbox
 ## hey_jude.txt
 ## lengths.txt
 ## lucy_in_the_sky.txt
+## shell_script.sh
 ## trees.txt
 ```
 
@@ -1458,9 +1546,10 @@ $ cat sandbox/lengths.txt
 ```
 ##        7 sandbox/animals.txt
 ##      195 sandbox/hey_jude.txt
+##        0 sandbox/lengths.txt
 ##      220 sandbox/lucy_in_the_sky.txt
-##        8 sandbox/trees.txt
-##      430 total
+##       24 sandbox/trees.txt
+##      446 total
 ```
 
 The `w` option made it so we only got the number of words, not characters or lines
@@ -1479,11 +1568,12 @@ $ sort -n sandbox/lengths.txt
 ```
 
 ```
+##        0 sandbox/lengths.txt
 ##        7 sandbox/animals.txt
-##        8 sandbox/trees.txt
+##       24 sandbox/trees.txt
 ##      195 sandbox/hey_jude.txt
 ##      220 sandbox/lucy_in_the_sky.txt
-##      430 total
+##      446 total
 ```
 
 where the `n` option means to sort numerically
@@ -1536,6 +1626,22 @@ $ cat sandbox/trees.txt
 
 ```
 ## maple pine birch oak beechnut palm fig redwood walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
 ```
 
 ---
@@ -1548,7 +1654,9 @@ We've learned a few options for manipulating text files, we can combine them in 
 
 Pipes `|` allow you sequentially write out commands that use the previous command's output as the next command's input
 
---
+---
+
+# Piping
 
 Suppose we wanted to find the file in a directory with the most number of characters, we could do this with
 
@@ -1562,7 +1670,7 @@ $ wc -m sandbox/* | sort -n | tail -n 2
 ```
 ## wc: sandbox/classes: read: Is a directory
 ##     1191 sandbox/lucy_in_the_sky.txt
-##     2395 total
+##     2840 total
 ```
 
 `lucy_in_the_sky.txt` is the longest in the sandbox directory
@@ -1712,13 +1820,13 @@ $ cat sandbox/classes/class_schedule.csv
 
 Looks like it worked but we have the header every other line, how do we get rid of it?
 
---
-
-.hi-blue[Hint:] we only need the header once, and then we want the last line of the csv for each file
-
 ---
 
 # Looping example 2
+
+.hi-blue[Hint:] we only need the header once, and then we want the last line of the csv for each file
+
+--
 
 First lets remove the old file
 
@@ -1893,6 +2001,10 @@ $ grep -E "^.a" sandbox/lucy_in_the_sky.txt | head -5
 ## Waiting to take you away
 ```
 
+---
+
+# Finding things
+
 `grep` shows up in most programming languages as well
 
 You can imagine using it to do things like dynamically renaming a set of variables, dealing with weirdly reported FIPS codes, etc
@@ -1916,6 +2028,22 @@ $ cat sandbox/shell_script.sh
 
 ```
 ## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
 ```
 
 We can the execute it using bash
@@ -1926,8 +2054,32 @@ $ bash sandbox/shell_script.sh
 
 ```
 ## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
 ```
 
+---
+
+class: inverse, center, middle
+name: julia
+
+# Julia
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
 
 
 ---
@@ -1940,7 +2092,7 @@ Why learn Julia?
 2. It delivers C++ and Fortran speed
 
 &lt;div align="center"&gt;
-  &lt;img src="figures/julia_speed_2.png" height=390&gt;
+  &lt;img src="figures/julia_speed_2.png" height=330&gt;
 &lt;/div&gt;
 
 ---
@@ -1953,7 +2105,9 @@ Why learn Julia?
 2. There are elements of style (e.g. Strunk and White) that make for clearer and more efficient code
 
 
---
+---
+
+# Intro to programming
 
 If you will be doing computational work there are:
 
@@ -1965,9 +2119,10 @@ If you will be doing computational work there are:
     - Julia: type stability; R: vectorize
 
 ---
+
 # Intro to programming
 
-### Learning these early will:
+Learning these early will:
 
 1. Make coding a lot easier
 --
@@ -2089,7 +2244,7 @@ It’s important to know that a good program has understandable code
 
 # Julia specifics
 
-We will discuss coding in the context of Julia  
+We will discuss coding in the context of Julia
 but a lot of this ports to Python, MATLAB, etc
 
 To do:
@@ -2363,7 +2518,9 @@ An alternative to the `Array` is the `Tuple` which is denoted by parentheses
 ```
 `a2` is a `Tuple` of 4 `Int64`s, tuples have no dimension
 
---
+---
+
+# Containers
 
 Tuples are **immutable** which means you **can't** change their values
 
@@ -2427,7 +2584,7 @@ This is basically how functions return output when you call them
 
 # Containers
 
-A `Dictionary` is the last main container type,  
+A `Dictionary` is the last main container type,
 they are arrays but are indexed by keys (names) instead of numbers
 
 --
@@ -2518,14 +2675,13 @@ As in other languages we have loops at our disposal:
 ```
 
 ```
-## We drew a 0.7600855101338988.
-## We drew a 0.49274639430432443.
-## We drew a 0.8921567760692246.
-## We drew a 0.27352582996706154.
-## We drew a 0.790319051812356.
-## We drew a 0.2353900368896369.
-## We drew a 0.8048663968302878.
-## We drew a 0.7067448362153019.
+## We drew a 0.5990391903148038.
+## We drew a 0.680720324320429.
+## We drew a 0.9363498701765078.
+## We drew a 0.31797232933680997.
+## We drew a 0.6437112609050042.
+## We drew a 0.9798415354133809.
+## We drew a 0.3058752996186378.
 ```
 
 ---
@@ -2544,7 +2700,7 @@ As in other languages we have loops at our disposal:
 ```
 
 ```
-## We drew a 0.5576232957214851.
+## We drew a 0.7667826515656491.
 ```
 
 ---
@@ -2630,7 +2786,7 @@ Here's a **very** simple example, the top function iterates on an `Array`, the b
 ```
 
 ```
-##   26.849 ns (1 allocation: 128 bytes)
+##   32.929 ns (1 allocation: 128 bytes)
 ```
 
 ```julia
@@ -2638,7 +2794,7 @@ Here's a **very** simple example, the top function iterates on an `Array`, the b
 ```
 
 ```
-##   1.279 ns (0 allocations: 0 bytes)
+##   1.310 ns (0 allocations: 0 bytes)
 ```
 
 The `Iterator` approach is faster and allocates no memory
@@ -2873,23 +3029,12 @@ Let's write two functions that do the same thing:
 
 
 ```julia
- function show_vec_speed(x) 
+ function show_vec_speed(x)
    out = [3x.^2 + 4x + 7x.^3 for i = 1:1]
  end
-```
-
-```
-## show_vec_speed (generic function with 1 method)
-```
-
-```julia
- function show_fuse_speed(x) 
+ function show_fuse_speed(x)
    out = @. [3x.^2 + 4x + 7x.^3 for i = 1:1]
  end
-```
-
-```
-## show_fuse_speed (generic function with 1 method)
 ```
 
 The top one is vectorized for the operations, the `@.` in the bottom one vectorizes everything in one swoop: the function call, the operation, and the assignment to a variable
@@ -2913,12 +3058,12 @@ First, precompile the functions
 ```
 
 ```
-##   0.019510 seconds (20 allocations: 45.777 MiB, 23.83% gc time)
+##   0.038819 seconds (13 allocations: 45.777 MiB)
 ```
 
 ```
 ## 1-element Array{Array{Float64,1},1}:
-##  [12.861723629700903, 1.9288570130193439, 4.618121381082656, 2.1092997815476298, 0.5474929676796775, 0.2581580004559404, 1.7316931735226495, 0.865498488679512, 7.489015929309849, 1.3240002299519937  …  8.87972822880598, 11.058919443149918, 5.79373631326248, 7.363341963385606, 0.026949311578706444, 3.358930924502511, 1.2591943206571903, 12.868332924140653, 2.3547706579519305, 0.1613862421281777]
+##  [2.6433107600220582, 0.3962041255696385, 13.762425686175513, 0.5870988232668544, 1.7569626779124916, 1.4719641258325313, 6.46905912631338, 0.9981512705013477, 0.152008456458593, 0.00899042023011212  …  2.9993536376766867, 0.5042738382174873, 3.612955190717269, 3.0617544085858714, 1.6870978849996514, 8.693769965194988, 9.506497343010036, 7.719681762717487, 0.37300474874350653, 12.800135342348488]
 ```
 
 ```julia
@@ -2926,12 +3071,12 @@ First, precompile the functions
 ```
 
 ```
-##   0.001814 seconds (9 allocations: 7.630 MiB)
+##   0.005004 seconds (3 allocations: 7.630 MiB)
 ```
 
 ```
 ## 1-element Array{Array{Float64,1},1}:
-##  [12.861723629700903, 1.9288570130193439, 4.618121381082656, 2.1092997815476298, 0.5474929676796775, 0.2581580004559404, 1.7316931735226495, 0.865498488679512, 7.489015929309849, 1.3240002299519937  …  8.87972822880598, 11.058919443149918, 5.79373631326248, 7.363341963385606, 0.026949311578706444, 3.358930924502511, 1.2591943206571903, 12.868332924140653, 2.3547706579519305, 0.1613862421281777]
+##  [2.6433107600220582, 0.3962041255696385, 13.762425686175513, 0.5870988232668544, 1.7569626779124916, 1.4719641258325313, 6.46905912631338, 0.9981512705013477, 0.152008456458593, 0.00899042023011212  …  2.9993536376766867, 0.5042738382174873, 3.612955190717269, 3.0617544085858714, 1.6870978849996514, 8.693769965194988, 9.506497343010036, 7.719681762717487, 0.37300474874350653, 12.800135342348488]
 ```
 
 Full vectorization using `@.` is 10x faster with 1/6 of the memory allocation
@@ -2958,7 +3103,7 @@ Here we are vectorizing the function call
 
 ```julia
  # precompile h so first timer isn't picking up on compile time
- h(1,2) 
+ h(1,2)
 ```
 
 ```julia
@@ -2966,31 +3111,31 @@ Here we are vectorizing the function call
 ```
 
 ```
-##   0.041467 seconds (147.64 k allocations: 10.681 MiB, 13.87% gc time)
+##   0.050953 seconds (90.03 k allocations: 7.975 MiB)
 ```
 
 ```
 ## 500001-element Array{Float64,1}:
-##    1.5282379529505645  
-##    9.346421517864995   
-##   25.735112300725387   
-##   49.719218820749624   
-##   81.6045065941119     
-##  121.44590854348961    
-##  169.4543440659069     
-##  225.51640067832085    
-##  289.5748078394144     
-##  361.3057619181106     
-##    ⋮                   
-##    9.999700002256343e11
-##    9.999740001690128e11
-##    9.999780001214305e11
-##    9.999820000811464e11
-##    9.999860000495673e11
-##    9.999900000257694e11
-##    9.999940000093579e11
-##    9.999980000016255e11
-##    1.000002000001051e12
+##    1.5747742104357516
+##    9.404226390609876
+##   25.68437541958081
+##   49.64445916320132
+##   81.11004468088623
+##  121.35389381037355
+##  169.0287801998405
+##  225.58459315190143
+##  289.51504463398646
+##  361.73241581625985
+##    ⋮
+##    9.999700002252386e11
+##    9.999740001691553e11
+##    9.999780001211277e11
+##    9.99982000081627e11
+##    9.99986000049711e11
+##    9.999900000251525e11
+##    9.999940000097053e11
+##    9.999980000015648e11
+##    1.0000020000016147e12
 ```
 
 ---
@@ -3008,31 +3153,31 @@ Here we are vectorizing the function call and assignment
 ```
 
 ```
-##   0.024322 seconds (21.73 k allocations: 995.816 KiB)
+##   0.049102 seconds (35.19 k allocations: 1.550 MiB)
 ```
 
 ```
 ## 500001-element Array{Float64,1}:
-##    1.5282379529505645  
-##    9.346421517864995   
-##   25.735112300725387   
-##   49.719218820749624   
-##   81.6045065941119     
-##  121.44590854348961    
-##  169.4543440659069     
-##  225.51640067832085    
-##  289.5748078394144     
-##  361.3057619181106     
-##    ⋮                   
-##    9.999700002256343e11
-##    9.999740001690128e11
-##    9.999780001214305e11
-##    9.999820000811464e11
-##    9.999860000495673e11
-##    9.999900000257694e11
-##    9.999940000093579e11
-##    9.999980000016255e11
-##    1.000002000001051e12
+##    1.5747742104357516
+##    9.404226390609876
+##   25.68437541958081
+##   49.64445916320132
+##   81.11004468088623
+##  121.35389381037355
+##  169.0287801998405
+##  225.58459315190143
+##  289.51504463398646
+##  361.73241581625985
+##    ⋮
+##    9.999700002252386e11
+##    9.999740001691553e11
+##    9.999780001211277e11
+##    9.99982000081627e11
+##    9.99986000049711e11
+##    9.999900000251525e11
+##    9.999940000097053e11
+##    9.999980000015648e11
+##    1.0000020000016147e12
 ```
 
 ---
@@ -3050,31 +3195,31 @@ Here we are vectorizing the function call, assignment, and operations
 ```
 
 ```
-##   0.006950 seconds (6 allocations: 240 bytes)
+##   0.011543 seconds (2 allocations: 128 bytes)
 ```
 
 ```
 ## 500001-element Array{Float64,1}:
-##    1.5282379529505645  
-##    9.346421517864995   
-##   25.735112300725387   
-##   49.719218820749624   
-##   81.6045065941119     
-##  121.44590854348961    
-##  169.4543440659069     
-##  225.51640067832085    
-##  289.5748078394144     
-##  361.3057619181106     
-##    ⋮                   
-##    9.999700002256343e11
-##    9.999740001690128e11
-##    9.999780001214305e11
-##    9.999820000811464e11
-##    9.999860000495673e11
-##    9.999900000257694e11
-##    9.999940000093579e11
-##    9.999980000016255e11
-##    1.000002000001051e12
+##    1.5747742104357516
+##    9.404226390609876
+##   25.68437541958081
+##   49.64445916320132
+##   81.11004468088623
+##  121.35389381037355
+##  169.0287801998405
+##  225.58459315190143
+##  289.51504463398646
+##  361.73241581625985
+##    ⋮
+##    9.999700002252386e11
+##    9.999740001691553e11
+##    9.999780001211277e11
+##    9.99982000081627e11
+##    9.99986000049711e11
+##    9.999900000251525e11
+##    9.999940000097053e11
+##    9.999980000015648e11
+##    1.0000020000016147e12
 ```
 
 ---
@@ -3132,7 +3277,7 @@ The .hi-blue[scope] of a variable name determines when it is valid to refer to i
 
 --
 
-Scope can be a frustrating concept if you haven't used a similarly scoped language before
+Scope can be a frustrating concept
 
 --
 
@@ -3218,7 +3363,7 @@ What happened?
 
 --
 
-The `zz` outside the for loop has a different scope,  
+The `zz` outside the for loop has a different scope,
 the .hi-blue[global scope], than the `zz` inside it
 
 --
@@ -3429,6 +3574,10 @@ In both of these examples `f` is a closure designed to .hi-blue[capture] a varia
 
 Here's a complicated example that actually returns a closure (a function!) itself:
 
+---
+
+# Closures
+
 
 ```julia
  x = 0;
@@ -3469,7 +3618,7 @@ Here's a complicated example:
 ```
 
 ```
-## (::getfield(Main, Symbol("#closure#2372")){Int64,Int64}) (generic function with 1 method)
+## (::var"#closure#2374"{Int64,Int64}) (generic function with 1 method)
 ```
 
 ```julia
@@ -3538,10 +3687,6 @@ We'll see next
  end
 ```
 
-```
-## t1 (generic function with 1 method)
-```
-
 ```julia
  function t2(n)
    s  = 0.0
@@ -3552,10 +3697,6 @@ We'll see next
    end
    return t
  end
-```
-
-```
-## t2 (generic function with 1 method)
 ```
 
 ---
@@ -3587,42 +3728,11 @@ Julia now can't assume `s`'s type and produce pure integer or floating point cod
 
 # THIS MATTERS
 
-Type stability matters for speed, here there's about a 100% difference
-
-
-```julia
- @btime t1(5)
-```
-
-```
-##   21.519 ns (0 allocations: 0 bytes)
-```
-
-```
-## 0
-```
-
-```julia
- @btime t2(5)
-```
-
-```
-##   13.985 ns (0 allocations: 0 bytes)
-```
-
-```
-## 0
-```
-
----
-
-# THIS MATTERS
-
 Here's an order of magnitude difference for a similar function
 
 ```julia
  # Type instable
- function g()
+ function type_unstable()
    x=1
    for i = 1:10
      x = x/2
@@ -3630,7 +3740,7 @@ Here's an order of magnitude difference for a similar function
    return x
  end
  # Type stable
- function h()
+ function type_stable()
    x=1.0
    for i = 1:10
      x = x/2
@@ -3647,11 +3757,11 @@ Here's an order of magnitude difference for a similar function
 
 
 ```julia
- @btime g()
+ @btime type_unstable()
 ```
 
 ```
-##   10.412 ns (0 allocations: 0 bytes)
+##   11.063 ns (0 allocations: 0 bytes)
 ```
 
 ```
@@ -3659,11 +3769,11 @@ Here's an order of magnitude difference for a similar function
 ```
 
 ```julia
- @btime h()
+ @btime type_stable()
 ```
 
 ```
-##   1.312 ns (0 allocations: 0 bytes)
+##   1.503 ns (0 allocations: 0 bytes)
 ```
 
 ```
@@ -3680,7 +3790,9 @@ A **concrete type** is one that can be instantiated (`Float64` `Bool` `Int32`)
 
 An **abstract type** cannot (`Real`, `Number`, `Any`)
 
---
+---
+
+# Concrete vs abstract types
 
 Abstract types are for organizing the types
 
@@ -3826,17 +3938,13 @@ You can declare types with the double colon
 
 This lets the compiler generate efficient code because it knows the types of the fields when you construct a `FoobarType`
 
-Declaring abstract types isn't good enough, you need to declare concrete types
-
---
-
-Or do we?
+Declaring abstract types isn't good enough, you need to declare concrete types...r do we?
 
 ---
 
 # Parametric types are what help deliver flexibility
 
-We can create types that hold different types of fields  
+We can create types that hold different types of fields
 by declaring subsets of abstract types
 
 
@@ -3867,7 +3975,7 @@ This actually delivers high performance code!
 
 We want to make sure types are stable but code is flexible
 
-Ex: if want to preallocate an array to store data,  
+Ex: if want to preallocate an array to store data,
 how do we know how to declare it's type?
 
 --
@@ -3910,24 +4018,7 @@ We did not declare any types but the function is type stable
 
 ```julia
  sametypes(x)
-```
-
-```
-## 3-element Array{Float64,1}:
-##  6.5
-##  8.0
-##  4.1
-```
-
-```julia
  sametypes(y)
-```
-
-```
-## 3-element Array{Int64,1}:
-##   8
-##   9
-##  10
 ```
 
 &lt;div align="center"&gt;
@@ -3949,6 +4040,10 @@ Neat thing about Julia: the same function name can perform different operations 
 
 A function specifies different **methods**, each of which operates on a specific set of types
 
+---
+
+# Multiple dispatch
+
 When you write a function that's type stable, you are actually writing many different methods, each of which are optimized for certain types
 
 --
@@ -3969,110 +4064,132 @@ This is why Julia can achieve C speeds: it compiles to C (or faster) code
 ```
 
 ```
-## # 103 methods for generic function "/":
-## [1] /(a::Float16, b::Float16) in Base at float.jl:392
-## [2] /(x::Float32, y::Float32) in Base at float.jl:400
-## [3] /(x::Float64, y::Float64) in Base at float.jl:401
-## [4] /(z::Complex{Float64}, w::Complex{Float64}) in Base at complex.jl:361
-## [5] /(::Missing, ::Missing) in Base at missing.jl:93
-## [6] /(::Missing, ::Number) in Base at missing.jl:94
-## [7] /(x::BigInt, y::BigInt) in Base.GMP at gmp.jl:428
-## [8] /(x::BigInt, y::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}) in Base.GMP at gmp.jl:477
-## [9] /(x::BigFloat, c::BigInt) in Base.MPFR at mpfr.jl:464
-## [10] /(x::BigFloat, y::BigFloat) in Base.MPFR at mpfr.jl:421
-## [11] /(x::BigFloat, c::Union{UInt16, UInt32, UInt64, UInt8}) in Base.MPFR at mpfr.jl:428
-## [12] /(x::BigFloat, c::Union{Int16, Int32, Int64, Int8}) in Base.MPFR at mpfr.jl:440
-## [13] /(x::BigFloat, c::Union{Float16, Float32, Float64}) in Base.MPFR at mpfr.jl:452
-## [14] /(x::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}, y::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}) in Base at int.jl:59
-## [15] /(x::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}, y::BigInt) in Base.GMP at gmp.jl:478
-## [16] /(x::T, y::T) where T&lt;:Integer in Base at int.jl:57
-## [17] /(x::Rational, y::Complex{#s75} where #s75&lt;:Union{Integer, Rational}) in Base at rational.jl:266
-## [18] /(a::R, z::S) where {R&lt;:Real, S&lt;:Complex} in Base at complex.jl:324
-## [19] /(z::Complex, x::Real) in Base at complex.jl:325
-## [20] /(z::Complex{T}, w::Complex{T}) where T&lt;:Union{Float16, Float32} in Base at complex.jl:351
-## [21] /(a::Complex{T}, b::Complex{T}) where T&lt;:Real in Base at complex.jl:328
-## [22] /(x::Rational, y::Rational) in Base at rational.jl:265
-## [23] /(c::Union{UInt16, UInt32, UInt64, UInt8}, x::BigFloat) in Base.MPFR at mpfr.jl:433
-## [24] /(c::Union{Int16, Int32, Int64, Int8}, x::BigFloat) in Base.MPFR at mpfr.jl:445
-## [25] /(c::Union{Float16, Float32, Float64}, x::BigFloat) in Base.MPFR at mpfr.jl:457
-## [26] /(x::AbstractIrrational, y::AbstractIrrational) in Base at irrationals.jl:137
-## [27] /(x::T, y::T) where T&lt;:Number in Base at promotion.jl:392
-## [28] /(x::Number, y::Number) in Base at promotion.jl:316
-## [29] /(x::Base.TwicePrecision, v::Number) in Base at twiceprecision.jl:301
-## [30] /(x::Base.TwicePrecision, y::Base.TwicePrecision) in Base at twiceprecision.jl:305
-## [31] /(r::StepRangeLen{#s75,#s74,S} where S where #s74&lt;:Base.TwicePrecision where #s75&lt;:Real, x::Real) in Base at twiceprecision.jl:482
-## [32] /(B::BitArray, x::Number) in Base at bitarray.jl:1103
-## [33] /(X::Union{DenseArray{P,N}, Base.ReinterpretArray{P,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, Base.ReshapedArray{P,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, SubArray{P,N,A,I,L} where L where I&lt;:Tuple{Vararg{Union{Int64, AbstractRange{Int64}, Base.AbstractCartesianIndex},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, Base.ReshapedArray{T,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, DenseArray}} where N, y::Real) where P&lt;:Dates.Period in Dates at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/Dates/src/deprecated.jl:46
-## [34] /(A::SymTridiagonal, B::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/tridiag.jl:162
-## [35] /(A::Tridiagonal, B::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/tridiag.jl:621
-## [36] /(A::UpperTriangular, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:736
-## [37] /(A::UnitUpperTriangular, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:739
-## [38] /(A::LowerTriangular, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:736
-## [39] /(A::UnitLowerTriangular, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:739
-## [40] /(A::Symmetric, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/symmetric.jl:486
-## [41] /(A::Hermitian, x::Real) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/symmetric.jl:487
-## [42] /(D::Diagonal, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/diagonal.jl:161
-## [43] /(A::Bidiagonal, B::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/bidiag.jl:327
-## [44] /(x::Union{SubArray{T,1,#s617,Tuple{Base.Slice{Base.OneTo{Int64}},Int64},false} where #s617&lt;:SparseArrays.SparseMatrixCSC, SparseArrays.SparseVector{T,Ti} where Ti&lt;:Integer} where T, a::Number) in SparseArrays at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/SparseArrays/src/sparsevector.jl:1409
-## [45] /(A::AbstractArray, B::Number) in Base at arraymath.jl:55
-## [46] /(A::Union{BitArray{2}, BitArray{1}}, B::Union{BitArray{2}, BitArray{1}}) in Base at bitarray.jl:1100
-## [47] /(x::Number, B::BitArray) in Base at bitarray.jl:1104
-## [48] /(::Number, ::Missing) in Base at missing.jl:95
-## [49] /(x::P, y::P) where P&lt;:Dates.Period in Dates at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/Dates/src/periods.jl:80
-## [50] /(x::P, y::Real) where P&lt;:Dates.Period in Dates at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/Dates/src/periods.jl:81
-## [51] /(X::Union{DenseArray{P,N}, Base.ReinterpretArray{P,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, Base.ReshapedArray{P,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, SubArray{P,N,A,I,L} where L where I&lt;:Tuple{Vararg{Union{Int64, AbstractRange{Int64}, Base.AbstractCartesianIndex},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, Base.ReshapedArray{T,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, DenseArray}} where N, y::P) where P&lt;:Dates.Period in Dates at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/Dates/src/deprecated.jl:46
-## [52] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2547
-## [53] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2548
-## [54] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:(AbstractArray{T,2} where T) where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/adjtrans.jl:282
-## [55] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2542
-## [56] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2543
-## [57] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2545
-## [58] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2546
-## [59] /(u::Adjoint{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::AbstractArray{T,2} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/adjtrans.jl:280
-## [60] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2553
-## [61] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2554
-## [62] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{#s617,#s616} where #s616&lt;:(AbstractArray{T,2} where T) where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/adjtrans.jl:283
-## [63] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2550
-## [64] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2551
-## [65] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2555
-## [66] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:2556
-## [67] /(u::Transpose{T,#s617} where #s617&lt;:(AbstractArray{T,1} where T) where T, A::AbstractArray{T,2} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/adjtrans.jl:281
-## [68] /(A::LowerTriangular, B::LowerTriangular) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1730
-## [69] /(A::LowerTriangular, B::UnitLowerTriangular) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1737
-## [70] /(A::UpperTriangular, B::UpperTriangular) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1744
-## [71] /(A::UpperTriangular, B::UnitUpperTriangular) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1751
-## [72] /(A::LowerTriangular, xformB::Adjoint{#s617,#s616} where #s616&lt;:UpperTriangular where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1765
-## [73] /(A::LowerTriangular, xformB::Adjoint{#s615,#s614} where #s614&lt;:UnitUpperTriangular where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1774
-## [74] /(A::UpperTriangular, xformB::Adjoint{#s613,#s612} where #s612&lt;:LowerTriangular where #s613) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1783
-## [75] /(A::UpperTriangular, xformB::Adjoint{#s611,#s610} where #s610&lt;:UnitLowerTriangular where #s611) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1792
-## [76] /(A::LowerTriangular, xformB::Transpose{#s617,#s616} where #s616&lt;:UpperTriangular where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1765
-## [77] /(A::LowerTriangular, xformB::Transpose{#s615,#s614} where #s614&lt;:UnitUpperTriangular where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1774
-## [78] /(A::UpperTriangular, xformB::Transpose{#s613,#s612} where #s612&lt;:LowerTriangular where #s613) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1783
-## [79] /(A::UpperTriangular, xformB::Transpose{#s611,#s610} where #s610&lt;:UnitLowerTriangular where #s611) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1792
-## [80] /(A::AbstractArray{T,1} where T, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1921
-## [81] /(A::AbstractArray{T,1} where T, adjB::Adjoint{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1928
-## [82] /(A::AbstractArray{T,1} where T, transB::Transpose{#s615,#s614} where #s614&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1936
-## [83] /(A::AbstractArray{T,1} where T, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1947
-## [84] /(A::AbstractArray{T,1} where T, adjB::Adjoint{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1954
-## [85] /(A::AbstractArray{T,1} where T, transB::Transpose{#s615,#s614} where #s614&lt;:Union{LowerTriangular, UpperTriangular} where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1962
-## [86] /(A::AbstractArray{T,2} where T, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1921
-## [87] /(A::AbstractArray{T,2} where T, adjB::Adjoint{#s617,#s616} where #s616&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1928
-## [88] /(A::AbstractArray{T,2} where T, transB::Transpose{#s615,#s614} where #s614&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1936
-## [89] /(A::AbstractArray{T,2} where T, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1947
-## [90] /(A::AbstractArray{T,2} where T, adjB::Adjoint{#s617,#s616} where #s616&lt;:Union{LowerTriangular, UpperTriangular} where #s617) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1954
-## [91] /(A::AbstractArray{T,2} where T, transB::Transpose{#s615,#s614} where #s614&lt;:Union{LowerTriangular, UpperTriangular} where #s615) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/triangular.jl:1962
-## [92] /(Da::Diagonal, Db::Diagonal) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/diagonal.jl:306
-## [93] /(A::Union{LinearAlgebra.AbstractTriangular, Union{DenseArray{T,2}, Base.ReinterpretArray{T,2,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, Base.ReshapedArray{T,2,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray}, SubArray{T,2,A,I,L} where L where I&lt;:Tuple{Vararg{Union{Int64, AbstractRange{Int64}, Base.AbstractCartesianIndex},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, Base.ReshapedArray{T,N,A,MI} where MI&lt;:Tuple{Vararg{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64},N} where N} where A&lt;:Union{Base.ReinterpretArray{T,N,S,A} where S where A&lt;:Union{SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, SubArray{T,N,A,I,true} where I&lt;:Union{Tuple{Vararg{Real,N} where N}, Tuple{AbstractUnitRange,Vararg{Any,N} where N}} where A&lt;:DenseArray where N where T, DenseArray} where N where T, DenseArray}} where T}, D::Diagonal) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/diagonal.jl:378
-## [94] /(A::Bidiagonal{T,V} where V&lt;:AbstractArray{T,1}, adjB::Adjoint{#s617,#s616} where #s616&lt;:AbstractArray{T,1} where #s617) where T in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/bidiag.jl:574
-## [95] /(A::Bidiagonal{T,V} where V&lt;:AbstractArray{T,1}, B::AbstractArray{T,1}) where T in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/bidiag.jl:573
-## [96] /(A::Union{AbstractArray{T,1}, AbstractArray{T,2}} where T, B::Union{AbstractArray{T,1}, AbstractArray{T,2}} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/generic.jl:977
-## [97] /(x::Number, v::AbstractArray{T,1} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/generic.jl:982
-## [98] /(B::AbstractArray{T,2} where T, A::LU) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/lu.jl:627
-## [99] /(J1::UniformScaling, J2::UniformScaling) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/uniformscaling.jl:202
-## [100] /(J::UniformScaling, A::AbstractArray{T,2} where T) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/uniformscaling.jl:203
-## [101] /(A::AbstractArray{T,2} where T, J::UniformScaling) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/uniformscaling.jl:204
-## [102] /(J::UniformScaling, x::Number) in LinearAlgebra at /Users/sabae/buildbot/worker/package_macos64/build/usr/share/julia/stdlib/v1.2/LinearAlgebra/src/uniformscaling.jl:206
-## [103] /(x::RObject, y::RObject) in RCall at /Users/ir229/.julia/packages/RCall/g7dhB/src/operators.jl:6
+## # 125 methods for generic function "/":
+## [1] /(x::Float32, y::Float32) in Base at float.jl:406
+## [2] /(a::Float16, b::Float16) in Base at float.jl:398
+## [3] /(x::BigInt, y::BigInt) in Base.GMP at gmp.jl:491
+## [4] /(x::BigInt, y::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}) in Base.GMP at gmp.jl:540
+## [5] /(::Missing, ::Missing) in Base at missing.jl:114
+## [6] /(::Missing, ::Number) in Base at missing.jl:115
+## [7] /(x::BigFloat, c::BigInt) in Base.MPFR at mpfr.jl:449
+## [8] /(x::BigFloat, y::BigFloat) in Base.MPFR at mpfr.jl:406
+## [9] /(x::BigFloat, c::Union{UInt16, UInt32, UInt64, UInt8}) in Base.MPFR at mpfr.jl:413
+## [10] /(x::BigFloat, c::Union{Int16, Int32, Int64, Int8}) in Base.MPFR at mpfr.jl:425
+## [11] /(x::BigFloat, c::Union{Float16, Float32, Float64}) in Base.MPFR at mpfr.jl:437
+## [12] /(x::Float64, y::Float64) in Base at float.jl:407
+## [13] /(z::Complex{Float64}, w::Complex{Float64}) in Base at complex.jl:368
+## [14] /(x::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}, y::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}) in Base at int.jl:92
+## [15] /(x::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}, y::BigInt) in Base.GMP at gmp.jl:541
+## [16] /(x::T, y::T) where T&lt;:Integer in Base at int.jl:90
+## [17] /(x::Rational, y::Union{Integer, Complex{var"#s91"} where var"#s91"&lt;:Union{Integer, Rational}, Rational}) in Base at rational.jl:320
+## [18] /(a::R, z::S) where {R&lt;:Real, S&lt;:Complex} in Base at complex.jl:332
+## [19] /(x::Union{Integer, Complex{var"#s91"} where var"#s91"&lt;:Union{Integer, Rational}}, y::Rational) in Base at rational.jl:321
+## [20] /(z::Complex, x::Real) in Base at complex.jl:333
+## [21] /(z::Complex{T}, w::Complex{T}) where T&lt;:Union{Float16, Float32} in Base at complex.jl:359
+## [22] /(a::Complex{T}, b::Complex{T}) where T&lt;:Real in Base at complex.jl:335
+## [23] /(c::Union{UInt16, UInt32, UInt64, UInt8}, x::BigFloat) in Base.MPFR at mpfr.jl:418
+## [24] /(c::Union{Int16, Int32, Int64, Int8}, x::BigFloat) in Base.MPFR at mpfr.jl:430
+## [25] /(c::Union{Float16, Float32, Float64}, x::BigFloat) in Base.MPFR at mpfr.jl:442
+## [26] /(x::AbstractIrrational, y::AbstractIrrational) in Base at irrationals.jl:156
+## [27] /(x::T, y::T) where T&lt;:Number in Base at promotion.jl:387
+## [28] /(x::Number, y::Number) in Base at promotion.jl:314
+## [29] /(x::Base.TwicePrecision, v::Number) in Base at twiceprecision.jl:303
+## [30] /(x::Base.TwicePrecision, y::Base.TwicePrecision) in Base at twiceprecision.jl:307
+## [31] /(r::StepRangeLen{var"#s91",var"#s90",S} where S where var"#s90"&lt;:Base.TwicePrecision where var"#s91"&lt;:Real, x::Real) in Base at twiceprecision.jl:488
+## [32] /(B::BitArray, x::Number) in Base at bitarray.jl:1130
+## [33] /(X::StridedArray{P, N} where N, y::Real) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/Dates/src/deprecated.jl:44
+## [34] /(A::SymTridiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/tridiag.jl:209
+## [35] /(A::Tridiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/tridiag.jl:736
+## [36] /(A::UpperTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:874
+## [37] /(A::UnitUpperTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:876
+## [38] /(A::LowerTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:874
+## [39] /(A::UnitLowerTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:876
+## [40] /(A::Symmetric, x::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/symmetric.jl:631
+## [41] /(A::Hermitian, x::Real) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/symmetric.jl:632
+## [42] /(D::Diagonal, x::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/diagonal.jl:176
+## [43] /(A::Bidiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/bidiag.jl:368
+## [44] /(x::Union{SubArray{T,1,var"#s828",Tuple{Base.Slice{Base.OneTo{Int64}},Int64},false} where var"#s828"&lt;:SparseArrays.AbstractSparseMatrixCSC, SparseArrays.SparseVector{T,Ti} where Ti&lt;:Integer} where T, a::Number) in SparseArrays at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/SparseArrays/src/sparsevector.jl:1407
+## [45] /(a::PDMats.ScalMat{T}, c::T) where T&lt;:Real in PDMats at /Users/ir229/.julia/packages/PDMats/8bndI/src/scalmat.jl:42
+## [46] /(a::PDMats.AbstractPDMat, c::T) where T&lt;:Real in PDMats at /Users/ir229/.julia/packages/PDMats/8bndI/src/generics.jl:27
+## [47] /(A::AbstractArray, B::Number) in Base at arraymath.jl:55
+## [48] /(A::Union{BitArray{2}, BitArray{1}}, B::Union{BitArray{2}, BitArray{1}}) in Base at bitarray.jl:1127
+## [49] /(x::Number, B::BitArray) in Base at bitarray.jl:1131
+## [50] /(::Number, ::Missing) in Base at missing.jl:116
+## [51] /(x::P, y::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/Dates/src/periods.jl:81
+## [52] /(x::P, y::Real) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/Dates/src/periods.jl:82
+## [53] /(r::AbstractRange{var"#s828"} where var"#s828"&lt;:P, x::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/Dates/src/ranges.jl:63
+## [54] /(X::StridedArray{P, N} where N, y::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/Dates/src/deprecated.jl:44
+## [55] /(u::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:Union{LowerTriangular, UpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2703
+## [56] /(u::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2704
+## [57] /(u::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:(AbstractArray{T,2} where T) where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/adjtrans.jl:314
+## [58] /(u::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2698
+## [59] /(u::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2699
+## [60] /(u::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Union{LowerTriangular, UpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2701
+## [61] /(u::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2702
+## [62] /(adjA::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:(AbstractArray{T,1} where T) where var"#s828", F::Adjoint{var"#s826",var"#s825"} where var"#s825"&lt;:LU where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/lu.jl:431
+## [63] /(adjB::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, adjF::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Factorization where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:127
+## [64] /(B::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, F::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:(Factorization{var"#s826"} where var"#s826"&lt;:Real) where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:149
+## [65] /(B::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, F::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:Factorization where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:151
+## [66] /(u::Adjoint{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::AbstractArray{T,2} where T) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/adjtrans.jl:312
+## [67] /(u::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Union{LowerTriangular, UpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2709
+## [68] /(u::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2710
+## [69] /(u::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:(AbstractArray{T,2} where T) where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/adjtrans.jl:315
+## [70] /(u::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2706
+## [71] /(u::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2707
+## [72] /(u::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:Union{LowerTriangular, UpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2711
+## [73] /(u::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2712
+## [74] /(trA::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:(AbstractArray{T,1} where T) where var"#s828", F::Adjoint{var"#s826",var"#s825"} where var"#s825"&lt;:LU where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/lu.jl:433
+## [75] /(B::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, adjF::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Factorization where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:128
+## [76] /(B::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, F::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:(Factorization{var"#s826"} where var"#s826"&lt;:Real) where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:150
+## [77] /(B::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, F::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:Factorization where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:152
+## [78] /(u::Transpose{T,var"#s828"} where var"#s828"&lt;:(AbstractArray{T,1} where T) where T, A::AbstractArray{T,2} where T) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/adjtrans.jl:313
+## [79] /(A::LowerTriangular, B::LowerTriangular) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1885
+## [80] /(A::LowerTriangular, B::UnitLowerTriangular) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1892
+## [81] /(A::UpperTriangular, B::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1899
+## [82] /(A::UpperTriangular, B::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1906
+## [83] /(A::LowerTriangular, xformB::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:UpperTriangular where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1920
+## [84] /(A::LowerTriangular, xformB::Adjoint{var"#s826",var"#s825"} where var"#s825"&lt;:UnitUpperTriangular where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1929
+## [85] /(A::UpperTriangular, xformB::Adjoint{var"#s824",var"#s823"} where var"#s823"&lt;:LowerTriangular where var"#s824") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1938
+## [86] /(A::UpperTriangular, xformB::Adjoint{var"#s822",var"#s821"} where var"#s821"&lt;:UnitLowerTriangular where var"#s822") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1947
+## [87] /(A::LowerTriangular, xformB::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:UpperTriangular where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1920
+## [88] /(A::LowerTriangular, xformB::Transpose{var"#s826",var"#s825"} where var"#s825"&lt;:UnitUpperTriangular where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1929
+## [89] /(A::UpperTriangular, xformB::Transpose{var"#s824",var"#s823"} where var"#s823"&lt;:LowerTriangular where var"#s824") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1938
+## [90] /(A::UpperTriangular, xformB::Transpose{var"#s822",var"#s821"} where var"#s821"&lt;:UnitLowerTriangular where var"#s822") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:1947
+## [91] /(A::AbstractArray{T,1} where T, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2076
+## [92] /(A::AbstractArray{T,1} where T, adjB::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2083
+## [93] /(A::AbstractArray{T,1} where T, transB::Transpose{var"#s826",var"#s825"} where var"#s825"&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2091
+## [94] /(A::AbstractArray{T,1} where T, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2102
+## [95] /(A::AbstractArray{T,1} where T, adjB::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Union{LowerTriangular, UpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2109
+## [96] /(A::AbstractArray{T,1} where T, transB::Transpose{var"#s826",var"#s825"} where var"#s825"&lt;:Union{LowerTriangular, UpperTriangular} where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2117
+## [97] /(A::AbstractArray{T,2} where T, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2076
+## [98] /(A::AbstractArray{T,2} where T, adjB::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2083
+## [99] /(A::AbstractArray{T,2} where T, transB::Transpose{var"#s826",var"#s825"} where var"#s825"&lt;:Union{UnitLowerTriangular, UnitUpperTriangular} where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2091
+## [100] /(A::AbstractArray{T,2} where T, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2102
+## [101] /(A::AbstractArray{T,2} where T, adjB::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Union{LowerTriangular, UpperTriangular} where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2109
+## [102] /(A::AbstractArray{T,2} where T, transB::Transpose{var"#s826",var"#s825"} where var"#s825"&lt;:Union{LowerTriangular, UpperTriangular} where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/triangular.jl:2117
+## [103] /(adjA::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:(AbstractArray{T,2} where T) where var"#s828", F::Adjoint{var"#s826",var"#s825"} where var"#s825"&lt;:LU where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/lu.jl:432
+## [104] /(trA::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:(AbstractArray{T,2} where T) where var"#s828", F::Adjoint{var"#s826",var"#s825"} where var"#s825"&lt;:LU where var"#s826") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/lu.jl:437
+## [105] /(A::AbstractArray{T,2} where T, F::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:LU where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/lu.jl:426
+## [106] /(B::AbstractArray{T,2} where T, adjF::Adjoint{var"#s828",var"#s827"} where var"#s827"&lt;:Factorization where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:119
+## [107] /(B::AbstractArray{T,2} where T, F::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:(Factorization{var"#s826"} where var"#s826"&lt;:Real) where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:147
+## [108] /(B::AbstractArray{T,2} where T, F::Transpose{var"#s828",var"#s827"} where var"#s827"&lt;:Factorization where var"#s828") in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:148
+## [109] /(Da::Diagonal, Db::Diagonal) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/diagonal.jl:414
+## [110] /(A::Union{LinearAlgebra.AbstractTriangular, StridedArray{T, 2} where T}, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/diagonal.jl:486
+## [111] /(A::SparseArrays.AbstractSparseMatrixCSC, D::Diagonal) in SparseArrays at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/SparseArrays/src/linalg.jl:177
+## [112] /(x::Union{AbstractArray{T,1}, AbstractArray{T,2}} where T, a::PDMats.PDMat) in PDMats at /Users/ir229/.julia/packages/PDMats/8bndI/src/pdmat.jl:52
+## [113] /(x::StridedVecOrMat{T}, a::PDMats.PDSparseMat{T,S} where S&lt;:(SparseArrays.AbstractSparseArray{Tv,Ti,2} where Ti where Tv)) where T&lt;:Real in PDMats at /Users/ir229/.julia/packages/PDMats/8bndI/src/pdsparsemat.jl:50
+## [114] /(x::Union{AbstractArray{T,1}, AbstractArray{T,2}} where T, a::PDMats.PDiagMat) in PDMats at /Users/ir229/.julia/packages/PDMats/8bndI/src/pdiagmat.jl:53
+## [115] /(x::Union{AbstractArray{T,1}, AbstractArray{T,2}} where T, a::PDMats.ScalMat) in PDMats at /Users/ir229/.julia/packages/PDMats/8bndI/src/scalmat.jl:46
+## [116] /(A::Union{AbstractArray{T,1}, AbstractArray{T,2}} where T, B::Union{AbstractArray{T,1}, AbstractArray{T,2}} where T) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/generic.jl:1122
+## [117] /(x::Number, v::AbstractArray{T,1} where T) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/generic.jl:1128
+## [118] /(B::Union{Array{Complex{T},1}, Array{Complex{T},2}}, F::Factorization{T}) where T&lt;:Union{Float32, Float64} in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:90
+## [119] /(B::AbstractArray{T,2} where T, F::Factorization) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/factorization.jl:112
+## [120] /(J1::UniformScaling, J2::UniformScaling) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/uniformscaling.jl:232
+## [121] /(J::UniformScaling, A::AbstractArray{T,2} where T) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/uniformscaling.jl:233
+## [122] /(A::AbstractArray{T,2} where T, J::UniformScaling) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/uniformscaling.jl:234
+## [123] /(v::AbstractArray{T,1} where T, J::UniformScaling) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/uniformscaling.jl:235
+## [124] /(J::UniformScaling, x::Number) in LinearAlgebra at /Applications/Julia-1.5.app/Contents/Resources/julia/share/julia/stdlib/v1.5/LinearAlgebra/src/uniformscaling.jl:237
+## [125] /(x::RObject, y::RObject) in RCall at /Users/ir229/.julia/packages/RCall/Qzssx/src/operators.jl:6
 ```
 
 
@@ -4129,6 +4246,32 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -4146,17 +4289,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
 
 <script>
 slideshow._releaseMath = function(el) {

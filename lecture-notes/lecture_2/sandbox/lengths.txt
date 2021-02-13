@@ -1,0 +1,6 @@
+       7 sandbox/animals.txt
+     195 sandbox/hey_jude.txt
+       0 sandbox/lengths.txt
+     220 sandbox/lucy_in_the_sky.txt
+      24 sandbox/trees.txt
+     446 total

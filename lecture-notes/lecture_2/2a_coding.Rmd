@@ -42,7 +42,7 @@ knit_hooks$set(
 
 Necessary things to do:
 
-- Windows users: Install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and a Unix distribution
+- Windows users: Install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and a Unix distribution or use https://repl.it
 
 - Install [Julia](https://julialang.org/downloads/)
 
@@ -51,6 +51,16 @@ Necessary things to do:
 --
 
 These slides are based on Software Carpentry, notes by Grant Mcdermott, QuantEcon, Julia documentation, etc
+
+---
+
+class: inverse, center, middle
+name: shell
+
+# The shell
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
 
 ---
 
@@ -423,6 +433,12 @@ mkdir "123test directory"
 ls
 ```
 
+---
+
+# Creating files and directories
+
+If you really, really, want to use spaces in names you'll have to do one of two things, enclose in quotes or backslash the space
+
 ```{bash}
 mkdir 123test\ directory\ 2
 ls
@@ -442,14 +458,26 @@ We can move files and directories with `mv` (move)
 
 --
 
-```{bash}
+```{bash, eval = F}
 mv test_directory/test.txt ..
 ls ..
 ```
 
 The first argument is the (relative) path of the file you want to move, the second argument is where you're moving it to
 
+---
+
+# Moving files and directories
+
+```{bash}
+mv test_directory/test.txt ..
+ls ..
+```
+
 We moved the test.txt file from  `test_directory` to the parent directory
+
+
+
 
 ---
 
@@ -539,6 +567,18 @@ touch test_directory/test_copy.txt
 cp test_directory/test_copy.txt .
 ls test_directory
 ```
+
+---
+
+# Copying files and directories
+
+
+```{bash, eval = F}
+mkdir test_directory
+touch test_directory/test_copy.txt
+cp test_directory/test_copy.txt .
+ls test_directory
+```
 ```{bash}
 ls
 ```
@@ -614,6 +654,10 @@ We can rename multiple files in an easier way using `rename` (`brew install rena
 
 We can change all of our txt files to csvs, `-s` indicates that the first argument is to be the text we are changing, and the second argument is the text we are changing it to, the third argument is the location of the files we are renaming
 
+---
+
+# Renaming multiple files
+
 ```{bash}
 ls copy_directory
 ```
@@ -622,6 +666,8 @@ ls copy_directory
 rename -s .txt .csv copy_directory/*
 ls copy_directory
 ```
+
+We can change all of our txt files to csvs, `-s` indicates that the first argument is to be the text we are changing, and the second argument is the text we are changing it to, the third argument is the location of the files we are renaming
 
 ---
 
@@ -653,7 +699,10 @@ The shell really shines when you try to combine multiple commands into one
 
 Lets play around with the `sandbox` directory and count the number of words in `animals.txt` using `wc`
 
---
+
+---
+
+# Word count
 
 ```{bash}
 ls sandbox
@@ -758,7 +807,9 @@ We've learned a few options for manipulating text files, we can combine them in 
 
 Pipes `|` allow you sequentially write out commands that use the previous command's output as the next command's input
 
---
+---
+
+# Piping
 
 Suppose we wanted to find the file in a directory with the most number of characters, we could do this with
 
@@ -878,13 +929,13 @@ cat sandbox/classes/class_schedule.csv
 
 Looks like it worked but we have the header every other line, how do we get rid of it?
 
---
-
-.hi-blue[Hint:] we only need the header once, and then we want the last line of the csv for each file
-
 ---
 
 # Looping example 2
+
+.hi-blue[Hint:] we only need the header once, and then we want the last line of the csv for each file
+
+--
 
 First lets remove the old file
 
@@ -1009,6 +1060,10 @@ For example, lets find lines with "a" as the second letter
 grep -E "^.a" sandbox/lucy_in_the_sky.txt | head -5
 ```
 
+---
+
+# Finding things
+
 `grep` shows up in most programming languages as well
 
 You can imagine using it to do things like dynamically renaming a set of variables, dealing with weirdly reported FIPS codes, etc
@@ -1034,6 +1089,14 @@ We can the execute it using bash
 bash sandbox/shell_script.sh
 ```
 
+---
+
+class: inverse, center, middle
+name: julia
+
+# Julia
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 
 ---
@@ -1046,7 +1109,7 @@ Why learn Julia?
 2. It delivers C++ and Fortran speed
 
 <div align="center">
-  <img src="figures/julia_speed_2.png" height=390>
+  <img src="figures/julia_speed_2.png" height=330>
 </div>
 
 ---
@@ -1059,7 +1122,9 @@ Why learn Julia?
 2. There are elements of style (e.g. Strunk and White) that make for clearer and more efficient code
 
 
---
+---
+
+# Intro to programming
 
 If you will be doing computational work there are:
 
@@ -1071,9 +1136,10 @@ If you will be doing computational work there are:
     - Julia: type stability; R: vectorize
 
 ---
+
 # Intro to programming
 
-### Learning these early will:
+Learning these early will:
 
 1. Make coding a lot easier
 --
@@ -1195,7 +1261,7 @@ It’s important to know that a good program has understandable code
 
 # Julia specifics
 
-We will discuss coding in the context of Julia  
+We will discuss coding in the context of Julia
 but a lot of this ports to Python, MATLAB, etc
 
 To do:
@@ -1377,7 +1443,9 @@ a2 = (1, 2, 3, 4); typeof(a2)
 ```
 `a2` is a `Tuple` of 4 `Int64`s, tuples have no dimension
 
---
+---
+
+# Containers
 
 Tuples are **immutable** which means you **can't** change their values
 ```{julia}
@@ -1419,7 +1487,7 @@ This is basically how functions return output when you call them
 
 # Containers
 
-A `Dictionary` is the last main container type,  
+A `Dictionary` is the last main container type,
 they are arrays but are indexed by keys (names) instead of numbers
 
 --
@@ -1715,11 +1783,11 @@ Julia can do broadcasting in a nicer, faster way by .hi-blue[fusing] operations 
 
 Let's write two functions that do the same thing:
 
-```{julia}
-function show_vec_speed(x) 
+```{julia, results = 'hide'}
+function show_vec_speed(x)
   out = [3x.^2 + 4x + 7x.^3 for i = 1:1]
 end
-function show_fuse_speed(x) 
+function show_fuse_speed(x)
   out = @. [3x.^2 + 4x + 7x.^3 for i = 1:1]
 end
 ```
@@ -1765,7 +1833,7 @@ Here we are vectorizing the function call
 
 ```{julia, results = 'hide'}
 # precompile h so first timer isn't picking up on compile time
-h(1,2) 
+h(1,2)
 ```
 ```{julia}
 @time out_1 = h.(y,z)    # evaluate h.(y,z) and time
@@ -1835,7 +1903,7 @@ The .hi-blue[scope] of a variable name determines when it is valid to refer to i
 
 --
 
-Scope can be a frustrating concept if you haven't used a similarly scoped language before
+Scope can be a frustrating concept
 
 --
 
@@ -1906,7 +1974,7 @@ What happened?
 
 --
 
-The `zz` outside the for loop has a different scope,  
+The `zz` outside the for loop has a different scope,
 the .hi-blue[global scope], than the `zz` inside it
 
 --
@@ -2051,6 +2119,10 @@ In both of these examples `f` is a closure designed to .hi-blue[capture] a varia
 
 Here's a complicated example that actually returns a closure (a function!) itself:
 
+---
+
+# Closures
+
 ```{julia}
 x = 0;
 function toplevel(y)
@@ -2124,7 +2196,7 @@ We'll see next
 
 # These two functions look the same, but are they?
 
-```{julia}
+```{julia, results = 'hide'}
 function t1(n)
   s = 0
   t = 1
@@ -2135,7 +2207,7 @@ function t1(n)
   return t
 end
 ```
-```{julia}
+```{julia, results = 'hide'}
 function t2(n)
   s  = 0.0
   t = 1
@@ -2176,21 +2248,10 @@ Julia now can't assume `s`'s type and produce pure integer or floating point cod
 
 # THIS MATTERS
 
-Type stability matters for speed, here there's about a 100% difference
-
-```{julia}
-@btime t1(5)
-@btime t2(5)
-```
-
----
-
-# THIS MATTERS
-
 Here's an order of magnitude difference for a similar function
 ```{julia, results = 'hide'}
 # Type instable
-function g()
+function type_unstable()
   x=1
   for i = 1:10
     x = x/2
@@ -2198,7 +2259,7 @@ function g()
   return x
 end
 # Type stable
-function h()
+function type_stable()
   x=1.0
   for i = 1:10
     x = x/2
@@ -2214,8 +2275,8 @@ end
 Here's an order of magnitude difference for a similar function
 
 ```{julia}
-@btime g()
-@btime h()
+@btime type_unstable()
+@btime type_stable()
 ```
 
 ---
@@ -2228,7 +2289,9 @@ A **concrete type** is one that can be instantiated (`Float64` `Bool` `Int32`)
 
 An **abstract type** cannot (`Real`, `Number`, `Any`)
 
---
+---
+
+# Concrete vs abstract types
 
 Abstract types are for organizing the types
 
@@ -2312,17 +2375,13 @@ newfoo.a
 
 This lets the compiler generate efficient code because it knows the types of the fields when you construct a `FoobarType`
 
-Declaring abstract types isn't good enough, you need to declare concrete types
-
---
-
-Or do we?
+Declaring abstract types isn't good enough, you need to declare concrete types...r do we?
 
 ---
 
 # Parametric types are what help deliver flexibility
 
-We can create types that hold different types of fields  
+We can create types that hold different types of fields
 by declaring subsets of abstract types
 
 ```{julia}
@@ -2348,7 +2407,7 @@ This actually delivers high performance code!
 
 We want to make sure types are stable but code is flexible
 
-Ex: if want to preallocate an array to store data,  
+Ex: if want to preallocate an array to store data,
 how do we know how to declare it's type?
 
 --
@@ -2380,7 +2439,7 @@ y = [7, 8, 9];
 We did not declare any types but the function is type stable
 
 
-```{julia}
+```{julia, results = 'hide'}
 sametypes(x)
 sametypes(y)
 ```
@@ -2403,6 +2462,10 @@ There's a lot of other functions out there that help with writing flexible, type
 Neat thing about Julia: the same function name can perform different operations depending on the underlying type of the inputs
 
 A function specifies different **methods**, each of which operates on a specific set of types
+
+---
+
+# Multiple dispatch
 
 When you write a function that's type stable, you are actually writing many different methods, each of which are optimized for certain types
 
