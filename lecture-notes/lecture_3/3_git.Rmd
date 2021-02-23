@@ -15,10 +15,20 @@ output:
 
 ---
 name: toc
-
-```{r setup, include=FALSE}
+exclude: true
+```{r setup}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall, tweetrmd, knitr
+)
 options(htmltools.dir.version = FALSE)
-library(knitr)
+```
+```{r xaringanExtra, echo = FALSE}
+xaringanExtra::use_xaringan_extra(c("tile_view", "panelset", "webcam"))
+
+```
+```{r echo=FALSE}
+xaringanExtra::style_panelset(panel_tab_color_active = "red")
 opts_chunk$set(
   prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
   fig.align = "center", #fig.width=6, fig.height=4.5, 
@@ -74,6 +84,19 @@ When did you make changes? Who made them?
 How do you undo only **some** changes from one update to the next?
 
 --
+
+If you've ever had a disaster managing code changes (you will), Git can help
+
+
+---
+
+# Why bother with this new fangled Git stuff?
+
+The classic .hi-blue[date your file name method] is not good
+
+<div align="center">
+  <img src="figures/bad_version_control.png" height=300>
+</div>
 
 If you've ever had a disaster managing code changes (you will), Git can help
 
@@ -255,6 +278,10 @@ Repos come with some common files in them
 - `README.md`: a Markdown file that is basically the welcome content on repo's GitHub website, you should generally initialize a repo with one of these
 - `LICENSE.md`: describes the license agreement for the repository
 
+---
+
+# Git basics
+
 <div align="center">
   <img src="figures/repo_example.png" height=600>
 </div>
@@ -418,7 +445,7 @@ This brings the changes from `wind-turbines` since the initial branch back into 
 
 # Using Git
 
-In your own repository do the following using either shell or GitHub Desktop:
+In your own repository do the following:
 
 --
 
@@ -496,6 +523,16 @@ You need to pull the remote changes first, but then you get the following messag
 
 And we got a .hi-blue[merge conflict] in `README.md`
 
+---
+
+# Update by pulling after you commit local changes
+
+You need to pull the remote changes first, but then you get the following message:
+
+<div align="center">
+  <img src="figures/merge_conflict.png" height=300>
+</div>
+
 This means there were differences between the remote and your local that conflicted
 
 ---
@@ -509,7 +546,10 @@ Sometimes there will be conflicts between two separate histories
 
 When you try to merge these histories by pushing to the remote, Git will throw a .hi-blue[merge conflict]
 
---
+
+---
+
+# Merge conflicts
 
 When you get a merge conflict, the conflicted part of the code in your file will look like:
 ```{bash, eval = FALSE}   
@@ -681,26 +721,3 @@ If you click on the commit, it takes you to the `git diff` which shows you any c
 <div align = "center">
   <img src="figures/issues_9.png">
 </div>
-
----
-
-# Windows users!!!!!
-
-## Do the following:
-
-- Open up a command prompt or Git Bash (recommend Bash from here on out)
-- Run the following commands:
-```bash
-git config --global core.eol lf
-git config --global core.autocrlf false
-```
-
---
-
-Git tracks changes by specific characters at the end of each line, it does this differently across Windows/Unix by default
-
----
-
-# Next up:
-
-## Optimization: root-finding and maximization/minimization

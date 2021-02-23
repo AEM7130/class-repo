@@ -8,6 +8,12 @@
     <link href="3_git_files/remark-css/default.css" rel="stylesheet" />
     <link href="3_git_files/remark-css/metropolis.css" rel="stylesheet" />
     <link href="3_git_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="3_git_files/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="3_git_files/tile-view/tile-view.js"></script>
+    <link href="3_git_files/panelset/panelset.css" rel="stylesheet" />
+    <script src="3_git_files/panelset/panelset.js"></script>
+    <script src="3_git_files/xaringanExtra-webcam/webcam.js"></script>
+    <script id="xaringanExtra-webcam-options" type="application/json">{"width":"200","height":"200","margin":"1em"}</script>
     <link rel="stylesheet" href="my-css.css" type="text/css" />
   </head>
   <body>
@@ -22,8 +28,26 @@ class: center, middle, inverse, title-slide
 ---
 
 name: toc
+exclude: true
+
+```r
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall, tweetrmd, knitr
+)
+options(htmltools.dir.version = FALSE)
+```
 
 
+```
+## Warning: 'xaringanExtra::style_panelset' is deprecated.
+## Use 'style_panelset_tabs' instead.
+## See help("Deprecated")
+```
+
+```
+## Warning in style_panelset_tabs(...): The arguments to `syle_panelset()` changed in xaringanExtra 0.1.0. Please refer to the documentation to update your slides.
+```
 
 ---
 
@@ -63,6 +87,19 @@ When did you make changes? Who made them?
 How do you undo only **some** changes from one update to the next?
 
 --
+
+If you've ever had a disaster managing code changes (you will), Git can help
+
+
+---
+
+# Why bother with this new fangled Git stuff?
+
+The classic .hi-blue[date your file name method] is not good
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/bad_version_control.png" height=300&gt;
+&lt;/div&gt;
 
 If you've ever had a disaster managing code changes (you will), Git can help
 
@@ -244,6 +281,10 @@ Repos come with some common files in them
 - `README.md`: a Markdown file that is basically the welcome content on repo's GitHub website, you should generally initialize a repo with one of these
 - `LICENSE.md`: describes the license agreement for the repository
 
+---
+
+# Git basics
+
 &lt;div align="center"&gt;
   &lt;img src="figures/repo_example.png" height=600&gt;
 &lt;/div&gt;
@@ -407,7 +448,7 @@ This brings the changes from `wind-turbines` since the initial branch back into 
 
 # Using Git
 
-In your own repository do the following using either shell or GitHub Desktop:
+In your own repository do the following:
 
 --
 
@@ -485,6 +526,16 @@ You need to pull the remote changes first, but then you get the following messag
 
 And we got a .hi-blue[merge conflict] in `README.md`
 
+---
+
+# Update by pulling after you commit local changes
+
+You need to pull the remote changes first, but then you get the following message:
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/merge_conflict.png" height=300&gt;
+&lt;/div&gt;
+
 This means there were differences between the remote and your local that conflicted
 
 ---
@@ -498,7 +549,10 @@ Sometimes there will be conflicts between two separate histories
 
 When you try to merge these histories by pushing to the remote, Git will throw a .hi-blue[merge conflict]
 
---
+
+---
+
+# Merge conflicts
 
 When you get a merge conflict, the conflicted part of the code in your file will look like:
 
@@ -673,29 +727,6 @@ If you click on the commit, it takes you to the `git diff` which shows you any c
 &lt;div align = "center"&gt;
   &lt;img src="figures/issues_9.png"&gt;
 &lt;/div&gt;
-
----
-
-# Windows users!!!!!
-
-## Do the following:
-
-- Open up a command prompt or Git Bash (recommend Bash from here on out)
-- Run the following commands:
-```bash
-git config --global core.eol lf
-git config --global core.autocrlf false
-```
-
---
-
-Git tracks changes by specific characters at the end of each line, it does this differently across Windows/Unix by default
-
----
-
-# Next up:
-
-## Optimization: root-finding and maximization/minimization
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -744,6 +775,32 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -761,17 +818,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
 
 <script>
 slideshow._releaseMath = function(el) {
