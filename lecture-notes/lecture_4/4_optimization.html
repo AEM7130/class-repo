@@ -4,10 +4,10 @@
     <title>Lecture 4</title>
     <meta charset="utf-8" />
     <meta name="author" content="Ivan Rudik" />
-    <script src="4_optimization_files/header-attrs-2.1/header-attrs.js"></script>
-    <link href="4_optimization_files/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="4_optimization_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
-    <link href="4_optimization_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <script src="4_optimization_files/header-attrs/header-attrs.js"></script>
+    <link href="4_optimization_files/remark-css/default.css" rel="stylesheet" />
+    <link href="4_optimization_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="4_optimization_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="my-css.css" type="text/css" />
   </head>
   <body>
@@ -43,7 +43,9 @@ All econ problems are optimization problems
 
 - Max PV E[welfare]
 
---
+---
+
+# Optimization
 
 Some are harder than others:
 
@@ -186,7 +188,9 @@ it achieves all values in the set `\([a,b]\)` somewhere in its domain
 
 How can this motivate an algorithm to find the root of a function?
 
---
+---
+
+# Basic non-linear rootfinders: Bisection method
 
 If we have a continuous, 1 variable function that is positive at some value and negative at another, a root must fall in between those values
 
@@ -265,6 +269,8 @@ bisection(f, -4, 1)
 ```
 
 ---
+
+# The bisection method
 
 
 ```julia
@@ -412,18 +418,18 @@ function_iteration(f, 2.)
 
 ```
 ## Intermediate guess of 1.0e-10.
-## Intermediate guess of 0.7071067811865476.
+## Intermediate guess of 0.7071067811865475.
 ## Intermediate guess of 1.189207115002721.
 ## Intermediate guess of 0.9170040432046712.
-## Intermediate guess of 1.0442737824274138.
-## Intermediate guess of 0.9785720620877002.
-## Intermediate guess of 1.0108892860517005.
-## Intermediate guess of 0.9945994234836332.
+## Intermediate guess of 1.044273782427414.
+## Intermediate guess of 0.9785720620877.
+## Intermediate guess of 1.0108892860517007.
+## Intermediate guess of 0.9945994234836331.
 ## Intermediate guess of 1.0027112750502025.
 ## Intermediate guess of 0.9986471128909702.
 ## Intermediate guess of 1.0006771306930664.
 ## Intermediate guess of 0.9996616064962437.
-##   0.002017 seconds (924 allocations: 233.763 KiB)
+##   0.003665 seconds (909 allocations: 237.169 KiB)
 ## The fixed point of f(x) is at 1.0001692397053021.
 ```
 
@@ -487,9 +493,16 @@ Approximate the non-linear function with its first-order Taylor expansion about 
 
 This is just the tangent line at `\(x^0\)`, solve for the root of this linear approximation, call it `\(x^{(1)}\)`
 
---
 
-Repeat starting at `\(x^{(1)}\)`
+---
+
+# Newton's method
+
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/newtons_method.png" height=450&gt;
+&lt;/div&gt;
+
+Repeat starting at `\(x^{(1)}\)` until we converge to `\(x^*\)`
 
 --
 
@@ -506,7 +519,7 @@ Begin with some initial guess of the root vector `\(\mathbf{x^{(0)}}\)`
 
 Our new guess `\(\mathbf{x^{(k+1)}}\)` given some arbitrary point in the algorithm, `\(\mathbf{x^{(k)}}\)`, is obtained by approximating `\(f(\mathbf{x})\)` using a first-order Taylor expansion about `\(\mathbf{x^{(k)}}\)` and solving for `\(\mathbf{x}\)`:
 `\begin{gather}
-f(\mathbf{x}) \approx f(\mathbf{x^{(k)}}) + f'(\mathbf{x^{(k)}})(\mathbf{x}-\mathbf{x^{(k)}}) = 0 \notag \\
+f(\mathbf{x}) \approx f(\mathbf{x^{(k)}}) + f'(\mathbf{x^{(k)}})(\mathbf{x^{(k+1)}}-\mathbf{x^{(k)}}) = 0 \notag \\
 \Rightarrow \mathbf{x^{(k+1)}} = \mathbf{x^{(k)}} - \left[f'(\mathbf{x^{(k)}})\right]^{-1}f(\mathbf{x^{(k)}}) \notag
 \end{gather}`
 
@@ -657,13 +670,15 @@ Root guess update is the same as before but with our guess of the Jacobian subst
 we still need to update `\(A_{(k)}\)`: we do this update is performed by making the smallest change, in terms of the Frobenius matrix norm, that satisfies what is called the *secant condition* (under determined if `\(n&gt;1\)`):
 `\(f(\mathbf{x^{(k+1)}}) - f(\mathbf{x^{(k)}}) = A_{(k+1)}\left( \mathbf{x^{(k+1)}} - \mathbf{x^{(k)}} \right)\)`
 
---
+---
+
+# Quasi-Newton: Broyden's method
 
 The updated differences in root guesses, and the function value at those root guesses, should align with our estimate of the Jacobian at that point
 
 --
 
-`\(A_{(k+1)} = A_{(k)} + \left[f(\mathbf{x^{(k+1)}}) - f(\mathbf{x^{(k)}}) - A_{(k+1)}\left( \mathbf{x^{(k+1)}} - \mathbf{x^{(k)}} \right)\right]\frac{\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}}}{(\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})^T(\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})}\)`
+`$$A_{(k+1)} = A_{(k)} + \\ \left[f(\mathbf{x^{(k+1)}}) - f(\mathbf{x^{(k)}}) - A_{(k+1)}\left( \mathbf{x^{(k+1)}} - \mathbf{x^{(k)}} \right)\right] \times \\ \frac{\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}}}{(\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})^T(\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})}$$` 
 
 ---
 
@@ -675,7 +690,9 @@ Why update the Jacobian and then invert when we can just update an inverted Jaco
 
 where `\(d^{(k)} = (\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})\)`, and `\(u^{(k)} = B_{(k)}\left[f(\mathbf{x^{(k+1)}})-f(\mathbf{x^{(k)}})\right]\)`.
 
---
+---
+
+# Accelerating Broyden
 
 Broyden converges under relatively weak conditions:
 
@@ -700,7 +717,11 @@ A sequence of iterates `\(x^{(k)}\)` is said to converge to `\(x^*\)` at a rate 
 
 for sufficiently large `\(k\)`
 
---
+---
+
+# Convergence speed
+
+`\(||x^{(k+1)} - x^*|| \leq C||x^{(k)} - x^*||^p\)`
 
 If `\(C &lt; 1\)` and `\(p = 1\)`, the rate of convergence is linear
 
@@ -1921,6 +1942,32 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -1938,17 +1985,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
 
 <script>
 slideshow._releaseMath = function(el) {

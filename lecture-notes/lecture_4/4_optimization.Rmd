@@ -36,7 +36,9 @@ All econ problems are optimization problems
 
 - Max PV E[welfare]
 
---
+---
+
+# Optimization
 
 Some are harder than others:
 
@@ -179,7 +181,9 @@ it achieves all values in the set $[a,b]$ somewhere in its domain
 
 How can this motivate an algorithm to find the root of a function?
 
---
+---
+
+# Basic non-linear rootfinders: Bisection method
 
 If we have a continuous, 1 variable function that is positive at some value and negative at another, a root must fall in between those values
 
@@ -233,6 +237,8 @@ bisection(f, -4, 1)
 ```
 
 ---
+
+# The bisection method
 
 ```{julia}
 g(x) = 3x^3 + 2x -4
@@ -380,9 +386,16 @@ Approximate the non-linear function with its first-order Taylor expansion about 
 
 This is just the tangent line at $x^0$, solve for the root of this linear approximation, call it $x^{(1)}$
 
---
 
-Repeat starting at $x^{(1)}$
+---
+
+# Newton's method
+
+<div style="float: right">
+  <img src="figures/newtons_method.png" height=450>
+</div>
+
+Repeat starting at $x^{(1)}$ until we converge to $x^*$
 
 --
 
@@ -399,7 +412,7 @@ Begin with some initial guess of the root vector $\mathbf{x^{(0)}}$
 
 Our new guess $\mathbf{x^{(k+1)}}$ given some arbitrary point in the algorithm, $\mathbf{x^{(k)}}$, is obtained by approximating $f(\mathbf{x})$ using a first-order Taylor expansion about $\mathbf{x^{(k)}}$ and solving for $\mathbf{x}$:
 \begin{gather}
-f(\mathbf{x}) \approx f(\mathbf{x^{(k)}}) + f'(\mathbf{x^{(k)}})(\mathbf{x}-\mathbf{x^{(k)}}) = 0 \notag \\
+f(\mathbf{x}) \approx f(\mathbf{x^{(k)}}) + f'(\mathbf{x^{(k)}})(\mathbf{x^{(k+1)}}-\mathbf{x^{(k)}}) = 0 \notag \\
 \Rightarrow \mathbf{x^{(k+1)}} = \mathbf{x^{(k)}} - \left[f'(\mathbf{x^{(k)}})\right]^{-1}f(\mathbf{x^{(k)}}) \notag
 \end{gather}
 
@@ -539,13 +552,15 @@ $\mathbf{x^{(k+1)}} = \mathbf{x^{(k)}} - A_{(k)}^{-1} \, f(\mathbf{x^{(k)}}).$
 we still need to update $A_{(k)}$: we do this update is performed by making the smallest change, in terms of the Frobenius matrix norm, that satisfies what is called the *secant condition* (under determined if $n>1$):
 $f(\mathbf{x^{(k+1)}}) - f(\mathbf{x^{(k)}}) = A_{(k+1)}\left( \mathbf{x^{(k+1)}} - \mathbf{x^{(k)}} \right)$
 
---
+---
+
+# Quasi-Newton: Broyden's method
 
 The updated differences in root guesses, and the function value at those root guesses, should align with our estimate of the Jacobian at that point
 
 --
 
-$A_{(k+1)} = A_{(k)} + \left[f(\mathbf{x^{(k+1)}}) - f(\mathbf{x^{(k)}}) - A_{(k+1)}\left( \mathbf{x^{(k+1)}} - \mathbf{x^{(k)}} \right)\right]\frac{\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}}}{(\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})^T(\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})}$
+$$A_{(k+1)} = A_{(k)} + \\ \left[f(\mathbf{x^{(k+1)}}) - f(\mathbf{x^{(k)}}) - A_{(k+1)}\left( \mathbf{x^{(k+1)}} - \mathbf{x^{(k)}} \right)\right] \times \\ \frac{\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}}}{(\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})^T(\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})}$$ 
 
 ---
 
@@ -557,7 +572,9 @@ $B_{(k+1)} = B_{(k)} + \frac{[d^{(k)} - u^{(k)}]{d^{(k)}}^TB_{(k)}}{{d^{(k)}}^T 
 
 where $d^{(k)} = (\mathbf{x^{(k+1)}} - \mathbf{x^{(k)}})$, and $u^{(k)} = B_{(k)}\left[f(\mathbf{x^{(k+1)}})-f(\mathbf{x^{(k)}})\right]$.
 
---
+---
+
+# Accelerating Broyden
 
 Broyden converges under relatively weak conditions:
 
@@ -582,7 +599,11 @@ $||x^{(k+1)} - x^*|| \leq C||x^{(k)} - x^*||^p$
 
 for sufficiently large $k$
 
---
+---
+
+# Convergence speed
+
+$||x^{(k+1)} - x^*|| \leq C||x^{(k)} - x^*||^p$
 
 If $C < 1$ and $p = 1$, the rate of convergence is linear
 
