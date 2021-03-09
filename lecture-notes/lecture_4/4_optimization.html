@@ -4,10 +4,10 @@
     <title>Lecture 4</title>
     <meta charset="utf-8" />
     <meta name="author" content="Ivan Rudik" />
-    <script src="4_optimization_files/header-attrs/header-attrs.js"></script>
-    <link href="4_optimization_files/remark-css/default.css" rel="stylesheet" />
-    <link href="4_optimization_files/remark-css/metropolis.css" rel="stylesheet" />
-    <link href="4_optimization_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <script src="4_optimization_files/header-attrs-2.6/header-attrs.js"></script>
+    <link href="4_optimization_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="4_optimization_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="4_optimization_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="my-css.css" type="text/css" />
   </head>
   <body>
@@ -429,7 +429,7 @@ function_iteration(f, 2.)
 ## Intermediate guess of 0.9986471128909702.
 ## Intermediate guess of 1.0006771306930664.
 ## Intermediate guess of 0.9996616064962437.
-##   0.003665 seconds (909 allocations: 237.169 KiB)
+##   0.005710 seconds (909 allocations: 237.169 KiB)
 ## The fixed point of f(x) is at 1.0001692397053021.
 ```
 
@@ -1019,7 +1019,9 @@ Similar to bisection, **golden search** looks for a solution of a one-dimensiona
 If we have a continuous one dimensional function, `\(f(x)\)`,  
 and we want to find a local minimum in some interval `\([a,b]\)`
 
---
+---
+
+# Derivative free optimization: Golden search
 
 1. Select points `\(x_1,x_2 \in [a,b]\)` where `\(x_2 &gt; x_1\)`
 
@@ -1275,7 +1277,10 @@ General idea:
 2. Select a direction to move in `\(p_k\)`
 3. Figure out how far along `\(p_k\)` to move
 
---
+
+---
+
+# Line search algorithms
 
 How do we figure out how far to move?
 
@@ -1314,10 +1319,13 @@ The direction that yields the *steepest descent*
 
 `\(-\nabla \, f_k\)` is the direction that makes `\(f\)` decrease most rapidly, `\(k\)` indicates we are evaluating `\(f\)` at iteration `\(k\)`
 
---
+---
+
+# Line search algorithms
+
 
 &lt;div align="center"&gt;
-  &lt;img src="figures/steepest_descent.png" height=300&gt;
+  &lt;img src="figures/steepest_descent.png" height=400&gt;
 &lt;/div&gt;
 
 ---
@@ -1420,7 +1428,9 @@ Newton's direction comes out of the second order Taylor series approximation to 
 `$$f(x_k + p) \approx f_k + p^T\,\nabla\,f_k + \frac{1}{2!}\,p^T\,\nabla^2f_k\,p$$`
 Define this as `\(\mathbf{m_k(p)}\)`
 
---
+---
+
+# Newton's method
 
 We find the Newton direction by selecting the vector `\(p\)` that minimizes `\(f(x_k + p)\)`
 

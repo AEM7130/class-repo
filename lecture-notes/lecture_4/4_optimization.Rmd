@@ -901,7 +901,9 @@ Similar to bisection, **golden search** looks for a solution of a one-dimensiona
 If we have a continuous one dimensional function, $f(x)$,  
 and we want to find a local minimum in some interval $[a,b]$
 
---
+---
+
+# Derivative free optimization: Golden search
 
 1. Select points $x_1,x_2 \in [a,b]$ where $x_2 > x_1$
 
@@ -1151,7 +1153,10 @@ General idea:
 2. Select a direction to move in $p_k$
 3. Figure out how far along $p_k$ to move
 
---
+
+---
+
+# Line search algorithms
 
 How do we figure out how far to move?
 
@@ -1190,10 +1195,13 @@ The direction that yields the *steepest descent*
 
 $-\nabla \, f_k$ is the direction that makes $f$ decrease most rapidly, $k$ indicates we are evaluating $f$ at iteration $k$
 
---
+---
+
+# Line search algorithms
+
 
 <div align="center">
-  <img src="figures/steepest_descent.png" height=300>
+  <img src="figures/steepest_descent.png" height=400>
 </div>
 
 ---
@@ -1296,7 +1304,9 @@ Newton's direction comes out of the second order Taylor series approximation to 
 $$f(x_k + p) \approx f_k + p^T\,\nabla\,f_k + \frac{1}{2!}\,p^T\,\nabla^2f_k\,p$$
 Define this as $\mathbf{m_k(p)}$
 
---
+---
+
+# Newton's method
 
 We find the Newton direction by selecting the vector $p$ that minimizes $f(x_k + p)$
 

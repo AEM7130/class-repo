@@ -54,7 +54,6 @@ $$ p_1 C_1 + p_2 C_2 = W$$
 1. Recast the problem as an unconstrained utility maximization problem.
 2. Use the `Optim` or `JuMP` package and write a program   
 `utility_maximizer(kappa, eta, p1, p2, w, initial_guess, solver)` to solve this utility maximization problem using one of the following solvers
-    - Nelder-Mead
     - Newton
     - Conjugate gradient
     
