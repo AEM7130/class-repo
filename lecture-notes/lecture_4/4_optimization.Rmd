@@ -1515,7 +1515,9 @@ The second term increases the value of the function, bigger $\mu \rightarrow$ bi
 The penalty terms are smooth $\rightarrow$ use unconstrained optimization techniques  
 to solve the problem by searching for iterates of $x_k$
 
---
+---
+
+# Constrained optimization: Penalty methods
 
 Also generally iterate on sequences of $\mu_k \rightarrow \infty$ as $k \rightarrow \infty$, to require satisfying the constraints as we close in
 
@@ -1577,9 +1579,11 @@ Active set methods encapsulate sequential quadratic programming (SQP) methods
 1. Replace the large non-linear constrained problem with a constrained quadratic programming problem  
 2. Use Newton's method to solve the sequence of simpler quadratic problems
 
---
+---
 
-Tthe Lagrangian is
+# Constrained optimization: Active set methods
+
+The Lagrangian is
 $$L(x,\lambda) = f(x) - \lambda^T\,c(x)$$
 
 --
@@ -1674,7 +1678,9 @@ Final step: introduce a **barrier function** to eliminate the inequality constra
 
 where $\mu$ is a positive barrier parameter
 
---
+---
+
+# Constrained optimization: Interior point methods
 
 The barrier function prevents the components of $s$ from approaching  
 zero by imposing a logarithmic barrier $\rightarrow$ it maintains slack in the constraints
@@ -1741,7 +1747,10 @@ Two main tolerances in optimization:
 
 What is a suitable tolerance?
 
---
+
+---
+
+# Be aware of tolerances
 
 It depends
 

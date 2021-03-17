@@ -130,9 +130,20 @@ We can use $P$ to determine the probability of moving to another state in *two* 
 &= \sum_{h=1}^n P_{ih}P_{hj} = P_{ij}^2 \notag
 \end{align}
 
+---
+
+# Markov chains
+
+\begin{align}
+\text{Prob}(x_{t+2} = e_j|x_t = e_i) = \sum_{h=1}^n P_{ih}P_{hj} = P_{ij}^2 \notag
+\end{align}
+
 --
 
 iterate on this to show that
+
+--
+
 $$\text{Prob}(x_{t+k}=e_j|x_t=e_i) = P_{ij}^k$$
 
 ---
@@ -146,6 +157,77 @@ Start with a general sequential problem to set up the basic recursive/feedback d
 Let $\beta \in (0,1)$, the economic agent selects a sequence of controls, $\{u_t\}_{t=0}^\infty$ to maximize
 $$\sum_{t=0}^\infty \beta^t r(x_t,u_t)$$
 subject to $x_{t+1} = g(x_t,u_t)$ and with $x_0$ given
+
+---
+
+# Dynamic programming
+
+If we want to maximize the PV of total utility:
+$$\max_{u_0,u_1,\dots,u_n,\dots} \sum_{t=0}^\infty \beta^t r(x_t,u_t)$$
+
+we have a tough problem, we need to select a full sequence of $u_t$s
+
+--
+
+Dynamic programming makes this simpler
+
+---
+
+# Dynamic programming
+
+The idea behind dynamic programmming (like most of what we do) is to exchange solving one hard problem for solving a bunch of easier problems
+
+--
+
+Dynamic programming was developed by Richard Bellman
+
+--
+
+The essence of dynamic programming is summed up in .hi[Bellman's Principle of Optimality]
+
+---
+
+# Dynamic programming
+
+.hi[Principle of Optimality:]
+> An optimal policy has the property that whatever the initial state and initial decision are, the remaining decisions must constitute an optimal policy with regard to the state resulting from the first decision
+
+--
+
+In simpler terms: your current optimal decision is only dependent on the current state, not your past actions
+
+--
+
+Why does this make our problem simpler?
+
+
+---
+
+# Dynamic programming
+
+In dynamic programming we really just solve for one object
+
+--
+
+This object is a function that effectively tells us what is the optimal action to take given the current state
+
+--
+
+The tricky thing about this (and what we will be learning about for the next few weeks), is how we actually solve for this function
+
+---
+
+# Dynamic programming
+
+You may have heard about these functions before: policy functions, value functions
+
+--
+
+They either tell you your optimal action given the state, or your maximized payoff given the state
+
+--
+
+Once we have either of these functions we can solve for the optimal action in any given state of the world and solve our problem
 
 ---
 
@@ -170,7 +252,11 @@ Consider a function $V(x)$, the .hi-blue[continuation value function] where
 $$V(x_0) = \max_{\{u_s\}_{s=0}^\infty} \sum_{t=0}^\infty \beta^t r(x_t,u_t)$$
 subject to the transition equation: $x_{t+1} = g(x_t,u_t)$
 
-The value function defines the maximum value of our original problem as a function of the state
+The value function defines the maximum value (payoff) of our problem as a function of the state
+
+--
+
+It's the dynamic indirect utility function
 
 ---
 
@@ -186,7 +272,7 @@ Conditional on having $V(x)$ we can solve our dynamic programming problem
 
 --
 
-Instead of solving for an infinite dimensional set of policies, we instead find the $V(x)$ and $h$ that solves the continuum maximization problems, where there is a unique maximization problem for each $x$
+Instead of solving for an infinite dimensional set of policies, we instead find the $V(x)$ and $h$ that solves the continuum of maximization problems, where there is a unique maximization problem for each $x$
 
 --
 
@@ -235,8 +321,7 @@ Under standard assuptions we have that
 1. The solution to the Bellman equation, $V(x)$, is strictly concave
 2. The solution is approached in the limit as $j \rightarrow \infty$ by iterations on:  
 $V_{j+1}(x) = \max_{u} r(x,u) + \beta V_j(x')$, given any bounded and continuous $V_0$ and our transition equation
-3. There exists a unique and time-invariant optimal policy function $u_t = h(x_t)$  
-where $h$ maximizes the right hand side of the Bellman
+3. There exists a unique and time-invariant optimal policy function $u_t = h(x_t)$ where $h$ maximizes the right hand side of the Bellman
 4. The value function $V(x)$ is differentiable
 
 ---
@@ -359,13 +444,13 @@ Consider an infinite horizon problem for an economic agent
 1. Payoff $r(s_t,u_t)$ in some period $t$ is a function of the state vector $s_t$ and control vector $u_t$
 2. Transition equations are $s_{t+1} = g(s_t,u_t)$
 3. Assume that $u \in U$ and $s \in S$
-4. Payoff is bounded: $u(s_t,u_t)$. 
+4. Payoff is bounded: $u(s_t,u_t)$
 
 ---
 
 # Basic theory
 
-Here the current state vector *completely* summarizes all the information of the past and is all the information the agent needs to make a forward-looking decision
+Here the current state vector .hi[completely] summarizes all the information of the past and is all the information the agent needs to make a forward-looking decision
 
 $\rightarrow$ our problem has the Markov property
 
@@ -388,7 +473,7 @@ $$\sum_{t=0}^\infty \beta^t r(s_t,u_t)$$
 
 The value of the maximized discounted stream of payoffs is
 \begin{gather}
-	V(s_0) = \max_{u_0 \in U(s_0)} r(s_t,u_t) + \beta \left[\max_{\{u_t\}_{t=1}^\infty}	\sum_{t=t}^\infty \beta^t r(s_t,u_t)\right] \notag \\
+	V(s_0) = \max_{u_0 \in U(s_0)} r(s_0,u_0) + \beta \left[\max_{\{u_t\}_{t=1}^\infty}	\sum_{t=1}^\infty \beta^{t-1} r(s_t,u_t)\right] \notag \\
 	\text{subject to:     } s_{t+1} = g(s_t,u_t) \notag
 \end{gather}
 
@@ -418,11 +503,13 @@ where $\Gamma(s)$ is our set of feasible states next period
 
 --
 
-There exists a solution to the Bellman under a (particular) set of sufficient conditions:
+There exists a solution to the Bellman under a (particular) set of sufficient conditions
 
---
+---
 
-If the following are true
+# Value function existence and uniqueness
+
+If the following are true:
 
 --
 
@@ -501,6 +588,22 @@ So we can take advantage of the contraction mapping theorem which states:
 
 ---
 
-# Next up
+# Function iteration
 
-## Next: numerical methods for discrete time dynamics
+What this tells us is we can solve for $V$ using a variant of function iteration
+
+--
+
+Before we were evaluating a function at value $x$, and then updating that value until it converges to a fixed point $x^*$
+
+--
+
+Here we are evaluating a function $T$ of functions $V$, updating the function $V$ until it converges to a fixed point $V^*$
+
+--
+
+Even though it seems a bit more complicated the solution concept is exactly the same
+
+--
+
+Next we will start learning how to do this

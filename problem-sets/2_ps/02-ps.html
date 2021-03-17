@@ -435,13 +435,19 @@ summary {
 <ol style="list-style-type: decimal">
 <li>Recast the problem as an unconstrained utility maximization problem.</li>
 <li>Use the <code>Optim</code> or <code>JuMP</code> package and write a program<br />
-<code>utility_maximizer(kappa, eta, p1, p2, w, initial_guess, solver)</code> to solve this utility maximization problem using one of the following solvers
+<code>utility_maximizer(kappa, eta, p1, p2, w, initial_guess, solver)</code> to solve this utility maximization problem given the name of either of the following solvers as an argument:
 <ul>
 <li>Newton</li>
 <li>Conjugate gradient</li>
 </ul></li>
 </ol>
-<p>Feel free to use the default settings (tolerances, etc) for the optimization package or change them. 3. Choose a set of parameters and solve it analytically. Also solve it numerically with the same set of parameters and report the algorithm results (e.g. the output shown <a href="https://julianlsolvers.github.io/Optim.jl/stable/#algo/cg/">here</a>). - Note: Let <span class="math inline">\(0 &lt; \kappa &lt; 1\)</span> and <span class="math inline">\(\eta &gt; 1\)</span></p>
+<p>Feel free to use the default settings (tolerances, etc) for the optimization package or change them. Here’s a hint if you run into issues with negative numbers: replace the variable <code>X</code> in the function with <code>exp(X)</code>, which is strictly positive, while letting the solver search over <code>X</code>.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Choose a set of parameters and solve it analytically. Also solve it numerically with the same set of parameters and report the algorithm results (e.g. the output shown <a href="https://julianlsolvers.github.io/Optim.jl/stable/#algo/cg/">here</a>).
+<ul>
+<li>Note: Let <span class="math inline">\(0 &lt; \kappa &lt; 1\)</span> and <span class="math inline">\(\eta &gt; 1\)</span></li>
+</ul></li>
+</ol>
 </div>
 </div>
 

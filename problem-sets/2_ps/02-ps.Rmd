@@ -53,10 +53,11 @@ $$ p_1 C_1 + p_2 C_2 = W$$
 
 1. Recast the problem as an unconstrained utility maximization problem.
 2. Use the `Optim` or `JuMP` package and write a program   
-`utility_maximizer(kappa, eta, p1, p2, w, initial_guess, solver)` to solve this utility maximization problem using one of the following solvers
+`utility_maximizer(kappa, eta, p1, p2, w, initial_guess, solver)` to solve this utility maximization problem given the name of either of the following solvers as an argument:
     - Newton
     - Conjugate gradient
     
-Feel free to use the default settings (tolerances, etc) for the optimization package or change them.
+Feel free to use the default settings (tolerances, etc) for the optimization package or change them. Here's a hint if you run into issues with negative numbers: replace the variable `X` in the function with `exp(X)`, which is strictly positive, while letting the solver search over `X`.
+
 3. Choose a set of parameters and solve it analytically. Also solve it numerically with the same set of parameters and report the algorithm results (e.g. the output shown [here](https://julianlsolvers.github.io/Optim.jl/stable/#algo/cg/)).
    - Note: Let $0 < \kappa < 1$ and $\eta > 1$

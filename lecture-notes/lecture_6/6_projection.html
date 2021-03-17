@@ -4,7 +4,7 @@
     <title>Lecture 6</title>
     <meta charset="utf-8" />
     <meta name="author" content="Ivan Rudik" />
-    <script src="6_projection_files/header-attrs-2.1/header-attrs.js"></script>
+    <script src="6_projection_files/header-attrs-2.6/header-attrs.js"></script>
     <link href="6_projection_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="6_projection_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link href="6_projection_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
@@ -42,7 +42,9 @@ We can start from any arbitrary initial state vector and simulate the optimal po
 
 We know that this problem has a fixed point (solution) `\(V^*\)` from previous lectures, but *how* do we approximate `\(V^*\)`?
 
---
+---
+
+# Our basic dynamic model
 
 One way to do this is via .hi-blue[projection]
 
@@ -69,7 +71,9 @@ What do I mean by approximately?
 The coefficients of `\(\hat{V}\)` are selected to minimize some residual function  
 that tells us how far away our solution is from solving the Bellman 
 
---
+---
+
+# Projection methods
 
 Rearrange the Bellman equation and define a new functional `\(H\)` that maps the problem into a more general framework
 `$$H(V) = V(S_t) - \max_{q_t} u(q_t) + \beta\,V(S_{t+1}(q_t))$$`
@@ -103,7 +107,9 @@ and select the coefficient values to minimize the residual, given some measure o
 
 This step of selecting the coefficients is called .hi-blue[projecting] `\(H\)` against our basis
 
---
+---
+
+# Projection methods
 
 We still have some choices to make: 
 
@@ -144,7 +150,9 @@ These are the first two elements of the *monomial basis*
 
 One residual function is then: `\(R(Y,X|\theta_0,\theta_1) = abs(Y-\theta_0-\theta_1 X)\)`
 
---
+---
+
+# Projection methods
 
 In econometrics we often minimize the square of this residual, which is just OLS
 
@@ -264,7 +272,7 @@ where the weights are determined by the partial derivatives of the residual
 
 --
 
-The partial derivative weight function yields a metric function that solves the least squares problem!
+The partial derivative weight function solves the least squares problem!
 
 
 ---
@@ -329,8 +337,7 @@ But the residual is a function of `\(V\)`, and thus will be a function of `\(\th
 
 --
 
-We can solve this problem by *iterating* on the problem,  
-continually setting the residuals equal to zero, recovering new `\(\theta\)`s, and repeating
+We can solve this problem by *iterating* on the problem, continually setting the residuals equal to zero, recovering new `\(\theta\)`s, and repeating
 
 ---
 
@@ -340,23 +347,25 @@ In any given iteration, we:
 
 --
 
-1. Begin with a vector of coefficients on the basis functions (e.g. a random guess)
+- Begin with a vector of coefficients on the basis functions (e.g. a random guess)
 
 --
 
-2. Use a linear combination of the basis functions as an approximation to the value function on the right hand side of the Bellman
+- Use a linear combination of the basis functions as an approximation to the value function on the right hand side of the Bellman
+
+---
+
+# Rough idea of how we proceed
+
+- Solve the Bellman with the approximated value function in it, at our set of collocation points
 
 --
 
-3. Solve the Bellman with the approximated value function in it, at our set of collocation points
+- Recover a set maximized continuation values at these points in our state space conditional on the previous value function approximant we used
 
 --
 
-4. Recover a set maximized continuation values at these points in our state space conditional on the previous value function approximant we used
-
---
-
-5. Use these new maximized values to obtain updated coefficients solving the system of linear equations, and repeat the process until we have "converged"
+- Use these new maximized values to obtain updated coefficients solving the system of linear equations, and repeat the process until we have "converged"
 
 
 ---
@@ -399,7 +408,9 @@ Once we have recovered an adequate approximation to the value function, we have 
 
 We know how the policymaker's expected discounted stream of future payoffs changes as we move through the state space
 
---
+---
+
+# Still have some questions
 
 We can solve the Bellman at some initial state and know that solving the Bellman will yield us optimal policies
 
@@ -450,8 +461,7 @@ Let `\(V\)` be the value function we wish to approximate with some `\(\hat{V}\)`
 
 --
 
-Each `\(\psi_j(x)\)` is a basis function, and the coefficients `\(c_j\)` determine how they are combined  
-at some point `\(\bar{x}\)` to yield our approximation `\(\hat{V}(\bar{x})\)` to `\(V(\bar{x})\)`
+Each `\(\psi_j(x)\)` is a basis function, and the coefficients `\(c_j\)` determine how they are combined at some point `\(\bar{x}\)` to yield our approximation `\(\hat{V}(\bar{x})\)` to `\(V(\bar{x})\)`
 
 ---
 
@@ -486,7 +496,9 @@ where `\(\Psi\)` is the matrix of basis functions, `\(c\)` is a vector of coeffi
 We can recover `\(c\)` by left dividing by `\(\Psi\)` which yields
 `$$\mathbf{c} = \Psi^{-1}\mathbf{y}$$`
 
---
+---
+
+# Basis functions
 
 If we have more equations, or grid points, than coefficients, 
 then we can just use OLS to solve for the coefficients by minimizing the sum of squared errors
@@ -509,7 +521,9 @@ When using spectral methods we virtually always use polynomials
 
 **Why?**
 
---
+---
+
+# (Pseudo-)spectral methods
 
 The Stone-Weierstrass Theorem which states (for one dimension)
 
@@ -555,7 +569,9 @@ Logical choice: the monomial basis: `\(1, x, x^2,...\)`
 
 It is simple, and SW tells us that we can uniformly approximate any continuous function on a closed interval using them
 
---
+---
+
+# Basis choice
 
 ## Practice
 
@@ -612,15 +628,15 @@ coefficients_10 = project_monomial(f, 10, 0, 2pi)
 
 ```
 ## 10-element Array{Float64,1}:
-##   0.0                  
-##   0.9990725797458863   
-##   0.004015857153649684 
-##  -0.1738437387373486   
-##   0.007075663351639969 
-##   0.004040763230876247 
+##   0.0
+##   0.9990725797458863
+##   0.004015857153649684
+##  -0.1738437387373486
+##   0.007075663351639969
+##   0.004040763230876247
 ##   0.0016747985983553285
 ##  -0.0006194667844101428
-##   6.485272688203222e-5 
+##   6.485272688203222e-5
 ##  -2.293696012495368e-6
 ```
 
@@ -644,7 +660,9 @@ function f_approx(coefficients, points)
 end;
 ```
 
---
+---
+
+# Approximating sin(x)
 
 
 ```julia
@@ -656,25 +674,25 @@ f_values_10 = f_approx(coefficients_10, plot_points)
 
 ```
 ## 629×1 Array{Float64,2}:
-##   0.0                  
-##   0.009990953610597868 
-##   0.019981668333012258 
-##   0.029971103713554246 
-##   0.03995822109623334  
-##   0.04994198367415802  
-##   0.05992135654204973  
-##   0.06989530674983996  
-##   0.07986280335732032  
-##   0.0898228174898161   
-##   ⋮                    
-##  -0.08303623493742407  
-##  -0.0730710101597829   
-##  -0.06309900382682798  
-##  -0.05312124622683001  
-##  -0.04313876967565733  
-##  -0.03315260846174084  
-##  -0.023163798791941304 
-##  -0.01317337873884128  
+##   0.0
+##   0.009990953610597868
+##   0.019981668333012258
+##   0.029971103713554246
+##   0.03995822109623334
+##   0.04994198367415802
+##   0.05992135654204973
+##   0.06989530674983996
+##   0.07986280335732032
+##   0.0898228174898161
+##   ⋮
+##  -0.08303623493742407
+##  -0.0730710101597829
+##  -0.06309900382681377
+##  -0.05312124622683001
+##  -0.04313876967565733
+##  -0.03315260846174084
+##  -0.023163798791941304
+##  -0.01317337873884128
 ##  -0.0031823881890886696
 ```
 
@@ -816,7 +834,7 @@ println("Condition number: $(cond(basis_matrix))")
 ```
 
 ```
-## Condition number: 1.7447981077501208e20
+## Condition number: 2.6207888700137328e20
 ```
 
 --
@@ -849,7 +867,9 @@ It has nice approximation properties:
 
 3. They are bounded between `\([-1,1]\)`
 
---
+---
+
+# The Chebyshev basis
 
 Chebyshev polynomials are often selected because they minimize the oscillations that occur when approximating functions like Runge's function
 
@@ -892,13 +912,13 @@ Chebyshev polynomials are defined by a recurrence relation,
 Write two functions: `cheb_polys(n, x)` and `monomials(n, x)` with a degree of approximation `n` and vector of points `x`,
 that return the values of the approximant at `x`
 
---
-
-Write a plotting function `plot_function(basis_function, x, n)` that takes an arbitrary basis function `basis_function` and plots all basis functions up to degree `n`
-
---
-
 If you can't get the recurrence relation to work, you can use an alternative: `$$T_n(x) = cos(n \, arccos(x))$$`
+
+---
+
+# The Chebyshev basis
+
+Next, a plotting function `plot_function(basis_function, x, n)` that takes an arbitrary basis function `basis_function` and plots all basis functions up to degree `n`
 
 ---
 
@@ -1006,7 +1026,9 @@ Chebyshev polynomials span the space
 
 Monomials  clump together
 
---
+---
+
+# Chebyshev polynomials rule
 
 Chebyshev polynomials are nice for approximation because they are *orthogonal*
 and they form a basis with respect to the weight function `\(\phi(x) = 1/\sqrt{1-x^2}\)`
@@ -1105,7 +1127,9 @@ Chebyshev polynomials are the most widely used basis
 
 This is not purely theoretical but also from practical experience
 
---
+---
+
+# Boyd's moral principle
 
 John Boyd summarizes decades of experience with function approximation with his moral principle:
 
@@ -1159,7 +1183,11 @@ They are given by
 `$$x_k = cos\left(\frac{2k-1}{2n}\pi\right),\,\, k = 1,...,n$$`
 for some Chebyshev polynomial of degree `\(n\)`
 
---
+---
+
+# Chebyshev strikes again
+
+`$$x_k = cos\left(\frac{2k-1}{2n}\pi\right),\,\, k = 1,...,n$$`
 
 Mathematically, these also help reduce error in our approximation
 
@@ -1212,7 +1240,9 @@ Imagine areas of our approximant near the center of our domain but not at a node
 
 These areas benefit from having multiple nodes on both the left and right
 
---
+---
+
+# Chebyshev node locations
 
 This provides more information for these off-node areas and allows them to be better approximated
 because we know whats happening nearby in several different directions
@@ -1258,10 +1288,12 @@ Construct a vector of polynomials `\([\phi_{1,1}, \, \phi_{1,2}, \, \phi_{1,3}]\
 
 Construct a vector of polynomials `\([\phi_{2,1}, \, \phi_{2,2}, \, \phi_{2,3}]\)` for dimension 2
 
---
+---
+
+# Multi-dimensional approximation
 
 The tensor is just the product of every possibly polynomial pair which results in:
-`\([\phi_{1,1}\phi_{2,1} ,\, \phi_{1,1}\phi_{2,2}, \, \phi_{1,1}\phi_{2,3}, \, \phi_{1,2}\phi_{2,1}, \, \phi_{1,2}\phi_{2,2}, \, \phi_{1,2}\phi_{2,3}, \, \phi_{1,3}\phi_{2,1}, \, \phi_{1,3}\phi_{2,2}, \, \phi_{1,3}\phi_{2,3}]\)`
+`$$[\phi_{1,1}\phi_{2,1} ,\, \phi_{1,1}\phi_{2,2}, \, \phi_{1,1}\phi_{2,3}, \\ \phi_{1,2}\phi_{2,1}, \, \phi_{1,2}\phi_{2,2}, \, \phi_{1,2}\phi_{2,3}, \\ \phi_{1,3}\phi_{2,1}, \, \phi_{1,3}\phi_{2,2}, \, \phi_{1,3}\phi_{2,3}]$$`
 
 --
 
@@ -1342,7 +1374,9 @@ For each of these linear components, we need to solve for 1 coefficient and 1 in
 
 Each end of a linear segment must equal the function value at the knots
 
---
+---
+
+# Finite element methods
 
 We have two conditions and two unknowns for each segment: this is a simple set of linear equations that we can solve
 
@@ -1407,7 +1441,9 @@ One large benefit of splines is that they can handle kinks or areas of high curv
 
 By having the modeler place many knots in a concentrated region
 
---
+---
+
+# Splines can potentially handle lots of curvature
 
 If the knots are stacked on top of one another, this actually allows for a *kink* to be explicitly represented in the value function approximant, but the economist must know precisely where the kink is
 
@@ -1557,6 +1593,32 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -1574,17 +1636,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
 
 <script>
 slideshow._releaseMath = function(el) {
