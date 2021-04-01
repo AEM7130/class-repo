@@ -1,0 +1,44 @@
+---
+title: "Problem Set 3"
+author: "AEM 7130"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem Set 3: Due April 15 at 11:59PM.
+
+Make sure your code is well-commented and reproducible. Unless stated in the problem, you can (and may need to) use some Google searching to find how to code parts of your answers.
+
+# Problem 1:  Pseudo-spectral approximation
+
+Code up a function `project_cheb(f, n, m, lbx, lby, ubx, uby)` that takes in some **two-dimensional** function `f`; degrees of approximation $n$ and $m$, where $n$ is the number of grid points on the first dimension $x$ and $m$ is the number of grid points on the second dimension $y$; a set lower bounds $\{lbx, lby\}$; and a set of upper bounds $\{ubx, uby\}$.
+The function will construct a Chebyshev approximation on an grid of Chebyshev nodes. 
+Note: The total number of grid points will be $n\times m$.
+
+1. Using collocation methods, approximate `sin(x + y)` on $[0,2\pi]\times[0,2\pi]$ using n=3, 5, and 10 degree approximations.
+2. Plot your approximation for n=10 for each $y \in \{0, \pi/2, 3\pi/2\}$.
+3. For each $y \in \{0, \pi/2, 3\pi/2\}$: plot the relative error for n=5 in log10 units on an evenly spaced 100 point grid of $x$s in $[0,2\pi]$ where relative error is given by
+$$\text{relative error} = \log_{10}\left(\left|\frac{\hat{\sin}(x+y) - \sin(x+y)}{\sin(x+y)}\right|\right)$$
+and the hat indicates your approximation (e.g. this should be a plot of 3 lines, one for each y).
+
+log10 units often makes the plots more readable since errors can change size rapidly.
+
+## Problem 2: Complete Chebyshev basis
+
+Redo problem 1, but with the complete Chebyshev basis, and ignore the instructions in problem 1 for the number of grid points in part 1. That information will be below.
+The complete Chebyshev basis is defined as follows. Let $\psi_{i,j}(x, y) = \psi_i(x) \times \psi_j(y)$ be the product of two Chebyshev polynomials; one for $x$, $\psi_i(x)$, with degree $i$; and one for $y$, $\psi_j(y)$, with degree $j$.
+These are the individual terms in the tensor product of the sets of Chebyshev polynomials in the lecture notes.
+$\psi_{i,j}(x, y)$ thus has total degree $i+j$. 
+
+The complete Chebyshev approximation of degree $k$ is given by:
+$$ \hat{f}(x,y;c) = \sum_{0 \leq i+j \leq k} c_{i,j} \psi_{i,j}(x,y).$$
+This is just regular Chebyshev approximation, but where we only use terms where the total degree is at most $k$.
+This eliminates very high order terms and keeps the terms above a given diagonal in the tensor product matrix (e.g. if $k = 5$ we will drop all terms that are degree 3 or more in both dimensions since 3+3 > 5). The number of terms in the complete Chebyshev basis is ${k+d \choose d}$ where $d=2$ is the dimension of the function.
+
+For the problem, let $k = 4, 8, 12$, and let $n = m = 10$ so you have 100 total grid points.
+Note that here you will not be able to use collocation and must use regression. 
+To solve for the vector of $c_{i,j}$ you will need to do the following instead of our usual matrix inversion:
+$$\mathbf{c} = (\psi' \psi)^{-1} \psi' y.$$

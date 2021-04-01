@@ -1,5 +1,121 @@
 @import url(https://fonts.googleapis.com/css?family=Zilla+Slab:300,300i,400,400i,500,500i,700,700i);
 
+
+
+h2 {
+    font-size: 1.8rem;
+    margin-top: 2.75rem;
+}
+
+.article-container {
+    max-width: 960px;
+}
+
+.docs-article-container {
+    max-width: 960px;
+}
+
+#hero img {
+    max-width: 60%;
+}
+
+.hero-title {
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.icon-list {
+    list-style: none;
+    text-indent: -0.7rem;
+    padding-left: 1.4rem;
+}
+
+.contact-policy {
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.due-date {
+    margin-bottom: 2.5rem;
+}
+
+footer {
+    margin-top: 2rem;
+}
+
+footer p {
+    text-align: left;
+    font-size: 100%;
+}
+
+.course-info {
+    font-size: 0.9rem;
+}
+
+.credits {
+    font-size: 0.7rem;
+}
+
+.course-info p, .credits p {
+    margin-bottom: 0.3rem;
+}
+
+.centered-table table {
+    margin: 0 auto 1rem;
+}
+
+.article-style #TOC:before {
+    content: "Contents";
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: block;
+    background-color: #ddd;
+    padding: 5px 10px 0px;
+    margin-bottom: 1.1rem;
+}
+
+.article-style #TOC {
+    font-family: "Lato", sans-serif;
+    font-size: 0.8rem;
+    text-align: left;
+    background: #f2f2f2;
+    padding: 8px 8px;
+    margin: 4px 0 2rem;
+}
+
+.article-style #TOC ul {
+    padding-left: 2em;
+}
+
+.footnotes {
+    font-size: 0.8rem;
+    line-height: 1.3;
+}
+
+.fake-header {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 40;
+}
+
+.fake-header-table, td.mid-table-header {
+    font-family: "Lato", sans-serif;
+    font-weight: 700;
+}
+
+.fake-header-table {
+    font-size: 1.1rem;
+}
+
+td.mid-table-header {
+    text-align: center;
+    vertical-align: middle !important;
+}
+
+.article-style .slide-thumb {
+    margin-top: 0;
+}
+
 /* Create a highlighted class called 'hi'  */
 .hi {
   font-weight: 600;
@@ -23,7 +139,7 @@
 }
 .hi-orange {
   font-weight: 600;
-  color: #FFA500 !important;
+  color: #FFAC0F !important;
 }
 .hi-yellow{
   font-weight: 600;
@@ -38,12 +154,12 @@
   color: #8AA19E !important;
 }
 .hi-blue {
-  font-weight: 600;
+  font-weight: 800;
   color: #3C93DC !important;
 }
 .hi-red {
-  font-weight: 600;
-  color: #fb6107 !important;
+  font-weight: 800;
+  color: #ff0000 !important;
 }
 /* Pink text */
 .pink {
@@ -75,7 +191,7 @@
   color: #8AA19E !important;
 }
 .blue {
-  color: #3b3b9a !important;
+  color: #3C93DC !important;
 }
 .red {
   color: #fb6107 !important;
@@ -174,22 +290,25 @@
 }
 
 .remark-slide-content {
-  background-color: #ffffff;
-  font-size: 28px;
-  /* font-weight: 300; */
+  font-family: "Lato", sans-serif;
+  border-top: 70px solid #192439;
+  color: #192439;
+  background-color: #FFFFFF;
+  font-size: 32px;
+  font-weight: 355;
   /* line-height: 1.5; */
   /* padding: 1em 2em 1em 2em; */
 }
 
 .inverse {
-  background-color: #23373B;
+  background-color: #192439;
   text-shadow: 0 0 20px #333;
   /* text-shadow: none; */
 }
 
 .title-slide {
-  background-color: #ffffff;
-  border-top: 80px solid #ffffff;
+  background-color: #eeeeee;
+  border-top: 0px solid #ffffff;
 }
 
 .footnote {
@@ -360,11 +479,11 @@ table {
   color: #000000;
   font-size: 14pt;
   line-height: 100%;
-  border-top: 1px solid #ffffff !important;
-  border-bottom: 1px solid #ffffff !important;
+  border-top: 1px solid #000000 !important;
+  border-bottom: 1px solid #000000 !important;
 }
 th, td {
-  background-color: #ffffff;
+  background-color: #eeeeee;
 }
 table th {
   font-weight: 400;
@@ -409,7 +528,7 @@ table th {
 /* Example */
 .ex {
   font-weight: 300;
-  color: #cccccc !important;
+  color: #555555 !important;
   font-style: italic;
 }
 

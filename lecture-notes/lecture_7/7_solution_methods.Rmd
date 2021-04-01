@@ -18,6 +18,11 @@ output:
 
 # Roadmap
 
+```{r, echo = F, results = 'hide'}
+library(JuliaCall)
+julia_setup(JULIA_HOME = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin/")
+```
+
 1. How do we think about solving dynamic economic models
 2. Value function iteration
 3. Fixed point iteration
@@ -32,10 +37,13 @@ output:
 --
 
 2. Keep in mind that for VFI and TI we will be using optimization/rootfinding packages
-+ This matters because these packages typically only let the functions they work on have one input: the guesses for the maximizing input or root
-+ We get around this by expressing the function as a *closure*
-+ i.e. declare the function inside of a wrapper function that does the maximization/rootfinding so it can access the parameters in the wrapper function
---
+  - This matters because these packages typically only let the functions they work on have one input: the guesses for the maximizing input or root
+  - We get around this by expressing the function as a *closure*
+  - i.e. declare the function inside of a wrapper function that does the maximization/rootfinding so it can access the parameters in the wrapper function
+
+---
+
+# Things to do
 
 3. Keep in mind we will be working with about the simplest example possible,  
 more complex problems will be more difficult to solve in many ways
@@ -54,7 +62,9 @@ First, what do we want?
 
 We want to be able to compute things like optimal policy trajectories, welfare, etc
 
---
+---
+
+# Solutions to economic models
 
 There are generally two objects that can deliver what we want:
 
@@ -63,8 +73,7 @@ There are generally two objects that can deliver what we want:
 
 --
 
-The idea behind the most commonly used solution concepts is  
-to recover good approximations to one of these two functions
+The idea behind the most commonly used solution concepts is to recover good approximations to one of these two functions
 
 ---
 
@@ -78,6 +87,7 @@ We recover these functions by exploiting two things:
 --
 
 First lets look at recovering the value function
+
 
 ---
 
@@ -136,16 +146,25 @@ The algorithm has 6 steps
 
 # Method 1: Value function iteration
 
+
 .hi-blue[Step 5:] While convergence criterion $>$ tolerance **(outer loop)**
 + Start iteration $p$
 + For each grid point **(inner loop)**
-+ Solve the right hand side of the Bellman equation at each grid point using the  
+    - Solve the right hand side of the Bellman equation at each grid point using the  
 value function approximant $\Gamma(k_{t+1};b^{(p)})$ in place of $V(k_{t+1})$
-+ Recover the maximized values at each grid point, conditional on the approximant
-+ Fit the polynomial to the values and recover a new vector of coefficients $\hat{b}^{(p+1)}$.
+    - Recover the maximized values at each grid point, conditional on the approximant
+
+...
+
+---
+
+# Method 1: Value function iteration
+
+.hi-blue[Step 5:] While convergence criterion $>$ tolerance **(outer loop, continued)**
++ Fit the polynomial to the maximized values and recover a new vector of coefficients $\hat{b}^{(p+1)}$.
 + Compute the vector of coefficients $b^{(p+1)}$ for iteration $p+1$ by  
 $b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}$ where $\gamma \in (0,1).$ (damping)
-+ Use the optimal controls for this iteration as our initial guess for next iteration  
++ Use the optimal controls for this iteration as our initial guess for next iteration (optional) 
 
 --
 
@@ -155,17 +174,16 @@ $b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}$ where $\gamma \in (0,1
 
 # Functional forms and parameters
 
-## Functional forms
+Functional forms
 - $u(c_t) = c_t^{1-\eta}/(1-\eta)$
 - $f(k_t) = k_t^\alpha$
 
-## Parameters
+Parameters
 - $\alpha = 0.75$
 - $\beta = 0.95$
 - $\eta = 2$
 
-## Initial capital value for simulating
-- $k_0 = (\alpha \beta)^{1/(1-\alpha)}/2$
+Initial capital value: $k_0 = (\alpha \beta)^{1/(1-\alpha)}/2$
 
 ---
 
@@ -177,7 +195,9 @@ If $k_0 = (\alpha \beta)^{1/(1-\alpha)}/2$ what are a logical set of bounds for 
 
 $k^0$ and the steady state level $(\alpha \beta)^{1/(1-\alpha)}$
 
---
+---
+
+# Step 1: Select the number of points and domain
 
 Put everything in a **named tuple** to make passing things easier
 
@@ -185,14 +205,14 @@ Put everything in a **named tuple** to make passing things easier
 using LinearAlgebra
 using Optim
 using Plots
-params = (alpha = 0.75, 
-          beta = 0.95, 
-          eta = 2,
-          steady_state = (0.75*0.95)^(1/(1 - 0.75)), 
-          k_0 = (0.75*0.95)^(1/(1 - 0.75))/2,
-          capital_upper = (0.75*0.95)^(1/(1 - 0.75))*1.01, 
-          capital_lower = (0.75*0.95)^(1/(1 - 0.75))/2,
-          num_points = 7, 
+params = (alpha = 0.75, # capital share
+          beta = 0.95, # discount
+          eta = 2, # EMUC
+          steady_state = (0.75*0.95)^(1/(1 - 0.75)),
+          k_0 = (0.75*0.95)^(1/(1 - 0.75))/2, # initial state
+          capital_upper = (0.75*0.95)^(1/(1 - 0.75))*1.01, # upper bound
+          capital_lower = (0.75*0.95)^(1/(1 - 0.75))/2, # lower bound
+          num_points = 7, # number of grid points
           tolerance = 0.0001)
 ```
 
@@ -206,14 +226,14 @@ In some cases you might have a good guess (e.g. increasing and concave so you kn
 
 --
 
-Other cases you might not,  
-guessing zeros effectively turns the initial iteration into a static problem,  
+Other cases you might not,
+guessing zeros effectively turns the initial iteration into a static problem,
 the second iteration into a 2 period problem, and so on
 
 --
 
 ```{julia}
-coefficients = zeros(params.num_points)
+coefficients = zeros(params.num_points) # # coeffs = # grid points in collocation
 ```
 
 ---
@@ -242,7 +262,7 @@ Which norm?
 
 # Step 4: Construct the grid and basis matrix
 
-The function `cheb_nodes` constructs the grid on $[-1,1]$
+The function `cheb_nodes` from last lecture constructs the grid on $[-1,1]$
 
 --
 
@@ -254,18 +274,19 @@ $$x_k = cos\left(\frac{2k-1}{2n}\pi\right),\,\, k = 1,...,n$$
 
 ```{julia}
 cheb_nodes(n) = cos.(pi * (2*(1:n) .- 1)./(2n))
-grid = cheb_nodes(params.num_points) # [-1, 1] grid
+grid = cheb_nodes(params.num_points) # [-1, 1] grid with n points
 ```
 ---
 
 # Step 4: Construct the grid and basis matrix
 
-But we need to expand the grid from $[-1,1]$ to our actual capital domain
+But our actual capital domain isn't on $[-1,1]$, we need to expand the grid
 
 --
 
 ```{julia}
-expand_grid(grid, params) = (1 .+ grid)*(params.capital_upper - params.capital_lower)/2 .+ params.capital_lower
+expand_grid(grid, params) = # function that expands [-1,1] to [a,b]
+   (1 .+ grid)*(params.capital_upper - params.capital_lower)/2 .+ params.capital_lower
 capital_grid = expand_grid(grid, params)
 ```
 
@@ -273,7 +294,7 @@ capital_grid = expand_grid(grid, params)
 
 # Step 4: Construct the grid and basis matrix
 
-Use `cheb_polys` to construct the basis matrix
+Use `cheb_polys` from last lecture to construct the basis matrix
 
 ```{julia}
 # Chebyshev polynomial function
@@ -290,16 +311,22 @@ function cheb_polys(x, n)
 end;
 ```
 
+Recall, `cheb_polys(x, n)` gives us the nth degree Chebyshev polynomial at point x
+
 ---
 
 # Step 4a: Pre-invert your basis matrix
 
 .hi-blue[Pro tip:] you will be using the *exact same* basis matrix in each loop iteration to recover the coefficients: just pre-invert it to save time because inverting the same matrix every loop is costly (especially when large)
 
+--
+
+```{julia, results = 'hide'}
+basis_matrix = [cheb_polys.(grid, n) for n = 0:params.num_points - 1]; #for each degree, get the Cheb polys at each x
+basis_matrix = hcat(basis_matrix...) # put into matrix form
+```
 ```{julia}
-basis_matrix = [cheb_polys.(grid, n) for n = 0:params.num_points - 1];
-basis_matrix = hcat(basis_matrix...)
-basis_inverse = basis_matrix\I
+basis_inverse = basis_matrix\I # pre-invert
 ```
 
 ---
@@ -324,18 +351,22 @@ Here's a simple way to do it:
 --
 
 ```{julia}
-shrink_grid(capital) = 2*(capital - params.capital_lower)/(params.capital_upper - params.capital_lower) - 1;
+# reverse of expand_grid
+shrink_grid(capital) = 
+  2*(capital - params.capital_lower)/(params.capital_upper - params.capital_lower) - 1;
+
+# evaluates V on the [-1,1]-equivalent grid
 eval_value_function(coefficients, capital, params) = 
     coefficients' * [cheb_polys.(shrink_grid(capital), n) for n = 0:params.num_points - 1];
 ```
 
-The top function inherits `params` from the bottom function
+The top function inherits `params` from the bottom function inside the bottom function
 
 ---
 
 # Step 5: Inner loop over grid points
 
-Construct a function that loops over the grid points  
+Construct a function that loops over the grid points
 and solves the Bellman given $\Gamma(x;b^{(p)})$
 
 Pseudocode:
@@ -356,10 +387,10 @@ return vector of maximized values
 ```{julia}
 function loop_grid(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
     max_value = similar(coefficients); # initialized max value vector
-    
+
     # Inner loop over grid points
     for (iteration, capital) in enumerate(capital_grid)
-    
+
         # Define Bellman as a closure
         function bellman(consumption)
             capital_next = capital^params.alpha - consumption # Next period state
@@ -367,7 +398,7 @@ function loop_grid(params, basis_inverse, basis_matrix, grid, capital_grid, coef
             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value # Utility + continuation value
             return -value_out
         end;
-        
+
         results = optimize(bellman, 0.00*capital^params.alpha, 0.99*capital^params.alpha) # maximize Bellman
         max_value[iteration] = -Optim.minimum(results) # Store max value in vector
     end
@@ -546,7 +577,7 @@ function simulate_model(params, solution_coeffs, time_horizon = 100)
     capital_store = zeros(time_horizon + 1)
     consumption_store = zeros(time_horizon)
     capital_store[1] = params.k_0
-    
+
     for t = 1:time_horizon
         capital = capital_store[t]
         function bellman(consumption)
@@ -556,7 +587,7 @@ function simulate_model(params, solution_coeffs, time_horizon = 100)
             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
             return -value_out
         end;
-        
+
         results = optimize(bellman, 0.0, capital^params.alpha)
         consumption_store[t] = Optim.minimizer(results)
         capital_store[t+1] = capital^params.alpha - consumption_store[t]
@@ -588,7 +619,7 @@ consumption = similar(capital_levels);
 
 # Compute optimal consumption at all capital grid points
 for (iteration, capital) in enumerate(capital_levels)
-    
+
     function bellman(consumption)
         capital_next = capital^params.alpha - consumption
         capital_next_scaled = shrink_grid(capital_next)
@@ -596,9 +627,9 @@ for (iteration, capital) in enumerate(capital_levels)
         value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
         return -value_out
     end
-    
+
     results = optimize(bellman, 0., capital^params.alpha)
-    
+
     consumption[iteration] = Optim.minimizer(results)
 end;
 ```
@@ -726,7 +757,7 @@ The algorithm has 6 steps, very similar to VFI
 
 .hi-blue[Step 6:] Error check your approximation
 
-Notice: we did not have to perform a maximization step .hi-red[anywhere],   
+Notice: we did not have to perform a maximization step .hi-red[anywhere],
 this leads to big speed gains
 
 ---
@@ -849,7 +880,7 @@ Here's a simple way to do it:
 
 ```{julia}
 shrink_grid(capital) = 2*(capital - params_fpi.capital_lower)/(params_fpi.capital_upper - params_fpi.capital_lower) - 1;
-eval_policy_function(coefficients, capital, params_fpi) = 
+eval_policy_function(coefficients, capital, params_fpi) =
     coefficients' * [cheb_polys.(shrink_grid(capital), n) for n = 0:params_fpi.num_points - 1];
 ```
 
@@ -1137,7 +1168,7 @@ It preserves the (first-order) shape of the policy function so it is reliable an
 
 --
 
-Unfortunately time iteration tends to be slow,  
+Unfortunately time iteration tends to be slow,
 especially as the number of dimensions grows
 
 ---
@@ -1198,8 +1229,8 @@ In some cases you might have a good guess (e.g. increasing and concave so you kn
 
 --
 
-Other cases you might not,  
-guessing zeros effectively turns the initial iteration into a static problem,  
+Other cases you might not,
+guessing zeros effectively turns the initial iteration into a static problem,
 the second iteration into a 2 period problem, and so on
 
 --
@@ -1317,7 +1348,7 @@ Here's a simple way to do it:
 
 ```{julia}
 shrink_grid(capital) = 2*(capital - params_ti.capital_lower)/(params_ti.capital_upper - params_ti.capital_lower) - 1;
-eval_policy_function(coefficients, capital, params_ti) = 
+eval_policy_function(coefficients, capital, params_ti) =
     coefficients' * [cheb_polys.(shrink_grid(capital), n) for n = 0:params_ti.num_points - 1];
 ```
 
@@ -1610,7 +1641,7 @@ params_dis = (alpha = 0.75, beta = 0.95, eta = 2,
 # Discretizing the state space
 
 ```{julia}
-function iterate_value(grid, params) 
+function iterate_value(grid, params)
     grid_size = size(grid, 1)
     V, V_prev = zeros(grid_size, 1), zeros(grid_size, 1)
     V_store = Array{Float64}(undef, grid_size, params.max_iterations)
