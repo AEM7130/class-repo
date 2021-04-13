@@ -1609,7 +1609,10 @@ then there is only a finite number of valid controls
 
 This makes solving easy!
 
---
+
+---
+
+# A short overview of discretization + VFI
 
 Search over all possible controls today until you find the one that yields the highest value of the RHS of the Bellman:
 just requires looping and a max operator

@@ -4,10 +4,16 @@
     <title>Lecture 10</title>
     <meta charset="utf-8" />
     <meta name="author" content="Ivan Rudik" />
-    <script src="10_machine_learning_files/header-attrs-2.1/header-attrs.js"></script>
-    <link href="10_machine_learning_files/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="10_machine_learning_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
-    <link href="10_machine_learning_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <script src="10_machine_learning_files/header-attrs/header-attrs.js"></script>
+    <link href="10_machine_learning_files/remark-css/default.css" rel="stylesheet" />
+    <link href="10_machine_learning_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="10_machine_learning_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="10_machine_learning_files/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="10_machine_learning_files/tile-view/tile-view.js"></script>
+    <link href="10_machine_learning_files/panelset/panelset.css" rel="stylesheet" />
+    <script src="10_machine_learning_files/panelset/panelset.js"></script>
+    <script src="10_machine_learning_files/xaringanExtra-webcam/webcam.js"></script>
+    <script id="xaringanExtra-webcam-options" type="application/json">{"width":"200","height":"200","margin":"1em"}</script>
     <link rel="stylesheet" href="my-css.css" type="text/css" />
   </head>
   <body>
@@ -21,12 +27,39 @@ class: center, middle, inverse, title-slide
 
 ---
 
+exclude: true
+
+```r
+options(htmltools.dir.version = FALSE)
+knitr::opts_hooks$set(fig.callout = function(options) {
+  if (options$fig.callout) {
+    options$echo &lt;- FALSE
+  }
+knitr::opts_chunk$set(echo = TRUE, fig.align="", message = FALSE, warning = FALSE)
+  options
+})
+```
+
+
+```
+## Warning: 'xaringanExtra::style_panelset' is deprecated.
+## Use 'style_panelset_tabs' instead.
+## See help("Deprecated")
+```
+
+```
+## Warning in style_panelset_tabs(...): The arguments to `syle_panelset()` changed in xaringanExtra 0.1.0. Please refer to the
+## documentation to update your slides.
+```
+
+---
 
 # Roadmap
 
 1. Intro to machine learning
-2. Supervised methods, validation, and cross-validation
-4. Unsupervised methods
+2. Shrinkage estimators
+3. CARTs and forests
+4. Synthetic control using lasso (SCUL)
 
 ---
 
@@ -54,11 +87,16 @@ Econometricians are finding ways to do both (double selection, double ML, trees 
 
 # Terminology
 
-You'll run into terms that have similar meaning to what we use in economics 
+You'll run into terms that have similar meaning to what we use in economics
 
 1. .hi-blue[Features]: regressors, your `\(x\)`s
 2. .hi-blue[Supervised learning]: settings where we have an outcome `\(y\)` and a set of features `\(x\)`, this will be called regression if `\(y\)` is continuous, or classification if `\(y\)` is categorical
 3. .hi-blue[Unsupervised learning]: settings where we only have features `\(x\)`, there's no outcomes!
+
+---
+
+# Terminology
+
 4. .hi-blue[Training sample]: the partition of the dataset used to estimate the model
 5. .hi-blue[Validation sample]: the partition of the dataset used to validate the out-of-sample fit within a fold
 6. .hi-blue[Test sample]: The partition of the dataset used to test out-of-sample fit of the final model
@@ -69,9 +107,15 @@ You'll run into terms that have similar meaning to what we use in economics
 
 .hi-blue[Out-of-sample validation]: we will validate our methods by checking their fit and properties out-of-sample
 
+--
+
 The fact that we're trying to solve prediction problems is why we can do this: we see the actual realizations of `\(y\)`, so that we can test the quality of the fit
 
+--
+
 For causal inference problems we never observe the true `\(\beta\)` so we can't validate our solutions
+
+--
 
 We use our training sample to estimate our model and then test it on our test sample
 
@@ -81,11 +125,19 @@ We use our training sample to estimate our model and then test it on our test sa
 
 .hi-blue[Regularization]: impose a penalty for overfitting the model
 
+--
+
 You can get great (perfect) in-sample prediction by having `\(N=K\)`
+
+--
 
 The problem is that this will lead to an over-fit model that will do very poorly out-of-sample
 
-How much regularization do we want? 
+--
+
+How much regularization do we want?
+
+--
 
 We typically use cross-validation methods to help us choose
 
@@ -95,7 +147,11 @@ We typically use cross-validation methods to help us choose
 
 .hi-blue[Scalability]: can handle a lot of data `\(N\)` or `\(K\)`
 
+--
+
 Could have thousands of features, billions of observations
+
+--
 
 Having parallelizable algorithms is important
 
@@ -105,12 +161,18 @@ Having parallelizable algorithms is important
 
 .hi-blue[Bias-variance trade-off]: expected mean squared error (MSE) of a prediction is a combo of bias and variance
 
+--
+
 Typically as economists we want low (zero) bias estimators because we care about the sign and interpretation of coefficients
+
+---
+
+# The key pieces
 
 If we want a good prediction of `\(y\)`, we may be willing to allow more bias to reduce variance and decrease MSE
 
 `\begin{align}
-  E(y-\hat{f}(x)^2) 
+  E([y-\hat{f}(x)]^2)
     &amp;= E[y^2] + E[\hat{f}^2] - 2[Ey\hat{f}]\\
     &amp;= var(y) + E[y^2] + var(\hat{f}) + E[\hat{f}^2] - 2fE[\hat{f}] \\
     &amp;= var(y) + var(\hat{f}) + (f-E[\hat{f}])^2 \\
@@ -139,11 +201,20 @@ If we want a good prediction of `\(y\)`, we may be willing to allow more bias to
 
 One way to reduce variance is to shrink the `\(\beta\)`s, or even set some to zero `\((var(0) = 0)\)`
 
+--
+
 A common way we implement this is by penalizing deviation in `\(\beta\)`s different than zero:
 
+--
+
 `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda \times Penalty(\beta \neq 0)$$`
+---
+
+# Shrinkage/regularization methods
 
 If we set estimates to zero we will end up with .hi-blue[sparse] representations
+
+--
 
 Bet on the .hi-blue[sparsity principle]: use a procedure that does well in sparse problems, since no procedure does well in dense problems (Hastie, Tibshirani and Wainwright 2015)
 
@@ -165,11 +236,21 @@ There are three common specifications for this approach depending on how we spec
 
 `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda (||\beta||_2)^2$$`
 
+---
+
+# Ridge regression
+
 Ridge regression penalizes coefficients based on their `\(L_2\)` norm, this tends to .hi-red[shrink] coefficients toward zero
+
+--
 
 It rarely sets coefficients exactly equal to zero since the penalty is smooth
 
+--
+
 It does a good job with fixing ill-conditioning problems and in cases where `\(K&gt;N\)`
+
+--
 
 It also has a closed form solution: `\(\hat{\beta} = (X'X + \lambda I)^{-1} X'Y\)`
 
@@ -179,13 +260,27 @@ It also has a closed form solution: `\(\hat{\beta} = (X'X + \lambda I)^{-1} X'Y\
 
 Ridge has a nice Bayesian interpretation
 
-If 
+--
+
+If
+
+--
 
 - The prior distribution of `\(\beta\)` is `\(\mathcal{N}(0,\tau^2 \times I)\)`
+
+--
+
 - The error term is distributed `\(\mathcal{N}(0,\sigma^2)\)`
+
+--
+
 - `\(\lambda = \sigma^2/\tau^2\)`
 
+--
+
 Then
+
+--
 
 `\(\hat{\beta}_{ridge}\)` is the posterior mean, median, and mode
 
@@ -195,13 +290,25 @@ Then
 
 When regularizing we generally want to normalize our features and outcome
 
+--
+
 Why?
+
+---
+
+# Sidebar: normalization
 
 If features vary dramatically in magnitude or have different scales (dollars of GDP vs percent GDP), variables that are numerically large will get penalized more just because of their units
 
+--
+
 If we set all variables to mean zero, variance one they are on a common playing field for regularization
 
+--
+
 Regularizing the outcome will get rid of the intercept term as well
+
+--
 
 For ridge, normalizing results in coefficients being shrunk by a factor of `\(1/(1+\lambda)\)`
 
@@ -213,9 +320,17 @@ For ridge, normalizing results in coefficients being shrunk by a factor of `\(1/
 
 `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda ||\beta||_1$$`
 
+---
+
+# LASSO
+
 LASSO penalizes coefficients based on their `\(L_1\)` norm, this tends to .hi-red[select] a subset of ceofficients, i.e. it sets a number of them equal precisely to zero and generates a sparse solution
 
+--
+
 LASSO is generally used for variable or model selection
+
+--
 
 LASSO has no analytic solution, need to use convex optimization routines
 
@@ -226,12 +341,23 @@ LASSO has no analytic solution, need to use convex optimization routines
 
 LASSO also has a nice Bayesian interpretation
 
-If 
+--
+
+If
+
+--
 
 - The prior distribution of `\(\beta\)` is Laplacian
+
+--
+
 - The error term is distributed `\(\mathcal{N}(0,\sigma^2)\)`
 
+--
+
 Then
+
+--
 
 `\(\hat{\beta}_{LASSO}\)` is the posterior mode
 
@@ -241,9 +367,17 @@ Then
 
 `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda (||\beta||_p)^{1/p}$$`
 
+--
+
 Ridge and LASSO are special cases of a general `\(L_p\)` regularizer
 
+
+--
+
 Another special case is subset selection is we use the `\(L_0\)` norm
+
+
+--
 
 .hi-blue[Subset selection] induces the estimates to be the OLS estimates but it is computationally tough to solve so it is not often used
 
@@ -251,11 +385,7 @@ Another special case is subset selection is we use the `\(L_0\)` norm
 
 # Ridge vs LASSO
 
-One way to reframe ridge and LASSO are as their dual, constrained problems:
-
-Ridge: `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 \text{ subject to } \sum_l \beta^2_l \leq s$$`
-
-LASSO: `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 \text{ subject to } \sum_l |\beta_l| \leq s$$`
+One way to reframe ridge and LASSO are as their dual, constrained problems
 
 We can then plot the constraints and the contours of the unconstrained problem to see how they differ
 
@@ -263,27 +393,47 @@ We can then plot the constraints and the contours of the unconstrained problem t
 
 # Ridge vs LASSO
 
-&lt;div style="float: right"&gt;
-  &lt;img src="figures/lasso_vs_ridge.png" height=450&gt;
-&lt;/div&gt;
+Ridge: `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 \text{ subject to } \sum_l \beta^2_l \leq s$$`
 
+LASSO: `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 \text{ subject to } \sum_l |\beta_l| \leq s$$`
+
+
+---
+
+# Ridge vs LASSO
+
+.pull-left[
+&lt;img src="figures/lasso_vs_ridge.png" width="100%" /&gt;
+]
+
+.pull-right[
 LASSO induces a constraint set with kinks at `\(x_1=0; x_2=0, ...\)`
 
 `\(\rightarrow\)` solutions will generally be at the kinks and we get lots of zero coefficients
 
 Ridge induces a spherical constraint set, it tends to shrink coefficients toward zero without setting them exactly to zero
 
+]
 ---
 
 # Elastic Net
 
 `$$\min_{\beta} \sum_{i=1}^N \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda [(1-\alpha)(||\beta||_2)^2 + \alpha||\beta||_1]$$`
 
+--
+
 Elastic net tries to get the best of both ridge and LASSO by using a convex combination of their penalties
 
-LASSO has one big problem:
+
+--
+
+LASSO has one big problem
+
+--
 
 .hi-blue[Selection with Collinearity]: if features are highly correlated LASSO tends to select one and ignore the others
+
+--
 
 The ridge penalty helps get around these issues by allowing us to select multiple of the correlated variables
 
@@ -301,13 +451,22 @@ The ridge penalty helps get around these issues by allowing us to select multipl
 
 One thing we haven't discussed yet is how we select `\(\lambda\)`, our penalty parameter
 
-Big lambdas tend to result in a lot of shrinkage and sparsity,  
-as `\(\lambda \rightarrow 0\)` our solution approaches the OLS solution
+--
+
+Big lambdas tend to result in a lot of shrinkage and sparsity, as `\(\lambda \rightarrow 0\)` our solution approaches the OLS solution
+
+---
+
+# Validation and cross-validation
 
 There are two general ways to select `\(\lambda\)`
 
+--
+
 1. Select model with lowest AIC/BIC/other plug-in criterion
     - This uses no out-of-sample information for selection but is fast
+--
+
 2. Cross-validate by testing on our hold-out test sample
     - Variants of cross-validation are most commonly used
 
@@ -317,9 +476,15 @@ There are two general ways to select `\(\lambda\)`
 
 When we perform cross-validation we split our sample into three different pieces: a training sample, a validation sample, and a test sample
 
+--
+
 First you randomly allocate some fraction of your data to the test sample
 
+--
+
 Next you perform cross-validation on the remaining data
+
+--
 
 A common way to do this is called .hi-blue[k-fold cross-validation]
 
@@ -327,23 +492,20 @@ A common way to do this is called .hi-blue[k-fold cross-validation]
 
 # k-fold cross-validation
 
-In k-fold cross-validation we do the following:
-
-- Create a grid of `\(\lambda\)`s
-- For each `\(\lambda\)`:
+- Create a grid of `\(\lambda\)`s, for each `\(\lambda\)` grid point:
     - Split data into `\(k\)` mutually-exclusive folds of about equal size, usually choose `\(k=5,10\)`
     - For `\(j=1,...,k\)`
         - fit the model using all folds but fold `\(j\)`
         - Predict out-of-sample on fold `\(j\)`
     - Compute average mean squared prediction error across the `\(k\)` folds: `\(\bar{Q}(\lambda) = \frac{1}{k}\sum_{j=1}^k \sum_{i \in \text{fold j}} \left(y_i - (\alpha_0 + x_i' \beta) \right)^2 + \lambda ||\beta||_1\)`
-- Choose `\(\hat{\lambda}_{min} = argmin_{\lambda} \bar{Q}(\lambda)\)` or to avoid modest overfitting   
+- Choose `\(\hat{\lambda}_{min} = argmin_{\lambda} \bar{Q}(\lambda)\)` or to avoid modest overfitting
 choose the largest `\(\lambda\)` such that `\(\bar{Q}(\lambda) \leq \hat{\lambda}_{min} + \sigma_{\hat{\lambda}_{min}}\)` (1 standard deviation rule)
 
 ---
 
 # Supervised learning examples: Preliminaries
 
-We need `tidyverse` to work with the data, `glmnet` to do the ML, , `caret` to do some higher-level tuning, and `tidymodels` to use a similar grammar and structure to `tidyverse`
+We need `tidyverse` to work with the data, `glmnet` to do the ML, and `caret` to do some higher-level tuning
 
 We will be working with the mtcars dataset
 
@@ -353,9 +515,7 @@ We will be working with the mtcars dataset
 
 ```r
 if (!require("pacman")) install.packages("pacman")
-require(devtools)
-devtools::install_github("tidymodels/tidymodels")
-pacman::p_load(tidymodels, tidyverse, glmnet, caret)
+pacman::p_load(tidyverse, glmnet, caret)
 set.seed(123)
 ```
 
@@ -393,11 +553,11 @@ mtcars
 
 ```r
 y &lt;- mtcars %&gt;% # center and scale y's, glmnet will center and scale Xs
-  select(mpg) %&gt;% 
-  scale(center = TRUE, scale = FALSE) %&gt;% 
+  select(mpg) %&gt;%
+  scale(center = TRUE, scale = FALSE) %&gt;%
   as.matrix()
-X &lt;- mtcars %&gt;% 
-  select(-mpg) %&gt;% 
+X &lt;- mtcars %&gt;%
+  select(-mpg) %&gt;%
   as.matrix()
 ```
 
@@ -408,7 +568,7 @@ X &lt;- mtcars %&gt;%
 
 ```r
 lambdas_to_try &lt;- 10^seq(-3, 5, length.out = 100) # penalty parameter grid
-ridge_cv &lt;- cv.glmnet(X, y, 
+ridge_cv &lt;- cv.glmnet(X, y,
                       alpha = 0, # alpha is the elastic net parameter, 0 -&gt; ridge
                       lambda = lambdas_to_try, # lambda grid
                       standardize = TRUE, # standardize X's
@@ -418,8 +578,12 @@ ridge_cv &lt;- cv.glmnet(X, y,
 ---
 
 # Ridge regression with glmnet
-Here's MSE as a function of the choice of `\(\log(\lambda)\)`, notice we keep all variables
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+```r
+plot(ridge_cv) # plots MSE as a function of log(lambda)
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -428,11 +592,11 @@ Here's MSE as a function of the choice of `\(\log(\lambda)\)`, notice we keep al
 
 ```r
 res_ridge &lt;- glmnet(X, y, alpha = 0, lambda = lambdas_to_try, standardize = TRUE)
-plot(res_ridge, xvar = "lambda")
+plot(res_ridge, xvar = "lambda") # shows coefficients as a function of log(lambda)
 legend("bottomright", lwd = 1, col = 1:6, legend = colnames(X), cex = .7)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -441,7 +605,7 @@ legend("bottomright", lwd = 1, col = 1:6, legend = colnames(X), cex = .7)
 
 ```r
 lambdas_to_try &lt;- 10^seq(-3, 5, length.out = 100) # penalty parameter grid
-lasso_cv &lt;- cv.glmnet(X, y, 
+lasso_cv &lt;- cv.glmnet(X, y,
                       alpha = 1, # alpha is the elastic net parameter, 1 -&gt; LASSO
                       lambda = lambdas_to_try, # lambda grid
                       standardize = TRUE, # standardize X's
@@ -451,8 +615,12 @@ lasso_cv &lt;- cv.glmnet(X, y,
 ---
 
 # LASSO with glmnet
-Here's MSE as a function of the choice of `\(\log(\lambda)\)`, LASSO generates sparse solutions
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+```r
+plot(lasso_cv) # LASSO generates sparse solutions
+```
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -465,7 +633,7 @@ plot(res_lasso, xvar = "lambda")
 legend("bottomright", lwd = 1, col = 1:6, legend = colnames(X), cex = .7)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -474,7 +642,7 @@ legend("bottomright", lwd = 1, col = 1:6, legend = colnames(X), cex = .7)
 
 ```r
 lambdas_to_try &lt;- 10^seq(-3, 5, length.out = 100) # penalty parameter grid
-elastic_net_cv &lt;- cv.glmnet(X, y, 
+elastic_net_cv &lt;- cv.glmnet(X, y,
                       alpha = 0.45, # alpha is the elastic net parameter
                       lambda = lambdas_to_try, # lambda grid
                       standardize = TRUE, # standardize X's
@@ -484,8 +652,8 @@ elastic_net_cv &lt;- cv.glmnet(X, y,
 ---
 
 # Elastic net with glmnet
-Here's MSE as a function of the choice of `\(\log(\lambda)\)`, elastic net generates sparse solutions
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -498,7 +666,7 @@ plot(res_en, xvar = "lambda")
 legend("bottomright", lwd = 1, col = 1:6, legend = colnames(X), cex = .7)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -2535,8 +2703,8 @@ elastic_net_model &lt;- train(mpg ~ .,
 ```
 
 ```
-## Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo, :
-## There were missing values in resampled performance measures.
+## Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo, : There were missing values in resampled
+## performance measures.
 ```
 
 ```
@@ -2570,7 +2738,7 @@ Here we selected something close to ridge regression
 plot(elastic_net_model)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -2582,7 +2750,14 @@ plot(elastic_net_model)
 
 These are called .hi-blue[trees] because the splitting is sequential, one feature at a time, so when you plot all the splits it begins to look like an upside down tree where
 
+
+---
+
+# Non-parametric regression: Regression Trees
+
 Each split is called a .hi-blue[node], and the first split is called your .hi-blue[root node]
+
+--
 
 Each terminal point of your tree is called a .hi-blue[leaf node]
 
@@ -2596,13 +2771,24 @@ Trees effectively partition the space into a bunch of hyperrectangles in a way t
 
 How do we grow our regression tree?
 
-1. Let `\(g(x) = \bar{y}\)` and let the sum of squared errors be 
+--
+
+- Let `\(g(x) = \bar{y}\)` and let the sum of squared errors be
 `$$Q(g) = \sum_{i=1}^N(y_i-g(x_i))^2 = \sum_{i=1}^N (y_i - \bar{y})^2$$`
 
-2. For a feature `\(j\)` and split point `\(s\)` consider splitting the data depending on whether `\(x_{i,j} \leq s\)` or `\(x_{i,j} &gt; s\)`, and let `\(\bar{y}_{left}\)` and `\(\bar{y}_{right}\)` be the average values in the two subspaces
+---
 
-3. If `\(x_j \leq t\)` let `\(g_{j,t}(x) = \bar{y}_{left}\)` else `\(g_{j,t}(x) =\bar{y}_{right}\)`
-4. Find the `\(j^*,s^* = argmin_{j,s} Q(g_{j,s}(\cdot))\)`
+# Growing a regression tree
+
+- For a feature `\(j\)` and split point `\(s\)` consider splitting the data depending on whether `\(x_{i,j} \leq s\)` or `\(x_{i,j} &gt; s\)`, and let `\(\bar{y}_{left}\)` and `\(\bar{y}_{right}\)` be the average values in the two subspaces
+
+--
+
+- If `\(x_j \leq t\)` let `\(g_{j,t}(x) = \bar{y}_{left}\)` else `\(g_{j,t}(x) =\bar{y}_{right}\)`
+
+--
+
+- Find the `\(j^*,s^* = argmin_{j,s} Q(g_{j,s}(\cdot))\)`
 
 ---
 
@@ -2610,7 +2796,11 @@ How do we grow our regression tree?
 
 This gives us the covariate `\(j^*\)` to split, and where to split it into separate subspaces `\(s^*\)` in order to minimize the sum of squared errors
 
+--
+
 This first split will end up being our root node
+
+--
 
 We then continue this process for each of the subspaces, splitting on the best covariates and creating new nodes and growing our tree
 
@@ -2632,7 +2822,7 @@ The left shows the tree diagram
 
 The middle shows the actual regression function
 
-The right shows a 2d projection of the regression function where darker colors are higher probabilities
+The right shows a 2d projection of the regression function
 
 ---
 
@@ -2644,7 +2834,11 @@ If we just followed the regression tree algorithm we could minimize error by spl
 
 We solve this problem similar to how we did linear regression: we penalize complexity (the number of leaves)
 
+--
+
 `$$Q(g) + \lambda \cdot \#leaves$$`
+
+--
 
 The penalty (if large enough) will keep the tree from having too many nodes
 
@@ -2652,10 +2846,7 @@ The penalty (if large enough) will keep the tree from having too many nodes
 
 # Cross-validating trees
 
-How do we choose `\(\lambda\)`? Basically the same way as we did for linear regression
-
-- Create a grid of `\(\lambda\)`s
-- For each `\(\lambda\)`:
+- Create a grid of `\(\lambda\)`s, for each `\(\lambda\)`:
     - Split data into `\(k\)` mutually-exclusive folds of about equal size, usually choose `\(k=5,10\)`
     - For `\(j=1,...,k\)`
         - Grow the tree using all folds but fold `\(j\)`
@@ -2663,16 +2854,27 @@ How do we choose `\(\lambda\)`? Basically the same way as we did for linear regr
     - Compute squared prediction error across the `\(k\)` folds: `\(Q(\lambda) = \sum_{j=1}^k \sum_{i \in \text{fold j}} \left(y_i - g(j,\lambda)\right)\)`
 - Choose `\(\hat{\lambda}_{min} = argmin_{\lambda} Q(\lambda)\)`
 
+This is very similar to how we cross-validated for LASSO/ridge
+
 ---
 
 # Pruning trees
 
-Using this simple cross-validation approach may stop growing the tree too early, one split may not help immediately, but it may help us find future profitable splits 
-    - This is a drawback of a greedy algorithm
+Using this simple cross-validation approach may stop growing the tree *too early*, one split may not help immediately, but it may help us find future profitable splits
+
+--
+
+This is a drawback of a greedy algorithm
+
+--
 
 This suggests that one way we can improve is by .hi-blue[pruning] the tree
 
+--
+
 1. Grow a big tree, select some rule to stop like 5 observations per leaf, or a very small `\(\lambda\)`
+--
+
 2. Prune branches or leaves that don't improve the prediction by a sufficient amount
 
 ---
@@ -2681,22 +2883,32 @@ This suggests that one way we can improve is by .hi-blue[pruning] the tree
 
 The simplest way to prune is called .hi-blue[reduced error pruning]
 
-It works as follows
+--
 
 1. Starting at the leaves, remove each node
+--
+
 2. Check if prediction accuracy on the validation sample is the same or better
+--
+
 3. If 2 is true, remove the node
+--
+
 4. Continue until we cannot improve the tree any further
+
+--
 
 This is simple and fast
 
-There are other more complex ways to prune (e.g. cost complexity)
+--
+
+There are other more complex ways to prune
 
 ---
 
 # Bagging predictors
 
-Single trees typically are not great predictors 
+Single trees typically are not great predictors
 
 --
 
@@ -2706,7 +2918,9 @@ One way to improve upon a single tree is to bootstrap aggregate (bag) a predicti
 
 This generally reduces variance and helps with avoiding overfitting
 
---
+---
+
+# Bagging predictors
 
 Bagging is easy:
 
@@ -2716,7 +2930,7 @@ Bagging is easy:
 
 --
 
-This only matters because trees are non-linear,  
+This only matters because trees are non-linear,
 so bagging smooths out the end predictions
 
 ---
@@ -2725,11 +2939,19 @@ so bagging smooths out the end predictions
 
 The problem with bagging is that the `\(B\)` bagged estimated are correlated
 
+--
+
 Important regressors will always appear near the top of the tree in the bootstrapped samples
+
+--
 
 This means all the trees will look similar
 
+--
+
 Predictions won't actually be as good as you might think
+
+--
 
 How can we break this correlation?
 
@@ -2784,7 +3006,9 @@ Repeat this process many times to get a set of `\(g\)`s
 These give you an additive approximation to the actual regression tree:
 `$$\sum_{m=1}^M g_m(x|X,\varepsilon_{m-1}) = \sum_{k=1}^K h_k(x_k) \text{ where } \varepsilon_0 = Y$$`
 
---
+---
+
+# Boosted trees
 
 By continually residualizing and re-estimating, its like we are adding functions `\(h_k\)` sequentially to our regression
 
@@ -2824,19 +3048,19 @@ carseats
 
 ```
 ## # A tibble: 400 x 11
-##    Sales CompPrice Income Advertising Population Price ShelveLoc   Age Education
-##    &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-##  1  9.5        138     73          11        276   120 Bad          42        17
-##  2 11.2        111     48          16        260    83 Good         65        10
-##  3 10.1        113     35          10        269    80 Medium       59        12
-##  4  7.4        117    100           4        466    97 Medium       55        14
-##  5  4.15       141     64           3        340   128 Bad          38        13
-##  6 10.8        124    113          13        501    72 Bad          78        16
-##  7  6.63       115    105           0         45   108 Medium       71        15
-##  8 11.8        136     81          15        425   120 Good         67        10
-##  9  6.54       132    110           0        108   124 Medium       76        10
-## 10  4.69       132    113           0        131   124 Medium       76        17
-## # … with 390 more rows, and 2 more variables: Urban &lt;fct&gt;, US &lt;fct&gt;
+##    Sales CompPrice Income Advertising Population Price ShelveLoc   Age Education Urban US   
+##    &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt;
+##  1  9.5        138     73          11        276   120 Bad          42        17 Yes   Yes  
+##  2 11.2        111     48          16        260    83 Good         65        10 Yes   Yes  
+##  3 10.1        113     35          10        269    80 Medium       59        12 Yes   Yes  
+##  4  7.4        117    100           4        466    97 Medium       55        14 Yes   Yes  
+##  5  4.15       141     64           3        340   128 Bad          38        13 Yes   No   
+##  6 10.8        124    113          13        501    72 Bad          78        16 No    Yes  
+##  7  6.63       115    105           0         45   108 Medium       71        15 Yes   No   
+##  8 11.8        136     81          15        425   120 Good         67        10 Yes   Yes  
+##  9  6.54       132    110           0        108   124 Medium       76        10 No    No   
+## 10  4.69       132    113           0        131   124 Medium       76        17 No    Yes  
+## # … with 390 more rows
 ```
 
 ---
@@ -2856,8 +3080,7 @@ summary(tree_carseats)
 ## Regression tree:
 ## tree(formula = Sales ~ ., data = carseats)
 ## Variables actually used in tree construction:
-## [1] "ShelveLoc"   "Price"       "Age"         "Income"      "Population" 
-## [6] "Advertising"
+## [1] "ShelveLoc"   "Price"       "Age"         "Income"      "Population"  "Advertising"
 ## Number of terminal nodes:  17 
 ## Residual mean deviance:  2.878 = 1102 / 383 
 ## Distribution of residuals:
@@ -2875,7 +3098,7 @@ plot(tree_carseats)
 text(tree_carseats, pretty = 0)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -2890,7 +3113,7 @@ plot(tree_carseats)
 text(tree_carseats, pretty = 0)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -2917,7 +3140,7 @@ cv_carseats = cv.tree(tree_carseats)
 plot(cv_carseats)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -2931,7 +3154,7 @@ plot(prune_carseats)
 text(prune_carseats, pretty = 0)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -3005,7 +3228,7 @@ mse_prune
 varImpPlot(rf_carseats)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-29-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-31-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -3034,7 +3257,7 @@ matplot(1:mtry, cbind(test_err, oob_err), pch = 23, col = c("red", "blue"), type
 legend("topright", legend = c("OOB", "Test"), pch = 23, col = c("red", "blue"))
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-31-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-33-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -3042,12 +3265,12 @@ legend("topright", legend = c("OOB", "Test"), pch = 23, col = c("red", "blue"))
 
 
 ```r
-boost_carseats = gbm(Sales~., data = carseats[train,], 
+boost_carseats = gbm(Sales~., data = carseats[train,],
                      distribution = "gaussian", n.trees = 10000, shrinkage = 0.01, interaction.depth = 4)
 summary(boost_carseats)
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-32-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-34-1.png" style="display: block; margin: auto;" /&gt;
 
 ```
 ##                     var    rel.inf
@@ -3072,13 +3295,13 @@ summary(boost_carseats)
 plot(boost_carseats, i = "Price")
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-33-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-35-1.png" style="display: block; margin: auto;" /&gt;
 
 ```r
 plot(boost_carseats, i = "CompPrice")
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-33-2.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-35-2.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -3093,22 +3316,1133 @@ plot(n_trees, boost_err, pch = 23, ylab = "Mean Squared Error", xlab = "# Trees"
 abline(h = min(test_err), col = "red")
 ```
 
-&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-34-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="10_machine_learning_files/figure-html/unnamed-chunk-36-1.png" style="display: block; margin: auto;" /&gt;
 
+
+---
+
+# ML for inference: SCUL
+
+One new method using machine learning for causal inference is .hi[synthetic control using lasso (SCUL)] by Hollingsworth and Wing
+
+--
+
+Here's the intuition:
+
+--
+
+With synthetic control, we have a treated unit
+
+--
+
+We want to construct a *synthetic* control group for this treated unit using combinations of untreated units in our data
+
+--
+
+We construct this group using .hi-red[pre-treatment] data, and then its post-treatment behavior is our counterfactual
+
+---
+
+# Synthetic control
+
+SCM has:
+
+1. A time series of outcomes for a treated unit
+2. A time series of outcomes for `\(N\)` untreated units (also called the donor pool)
+
+--
+
+SCM then uses a weighted average of the `\(N\)` donors as a counterfactual for the treated unit
+
+--
+
+You can think of SCM as .hi[matching:] we are trying to match our treated series to a set of our donor series based on factors that determine the data generating process *prior to treatment*
+
+---
+
+# Synthetic control
+
+Every time series has some data generating process:
+`$$y_{it} = \delta_t \alpha_i + \varepsilon_{it}$$`
+where `\(y_{it}\)` is the observed outcome, and `\(\alpha_i\)` is some unobserved unit-specific factor
+
+--
+
+Ideally we would match on `\(\alpha_i\)`, but we don't have these in our data
+
+--
+
+So we have to match on the observed `\(y_{it}\)`, which has some error component `\(\varepsilon_{it}\)`
+
+---
+
+# Synthetic control
+
+We "match" using a weighted combination of the donor pool:
+`$$y_{t}^* = \sum_{i=1}^N y_{it} \pi_i$$`
+where `\(\pi_i\)` is some weight assigned to donor unit `\(i\)`
+
+--
+
+The challenge in synthetic control is determining the weights `\(\pi_i\)`, how they are determined (i.e. how they minimize prediction error) is what differentiates the classes of synthetic control methods
+
+--
+
+SCUL uses LASSO to choose the donor pool and weights
+
+---
+
+# Synthetic control in figures
+
+Consider this target/treated series
+.center[
+&lt;img src="figures/pre_treat_target_plot_1.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+Some treatment occurs
+.center[
+&lt;img src="figures/pre_treat_target_plot_2.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+There seems to be a treatment effect
+.center[
+&lt;img src="figures/target_plot.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+Can we use untreated units to estimate the size?
+.center[
+&lt;img src="figures/placebo_plot_sample.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+Untreated units are the .hi[donor pool]
+.center[
+&lt;img src="figures/placebo_plot.png" width="50%" /&gt;
+]
+
+
+---
+
+# Synthetic control in figures
+
+Restrict focus to the .hi[untreated] time period
+.center[
+&lt;img src="figures/placebo_plot_treatment.png" width="50%" /&gt;
+]
+
+
+---
+
+# Synthetic control in figures
+
+Is there a combo of donors that's a good match for the treated unit?
+.center[
+&lt;img src="figures/placebo_plot_treatment_add_target.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+Yes!
+.center[
+&lt;img src="figures/target_plus_placebo_plot_highlight_donors.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+Let's focus on the "good" donors
+.center[
+&lt;img src="figures/target_plus_donors.png" width="50%" /&gt;
+]
+
+
+---
+
+# Synthetic control in figures
+
+Use these to form a pre-treatment prediction
+.center[
+&lt;img src="figures/target_plus_donors_and_prediction.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+Extend this to the post-treatment period
+.center[
+&lt;img src="figures/target_plus_donors_whole_period.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+This is our counterfactual prediction of the treated unit
+.center[
+&lt;img src="figures/target_plus_prediction.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+Compare to the observed series
+.center[
+&lt;img src="figures/target_plus_prediction_all_time.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control in figures
+
+The difference is the treatment effect
+.center[
+&lt;img src="figures/treatment_effect.png" width="50%" /&gt;
+]
+
+---
+
+# Synthetic control weights
+
+SCM weights are often chosen by simple OLS: select the weights that minimize the difference between the pre-treatment values of the synthetic control time series, and the treated time series
+`$$\widehat{\omega}_{OLS} = arg\ min_{\omega}\left(\sum_{t=1}^{T_0}(y_{0t}-x_t \omega)^2 \right)$$`
+
+--
+
+The weights are simply the coefficients that arise from a regression of outcomes for the treated unit on the outcomes from each of the comparison units using only the `\(t=1...T_{0}\)` observations from the pre-treatment period
+
+--
+
+The synthetic control group is the predicted value from the regression for each period
+
+---
+
+# Synthetic control weights
+
+Why is OLS potentially not good here?
+
+--
+
+We want good .hi[predictions]
+
+--
+
+OLS may overfit and have bad out-of-sample properties (i.e. post-treatment)
+
+--
+
+If there are more donor units than pre-treatment observations there is no unique solution
+
+
+---
+
+# Synthetic control drawbacks
+
+Classic synthetic control has two other major drawbacks
+.center[
+&lt;img src="figures/time_series_convex_hull.png" width="60%" /&gt;
+]
+
+
+---
+
+# SCUL
+
+SCUL uses LASSO to be disciplined with weight selection:
+`\begin{align}
+ \widehat{\omega}_{lasso} = arg \ min_{\omega } \left(\sum_{t=1}^{T_0}(y_{0t}-x_t \omega)^2+\lambda|\omega|_1  \right)
+\end{align}`
+
+--
+
+We penalize choosing additional units as donors like we penalize extra regressors in OLS
+
+--
+
+How do we cross-validate `\(\lambda\)` here?
+
+--
+
+The tricky thing is that we have full .hi[time series], future and present observations are related, so full random sampling doesn't seem right...
+
+
+---
+
+# SCUL: rolling-origin cross-validation
+
+SCUL uses .hi[rolling-origin cross-validation]
+
+.center[
+&lt;img src="figures/rolling-origin-cv.png" width="75%" /&gt;
+]
+
+---
+
+# SCUL in practice
+
+Now let's actually .hi[use] SCUL
+
+--
+
+We will be using state-year level data from 1970-1997 on cigarette sales per capita and prices
+
+--
+
+SCUL requires data to be in .hi[wide] format, rows are time periods, columns are unit-specific variables
+
+--
+
+Sort the data so earliest dates are first
+
+---
+
+# SCUL in practice
+
+
+```r
+if (!require("devtools")) install.packages("devtools")
+```
+
+```
+## Loading required package: devtools
+```
+
+```
+## Loading required package: usethis
+```
+
+```r
+devtools::install_github("hollina/scul")
+```
+
+```
+## Using github PAT from envvar GITHUB_PAT
+```
+
+```
+## Skipping install of 'scul' from a github remote, the SHA1 (8756796e) has not changed since last install.
+##   Use `force = TRUE` to force installation
+```
+
+```r
+library(scul)
+library(tidyverse)
+```
+
+---
+
+# SCUL in practice
+
+Let's look at the data
+
+
+```r
+dim(cigarette_sales)
+```
+
+```
+## [1] 28 79
+```
+
+```r
+head(cigarette_sales[,1:6])
+```
+
+```
+##   year cigsale_6 cigsale_1 retprice_1 cigsale_5 retprice_5
+## 1 1970     123.0      89.8       39.6     100.3       36.7
+## 2 1971     121.0      95.4       42.7     104.1       38.8
+## 3 1972     123.5     101.1       42.3     103.9       44.1
+## 4 1973     124.4     102.9       42.1     108.0       45.1
+## 5 1974     126.7     108.2       43.1     109.7       45.5
+## 6 1975     127.1     111.7       46.6     114.8       48.6
+```
+
+
+---
+
+# SCUL in practice
+
+Next we need to break the data in two dataframes, one for the treated group `treated_data` and one for the donor pool `donor_data`
+
+```r
+target_data &lt;- cigarette_sales[, 1:2] # target/treated product
+donor_data &lt;- cigarette_sales %&gt;% # donors
+  select(-year, -cigsale_6, -retprice_6)
+```
+
+
+---
+
+# SCUL in practice: pre-process
+
+SCUL has a function `Preprocess` that lets ensures the data are in the correct format
+
+```r
+processed.target &lt;- Preprocess(target_data)
+processed.donor &lt;- Preprocess(donor_data)
+processed.target
+```
+
+```
+##    year cigsale_6
+## 1  1970     123.0
+## 2  1971     121.0
+## 3  1972     123.5
+## 4  1973     124.4
+## 5  1974     126.7
+## 6  1975     127.1
+## 7  1976     128.0
+## 8  1977     126.4
+## 9  1978     126.1
+## 10 1979     121.9
+## 11 1980     120.2
+## 12 1981     118.6
+## 13 1982     115.4
+## 14 1983     110.8
+## 15 1984     104.8
+## 16 1985     102.8
+## 17 1986      99.7
+## 18 1987      97.5
+## 19 1988      90.1
+## 20 1989      82.4
+## 21 1990      77.8
+## 22 1991      68.7
+## 23 1992      67.5
+## 24 1993      63.4
+## 25 1994      58.6
+## 26 1995      56.4
+## 27 1996      54.5
+## 28 1997      53.8
+```
+
+
+---
+
+# SCUL in practice: pre-process subsets
+
+We will be using CV to avoid overfitting, CV works on subsets of the data so we need to preprocess the subsets as well
+
+
+```r
+TreatmentBeginsAt &lt;- 19 # Here the 18th row is 1988
+PostPeriodLength &lt;- nrow(processed.target) - TreatmentBeginsAt + 1
+PrePeriodLength &lt;- TreatmentBeginsAt - 1
+NumberInitialTimePeriods &lt;- 5
+processed.target &lt;- PreprocessSubset(processed.target,
+                                       TreatmentBeginsAt ,
+                                       NumberInitialTimePeriods,
+                                       PostPeriodLength,
+                                       PrePeriodLength)
+```
+
+---
+
+# SCUL in practice: clean donor and placebo pool
+
+Next we want to clean the donor pool and the pool we will use for placebo analysis
+
+
+```r
+SCUL.input &lt;- OrganizeDataAndSetup (
+    time =  data.frame(processed.target[, 1]),
+    y = data.frame(processed.target[, 2]),
+    TreatmentBeginsAt = TreatmentBeginsAt,
+    x.DonorPool = processed.donor[, -1],
+    CohensDThreshold = 0.25,
+    NumberInitialTimePeriods = NumberInitialTimePeriods,
+    TrainingPostPeriodLength = 7,
+    x.PlaceboPool = processed.donor[, -1],
+    OutputFilePath="vignette_output/"
+)
+```
 
 
 
 ---
 
-# Econ-specific stuff
+# SCUL in practice: examine data
 
-Often times we may want to predict using FEs
+Let's look at our actual data before we proceed using `GraphTargetData()`
 
-Aproblem with LASSO is that it may only select a few of them (recall they're just a vector of dummy variables)
 
-How do we force LASSO to either select all or none?
+```r
+GraphTargetData()
+```
 
-.hi-blue[Group LASSO]
+---
+
+# SCUL in practice: examine data
+
+
+```r
+GraphTargetData()
+```
+
+![](10_machine_learning_files/figure-html/examine data2-1.png)&lt;!-- --&gt;
+
+
+---
+
+# SCUL in practice: run it
+
+
+```r
+SCUL.output &lt;- SCUL()
+```
+
+```
+## [1] "The training data is running from 1 to"
+## [1] 5
+## [1] "The testing data is running from"
+## [1] 6
+## [1] "to"
+## [1] 12
+## [1] "The minimum lambda is"
+## [1] 1.809292
+## [1] "The training data is running from 1 to"
+## [1] 6
+## [1] "The testing data is running from"
+## [1] 7
+## [1] "to"
+## [1] 13
+## [1] "The minimum lambda is"
+## [1] 2.077073
+## [1] "The training data is running from 1 to"
+## [1] 7
+## [1] "The testing data is running from"
+## [1] 8
+## [1] "to"
+## [1] 14
+## [1] "The minimum lambda is"
+## [1] 2.296012
+## [1] "The training data is running from 1 to"
+## [1] 8
+## [1] "The testing data is running from"
+## [1] 9
+## [1] "to"
+## [1] 15
+## [1] "The minimum lambda is"
+## [1] 0.02121478
+## [1] "The training data is running from 1 to"
+## [1] 9
+## [1] "The testing data is running from"
+## [1] 10
+## [1] "to"
+## [1] 16
+## [1] "The minimum lambda is"
+## [1] 0.02028809
+## [1] "The training data is running from 1 to"
+## [1] 10
+## [1] "The testing data is running from"
+## [1] 11
+## [1] "to"
+## [1] 17
+## [1] "The minimum lambda is"
+## [1] 0.01837752
+## [1] "The training data is running from 1 to"
+## [1] 11
+## [1] "The testing data is running from"
+## [1] 12
+## [1] "to"
+## [1] 18
+## [1] "The minimum lambda is"
+## [1] 0.01999185
+```
+
+```r
+SCUL.output
+```
+
+```
+## $time
+##    processed.target...1.
+## 1                   1970
+## 2                   1971
+## 3                   1972
+## 4                   1973
+## 5                   1974
+## 6                   1975
+## 7                   1976
+## 8                   1977
+## 9                   1978
+## 10                  1979
+## 11                  1980
+## 12                  1981
+## 13                  1982
+## 14                  1983
+## 15                  1984
+## 16                  1985
+## 17                  1986
+## 18                  1987
+## 19                  1988
+## 20                  1989
+## 21                  1990
+## 22                  1991
+## 23                  1992
+## 24                  1993
+## 25                  1994
+## 26                  1995
+## 27                  1996
+## 28                  1997
+## 
+## $y.actual
+##    z...sapply.z..is.numeric..
+## 1                       123.0
+## 2                       121.0
+## 3                       123.5
+## 4                       124.4
+## 5                       126.7
+## 6                       127.1
+## 7                       128.0
+## 8                       126.4
+## 9                       126.1
+## 10                      121.9
+## 11                      120.2
+## 12                      118.6
+## 13                      115.4
+## 14                      110.8
+## 15                      104.8
+## 16                      102.8
+## 17                       99.7
+## 18                       97.5
+## 19                       90.1
+## 20                       82.4
+## 21                       77.8
+## 22                       68.7
+## 23                       67.5
+## 24                       63.4
+## 25                       58.6
+## 26                       56.4
+## 27                       54.5
+## 28                       53.8
+## 
+## $y.scul
+##               1
+##  [1,] 122.80650
+##  [2,] 121.10035
+##  [3,] 123.66937
+##  [4,] 124.27842
+##  [5,] 126.87893
+##  [6,] 126.87168
+##  [7,] 127.90750
+##  [8,] 126.74200
+##  [9,] 125.62046
+## [10,] 121.81751
+## [11,] 120.28339
+## [12,] 118.78419
+## [13,] 115.46472
+## [14,] 110.75182
+## [15,] 104.73155
+## [16,] 102.78487
+## [17,]  99.92603
+## [18,]  97.48069
+## [19,]  94.10392
+## [20,]  90.52442
+## [21,]  85.49664
+## [22,]  81.98920
+## [23,]  78.30692
+## [24,]  78.09999
+## [25,]  76.50438
+## [26,]  75.41327
+## [27,]  74.39505
+## [28,]  73.58538
+## 
+## $CrossValidatedLambda
+## [1] 0.02121478
+## 
+## $TreatmentBeginsAt
+## [1] 19
+## 
+## $CohensD
+## [1] 0.01482721
+## 
+## $coef.exact
+## 76 x 1 sparse Matrix of class "dgCMatrix"
+##                         1
+## (Intercept)  4.462494e+01
+## retprice_1   .           
+## cigsale_5    .           
+## retprice_5   .           
+## cigsale_8    .           
+## retprice_8   .           
+## cigsale_9    .           
+## retprice_9  -1.761931e-02
+## cigsale_10   .           
+## retprice_10  .           
+## cigsale_13   .           
+## retprice_13  .           
+## cigsale_16   .           
+## retprice_16  .           
+## cigsale_17   2.091209e-01
+## retprice_17  .           
+## cigsale_18  -1.037335e-02
+## retprice_18  .           
+## cigsale_19   .           
+## retprice_19  .           
+## cigsale_20   5.802361e-02
+## retprice_20  .           
+## cigsale_21   .           
+## retprice_21  .           
+## cigsale_22   .           
+## retprice_22  .           
+## cigsale_23   1.029246e-01
+## retprice_23  .           
+## cigsale_27   .           
+## retprice_27  .           
+## cigsale_28   .           
+## retprice_28  .           
+## cigsale_29   .           
+## retprice_29 -8.353330e-04
+## cigsale_30   .           
+## retprice_30  .           
+## cigsale_31   1.128328e-02
+## retprice_31  .           
+## cigsale_32   1.257049e-01
+## retprice_32  .           
+## cigsale_33   .           
+## retprice_33  .           
+## cigsale_35   .           
+## retprice_35  .           
+## cigsale_37   .           
+## retprice_37  .           
+## cigsale_38   .           
+## retprice_38  .           
+## cigsale_39   .           
+## retprice_39  .           
+## cigsale_40   .           
+## retprice_40 -1.469283e-03
+## cigsale_42   .           
+## retprice_42  .           
+## cigsale_44   .           
+## retprice_44  .           
+## cigsale_45   .           
+## retprice_45  .           
+## cigsale_46   .           
+## retprice_46 -2.087842e-02
+## cigsale_47  -1.024313e-01
+## retprice_47  .           
+## cigsale_48   .           
+## retprice_48  .           
+## cigsale_49   1.101705e-01
+## retprice_49  .           
+## cigsale_50   .           
+## retprice_50 -3.568402e-03
+## cigsale_51   .           
+## retprice_51 -1.101991e-05
+## cigsale_54   1.485928e-01
+## retprice_54 -1.080262e-01
+## cigsale_55   .           
+## retprice_55  .           
+## cigsale_56   .           
+## retprice_56  .
+```
+
+
+---
+
+# SCUL in practice: run it
+
+`SCUL.output` contains a number of useful things:
+
+- `time`: A vector of the running time variable
+- `TreatmentBeginsAt`: A scalar indicating the row that treatment begins
+- `y.actual`: The observed target series
+- `y.scul`: The counterfactul prediction from SCUL of the target series
+
+---
+
+# SCUL in practice: run it
+
+`SCUL.output` contains a number of useful things:
+- `CrossValidatedLambda`: The median cross-validated lambda from all of the cross-validation runs that is used to create `y.scul`. For this example, `\(\lambda\)` = 0.02
+- `CohensD`: A unit-free measure of fit between `y.actual` and `y.scul`. Discussed more below. For this example the fit is 0.01
+- `coef.exact`: A matrix of the coefficients for each donor variable which are used to create the synthetic prediction
+
+---
+
+# SCUL in practice: plot results
+
+
+```r
+PlotActualvSCUL()
+```
+
+&lt;img src="10_machine_learning_files/figure-html/plot actualvsSCUL-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# SCUL in practice: pre-period fit
+
+At this point you also want to evaluate the pre-period fit, there's no guarantee any SCM approach can find a weighted combo of donors that matches the treated unit well
+
+--
+
+Hollingsworth and Wing have some suggestions on how to do this specifically for this approach
+
+---
+
+# SCUL in practice: pre-period fit
+
+The common approach is to say we have a good fit if the .hi[Cohen's D statistic] `\(D_s\)` is less than 0.25 where:
+`$$D_s = \frac{1}{T_0}\sum_{t=1}^{T_0}|\frac{y_{st} - y^{*}_{st}}{\sigma_{s}}|$$`
+and
+`$$\sigma_{s} = \frac{1}{T_0}\sum_{t=1}^{T_0}(y_{st} - \overline{y_s})^2$$`
+
+
+---
+
+# SCUL in practice: pre-period fit
+
+If `\(D_s &lt; 0.25\)` then the imbalance is less than a quarter of a standard deviation
+
+--
+
+This is arbitrary, but its unit-free and standardized
+
+
+---
+
+# SCUL in practice: looking at the weights
+
+Next we can look at the weights with `PlotShareTable()`
+
+
+```r
+PlotShareTable()
+```
+
+
+&lt;table class="table table-condensed"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Share for
+ First Prediction &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Share for Most
+ Recent Prediction &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Coefficient &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Intercept &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 100.00%"&gt;0.28&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 100.00%"&gt;0.28&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: green"&gt;44.62&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cigsale_17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 60.00%"&gt;0.14&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 68.57%"&gt;0.17&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: green"&gt;0.21&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cigsale_32 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 51.43%"&gt;0.11&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 62.86%"&gt;0.15&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: green"&gt;0.13&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cigsale_54 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 48.57%"&gt;0.10&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 51.43%"&gt;0.11&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: green"&gt;0.15&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; retprice_54 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 42.86%"&gt;0.08&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 25.71%"&gt;0.02&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: red"&gt;-0.11&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cigsale_23 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 42.86%"&gt;0.08&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 42.86%"&gt;0.08&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: green"&gt;0.10&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cigsale_47 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 42.86%"&gt;0.08&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 40.00%"&gt;0.07&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: red"&gt;-0.10&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cigsale_49 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 31.43%"&gt;0.04&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 34.29%"&gt;0.05&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: green"&gt;0.11&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cigsale_20 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 31.43%"&gt;0.04&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 31.43%"&gt;0.04&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: green"&gt;0.06&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; retprice_46 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 25.71%"&gt;0.02&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 22.86%"&gt;0.01&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: red"&gt;-0.02&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; retprice_9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 22.86%"&gt;0.01&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 20.00%"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: red"&gt;-0.02&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cigsale_18 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 22.86%"&gt;0.01&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 22.86%"&gt;0.01&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: red"&gt;-0.01&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cigsale_31 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 22.86%"&gt;0.01&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 22.86%"&gt;0.01&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: green"&gt;0.01&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; retprice_50 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 20.00%"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 20.00%"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: black"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; retprice_40 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 20.00%"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 20.00%"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: black"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; retprice_29 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 20.00%"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 20.00%"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: black"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; retprice_51 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 20.00%"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="display: inline-block; direction: rtl; unicode-bidi: plaintext; border-radius: 4px; padding-right: 2px; background-color: #3399FF; width: 20.00%"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; &lt;span style="color: black"&gt;0.00&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+
+# SCUL in practice: inference
+
+So now we have our counterfactual time series, and we know how it was constructed
+
+--
+
+Next we want to actually do statistical inference
+
+--
+
+We need a measure of uncertainty
+
+--
+
+We do this using randomization inference (Cavallo et al. 2013; Dube and Zipperer 2015)
+
+
+---
+
+# SCUL in practice: inference
+
+We construct a rank-based two-sided p-value by comparing:
+
+--
+
+- Absolute values of the .hi[actual] standardized treatment estimates
+- Relative to absolute values of standardized treatment estimates using placebo time series
+
+--
+
+The latter serves as a null distribution
+
+--
+
+We then can basically count what percent of placebo treatment effects were larger than the actual
+
+
+---
+
+# SCUL in practice: inference
+
+Now we need to estimate the pseudo/placebo treatment effects:
+
+
+```r
+SCUL.inference &lt;- CreatePlaceboDistribution()
+```
+
+```
+## [1] "1.33 percent done"
+## [1] "2.67 percent done"
+## [1] "4 percent done"
+## [1] "5.33 percent done"
+## [1] "6.67 percent done"
+## [1] "8 percent done"
+## [1] "9.33 percent done"
+## [1] "10.67 percent done"
+## [1] "12 percent done"
+## [1] "13.33 percent done"
+## [1] "14.67 percent done"
+## [1] "16 percent done"
+## [1] "17.33 percent done"
+## [1] "18.67 percent done"
+## [1] "20 percent done"
+## [1] "21.33 percent done"
+## [1] "22.67 percent done"
+## [1] "24 percent done"
+## [1] "25.33 percent done"
+## [1] "26.67 percent done"
+## [1] "28 percent done"
+## [1] "29.33 percent done"
+## [1] "30.67 percent done"
+## [1] "32 percent done"
+## [1] "33.33 percent done"
+## [1] "34.67 percent done"
+## [1] "36 percent done"
+## [1] "37.33 percent done"
+## [1] "38.67 percent done"
+## [1] "40 percent done"
+## [1] "41.33 percent done"
+## [1] "42.67 percent done"
+## [1] "44 percent done"
+## [1] "45.33 percent done"
+## [1] "46.67 percent done"
+## [1] "48 percent done"
+## [1] "49.33 percent done"
+## [1] "50.67 percent done"
+## [1] "52 percent done"
+## [1] "53.33 percent done"
+## [1] "54.67 percent done"
+## [1] "56 percent done"
+## [1] "57.33 percent done"
+## [1] "58.67 percent done"
+## [1] "60 percent done"
+## [1] "61.33 percent done"
+## [1] "62.67 percent done"
+## [1] "64 percent done"
+## [1] "65.33 percent done"
+## [1] "66.67 percent done"
+## [1] "68 percent done"
+## [1] "69.33 percent done"
+## [1] "70.67 percent done"
+## [1] "72 percent done"
+## [1] "73.33 percent done"
+## [1] "74.67 percent done"
+## [1] "76 percent done"
+## [1] "77.33 percent done"
+## [1] "78.67 percent done"
+## [1] "80 percent done"
+## [1] "81.33 percent done"
+## [1] "82.67 percent done"
+## [1] "84 percent done"
+## [1] "85.33 percent done"
+## [1] "86.67 percent done"
+## [1] "88 percent done"
+## [1] "89.33 percent done"
+## [1] "90.67 percent done"
+## [1] "92 percent done"
+## [1] "93.33 percent done"
+## [1] "94.67 percent done"
+## [1] "96 percent done"
+## [1] "97.33 percent done"
+## [1] "98.67 percent done"
+## [1] "100 percent done"
+```
+
+---
+
+# SCUL in practice: plot placebos
+
+Now we can make a smoke plot using `SmokePlot()`
+
+--
+
+A smoke plot plots our estimated treatment effect time series relative to the placebos
+
+--
+
+It gives us a visualization of the p-value
+
+---
+
+# SCUL in practice: plot placebos
+
+
+```r
+smoke_plot &lt;- SmokePlot()
+smoke_plot
+```
+
+&lt;img src="10_machine_learning_files/figure-html/smoke-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# SCUL in practice: two-sided p value
+
+
+```r
+Results.y.StandardizedDiff &lt;- (SCUL.output$y.actual-SCUL.output$y.scul) /
+    sd(unlist(SCUL.output$y.actual[1:(SCUL.input$TreatmentBeginsAt-1),]))
+PValue(
+    CohensD = 999,
+    StartTime = SCUL.input$TreatmentBeginsAt,
+    EndTime = nrow(Results.y.StandardizedDiff)
+)
+```
+
+```
+##   p.value.high
+## 1         0.13
+```
+
+
+---
+
+# SCUL in practice: two-sided p value
+
+
+```r
+PValue(
+    CohensD = .25,
+    StartTime = SCUL.input$TreatmentBeginsAt,
+    EndTime = nrow(Results.y.StandardizedDiff)
+)
+```
+
+```
+##   p.value.high
+## 1         0.07
+```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -3159,30 +4493,20 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
 })();
 (function() {
   "use strict"
-  /* Replace <script> tags in slides area to make them executable
-   *
-   * Runs after post-processing of markdown source into slides and replaces only
-   * <script>s on the last slide of continued slides using the .has-continuation
-   * class added by xaringan. Finally, any <script>s in the slides area that
-   * aren't executed are commented out.
-   */
+  // Replace <script> tags in slides area to make them executable
   var scripts = document.querySelectorAll(
-    '.remark-slides-area .remark-slide-container:not(.has-continuation) script'
+    '.remark-slides-area .remark-slide-container script'
   );
   if (!scripts.length) return;
   for (var i = 0; i < scripts.length; i++) {
     var s = document.createElement('script');
     var code = document.createTextNode(scripts[i].textContent);
     s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
     scripts[i].parentElement.replaceChild(s, scripts[i]);
-  }
-  var scriptsNotExecuted = document.querySelectorAll(
-    '.remark-slides-area .remark-slide-container.has-continuation script'
-  );
-  if (!scriptsNotExecuted.length) return;
-  for (var i = 0; i < scriptsNotExecuted.length; i++) {
-    var comment = document.createComment(scriptsNotExecuted[i].outerHTML)
-    scriptsNotExecuted[i].parentElement.replaceChild(comment, scriptsNotExecuted[i])
   }
 })();
 (function() {

@@ -25,6 +25,17 @@ class: center, middle, inverse, title-slide
 # Roadmap
 
 
+```
+## Julia version 1.5.4 at location /Applications/Julia-1.5.app/Contents/Resources/julia/bin will be used.
+```
+
+```
+## Loading setup script for JuliaCall...
+```
+
+```
+## Finish loading setup script for JuliaCall.
+```
 
 1. How do we think about solving dynamic economic models
 2. Value function iteration
@@ -1823,7 +1834,10 @@ then there is only a finite number of valid controls
 
 This makes solving easy!
 
---
+
+---
+
+# A short overview of discretization + VFI
 
 Search over all possible controls today until you find the one that yields the highest value of the RHS of the Bellman:
 just requires looping and a max operator
@@ -1970,7 +1984,7 @@ value, v_store = @time iterate_value(grid, params_dis)
 ## Current maximum value difference at iteration 200 is 0.00042797776669090126.
 ## Current maximum value difference at iteration 210 is 0.0002562460981039294.
 ## Current maximum value difference at iteration 220 is 0.00015342400445206295.
-##   0.261265 seconds (428.43 k allocations: 20.173 MiB, 24.19% gc time)
+##   0.391359 seconds (1.34 M allocations: 64.524 MiB, 3.72% gc time)
 ```
 
 ```
@@ -2026,7 +2040,7 @@ value, v_store = @time iterate_value(grid, params_dis)
 ## Current maximum value difference at iteration 200 is 0.00035505432774129986.
 ## Current maximum value difference at iteration 210 is 0.00021258414147951044.
 ## Current maximum value difference at iteration 220 is 0.0001272819782229817.
-##   0.028413 seconds (91.76 k allocations: 39.569 MiB)
+##   0.023097 seconds (91.76 k allocations: 39.569 MiB)
 ```
 
 ```
