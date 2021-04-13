@@ -60,7 +60,7 @@ There will be four problem sets. You must submit your code on [GitHub](https://g
 
 - Problem set 1: Due March 1 ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/1_ps/01-ps.html)) 
 - Problem set 2: Due March 17 ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/2_ps/02-ps.html)) 
-- Problem set 3: Due TBD
+- Problem set 3: Due April 15 ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/3_ps/03-ps.html)) 
 - Problem set 4: Due TBD
 
 ### Final project ([proposal instructions here](https://raw.githack.com/AEM7130/class-repo/master/final-project/project_proposal.html))
