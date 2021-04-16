@@ -1,0 +1,26 @@
+---
+title: "Problem Set 4"
+author: "AEM 7130"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem Set 4: Due May 1 at 11:59PM.
+
+Make sure your code is well-commented and reproducible. Unless stated in the problem, you can (and may need to) use some Google searching to find how to code parts of your answers.
+
+# Problem 1: Oil extraction
+
+You are a small oil extracting firm. You own an oil reservoir that contains $s_0 = 500$ barrels of oil at time 0, and $s_t$ denotes how much oil you have in your reservoir at time $t = 0,1,2,....$
+
+The cost of extracting oil is given by the function, $C(e_t) = e_t^2$ where $e_t$ is barrels of oil extracted at time $t$. The remaining oil in the reservoir is given by $s_{t+1} = s_t - e_t$. Extracted oil at time $t$ is sold immediately at a price of 30 dollars per barrel. We discount the future with a per-period discount factor $\beta = 0.95$. We cannot leave a negative stock of oil in the ground and we cannot extract a negative amount of oil ($e_t \geq 0$, $s_{t+1} \geq 0$).
+
+1. Write out the extraction problem in Bellman form.
+2. Solve for the infinite horizon value function or policy function using a method of your choosing and a Chebyshev approximation of degree 3, 5 and 8 (hint: the initial condition tells you what your collocation domain should be).
+3. Simulate the model forward in time for 20 periods using the three approximations. Plot the extraction and oil stock trajectories, with all three approximations on the same figure. 
+4. Derive the Euler equation for the firm's problem.
+5. Rearrange the Euler equation so that it is of a form: $g(e_t,\beta) = 1$.
+6. Construct a 100 point evenly spaced grid on your oil state. Compute and plot the Euler equation errors, $log_{10}(|g(e_t,\beta)|)$, along the grid for all three approximations.
