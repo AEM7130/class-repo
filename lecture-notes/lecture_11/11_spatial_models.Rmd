@@ -853,3 +853,7 @@ which is a set of $n$ equations and $n$ unknown $\hat{X}_{ji}$ for any $h$ we ch
 --
 
 We have solved for all the unobserved hat terms!
+
+--
+
+With these we can simulate any change in productivity, and the only two model parameters we needed to take a stand on were $\gamma$ and $\theta$
