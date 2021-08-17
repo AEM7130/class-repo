@@ -183,7 +183,7 @@ Judd (1998, Chapter 10)
 
 Lemoine, Derek, and Ivan Rudik. "Steering the climate system: using inertia to lower the cost of policy." American Economic Review 107, no. 10 (2017): 2947-57.
 
-### Week 10: Solving (dynamic) spatial equilibrium models
+### Week 10: Solving (dynamic) spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
 **Theory**: exact hat algebra, dynamic hat algebra
 
