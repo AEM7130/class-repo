@@ -17,8 +17,8 @@ output:
 ---
 
 # Roadmap
-
-1. The theory behind continuous time models
+ 
+1. The theory behind continuous time models 
 2. Numerical methods for solving continuous time model
 
 
@@ -26,14 +26,15 @@ output:
 
 # Model setup
 
-Consider a problem where each period an agent obtains flow utility $J(x(t),u(t))$,  
-where $x$ is our state and $u$ is our control
+Consider a problem where each period an agent obtains flow utility $J(x(t),u(t))$, where $x$ is our .hi[state] and $u$ is our .hi[control]
 
 --
 
-Suppose there is a finite horizon with a terminal time $T$
+Suppose there is a finite horizon with a .hi[terminal time] $T$
 
---
+---
+
+# Model setup
 
 The agent's objective is to maximize the total payoff, subject to the transitions of the states
 \begin{align}
@@ -43,6 +44,8 @@ The agent's objective is to maximize the total payoff, subject to the transition
 
 This is an open-loop solution so we optimize our entire policy trajectory from time $t=0$
 
+We will not be solving for functions of states, but functions of time:  $u(t), x(t)$
+
 ---
 
 # Hamiltonians
@@ -51,14 +54,16 @@ In a dynamic optimization problem, we will have an auxiliary function that yield
 
 --
 
-This function is called the *Hamiltonian*
+This function is called the *Hamiltonian*:
 $$H(x(t),u(t),\lambda(t)) \equiv J(x(t),u(t)) + \lambda(t)g(x(t),u(t))$$
+
+It is a function that treats the transitions as quasi-constraints so it appears similar to the Lagrangian you know
 
 ---
 
 # Hamiltonians
 
-Pontryagin's Maximum Principle states that the following conditions are necessary for an optimal solution,
+Pontryagin's Maximum Principle states that the following conditions are necessary for an optimal solution:
 \begin{align}
   \frac{\partial H(x(t),u(t),\lambda(t))}{\partial u} &= 0 \,\, \forall t \in [0,T] \tag{Maximality} \\
   \frac{\partial H(x(t),u(t),\lambda(t))}{\partial x} &= -\dot{\lambda}(t) \tag{Co-state} \\
@@ -74,19 +79,24 @@ What do these conditions mean?
 # Necessary conditions
 
 
-First, what is the Hamiltonian?
+First, what *is* the Hamiltonian?
 
 --
 
-The contribution of that instant $t$ to overall utility via the change in flow utility and the change in the state (which affects future flow utilities)
+The Hamiltonian tells us the contribution of that instant $t$ to overall utility via the change in flow utility and the change in the state (which affects future flow utilities)
 
 --
 
 The decisionmaker can use her control to increase the contemporaneous flow utility and reap immediate rewards, or to alter the state variable to increase future rewards
 
+
+$$H(x(t),u(t),\lambda(t)) \equiv \underbrace{J(x(t),u(t))}_{\text{current flow}} + \underbrace{\lambda(t)g(x(t),u(t))}_{\text{change in future value}}$$
+
 ---
 
 # Necessary conditions
+
+$$\frac{\partial H(x(t),u(t),\lambda(t))}{\partial u} = 0 \,\, \forall t \in [0,T]$$
 
 The .hi-blue[maximality condition]: in every instant, we select the control so that we can no longer increase our total payoff
 
@@ -94,22 +104,29 @@ The .hi-blue[maximality condition]: in every instant, we select the control so t
 
 It effectively sets the net marginal benefits of the control to zero
 
---
+---
 
-The state transition expression is just a definition
+# Necessary conditions
 
+$$\frac{\partial H(x(t),u(t),\lambda(t))}{\partial \lambda} = \dot{x}(t)$$
+
+The .hi-blue[state transition] is just a definition
 
 --
 
 Taking the derivative of the Hamiltonian with respect to the shadow value, just like a Lagrangian, yields this constraint back
 
+---
+
+# Necessary conditions
+
+$$\frac{\partial H(x(t),u(t),\lambda(t))}{\partial x} = -\dot{\lambda}(t)$$
+
+The .hi-blue[co-state condition] defines how the shadow value of our state transition, called the .hi[co-state variable], evolves over time
+
 --
 
-This leaves the .hi-blue[co-state condition]
-
---
-
-It defines how the shadow value of our state transition, called the *co-state variable*, evolves over time
+What is the co-state?
 
 ---
 
@@ -137,20 +154,23 @@ Why?
 
 # Necessary conditions
 
-If it didn't, we could increase value by accumulating more of the stock variable  
-$\rightarrow$ what we were doing cannot be optimal
+If it didn't, we could increase value by accumulating more of the stock variable $\rightarrow$ there is a profitable deviation and what we were doing cannot be optimal
 
 We can re-write the co-state equation as
 $$\frac{\partial J}{\partial x} + \lambda(t) \frac{\partial g}{\partial x} + \dot{\lambda}(t) = 0$$
 
 
---
+---
+
+# Necessary conditions
+
+$$\frac{\partial J}{\partial x} + \lambda(t) \frac{\partial g}{\partial x} + \dot{\lambda}(t) = 0$$
 
 We must have that the a unit of the stock's value must change (third term), so that is exactly offsets the change in value from increasing the stock in the immediate instant of time
 
 --
 
-The immediate value is made up of the actual utility payoff (first term),  
+The immediate value is made up of the actual utility payoff (first term), 
 and the future utility payoff payoff from how increasing the stock today affects the stock in the future (second term)
 
 ---
@@ -201,8 +221,7 @@ In general there are four types of transversality conditions
 
 --
 
-The first two are for free initial or terminal time problems,  
-these are problems where the agent can select when the problem starts or ends
+The first two are for free initial or terminal time problems: these are problems where the agent can select when the problem starts or ends
 
 --
 
@@ -210,7 +229,7 @@ The second two are for pinning down the initial and terminal state variables if 
 
 --
 
-Usually terminal conditions free and initial conditions are not
+Usually terminal conditions are free and initial conditions are not
 
 ---
 
@@ -246,7 +265,7 @@ Why?
 
 --
 
-If it were positive the policymaker could profitably deviate by altering the level of the stock. Finally, these are all necessary conditions of the problem. 
+If it were positive the policymaker could profitably deviate by altering the level of the stock. Finally, these are all necessary conditions of the problem
 
 ---
 
@@ -281,14 +300,22 @@ Present value refers to the value with respect to a specific period that we call
 
 Our previous necessary conditions apply to present value Hamiltonians,  
 but let us analyze a current value Hamiltonian to avoid including time terms,
-$$H^{cv}(x(t),u(t),\mu(t)) \equiv e^{rt} H(x(t),u(t),\lambda(t),t) = e^{rt} J(x(t),u(t),t) + e^{rt}\lambda(t)g(x(t),u(t))$$
+\begin{align}
+  H^{cv}(x(t),u(t),\mu(t)) \equiv e^{rt} &H(x(t),u(t),\lambda(t),t) \\
+  &= e^{rt} J(x(t),u(t),t) + e^{rt}\lambda(t)g(x(t),u(t))
+\end{align}
 
 $\mu(t)$ is the shadow value $\lambda$ brought into current value terms: $\mu(t) = e^{rt} \lambda(t)$
 
---
 
-We can then re-write our necessary conditions in current value by substituting in for the shadow value
-(which implies that $\dot{\lambda}(t) = -re^{-rt}\mu(t) + e^{-rt}\dot{\mu}(t)$), and for $\partial H / \partial x  = e^{-rt}\,\partial H^{cv}/\partial x$ into our co-state condition
+---
+
+# Current value terms
+
+We can then re-write our necessary conditions in current value by substituting in for:
+
+- the shadow value (which implies that $\dot{\lambda}(t) = -re^{-rt}\mu(t) + e^{-rt}\dot{\mu}(t)$)
+- $\partial H / \partial x  = e^{-rt}\,\partial H^{cv}/\partial x$ into our co-state condition:
 $$e^{-rt}\frac{\partial H^{cv}(x(t),u(t),\mu(t))}{\partial x} = e^{-rt}\left[r\mu(t) - \dot{\mu}(t)\right]$$
 
 ---
@@ -301,7 +328,11 @@ $$e^{-rt}\frac{\partial H^{cv}(x(t),u(t),\mu(t))}{\partial x} = e^{-rt}\left[r\m
 
 Before, the present value form of the co-state condition required the change in the present shadow value precisely equal the effect of the state variable on instantaneous value
 
---
+---
+
+# Current value
+
+$$e^{-rt}\frac{\partial H^{cv}(x(t),u(t),\mu(t))}{\partial x} = e^{-rt}\left[r\mu(t) - \dot{\mu}(t)\right]$$
 
 In current value form, the co-state condition recognizes that the change in the present shadow value is comprised of two parts:
 
@@ -671,7 +702,12 @@ If $y(t)$ is the true solution, the second order Taylor expansion around $t_i$ i
 $$y(t_{i+1}) = y(t_i) + hy'(t_i) + \frac{h^2}{2}y''(\xi)$$
 for some $\xi \in [t_i,t_{i+1}]$
 
---
+
+---
+
+# Euler's method
+
+$$y(t_{i+1}) = y(t_i) + hy'(t_i) + \frac{h^2}{2}y''(\xi)$$
 
 If we drop the second order term and assume $f(t_i,Y_i) = y'(t_i)$ and $Y_i = y(t_i)$ we have exactly Euler's formula
 
@@ -744,7 +780,9 @@ where excluded terms have order higher than $h$
 
 Thus the relative error in the Euler approximation has order $h$ and as $h$ goes to zero so does the approximation error
 
---
+---
+
+# Euler's method errors
 
 In general we can show that Euler's method has linear convergence
 

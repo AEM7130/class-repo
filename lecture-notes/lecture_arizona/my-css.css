@@ -294,7 +294,7 @@ td.mid-table-header {
 }
 
 .remark-slide-content {
-  font-family: "Lato", sans-serif;
+  font-family: "Atkinson Hyperlegible", sans-serif;
   border-top: 70px solid #ffffff;
   color: #000000;
   background-color: #ffffff;
@@ -558,7 +558,7 @@ hr, .title-slide h2::after, .mline h1::after {
   content: '';
   display: block;
   border: none;
-  background-color: #e5e5e5;
-  color: #e5e5e5;
-  height: 1px;
+  background-color: #3C93DC;
+  color: #3C93DC;
+  height: 6px;
 }
