@@ -51,9 +51,25 @@ knitr::opts_chunk$set(echo = TRUE, fig.align="", message = FALSE, warning = FALS
 
 ---
 
+# The economics of space
+
+Capturing space is hard for similar reasons as to why capturing time is hard: lots of states / interactions
+
+--
+
+Historically, very little serious treatment of space
+
+--
+
+.hi-blue["Spatial Impossibility Theorems"] tell us that there's no competitive equilibrium outcome with transport of goods and positive transport costs if space is homogeneous (utilities and production technologies are the same)
+  - Factor mobility perfectly substitutes for trade, never incur the trade cost
+  
+
+---
+
 # Spatial models
 
-With spatial models we are now going to allow for:
+Spatial models we are now going to allow for:
 
 - heterogeneity across space
 - migration
@@ -104,7 +120,6 @@ These features better allow us to understand the impacts of things like:
 - amenity endogeneity (Almagro and Dominguez-Ilno, 2021)
 - the value of density in Berlin (Ahlfeldt et al. 2015)
 - the impact of Amazon HQ2 (Dingel and Tintelnot 2021) [.hi[micro-geography]]
-- worker location choice (Diamond, 2016) [.hi[space + BLP!]]
 
 ---
 
@@ -118,7 +133,7 @@ The model and code are derived from Donaldson and Hornbeck (2016)
 
 --
 
-It is a version of the canonical Eaton and Kortum (2002) Ricardian trade model
+It is a version of the canonical Eaton and Kortum (2002) Ricardian model
 
 --
 
@@ -134,7 +149,7 @@ Standard trade models are all isomorphic: same aggregate outcomes despite differ
 
 Here's what we are going to do:
 
-1. Develop the static model (why is it called a gravity model?)
+1. Develop the static model
 2. Show how to solve for model unknowns using data and calibration of parameters 
 3. Show how to use .blue[exact hat algebra] to simulate counterfactuals without needing to observe time-invariant exogenous variables (Dekle et al. 2008)
   - Empirical seminar talk uses .blue[dynamic hat algebra] (Caliendo et al. 2019)
@@ -167,7 +182,7 @@ Household utility is
 
 --
 
-Each industry produces a continuum of varieties (more later) such that `\(C_i\)` is a .pink[constant elasticity of substitution] aggregate of the varieties with elasticity `\(\sigma\)`
+Each industry produces a continuum of varieties `\(\omega \in [0,N]\)` (important for the production side) such that `\(C_i\)` is a .pink[constant elasticity of substitution] aggregate of the varieties with elasticity `\(\sigma\)`
 
 --
 
@@ -249,15 +264,9 @@ Perfectly competitive firms use labor, capital, and .pink[Cobb-Douglas] technolo
 
 --
 
-The marginal cost of producing variety `\(\omega\)` in location `\(i\)` is:
-`$$MC_i(\omega) = \frac{1}{z_i(\omega)}{(w_i)}^\gamma {(r_i)}^{1-\gamma}$$`
-
---
-
 Total output in location `\(i\)` is given by `\(Y_i = z_i(\omega) L_i^\gamma K_i^{1-\gamma}\)`
 
 --
-
 
 `\(\gamma_i\)` is the share of value added and `\(r_i\)` is the rental rate of capital
 
@@ -265,9 +274,14 @@ Total output in location `\(i\)` is given by `\(Y_i = z_i(\omega) L_i^\gamma K_i
 
 Capital is perfectly mobile so `\(r_i = r\)` for all `\(i\)`
 
+--
+
+The input cost of producing variety `\(\omega\)` in location `\(i\)` is:
+`$$c_i = {(w_i)}^\gamma {(r)}^{1-\gamma}$$`
+
 ---
 
-# Firms: Trade
+# Firms: Trade and prices
 
 Trade costs are .pink[iceberg]
 
@@ -275,9 +289,63 @@ Trade costs are .pink[iceberg]
 
 Delivering 1 unit of the good from `\(j\)` to `\(i\)` requires shipping `\(\tau_{ij} \geq 1\)` units, this represents the costs of shipping/trade
 
+
 --
 
-With a bit of math we can solve for the .pink[ideal price index:]
+The price of a good from `\(j\)` in `\(i\)` is then:
+`$$P_{ij}(\omega) = \frac{1}{z_i(\omega)}c_i(\omega) \tau_{ij} = \frac{1}{z_i(\omega)}{(w_i)}^\gamma {(r)}^{1-\gamma} \tau_{ij}$$`
+
+--
+
+Buyers purchase from the lowest-cost provider so the price in `\(i\)` is:
+`$$P_i(\omega) = \min_{j}\left\{P_{ij}(\omega), j=1,\dots,N \right\}$$`
+
+---
+
+# Firms: Trade and prices
+
+`\(P_{ij}(\omega)\)` and the Frechet assumption on `\(z\)` give us a distribution of prices faced by `\(i\)` from `\(j\)` sellers `\(G_{ij}(p)\)`:
+`$$Pr[P_{ij} \leq p] \equiv G_{ij}(p) = 1 - F_{j}\left(\frac{1}{p}{(w_i)}^\gamma {(r)}^{1-\gamma} \tau_{ij}\right)$$`
+
+--
+
+The lowest price for a variety in `\(i\)` takes on the minimum across all countries `\(j\)` giving us the distribution for prices in `\(i\)` of varieties that `\(i\)` actually buys `\(G_n(p)\)`:
+`$$Pr[P_i \leq p] \equiv G_i(p) = 1 - \prod_{j=1}^N [1- G_{ij}(p)]$$`
+
+---
+
+# Firms: Trade and prices
+
+We then get our final expression for the distribution of prices in `\(i\)`:
+`$$G_i(p) = 1 - \exp(-\Phi_i p^\theta) \quad \text{where} \quad \Phi_i = \sum_{j=1}^N T_j (c_j \tau_{ij})^{-\theta}$$`
+
+`\(\Phi_i\)` summarizes how:
+  - Technologies in all `\(j\)`
+  - Input costs in all `\(j\)`
+  - Trade barriers with all `\(j\)`
+  
+Govern prices in `\(i\)`
+
+---
+
+# Firms: Prices
+
+Three key properties of `\(G_i(p)\)`:
+
+1. The probability that `\(j\)` is the lowest-cost seller in `\(i\)` is:
+`$$\pi_{ij} = \frac{T_j (c_j \tau_{ij})^{-\theta}}{\sum_{j=1}^N T_j (c_j \tau_{ij})^{-\theta}} \qquad \approx \text{ logit shares}$$`
+
+2. Prices are independent of sources: sellers adjust on the extensive margin by selling more or fewer goods
+
+3. The ideal price index in `\(i\)` is `\((\sigma &lt; 1+ \theta)\)`:
+`$$P_i = \gamma \Phi_i^{-1/\theta}$$`
+
+
+---
+
+# Firms: Prices
+
+With a bit of math we can solve for the .pink[ideal price index] as a function of input costs and parameters:
 `$$P_{i} = \kappa \left(\sum_{n=1}^N T_{n} \left[{(w_n)}^\gamma \tau_{in} \right]^{-\theta} \right)^{-1/\theta}$$`
 
 which is the cost of 1 unit of utility in location `\(i\)`, `\(\kappa\)` is a constant
@@ -298,16 +366,17 @@ Notice `\(P_i\)` is increasing in sellers' trade costs `\(\tau_{in}\)` and input
 
 # Firms: Trade
 
-.hi[Bilateral trade expenditures] of location `\(i\)` on goods from location `\(j\)` are given by:
+.hi[Bilateral trade expenditures] of location `\(i\)` on goods from location `\(j\)` are:
 `$$X_{ij} = \kappa T_{j} Y_i\left(\frac{ {(w_j)}^\gamma \tau_{ij}}{{P_{i}}}\right)^{-\theta}$$`
+
+
+Prop 2 `\(\rightarrow\)` average expenditure per good `\(\perp\)` source, `\(\rightarrow\)` Prop 1 `\(\rightarrow\)` fraction of quantities `\(\leftrightarrow\)` fraction of expenditures
 
 --
 
 `\(i\)` purchases more products from `\(j\)` if:
 
-- the costs of products from `\(j\)` are lower: smaller `\(w_j, \tau_{ij}\)`, larger `\(T_j\)`
-- `\(i\)` is richer `\(Y_i\)`
-- Consumer market access `\({(P_{i})}^{-\theta}\)` is lower
+- the costs of products from `\(j\)` are lower, `\(i\)` is richer `\(Y_i\)`, consumer market access `\({(P_{i})}^{-\theta}\)` is lower
 
 
 ---
