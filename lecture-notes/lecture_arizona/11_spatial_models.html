@@ -43,7 +43,6 @@ knitr::opts_chunk$set(echo = TRUE, fig.align="", message = FALSE, warning = FALS
 
 # Roadmap
 
-1. https://arkolakis.com/wp-content/uploads/Economics_and_Space_Unified_at_Last_DEGIT.pdf
 1. The economics of space
 2. Spatial model simple set up
 3. Function iteration solutions
@@ -69,14 +68,13 @@ Historically, very little serious treatment of space
 
 # Spatial models
 
-Spatial models we are now going to allow for:
+With spatial models we are now going to allow for:
 
 - heterogeneity across space
-- migration
-- trade
+- trade + frictions
+- migration + frictions
 - agglomeration economies
-- congestion forces
-- etc
+- dispersion forces (congestion)
 
 Basically, more consideration of general equilibrium effects
 
@@ -88,7 +86,11 @@ These new approaches generally are considered a part of .hi[economic geography:]
 
 --
 
-Distance, location, etc all matter, but are often ignored
+Exogenous location-specific characteristics matter
+
+--
+
+Endogenous agglomeration and dispersion forces matter
 
 --
 
@@ -96,13 +98,13 @@ Increasingly important in trade and urban, lots of conceptual/methodological par
 
 --
 
-Often combines granular data (census blocks, households, cell-level) with a theoretical equilibrium model to discipline estimation and simulate counterfactuals
+Often combines granular data (census blocks, households, cell-level) with a theoretical equilibrium model to simulate counterfactuals
 
 ---
 
 # Spatial models: macro-ish
 
-These features better allow us to understand the impacts of things like:
+These features allow us to better understand the impacts of things like:
 
 - the costs of sea level rise (Desmet et al. 2021)
 - climate change and the food problem (Nath 2021)
@@ -119,7 +121,7 @@ These features better allow us to understand the impacts of things like:
 - the social value of public transit (Severen 2021)
 - amenity endogeneity (Almagro and Dominguez-Ilno, 2021)
 - the value of density in Berlin (Ahlfeldt et al. 2015)
-- the impact of Amazon HQ2 (Dingel and Tintelnot 2021) [.hi[micro-geography]]
+- the impact of Amazon HQ2 (Dingel and Tintelnot 2021)
 
 ---
 
@@ -137,7 +139,7 @@ It is a version of the canonical Eaton and Kortum (2002) Ricardian model
 
 --
 
-Standard trade models are all isomorphic: same aggregate outcomes despite different microfoundations (Kucheryavyy et al. 2021) 
+Standard trade models are all isomorphic: same aggregate outcomes despite different microfoundations 
   - EK
   - Melitz
   - Armington
@@ -151,8 +153,8 @@ Here's what we are going to do:
 
 1. Develop the static model
 2. Show how to solve for model unknowns using data and calibration of parameters 
-3. Show how to use .blue[exact hat algebra] to simulate counterfactuals without needing to observe time-invariant exogenous variables (Dekle et al. 2008)
-  - Empirical seminar talk uses .blue[dynamic hat algebra] (Caliendo et al. 2019)
+3. Show how to use .blue[exact hat algebra] to simulate counterfactuals without data on time-invariant exogenous variables (Dekle et al. 2008)
+  - Tomorrow's paper uses .blue[dynamic hat algebra] (Caliendo et al. 2019)
 
 --
 
@@ -166,7 +168,7 @@ Here's what we are going to do:
 
 --
 
-Households supply labor inelastically, and are perfectly mobile across locations
+Households supply labor inelastically, and are perfectly mobile across locations (easy to relax)
 
 --
 
@@ -194,10 +196,10 @@ With the CES assumption, we have the .pink[price index] in location `\(i\)` is:
 
 # Households: equilibrium utility and wages
 
-With Cobb-Douglas preferences, a consumer's indirect utility is given by their .pink[real wage:]
+The consumer's indirect utility is given by their .pink[real wage:]
 `$$V_{i} = \frac{w_{i}}{P_{i}}$$`
 
-.hi[In equilibrium what must be true?] 
+.hi[In equilibrium what must be true about the spatial distribution of V?] 
 
 --
 
@@ -220,7 +222,7 @@ For each location, `\(z_{i}(\omega)\)` is .hi[efficiency]
 
 --
 
-This is the quantity of variety `\(\omega\)` that can be produced using one unit of labor in location `\(i\)`
+This is the quantity of variety `\(\omega\)` that can be produced using one unit of labor and capital in location `\(i\)`
 
 ---
 
@@ -242,7 +244,7 @@ This distributional assumption is what will buy us tractability in our model lat
 
 --
 
-`\(\theta &gt; 1\)` is the trade elasticity parameter common across all states and counties and measures the level of intra-industry heterogeneity
+`\(\theta &gt; 1\)` is the trade elasticity parameter common across all locations and measures the level of intra-industry heterogeneity
 
 --
 
@@ -268,7 +270,7 @@ Total output in location `\(i\)` is given by `\(Y_i = z_i(\omega) L_i^\gamma K_i
 
 --
 
-`\(\gamma_i\)` is the share of value added and `\(r_i\)` is the rental rate of capital
+`\(\gamma\)` is the labor share and `\(r_i\)` is the rental rate of capital
 
 --
 
@@ -287,13 +289,13 @@ Trade costs are .pink[iceberg]
 
 --
 
-Delivering 1 unit of the good from `\(j\)` to `\(i\)` requires shipping `\(\tau_{ij} \geq 1\)` units, this represents the costs of shipping/trade
+Delivering 1 unit of the good from `\(j\)` to `\(i\)` requires shipping `\(\tau_{ij} \geq 1\)` units where `\(\tau_{ii} = 1\)`, this represents the costs of shipping/trade
 
 
 --
 
 The price of a good from `\(j\)` in `\(i\)` is then:
-`$$P_{ij}(\omega) = \frac{1}{z_i(\omega)}c_i(\omega) \tau_{ij} = \frac{1}{z_i(\omega)}{(w_i)}^\gamma {(r)}^{1-\gamma} \tau_{ij}$$`
+`$$P_{ij}(\omega) = \frac{1}{z_i(\omega)}c_i \tau_{ij} = \frac{1}{z_i(\omega)}{(w_i)}^\gamma {(r)}^{1-\gamma} \tau_{ij}$$`
 
 --
 
@@ -319,25 +321,31 @@ The lowest price for a variety in `\(i\)` takes on the minimum across all countr
 We then get our final expression for the distribution of prices in `\(i\)`:
 `$$G_i(p) = 1 - \exp(-\Phi_i p^\theta) \quad \text{where} \quad \Phi_i = \sum_{j=1}^N T_j (c_j \tau_{ij})^{-\theta}$$`
 
-`\(\Phi_i\)` summarizes how:
+--
+
+`\(\Phi_i\)` summarizes how prices in `\(i\)` are governed by:
   - Technologies in all `\(j\)`
   - Input costs in all `\(j\)`
   - Trade barriers with all `\(j\)`
   
-Govern prices in `\(i\)`
+--
+  
+What does the distribution look like in autarky or with frictionless trade?
 
 ---
 
 # Firms: Prices
 
-Three key properties of `\(G_i(p)\)`:
+Two key properties of `\(G_i(p)\)`:
 
 1. The probability that `\(j\)` is the lowest-cost seller in `\(i\)` is:
-`$$\pi_{ij} = \frac{T_j (c_j \tau_{ij})^{-\theta}}{\sum_{j=1}^N T_j (c_j \tau_{ij})^{-\theta}} \qquad \approx \text{ logit shares}$$`
+`$$\pi_{ij} = \frac{T_j (c_j \tau_{ij})^{-\theta}}{\sum_{h=1}^N T_h (c_h \tau_{ih})^{-\theta}} \qquad \approx \text{ logit shares}$$`
+--
 
-2. Prices are independent of sources: sellers adjust on the extensive margin by selling more or fewer goods
+&lt;!-- 2. Prices are independent of sources: sellers adjust on the extensive margin by selling more or fewer goods --&gt;
+&lt;!-- -- --&gt;
 
-3. The ideal price index in `\(i\)` is `\((\sigma &lt; 1+ \theta)\)`:
+2. The ideal price index in `\(i\)` is `\((\sigma &lt; 1+ \theta)\)`:
 `$$P_i = \gamma \Phi_i^{-1/\theta}$$`
 
 
@@ -362,426 +370,39 @@ Notice `\(P_i\)` is increasing in sellers' trade costs `\(\tau_{in}\)` and input
 
 `\({(P_{i})}^{-\theta}\)` is often called consumer market access `\((CMA_i)\)` and captures location `\(i\)`'s access to cheaper products
 
+
 ---
 
 # Firms: Trade
 
-.hi[Bilateral trade expenditures] of location `\(i\)` on goods from location `\(j\)` are:
-`$$X_{ij} = \kappa T_{j} Y_i\left(\frac{ {(w_j)}^\gamma \tau_{ij}}{{P_{i}}}\right)^{-\theta}$$`
-
-
-Prop 2 `\(\rightarrow\)` average expenditure per good `\(\perp\)` source, `\(\rightarrow\)` Prop 1 `\(\rightarrow\)` fraction of quantities `\(\leftrightarrow\)` fraction of expenditures
+First we need to define a new variable, .pink[expenditure shares:] the share of total expenditures on products from location `\(j\)`
 
 --
 
-`\(i\)` purchases more products from `\(j\)` if:
-
-- the costs of products from `\(j\)` are lower, `\(i\)` is richer `\(Y_i\)`, consumer market access `\({(P_{i})}^{-\theta}\)` is lower
+Expenditure shares `\(\equiv\)` probability of being the lowest-cost seller:
+`$$\lambda_{ij} = \frac{T_{j} \left( {(w_j)}^\gamma \tau_{ij}\right)^{-\theta}}{\sum_{h=1}^N T_{h} \left( {(w_h)}^\gamma \tau_{ih}\right)^{-\theta}}$$`
 
 
 ---
 
-# Firms: Market access
+# Firms: Trade
 
-Firms also have a .hi[market access] term `\(FMA_j\)` that we can derive from combining the equilibrium real wage, price index, and trade expenditures expressions:
-`$$FMA_j = \sum_{i=1}^N \frac{\tau_{ij}^{-\theta}Y_i}{CMA_i}$$`
+.hi[Bilateral trade expenditures] of location `\(i\)` on goods from location `\(j\)` are `\(X_{ij}\)` where:
 
---
+`$$\lambda_{ij} = \frac{X_{ij}}{\sum_{h=1}^N X_{ih}} = \frac{X_{ij}}{X_{i}}$$`
 
-Firm market access captures the firm side: their access to higher price markets
-
----
-
-# Firms: Market access
-
-`$$FMA_j = \sum_{i=1}^N \frac{\tau_{ij}^{-\theta}Y_i}{CMA_i}$$`
-
-FMA is higher if:
-
-- Trade costs are lower `\((\tau_{ij})\)`
-- Other locations are richer `\((Y_i)\)`
-
-
----
-
-# We did it
-
-So that is the model
-
---
-
-Now we need to solve it
-
---
-
-One of the key pieces in our model are the .hi[market access terms]
-
---
-
-It turns out, FMA and CMA are .hi-blue[equivalent up to a normalization by a constant:]
-`$$MA_i \equiv FMA_i = \rho CMA_i$$`
-
-
----
-
-# Solving the model
-
-Typically we solve for the model equilibrium by using equilibrium conditions to solve for endogenous quantities
-
---
-
-Here we don't observe all exogenous quantities
-
---
-
-We can calibrate/estimate trade costs, labor share
-
---
-
-We still need the .pink[the N unobserved and exogenous] `\(T_i\)` .pink[terms]
-
----
-
-# Solving the model
-
-How do we solve for the `\(T_i\)` terms?
-
---
-
-We observe a number of endogenous variables (labor, wages) of length `\(&gt;\)` N
-
---
-
-If we assume the real world is in a static equilibrium we can use equilibrium conditions to solve for `\(T_i\)`
-
---
-
-Before we are able to solve for `\(T_i\)` we need to solve for one more endogenous variable: market access / price index
-
----
-
-# Solving the model: market access
-
-`$$FMA_j = \sum_{i=1}^N \frac{\tau_{ij}^{-\theta}Y_i}{CMA_i}$$`
-
---
-
-using the equivalency between FMA and CMA, and that `\(Y_i = \frac{w_i L_i}{\gamma}\)` from labor market clearing we have our condition allowing us to solve for market access:
-`$$MA_j = \rho \sum_{i=1}^N \tau_{ij}^{-\theta} MA_i^{\frac{-(1+\theta)}{\theta}} L_i$$`
-
-For `\(j=1,\dots,N\)` this is a system of N equations
-
----
-
-# Solving the model: market access
-
-`$$MA_j = \rho \sum_{i=1}^N \tau_{ij}^{-\theta} MA_i^{\frac{-(1+\theta)}{\theta}} L_i$$`
-
-`\(N\)` equations, `\(N\)` unknown MA terms, everything else is a parameter we can estimate `\((\tau_{ij}, \theta)\)`, data `\(L_i\)`, or a normalizing constant `\(\rho\)`
-
---
-
-.hi[Fujimoto-Krause] shows that we can solve for the vector `\(MA\)` up to this normalization using function iteration, but where our update is:
-`$$MA_{new} = \frac{RHS(MA_{old})}{||RHS(MA_{old})||}$$`
-
-
----
-
-# Fujimoto-Krause in matrix form
-
-```
-function solve_price(data, params, labor)
-
-    # set up intial guesses
-    ma_temp = collect(1:size(data.L)[1])
-    ma_new = data.tau_theta * (ma_temp .^ (-(1 + params.theta) / params.theta) .* labor)
-    ma_temp = ma_new / sqrt(sum(ma_new .^ 2))
-    error = Inf
-
-    # use Fujimoto-Krause to solve for MA up to a normalization
-    while error &gt; params.tol * params.damping
-        ma_new = data.tau_theta * (ma_temp .^ (-(1 + params.theta) / params.theta) .* labor) # RHS of MA equation
-        ma_new = ma_new / sqrt(sum(ma_new .^ 2)) # normalize
-        error = sqrt.(sum((ma_new .- ma_temp) .^ 2))
-        ma_temp = params.damping * ma_new + (1 - params.damping) * ma_temp # damp the update
-    end
-    
-    # Convert to price index
-    price = ma_new .^ (-1 / params.theta)
-    return price
-    
-end
-```
-
----
-
-# Solving the model: productivity
-
-Now we need to solve for productivity `\(T_j\)`
-
---
-
-How do we do this?
-
---
-
-Recall bilateral expenditures are:
-`$$X_{ij} = \kappa T_{j} Y_i\left(\frac{ {(w_j)}^\gamma \tau_{ij}}{{P_{i}}}\right)^{-\theta}$$`
-
-and the price index is:
-
-`$$MA_i = P_{i}^{-\theta} = \kappa \left(\sum_{n=1}^N T_{n} \left[{(w_n)}^\gamma \tau_{in} \right]^{-\theta} \right)$$`
- 
----
-
-# Solving the model: productivity
+and we can show that:
 
 `$$X_{ij} = \kappa T_{j} Y_i\left(\frac{ {(w_j)}^\gamma \tau_{ij}}{{P_{i}}}\right)^{-\theta}$$`
 
+`\(i\)` purchases more products from `\(j\)` if the costs of products from `\(j\)` are lower, `\(i\)` is richer, `\(j\)` is more productive
 
-Plug in `\(P_i\)`, and use `\(\bar{U} = \frac{w_i}{P_i}\)` to get an expression for equilibrium labor allocations as a function of productivity and market access:
-`$$L_j = \underbrace{\kappa \gamma T_j \bar{U}^{-(1+\gamma \theta)}}_{\eta_j} MA_j^{\frac{\theta(1+\gamma)+1}{\theta}}$$`
-where `\(\kappa\)` is some constant, and `\(\eta_j\)` is `\(T_j\)` up to a normalization by a constant
-
-
----
-
-# Solving the model: productivity
-
-
-`$$L_j = \eta_j MA_j^{\frac{\theta(1+\gamma)+1}{\theta}}$$`
-
---
-
-We can solve for `\(\eta_j\)` which is just `\(T_j\)` up to a normalization by a constant `\(\kappa \gamma \bar{U}^{-(1+\gamma \theta)}\)`
-`$$\eta_j = L_j MA_j^{-\frac{\theta(1+\gamma)+1}{\theta}}$$`
-
---
-
-Labor is higher areas with greater market access (cheaper goods), or higher productivity (higher wage)
-
----
-
-# Solving the model: productivity
-
-```
-function solve_productivity(data, params)
-
-    # Iterate on equation to solve for market access
-    # Then invert to recover P
-    price = solve_price(data, params, data.L)
-
-    # recover T up to a normalization
-    T =
-        exp.(
-            log.(data.L) .-
-            ((1 + params.theta * (1 + params.gamma)) / params.theta) .*
-            log.(price .^ (-params.theta)),
-        )
-
-    return T
-
-end
-```
-
---
-
-Now we have all the unknown exogenous pieces of the model and can simulate it given changes in model parameters
-
----
-
-# Simulating the model
-
-Suppose we want to measure the effect of a change in productivity to `\(T^c_j\)` where superscript `\(c\)` denotes counterfactual quantities
-
---
-
-We have 2N+1 unknowns: `\(MA^c_j, L^c_j, \bar{U}^c\)` for `\(j=1,\dots,N\)`
-
----
-
-# Simulating the model
-
-First rearrange the labor expression to solve for market access:
-`$$MA^c_j = \left[\frac{L^c_j}{\eta^c_j}\right]^{\frac{\theta}{\theta(1 + \gamma) + 1}}$$`
-
-where `\(\eta^c_j\)` is a function of `\(T^c_j\)`
-
---
-
-This is a set of `\(N\)` equations that pins down MA conditional on L
-
----
-
-# Simulating the model
-
-`$$MA^c_j = \left[\frac{L^c_j}{\eta^c_j}\right]^{\frac{\theta}{\theta(1 + \gamma) + 1}}$$`
-
---
-
-Next we can insert the `\(MA^c_j\)` terms into the MA fixed point equation:
-`$$MA^c_j = \rho \sum_{i=1}^N \tau_{ij}^{-\theta} {MA^c_i}^{\frac{-(1+\theta)}{\theta}} L^c_i$$`
-
---
-
-This is another `\(N\)` equations that now pins down L
-
---
-
-We still need to pin down `\(\bar{U}^c\)`
-
-
----
-
-# Simulating the model
-
-Pinning down `\(\bar{U}^c\)` is where the *up to a normalization* part comes in
-
---
-
-The pinned down `\(L^c_j\)`s above won't necessarily sum up to `\(\sum_{i=1}^N L_i\)`
-
---
-
-We pin down `\(\bar{U}^c\)` by inflating all the `\(L^c_j\)` terms by some constant factor `\(\zeta\)` so they sum up to the factual level of labor `\(\sum_{i=1}^N L_i\)`
-
---
-
-We are just imposing the last remaining equation, the labor resource constraint:
-`$$\sum_{i=1}^N L^c_i = \sum_{i=1}^N L_i$$`
-
----
-
-# Simulating the model
-
-`$$MA^c_j = \left[\frac{L^c_j}{\eta^c_j}\right]^{\frac{\theta}{\theta(1 + \gamma) + 1}}$$`
-
-`$$MA^c_j = \rho \sum_{i=1}^N \tau_{ij}^{-\theta} {MA^c_i}^{\frac{-(1+\theta)}{\theta}} L^c_i$$`
-
-`$$\sum_{i=1}^N L^c_i = \sum_{i=1}^N L_i$$`
-
-2N+1 equations and 2N+1 unknowns, we can solve this system of equations to get our new equilibrium under `\(\bar{T}^c_j\)`
-
-
----
-
-# Simulating the model
-
-We can then compute the change in welfare from this new equilibrium:
-`$$\frac{\bar{U}^c}{\bar{U}} = \left({\eta^c / \eta}\right)^{-1/(1+\gamma \theta)}$$`
-
---
-
-All the constant terms that we never explicitly solved for in `\(\eta\)` cancel out so we can still identify the .hi[change] in welfare and employment
-
---
-
-Now lets look at the code
-
-
----
-
-# Simulating the model: solving for a change in welfare
-
-Suppose we change eta from `eta_bar` to `eta_counter`
-
---
-
-Our code might look like:
-
-
-```julia
-function solve_counterfactual_base(eta_bar, data, params, regulation_counter)
-
-    eta_counter = eta_bar .* regulation_counter
-
-    # solve for labor allocation
-    labor_counter = solve_labor(data, params, eta_counter)
-    .
-    .
-```
-
-What does `solve_labor` do?
-
----
-
-# Simulating the model: solving for labor
-
-
-```julia
-function solve_labor(data, params, eta_counter)
-
-    # insert L into market access
-    g = 1 + params.theta * (1 + params.gamma)
-    L_temp = data.L
-    L_new =
-        eta_counter .*
-        (data.tau_theta * ((L_temp ./ eta_counter) .^ (-(1 + params.theta) / g) .* L_temp)) .^
-        (g / params.theta)
-    L_temp = L_new / sqrt(sum(L_new .^ 2))
-    error = Inf
-    .
-    .
-    # next do function iteration
-```
-
----
-
-# Simulating the model: solving for labor
-
-
-```julia
-    .
-    .
-    # use Fujimoto-Krause to solve for L up to a normalization
-    while error &gt; params.tol
-        L_new =
-            eta_counter .*
-            (data.tau_theta * ((L_temp ./ eta_counter) .^ (-(1 + params.theta) / g) .* L_temp)) .^
-            (g / params.theta)
-        L_new = L_new / sqrt(sum(L_new .^ 2))
-        error = sqrt.(sum((L_new .- L_temp) .^ 2))
-        L_temp = L_new
-    end
-    return L_new
-end
-```
-
-
----
-
-# Simulating the model: solving for a change in welfare
-
-
-```julia
-    .
-    labor_counter = solve_labor(data, params, T_counter)
-    labor_counter = labor_counter ./ sum(labor_counter) .* sum(data.L) # normalize
-    price_counter = solve_price(data, params, labor_counter) # get price index
-
-    eta_counter = # with P^c, L^c we can solve for eta^c
-        exp.(log.(labor_counter) .-
-            ((1 + params.theta * (1 + params.gamma)) / params.theta) .*
-            log.(price_counter .^ (-params.theta)),
-        ) ./ regulation_counter
-    delta_U = (eta_counter ./ eta_bar) .^ (-1 / (1 + params.gamma * params.theta))
-
-    results = DataFrame(
-        eta_bar = vec(eta_bar), T_bar_counter = vec(eta_bar_counter),
-        cf_reg = vec(regulation_counter),
-        labor_before = vec(data.L), labor_after = vec(labor_counter),
-        labor_change = vec(labor_counter ./ data.L), welfare_change = vec(delta_U))
-
-    return results
- 
-end
-```
 
 ---
 
 # Exact hat algebra
 
-We can solve this in a different way with fewer assumptions
+How do we solve this model?
 
 Suppose we want to know the effect of a change in productivity `\(\hat{T_j} = \frac{T^c_j}{T_j}\)`
 
@@ -801,23 +422,7 @@ Representing the model in changes is nice because it will difference out time-in
 
 # Exact hat algebra
 
-First we need to define a new variable, .pink[expenditure shares:]
-`$$\lambda_{ij} = \frac{X_{ij}}{\sum_{h=1}^N X_{ih}} = \frac{X_{ij}}{X_{i}}$$`
-
---
-
-This is just the share of total expenditures on products from location `\(j\)`
-
---
-
-Substitute in for the `\(X_{ih}\)` terms from the previous expression to get:
-`$$\lambda_{ij} = \frac{T_{j} \left( {(w_j)}^\gamma \tau_{ij}\right)^{-\theta}}{\sum_{h=1}^N T_{h} \left( {(w_h)}^\gamma \tau_{ih}\right)^{-\theta}}$$`
-
----
-
-# Exact hat algebra
-
-Next, labor income `\(w_i L_i = \gamma Y_i\)` can be written as a function of the sum of expenditures by `\(j\)` on products from `\(i\)`
+First, labor income `\(w_i L_i = \gamma Y_i\)` can be written as a function of the sum of expenditures by `\(j\)` on products from `\(i\)`
 `$$w_i L_i = \gamma \sum_{j=1}^N \lambda_{ji} w_j L_j$$`
 
 --
@@ -844,6 +449,8 @@ What we are going to do is manipulate these two expressions into .pink[hat form]
 
 Let's start with the counterfactual labor market clearing condition:
 `$$w^c_i L^c_i = \gamma \sum_{j=1}^N \lambda^c_{ji} w^c_j L^c_j$$`
+
+--
 
 `\(\lambda^c_{ji} w^c_j L^c_j\)` is just how much `\(j\)` spends on products from `\(i\)` so that:
 `$$w^c_i L^c_i = \gamma \sum_{j=1}^N X^c_{ji}$$`
