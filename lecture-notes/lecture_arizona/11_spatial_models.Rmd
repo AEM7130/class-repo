@@ -35,9 +35,8 @@ xaringanExtra::use_xaringan_extra(c("tile_view", "panelset"))
 # Roadmap
 
 1. The economics of space
-2. Spatial model simple set up
-3. Function iteration solutions
-4. Exact hat algebra
+2. A simple Eaton Kortum Model
+3. Exact hat algebra to solve counterfactuals
 
 ---
 
@@ -126,15 +125,15 @@ The model and code are derived from Donaldson and Hornbeck (2016)
 
 --
 
-It is a version of the canonical Eaton and Kortum (2002) Ricardian model
+It is a version of the widely-used Eaton and Kortum (2002) Ricardian model
 
---
+<!-- -- -->
 
-Standard trade models are all isomorphic: same aggregate outcomes despite different microfoundations 
-  - EK
-  - Melitz
-  - Armington
-  - Krugman
+<!-- Standard trade models are all isomorphic: same aggregate outcomes despite different microfoundations  -->
+<!--   - EK -->
+<!--   - Melitz -->
+<!--   - Armington -->
+<!--   - Krugman -->
 
 ---
 
@@ -143,8 +142,7 @@ Standard trade models are all isomorphic: same aggregate outcomes despite differ
 Here's what we are going to do:
 
 1. Develop the static model
-2. Show how to solve for model unknowns using data and calibration of parameters 
-3. Show how to use .blue[exact hat algebra] to simulate counterfactuals without data on time-invariant exogenous variables (Dekle et al. 2008)
+2. Show how to use .blue[exact hat algebra] to simulate counterfactuals without data on time-invariant exogenous variables (Dekle et al. 2008)
   - Tomorrow's paper uses .blue[dynamic hat algebra] (Caliendo et al. 2019)
 
 --
@@ -239,7 +237,7 @@ $\theta > 1$ is the trade elasticity parameter common across all locations and m
 
 --
 
-Smaller $\theta$ $\rightarrow$ more dispersion $\rightarrow$ more heterogeneity $\rightarrow$ stronger comparative advantage effects
+Smaller $\theta$ $\rightarrow$ more dispersion $\rightarrow$ more heterogeneity $\rightarrow$ stronger .blue[comparative advantage] effects
 
 --
 
@@ -247,7 +245,7 @@ $T_{i}$ measures fundamental productivity
 
 --
 
-Larger values of $T_{i}$ increase the probability of larger efficiency draws $z_{i}(\omega)$ and indicate larger absolute advantage
+Larger values of $T_{i}$ shifts the distribution to the right and corresponds to larger .blue[absolute advantage]
 
 ---
 
@@ -315,7 +313,7 @@ $$G_i(p) = 1 - \exp(-\Phi_i p^\theta) \quad \text{where} \quad \Phi_i = \sum_{j=
 --
 
 $\Phi_i$ summarizes how prices in $i$ are governed by:
-  - Technologies in all $j$
+  - Fundamental productivity in all $j$
   - Input costs in all $j$
   - Trade barriers with all $j$
   
@@ -366,7 +364,7 @@ ${(P_{i})}^{-\theta}$ is often called consumer market access $(CMA_i)$ and captu
 
 # Firms: Trade
 
-First we need to define a new variable, .pink[expenditure shares:] the share of total expenditures on products from location $j$
+Next, define a new variable, .pink[expenditure shares:] the share of $i$s total expenditures on products from location $j$: $\lambda_{ij}$
 
 --
 
@@ -381,6 +379,8 @@ $$\lambda_{ij} = \frac{T_{j} \left( {(w_j)}^\gamma \tau_{ij}\right)^{-\theta}}{\
 .hi[Bilateral trade expenditures] of location $i$ on goods from location $j$ are $X_{ij}$ where:
 
 $$\lambda_{ij} = \frac{X_{ij}}{\sum_{h=1}^N X_{ih}} = \frac{X_{ij}}{X_{i}}$$
+
+--
 
 and we can show that:
 
@@ -409,6 +409,10 @@ It turns out it's relatively easy to solve these models in terms of .hi[changes]
 
 Representing the model in changes is nice because it will difference out time-invariant variables
 
+--
+
+In this simple model trade costs are the time-invariant variable
+
 ---
 
 # Exact hat algebra
@@ -418,7 +422,7 @@ $$w_i L_i = \gamma \sum_{j=1}^N \lambda_{ji} w_j L_j$$
 
 --
 
-RHS is spending by all locations $j$ on $i$s products, scaled by the labor share
+RHS is spending by all locations $j$ on $i$s products
 
 ---
 
@@ -451,6 +455,9 @@ $$w^c_i L^c_i = \gamma \sum_{j=1}^N X^c_{ji}$$
 # Exact hat algebra
 
 Next let's put labor income into hat form:
+
+--
+
 $$\hat{w}_i \hat{L}_i = \frac{w^c_i L^c_i}{w_i L_i} = \gamma \sum_{j=1}^N \frac{X^c_{ji}}{w_i L_i} = \gamma \sum_{j=1}^N \frac{X^c_{ji}}{w_i L_i}\frac{X_{ji}}{X_{ji}} = \gamma \sum_{j=1}^N \frac{X_{ji}}{w_i L_i} \hat{X}_{ji}$$
 
 The change in income due to $\hat{T}_j$ is given by the change in bilateral expenditures, as well as the .pink[factual/observed] income and bilateral expenditures which are just data
@@ -567,8 +574,7 @@ $$\hat{P}_{i}^{-\theta} = \sum_{j=1}^N \left[\lambda_{ij} \hat{T}_j \left(\hat{w
 along with the change in equilibrium requirement that:
 $$\frac{\hat{w_i}}{\hat{P}_i} = \widehat{\bar{U}} \,\,\, \forall i$$
 
-allows us to iterate and solve for $\hat{P}_i$ up to a normalization since $\hat{L} = \frac{\sum_{i=1}^N L^c_i}{\sum_{i=1}^N L_i} = 1$ will later pin down $\widehat{\bar{U}}$
-
+allows us to iterate and solve for $\hat{w}_i$ up to a normalization 
 ---
 
 # Exact hat algebra
