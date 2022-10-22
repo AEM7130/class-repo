@@ -183,7 +183,22 @@ Judd (1998, Chapter 10)
 
 Lemoine, Derek, and Ivan Rudik. "Steering the climate system: using inertia to lower the cost of policy." American Economic Review 107, no. 10 (2017): 2947-57.
 
-### Week 10: Solving (dynamic) spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
+### Week 10: Solving spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
+
+**Theory**: exact hat algebra, dynamic hat algebra
+
+Dekle, Robert, Jonathan Eaton, and Samuel Kortum. "Global rebalancing with gravity: Measuring the burden of adjustment." IMF Staff Papers 55, no. 3 (2008): 511-540.
+
+Costinot, Arnaud, and Andrés Rodríguez-Clare. "Trade theory with numbers: Quantifying the consequences of globalization." In Handbook of international economics, vol. 4, pp. 197-261. Elsevier, 2014.
+
+Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. "Trade and labor market dynamics: General equilibrium analysis of the china trade shock." Econometrica 87, no. 3 (2019): 741-835.
+
+**Applications**: pollution regulation
+
+Shapiro, Joseph S., and Reed Walker. "Why is pollution from US manufacturing declining? The roles of environmental regulation, productivity, and trade." American Economic Review 108, no. 12 (2018): 3814-54.
+
+
+### Week 11: Solving dynamic spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
 **Theory**: exact hat algebra, dynamic hat algebra
 
@@ -195,42 +210,8 @@ Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. "Trade and labor mar
 
 **Applications**: sea level rise
 
-Shapiro, Joseph S., and Reed Walker. "Why is pollution from US manufacturing declining? The roles of environmental regulation, productivity, and trade." American Economic Review 108, no. 12 (2018): 3814-54.
-
 Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities."
 
-### Week 11: Machine learning ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.pdf))
-
-**Theory**: regularization and sparsity, prediction and model selection
-
-[Mullainathan, Sendhil, and Jann Spiess. "Machine learning: an applied econometric approach." Journal of Economic Perspectives 31, no. 2 (2017): 87-106.](https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.31.2.87)
-
-[Athey, Susan, and Guido W. Imbens. "Machine learning methods that economists should know about." Annual Review of Economics 11 (2019): 685-725.](https://www.gsb.stanford.edu/gsb-cmis/gsb-cmis-download-auth/476281)
-
-[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. The elements of statistical learning. Vol. 1, no. 10. New York: Springer series in statistics, 2001. Chapters 3, 4 and 7.](https://web.stanford.edu/~hastie/ElemStatLearn/)
-
-**Applications**: ML for asset pricing, boosted trees for prediction
-
-Gu, Shihao, Bryan Kelly, and Dacheng Xiu. "Empirical asset pricing via machine learning." The Review of Financial Studies 33, no. 5 (2020): 2223-2273.
-
-Kleinberg, Jon, Himabindu Lakkaraju, Jure Leskovec, Jens Ludwig, and Sendhil Mullainathan. "Human decisions and machine predictions." The quarterly journal of economics 133, no. 1 (2018): 237-293.
-
-### Week 12: Machine learning ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.pdf))
-
-**Theory**: trees, bagging, boosting, ML for synthetic control
-
-[Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 8, 9, 10, and 15.](https://web.stanford.edu/~hastie/ElemStatLearn/)
-
-Athey, Susan, and Guido Imbens (2016) "Recursive partitioning for heterogeneous causal effects." Proceedings of the National Academy of Sciences 113, no. 27, pp. 7353-7360.
-
-[Hollingsworth, Alex, and Coady Wing. "Tactics for design and inference in synthetic control studies: An applied example using high-dimensional data." (2020).](https://doi.org/10.31235/osf.io/fc9xt)
-
-**Applications**: causal trees for heterogeneous treatment effects, ridge-ish regression for returns
-
-Prest, Brian C. "Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing." Journal of the Association of Environmental and Resource Economists 7, no. 1 (2020): 103-143.
-
-Athey, Susan, and Stefan Wager. "Policy learning with observational data." Econometrica 89, no. 1 (2021): 133-161.
-
-Kozak, Serhiy, Stefan Nagel, and Shrihari Santosh. "Shrinking the cross-section." Journal of Financial Economics 135, no. 2 (2020): 271-292.
+### Week 12: XYZ
 
 ### Week 13: Final project presentations
