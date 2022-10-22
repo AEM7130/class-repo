@@ -93,6 +93,9 @@ Judd (1998, Chapters 2, 3 and 7)
 
 Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
+
+
+
 ### Week 2: Coding, reproducibility, and the shell ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.pdf))
 
 **Applications**: shell scripts, generic coding, reproducible coding, speed in julia, workflow
@@ -105,6 +108,9 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 [QuantEcon Lectures](https://quantecon.org/)
 
+
+
+
 ### Week 3: Version control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.pdf))
 
 **Applications**: git, github, issues, pull requests
@@ -112,6 +118,9 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 [Software Carpentry: Version Control with Git](https://swcarpentry.github.io/git-novice/)
 
 [SEERE Lab wiki](https://github.com/cornell-seere/lab-information/wiki)
+
+
+
 
 ### Week 4: Rootfinding and optimization ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.pdf))
 
@@ -129,6 +138,9 @@ Donaldson, Dave, and Richard Hornbeck. "Railroads and American economic growth: 
 
 Kitagawa, Toru, and Aleksey Tetenov. "Who should be treated? empirical welfare maximization methods for treatment choice." Econometrica 86, no. 2 (2018): 591-616.
 
+
+
+
 ### Week 5: Discrete time dynamic programming ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.pdf))
 
 **Theory**: markov chains, principle of optimality
@@ -136,6 +148,9 @@ Kitagawa, Toru, and Aleksey Tetenov. "Who should be treated? empirical welfare m
 Adda, Jerome, Russell Cooper, and Russell W. Cooper. Dynamic economics: quantitative methods and applications. MIT press, 2003.
 
 Ljungqvist, Lars, and Thomas J. Sargent. Recursive macroeconomic theory. MIT press, 2018.
+
+
+
 
 ### Week 6: Function approximation ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.pdf))
 
@@ -146,6 +161,9 @@ Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfhe
 **Application**: agriculture and climate change
 
 Ortiz-Bobea, Ariel, Erwin Knippenberg, and Robert G. Chambers. "Growing climatic sensitivity of US agriculture linked to technological change and regional specialization." Science advances 4, no. 12 (2018): eaat4343.
+
+
+
 
 ### Week 7: Approximating value and policy functions for discrete time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.pdf))
 
@@ -161,6 +179,9 @@ Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfhe
 
 Cai, Yongyang, and Thomas S. Lontzek. "The social cost of carbon with economic and climate risks." Journal of Political Economy 127, no. 6 (2019): 2684-2734.
 
+
+
+
 ### Week 8: Continuous time optimal control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
 
 **Theory**: maximum principle, hamiltonians
@@ -170,6 +191,9 @@ Caputo, Michael R. Foundations of dynamic economic analysis: optimal control the
 **Applications**: oil extraction
 
 Anderson, Soren T., Ryan Kellogg, and Stephen W. Salant. "Hotelling under pressure." Journal of Political Economy 126, no. 3 (2018): 984-1026.
+
+
+
 
 ### Week 9: Solving ordinary differential equations for continuous time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
 
@@ -183,6 +207,9 @@ Judd (1998, Chapter 10)
 
 Lemoine, Derek, and Ivan Rudik. "Steering the climate system: using inertia to lower the cost of policy." American Economic Review 107, no. 10 (2017): 2947-57.
 
+
+
+
 ### Week 10: Solving spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
 **Theory**: exact hat algebra, dynamic hat algebra
@@ -191,27 +218,27 @@ Dekle, Robert, Jonathan Eaton, and Samuel Kortum. "Global rebalancing with gravi
 
 Costinot, Arnaud, and Andrés Rodríguez-Clare. "Trade theory with numbers: Quantifying the consequences of globalization." In Handbook of international economics, vol. 4, pp. 197-261. Elsevier, 2014.
 
-Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. "Trade and labor market dynamics: General equilibrium analysis of the china trade shock." Econometrica 87, no. 3 (2019): 741-835.
-
 **Applications**: pollution regulation
 
 Shapiro, Joseph S., and Reed Walker. "Why is pollution from US manufacturing declining? The roles of environmental regulation, productivity, and trade." American Economic Review 108, no. 12 (2018): 3814-54.
+
 
 
 ### Week 11: Solving dynamic spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
 **Theory**: exact hat algebra, dynamic hat algebra
 
-Dekle, Robert, Jonathan Eaton, and Samuel Kortum. "Global rebalancing with gravity: Measuring the burden of adjustment." IMF Staff Papers 55, no. 3 (2008): 511-540.
-
-Costinot, Arnaud, and Andrés Rodríguez-Clare. "Trade theory with numbers: Quantifying the consequences of globalization." In Handbook of international economics, vol. 4, pp. 197-261. Elsevier, 2014.
-
 Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. "Trade and labor market dynamics: General equilibrium analysis of the china trade shock." Econometrica 87, no. 3 (2019): 741-835.
+
+Kleinman, Benny, Ernest Liu, and Stephen J. Redding. "Dynamic spatial general equilibrium." Econometrica, (Forthcoming).
 
 **Applications**: sea level rise
 
 Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities."
 
 ### Week 12: XYZ
+
+
+
 
 ### Week 13: Final project presentations
