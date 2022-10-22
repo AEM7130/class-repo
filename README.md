@@ -212,7 +212,7 @@ Lemoine, Derek, and Ivan Rudik. "Steering the climate system: using inertia to l
 
 ### Week 10: Solving spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
-**Theory**: exact hat algebra, dynamic hat algebra
+**Theory**: exact hat algebra
 
 Dekle, Robert, Jonathan Eaton, and Samuel Kortum. "Global rebalancing with gravity: Measuring the burden of adjustment." IMF Staff Papers 55, no. 3 (2008): 511-540.
 
@@ -226,7 +226,7 @@ Shapiro, Joseph S., and Reed Walker. "Why is pollution from US manufacturing dec
 
 ### Week 11: Solving dynamic spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
-**Theory**: exact hat algebra, dynamic hat algebra
+**Theory**: dynamic hat algebra
 
 Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. "Trade and labor market dynamics: General equilibrium analysis of the china trade shock." Econometrica 87, no. 3 (2019): 741-835.
 
