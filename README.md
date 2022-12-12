@@ -1,9 +1,9 @@
 # AEM 7130 Dynamic Optimization
-**Time**: Monday and Wednesday 2:45-4:00
+**Time**: Monday and Wednesday 11:25-12:40
 
-**Location**: Martha Van Rensselaer Hall G155
+**Location**: XYZ
 
-**Office Hours**: Tuesday 1:30-2:00, Thursday 1:00-1:30 on Zoom.
+**Office Hours**: XYZ
 
 **Prerequisites**: ECON 6090 and ECON 6170
 
@@ -12,14 +12,15 @@
 **Programs**: You will need to install the following programs on your computer
 
 - [Git](https://git-scm.com/downloads)
-- [JuliaPro](https://julialang.org/downloads/)
+- [Julia](https://julialang.org/downloads/)
+- [VSCode](https://code.visualstudio.com)
 
 
 ## Course Objective
 
 The objective of this course is to familiarize you with computational methods for economics. In this course you should learn why we need computational methods for certain types of problems, the theory behind the methods, and most importantly, how to use them in practice. The first part of the course covers general basics of computing and doing computational research. The second part covers optimization and function approximation. The third part covers basic dynamic theory and then goes over a selection of methods for solving dynamic models either numerically or empirically. The fourth part covers prediction and machine learning. The course concludes with how to use high performance computing resources like computing clusters. The beginning of the course is heavy on theory to understand what is happening inside your machine when solving numerical models. As we begin studying techniques to solve economic problems you will also apply them in practice.
 
-I will be teaching the class in Julia. Julia is becoming widely used in computational economics because it's open source, it has many packages to employ the methods we will learn and practice, and it's fast and intuitive. **Please set up a GitHub (https://github.com) account before class starts.** Much of what we do can be easily ported to R, Python, MATLAB, and C.
+I will be teaching the class in Julia. Julia is now widely used in computational economics because it's open source, it has many packages to employ the methods we will learn and practice, and it's fast and intuitive. **Please set up a GitHub (https://github.com) account before class starts.** Much of what we do can be easily ported to R, Python, MATLAB, and C.
 
 
 ## Integrity of credit
@@ -28,12 +29,10 @@ I expect every student in this course to abide by the Cornell University Code of
 
 ## Readings
 
-Some theory on dynamics will draw from Karp and Traeger (2013). Nocedal and Wright (2006) is highly useful as a detailed reference for optimization. Judd (1998) and Miranda and Fackler (2002) take a more detailed look at the fundamental numerical methods in economics. Judd (1998), Miranda and Fackler (2002), and Nocedal and Wright (2006) are available as eBooks in the library and Karp and Traeger (2013) will be available on Canvas or from the authors' websites. Please look at
+Judd (1998) and Miranda and Fackler (2002) take a more detailed look at the fundamental numerical methods in economics. Nocedal and Wright (2006) is highly useful as a detailed reference for optimization. Judd (1998), Miranda and Fackler (2002), and Nocedal and Wright (2006) are available as eBooks in the library. Please look at
 [Learning Julia](https://julialang.org/learning/) or go over the first few [QuantEcon Julia lectures](https://quantecon.org) for a brief introduction to coding in Julia. The remainder of the required readings will be from journal articles or excerpts from texts which will be accessible online and posted on GitHub a week before class.
 
 Judd, Kenneth L. (1998) Numerical Methods in Economics, Cambridge, MA: MIT Press.
-
-Karp, Larry and Christian Traeger (2013) Dynamic Methods in Environmental and Resource Economics.
 
 Miranda, Mario J. and Paul L. Fackler (2002) Applied Computational Economics and Finance, Cambridge, MA: MIT Press.
 
@@ -72,7 +71,7 @@ There is a final project for the course, due at the end of the semester. You may
   - Analytically develop the model, provide proofs for theoretical results if there are any.
   - Describe how you solve or estimate the model.
   - If possible, have preliminary results.
-2. Expand an existing paper by bringing in machine learning techniques or advanced numerical techniques (i.e. not just adding MORE fixed effects). This can be your own paper (e.g. your current second year paper in progress), or an existing published paper where reproduction data and code are available online. AEA maintains a repository of data and code for all papers published in AEA journals [here](https://www.openicpsr.org/openicpsr/search/aea/studies). The paper should:
+2. Expand an existing paper by bringing in advanced numerical techniques (i.e. not just adding MORE fixed effects). This can be your own paper (e.g. your current second year paper in progress), or an existing published paper where reproduction data and code are available online. AEA maintains a repository of data and code for all papers published in AEA journals [here](https://www.openicpsr.org/openicpsr/search/aea/studies). The paper should:
   - Briefly summarize the existing paper.
   - Describe the new techniques or data your are bringing to the table in detail.
   - Have preliminary results.
@@ -85,7 +84,7 @@ Starting near the middle of the course, one student a class will present either 
 
 ## Course Schedule
 
-### Week 1: Intro to computing ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.pdf))
+### Session 1: Intro to computing ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.pdf))
 
 **Theory**: floats, ints, read/write, memory, truncation, rounding, error propagation, matrix inversion, differentiation, integration
 
@@ -96,7 +95,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 
 
-### Week 2: Coding, reproducibility, and the shell ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.pdf))
+### Session 2: Coding, reproducibility, and the shell ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.pdf))
 
 **Applications**: shell scripts, generic coding, reproducible coding, speed in julia, workflow
 
@@ -111,7 +110,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 
 
-### Week 3: Version control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.pdf))
+### Session 3: Version control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.pdf))
 
 **Applications**: git, github, issues, pull requests
 
@@ -122,7 +121,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 
 
-### Week 4: Rootfinding and optimization ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.pdf))
+### Session 4: Rootfinding and optimization ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.pdf))
 
 **Theory**: iterative methods, newton methods, gaussian methods, global solvers
 
@@ -136,12 +135,9 @@ Nocedal and Wright (2006, Chapters 2-6)
 
 Donaldson, Dave, and Richard Hornbeck. "Railroads and American economic growth: A “market access” approach." The Quarterly Journal of Economics 131, no. 2 (2016): 799-858.
 
-Kitagawa, Toru, and Aleksey Tetenov. "Who should be treated? empirical welfare maximization methods for treatment choice." Econometrica 86, no. 2 (2018): 591-616.
 
 
-
-
-### Week 5: Discrete time dynamic programming ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.pdf))
+### Session 5: Discrete time dynamic programming ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.pdf))
 
 **Theory**: markov chains, principle of optimality
 
@@ -152,7 +148,7 @@ Ljungqvist, Lars, and Thomas J. Sargent. Recursive macroeconomic theory. MIT pre
 
 
 
-### Week 6: Function approximation ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.pdf))
+### Session 6: Function approximation ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.pdf))
 
 **Theory**: discretization, pseudospectral methods, finite element methods
 
@@ -165,7 +161,7 @@ Ortiz-Bobea, Ariel, Erwin Knippenberg, and Robert G. Chambers. "Growing climatic
 
 
 
-### Week 7: Approximating value and policy functions for discrete time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.pdf))
+### Session 7: Approximating value and policy functions for discrete time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.pdf))
 
 **Theory**: value function iteration, policy iteration, time iteration
 
@@ -182,7 +178,7 @@ Cai, Yongyang, and Thomas S. Lontzek. "The social cost of carbon with economic a
 
 
 
-### Week 8: Continuous time optimal control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
+### Session 8: Continuous time optimal control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
 
 **Theory**: maximum principle, hamiltonians
 
@@ -195,7 +191,7 @@ Anderson, Soren T., Ryan Kellogg, and Stephen W. Salant. "Hotelling under pressu
 
 
 
-### Week 9: Solving ordinary differential equations for continuous time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
+### Session 9: Solving ordinary differential equations for continuous time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
 
 **Theory**: shooting, backwards shooting
 
@@ -210,7 +206,7 @@ Lemoine, Derek, and Ivan Rudik. "Steering the climate system: using inertia to l
 
 
 
-### Week 10: Solving spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
+### Session 10: Solving spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
 **Theory**: exact hat algebra
 
@@ -224,7 +220,7 @@ Shapiro, Joseph S., and Reed Walker. "Why is pollution from US manufacturing dec
 
 
 
-### Week 11: Solving dynamic spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
+### Session 11: Solving dynamic spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
 **Theory**: dynamic hat algebra
 
@@ -236,9 +232,7 @@ Kleinman, Benny, Ernest Liu, and Stephen J. Redding. "Dynamic spatial general eq
 
 Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities."
 
-### Week 12: XYZ
-
-
+### Session 12: XYZ
 
 
 ### Week 13: Final project presentations
