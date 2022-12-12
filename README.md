@@ -176,35 +176,28 @@ Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfhe
 Cai, Yongyang, and Thomas S. Lontzek. "The social cost of carbon with economic and climate risks." Journal of Political Economy 127, no. 6 (2019): 2684-2734.
 
 
-
-
 ### Session 8: Continuous time optimal control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
 
-**Theory**: maximum principle, hamiltonians
-
-Caputo, Michael R. Foundations of dynamic economic analysis: optimal control theory and applications. Cambridge University Press, 2005.
-
-**Applications**: oil extraction
-
-Anderson, Soren T., Ryan Kellogg, and Stephen W. Salant. "Hotelling under pressure." Journal of Political Economy 126, no. 3 (2018): 984-1026.
-
-
-
-
-### Session 9: Solving ordinary differential equations for continuous time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
-
-**Theory**: shooting, backwards shooting
-
-Brunner, Martin, and Holger Strulik. "Solution of perfect foresight saddlepoint problems: a simple method and applications." Journal of Economic Dynamics and Control 26, no. 5 (2002): 737-753.
+**Theory**: maximum principle, hamiltonians, shooting, backwards shooting
 
 Judd (1998, Chapter 10)
 
-**Applications**: climate change
+Caputo, Michael R. Foundations of dynamic economic analysis: optimal control theory and applications. Cambridge University Press, 2005.
+
+**Applications**: oil extraction, climate policy
+
+Anderson, Soren T., Ryan Kellogg, and Stephen W. Salant. "Hotelling under pressure." Journal of Political Economy 126, no. 3 (2018): 984-1026.
 
 Lemoine, Derek, and Ivan Rudik. "Steering the climate system: using inertia to lower the cost of policy." American Economic Review 107, no. 10 (2017): 2947-57.
 
 
+### Session 9: Advanced dynamic programming methods ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
 
+**Theory**: endogenous grid method, envelope conditions, modified policy iteration
+
+Carroll, Christopher D. "The method of endogenous gridpoints for solving dynamic stochastic optimization problems." Economics letters 91, no. 3 (2006): 312-320.
+
+Maliar, Lilia, and Serguei Maliar. "Envelope condition method versus endogenous grid method for solving dynamic programming problems." Economics Letters 120, no. 2 (2013): 262-266.
 
 ### Session 10: Solving spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
@@ -217,7 +210,6 @@ Costinot, Arnaud, and Andrés Rodríguez-Clare. "Trade theory with numbers: Quan
 **Applications**: pollution regulation
 
 Shapiro, Joseph S., and Reed Walker. "Why is pollution from US manufacturing declining? The roles of environmental regulation, productivity, and trade." American Economic Review 108, no. 12 (2018): 3814-54.
-
 
 
 ### Session 11: Solving dynamic spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
