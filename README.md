@@ -48,23 +48,23 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 
 ## Important dates
 
-- [Final project proposals due: March 23](XXXXX)
+- [Final project proposals due: XYZ](XXXXX)
 - Final project presentations: Last week of class
-- Final project due: May 25
+- Final project due: XYZ
 
 ## Assignments
 
 ### Problem sets
-There will be four problem sets. You must submit your code on [GitHub](https://github.com). We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of **three or fewer people**. Each group should turn in one assignment with all members' names at the top of the file. Your grade will be a function of how well your answer the questions, and the clarity of your code (i.e. I should be able to tell what you're doing).
+There will be four problem sets. You must submit your code on [GitHub](https://github.com). We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of **two.** Each group should turn in one assignment with all members' names at the top of the file. Your grade will be a function of how well your answer the questions, and the clarity of your code (i.e. I should be able to tell what you're doing). I will help with conceptual issues on your problem sets but not minor coding issues. Part of the learning experience with problem sets is grappling with debugging code and learning how to use available resources (e.g. StackOverflow).
 
-- Problem set 1: Due March 1 ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/1_ps/01-ps.html)) 
-- Problem set 2: Due March 17 ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/2_ps/02-ps.html)) 
-- Problem set 3: Due April 15 ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/3_ps/03-ps.html)) 
-- Problem set 4: Due May 1([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/4_ps/04-ps.html))
+- Problem set 1: Due XYZ ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/1_ps/01-ps.html)) 
+- Problem set 2: Due XYZ ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/2_ps/02-ps.html)) 
+- Problem set 3: Due XYZ ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/3_ps/03-ps.html)) 
+- Problem set 4: Due XYZ ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/4_ps/04-ps.html))
 
 ### Final project ([proposal instructions here](https://raw.githack.com/AEM7130/class-repo/master/final-project/project_proposal.html))
 
-There is a final project for the course, due at the end of the semester. You may choose one of two options.
+There is a final project for the course, due at the end of the semester. You may work in a group of two. You may choose one of two options below:
 
 1. Begin a new computationally-driven research project. The project should:
   - Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.
@@ -80,13 +80,13 @@ There is a final project for the course, due at the end of the semester. You may
 A 1-2 page proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results.
 
 ### Computational paper presentations ([instructions here](https://raw.githack.com/AEM7130/class-repo/master/paper-presentation/paper_presentation.html))
-Starting near the middle of the course, one student a class will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. Presentations will be 15 minutes and will use methods from the current or previous week. Presentations should be similar to a regular talk, but with slightly more focus on methods. Example applied papers are below for different sections of the course but you can choose to present another paper with my approval.
+Starting near the middle of the course, one student a class will present either a paper that either applies methods we have learned in a previous week, a paper that extends methods we have previously learned, or a package that is related to the methods we have learned. Presentations will be >15 minutes. Example applied papers are below for different sections of the course but you can choose to present another paper. All presentation topics must have my approval at least 1 week before the presentation date.
 
 ## Course Schedule
 
 ### Session 1: Intro to computing ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.pdf))
 
-**Theory**: floats, ints, read/write, memory, truncation, rounding, error propagation, matrix inversion, differentiation, integration
+**Theory**: numbers, memory, linear algebra, calculus
 
 Judd (1998, Chapters 2, 3 and 7)
 
@@ -97,7 +97,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 ### Session 2: Coding, reproducibility, and the shell ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.pdf))
 
-**Applications**: shell scripts, generic coding, reproducible coding, speed in julia, workflow
+**Applications**: shell scripts, julia speed, reproducibility, workflow
 
 [Software Carpentry: The Unix Shell](https://swcarpentry.github.io/shell-novice/)
 
@@ -112,7 +112,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 ### Session 3: Version control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.pdf))
 
-**Applications**: git, github, issues, pull requests
+**Applications**: git, github
 
 [Software Carpentry: Version Control with Git](https://swcarpentry.github.io/git-novice/)
 
@@ -201,7 +201,7 @@ Maliar, Lilia, and Serguei Maliar. "Envelope condition method versus endogenous 
 
 ### Session 10: Solving spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
 
-**Theory**: exact hat algebra
+**Theory**: armington, eaton-kortum, exact hat algebra
 
 Dekle, Robert, Jonathan Eaton, and Samuel Kortum. "Global rebalancing with gravity: Measuring the burden of adjustment." IMF Staff Papers 55, no. 3 (2008): 511-540.
 
