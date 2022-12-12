@@ -1,0 +1,446 @@
+<!DOCTYPE html><html><head>
+      <title>README</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:////Users/ir229/.vscode-insiders/extensions/shd101wyy.markdown-preview-enhanced-0.6.3/node_modules/@shd101wyy/mume/dependencies/katex/katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <style>
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}
+
+/* highlight */
+pre[data-line] {
+  position: relative;
+  padding: 1em 0 1em 3em;
+}
+pre[data-line] .line-highlight-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  display: block;
+  width: 100%;
+}
+
+pre[data-line] .line-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: inherit 0;
+  margin-top: 1em;
+  background: hsla(24, 20%, 50%,.08);
+  background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
+  pointer-events: none;
+  line-height: inherit;
+  white-space: pre;
+}
+
+pre[data-line] .line-highlight:before, 
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-start);
+  position: absolute;
+  top: .4em;
+  left: .6em;
+  min-width: 1em;
+  padding: 0 .5em;
+  background-color: hsla(24, 20%, 50%,.4);
+  color: hsl(24, 20%, 95%);
+  font: bold 65%/1.5 sans-serif;
+  text-align: center;
+  vertical-align: .3em;
+  border-radius: 999px;
+  text-shadow: none;
+  box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-end);
+  top: auto;
+  bottom: .4em;
+}html body{font-family:"Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ul,html body>ol{margin-bottom:16px}html body ul,html body ol{padding-left:2em}html body ul.no-list,html body ol.no-list{padding:0;list-style-type:none}html body ul ul,html body ul ol,html body ol ol,html body ol ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:bold;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:bold}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em !important;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::before,html body code::after{letter-spacing:-0.2em;content:"\00a0"}html body pre>code{padding:0;margin:0;font-size:.85em !important;word-break:normal;white-space:pre;background:transparent;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;font-size:.85em !important;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:before,html body pre tt:before,html body pre code:after,html body pre tt:after{content:normal}html body p,html body blockquote,html body ul,html body ol,html body dl,html body pre{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body pre,html body code{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{padding:0 1.6em;margin-top:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li{margin-bottom:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{list-style-type:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  150px);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h1 class="mume-header" id="aem-7130-dynamic-optimization">AEM 7130 Dynamic Optimization</h1>
+
+<p><strong>Time</strong>: Monday and Wednesday 2:45-4:00</p>
+<p><strong>Location</strong>: Martha Van Rensselaer Hall G155</p>
+<p><strong>Office Hours</strong>: Tuesday 1:30-2:00, Thursday 1:00-1:30 on Zoom.</p>
+<p><strong>Prerequisites</strong>: ECON 6090 and ECON 6170</p>
+<p><strong>Credit Hours</strong>: 3</p>
+<p><strong>Programs</strong>: You will need to install the following programs on your computer</p>
+<ul>
+<li><a href="https://git-scm.com/downloads">Git</a></li>
+<li><a href="https://julialang.org/downloads/">JuliaPro</a></li>
+</ul>
+<h2 class="mume-header" id="course-objective">Course Objective</h2>
+
+<p>The objective of this course is to familiarize you with computational methods for economics. In this course you should learn why we need computational methods for certain types of problems, the theory behind the methods, and most importantly, how to use them in practice. The first part of the course covers general basics of computing and doing computational research. The second part covers optimization and function approximation. The third part covers basic dynamic theory and then goes over a selection of methods for solving dynamic models either numerically or empirically. The fourth part covers prediction and machine learning. The course concludes with how to use high performance computing resources like computing clusters. The beginning of the course is heavy on theory to understand what is happening inside your machine when solving numerical models. As we begin studying techniques to solve economic problems you will also apply them in practice.</p>
+<p>I will be teaching the class in Julia. Julia is becoming widely used in computational economics because it&apos;s open source, it has many packages to employ the methods we will learn and practice, and it&apos;s fast and intuitive. <strong>Please set up a GitHub (<a href="https://github.com">https://github.com</a>) account before class starts.</strong> Much of what we do can be easily ported to R, Python, MATLAB, and C.</p>
+<h2 class="mume-header" id="integrity-of-credit">Integrity of credit</h2>
+
+<p>I expect every student in this course to abide by the Cornell University Code of Academic Integrity. I strongly encourage collaboration in this course, but each student is responsible for making sure that she or he follows the rules laid out in this syllabus, and with those stated in the Code of Academic Integrity. Any student found to have violated the stated policies on problem sets and papers will receive a zero for that assignment. Multiple violations in a semester may result in failure of the course. The Code of Academic Integrity is available for review here: <a href="https://cuinfo.cornell.edu/aic.cfm">https://cuinfo.cornell.edu/aic.cfm</a>.</p>
+<h2 class="mume-header" id="readings">Readings</h2>
+
+<p>Some theory on dynamics will draw from Karp and Traeger (2013). Nocedal and Wright (2006) is highly useful as a detailed reference for optimization. Judd (1998) and Miranda and Fackler (2002) take a more detailed look at the fundamental numerical methods in economics. Judd (1998), Miranda and Fackler (2002), and Nocedal and Wright (2006) are available as eBooks in the library and Karp and Traeger (2013) will be available on Canvas or from the authors&apos; websites. Please look at<br>
+<a href="https://julialang.org/learning/">Learning Julia</a> or go over the first few <a href="https://quantecon.org">QuantEcon Julia lectures</a> for a brief introduction to coding in Julia. The remainder of the required readings will be from journal articles or excerpts from texts which will be accessible online and posted on GitHub a week before class.</p>
+<p>Judd, Kenneth L. (1998) Numerical Methods in Economics, Cambridge, MA: MIT Press.</p>
+<p>Karp, Larry and Christian Traeger (2013) Dynamic Methods in Environmental and Resource Economics.</p>
+<p>Miranda, Mario J. and Paul L. Fackler (2002) Applied Computational Economics and Finance, Cambridge, MA: MIT Press.</p>
+<p>Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 2nd edition.</p>
+<h2 class="mume-header" id="grading">Grading</h2>
+
+<ul>
+<li>Class participation: 10%</li>
+<li>Presentation of a computational paper: 10%</li>
+<li>Final project proposal: 15%</li>
+<li>Final project paper/presentation: 25%</li>
+<li>Problem sets: 40%, 10% each</li>
+</ul>
+<h2 class="mume-header" id="important-dates">Important dates</h2>
+
+<ul>
+<li><a href="XXXXX">Final project proposals due: March 23</a></li>
+<li>Final project presentations: Last week of class</li>
+<li>Final project due: May 25</li>
+</ul>
+<h2 class="mume-header" id="assignments">Assignments</h2>
+
+<h3 class="mume-header" id="problem-sets">Problem sets</h3>
+
+<p>There will be four problem sets. You must submit your code on <a href="https://github.com">GitHub</a>. We will learn how to use Git during class and will be using GitHub Classroom for submissions. You may work in a group of <strong>three or fewer people</strong>. Each group should turn in one assignment with all members&apos; names at the top of the file. Your grade will be a function of how well your answer the questions, and the clarity of your code (i.e. I should be able to tell what you&apos;re doing).</p>
+<ul>
+<li>Problem set 1: Due March 1 (<a href="https://raw.githack.com/AEM7130/class-repo/master/problem-sets/1_ps/01-ps.html">html</a>)</li>
+<li>Problem set 2: Due March 17 (<a href="https://raw.githack.com/AEM7130/class-repo/master/problem-sets/2_ps/02-ps.html">html</a>)</li>
+<li>Problem set 3: Due April 15 (<a href="https://raw.githack.com/AEM7130/class-repo/master/problem-sets/3_ps/03-ps.html">html</a>)</li>
+<li>Problem set 4: Due May 1(<a href="https://raw.githack.com/AEM7130/class-repo/master/problem-sets/4_ps/04-ps.html">html</a>)</li>
+</ul>
+<h3 class="mume-header" id="final-project-proposal-instructions-herehttpsrawgithackcomaem7130class-repomasterfinal-projectproject_proposalhtml">Final project (<a href="https://raw.githack.com/AEM7130/class-repo/master/final-project/project_proposal.html">proposal instructions here</a>)</h3>
+
+<p>There is a final project for the course, due at the end of the semester. You may choose one of two options.</p>
+<ol>
+<li>Begin a new computationally-driven research project. The project should:</li>
+</ol>
+<ul>
+<li>Have an introduction that clearly states the economic question you are answering, frames your research in the context of the existing literature, and tells the reader what you are doing to advance economic knowledge.</li>
+<li>Analytically develop the model, provide proofs for theoretical results if there are any.</li>
+<li>Describe how you solve or estimate the model.</li>
+<li>If possible, have preliminary results.</li>
+</ul>
+<ol start="2">
+<li>Expand an existing paper by bringing in machine learning techniques or advanced numerical techniques (i.e. not just adding MORE fixed effects). This can be your own paper (e.g. your current second year paper in progress), or an existing published paper where reproduction data and code are available online. AEA maintains a repository of data and code for all papers published in AEA journals <a href="https://www.openicpsr.org/openicpsr/search/aea/studies">here</a>. The paper should:</li>
+</ol>
+<ul>
+<li>Briefly summarize the existing paper.</li>
+<li>Describe the new techniques or data your are bringing to the table in detail.</li>
+<li>Have preliminary results.</li>
+<li>If using alternative techniques, compare outcomes or performance against the original methodology in the paper.</li>
+</ul>
+<p>A 1-2 page proposal of the final project is due at about the halfway point of the course. During the final week of class, each student will present their completed work which should have a first-take at a numerical/empirical model and preliminary results.</p>
+<h3 class="mume-header" id="computational-paper-presentations-instructions-herehttpsrawgithackcomaem7130class-repomasterpaper-presentationpaper_presentationhtml">Computational paper presentations (<a href="https://raw.githack.com/AEM7130/class-repo/master/paper-presentation/paper_presentation.html">instructions here</a>)</h3>
+
+<p>Starting near the middle of the course, one student a class will present either a paper that either applies methods we have learned in a previous week, or extends methods we have previously learned. Presentations will be 15 minutes and will use methods from the current or previous week. Presentations should be similar to a regular talk, but with slightly more focus on methods. Example applied papers are below for different sections of the course but you can choose to present another paper with my approval.</p>
+<h2 class="mume-header" id="course-schedule">Course Schedule</h2>
+
+<h3 class="mume-header" id="week-1-intro-to-computing-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_11_intro_to_computinghtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_11_intro_to_computingpdf">Week 1: Intro to computing (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.pdf">pdf</a>)</h3>
+
+<p><strong>Theory</strong>: floats, ints, read/write, memory, truncation, rounding, error propagation, matrix inversion, differentiation, integration</p>
+<p>Judd (1998, Chapters 2, 3 and 7)</p>
+<p>Miranda and Fackler (2002, Chapters 1, 2, and 5)</p>
+<h3 class="mume-header" id="week-2-coding-reproducibility-and-the-shell-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_22a_codinghtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_22a_codingpdf">Week 2: Coding, reproducibility, and the shell (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.pdf">pdf</a>)</h3>
+
+<p><strong>Applications</strong>: shell scripts, generic coding, reproducible coding, speed in julia, workflow</p>
+<p><a href="https://swcarpentry.github.io/shell-novice/">Software Carpentry: The Unix Shell</a></p>
+<p><a href="https://aeadataeditor.github.io/aea-de-guidance/">AEA Reproducibility Guidance</a></p>
+<p><a href="https://julialang.org/learning/">Learning Julia</a></p>
+<p><a href="https://quantecon.org/">QuantEcon Lectures</a></p>
+<h3 class="mume-header" id="week-3-version-control-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_33_githtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_33_gitpdf">Week 3: Version control (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.pdf">pdf</a>)</h3>
+
+<p><strong>Applications</strong>: git, github, issues, pull requests</p>
+<p><a href="https://swcarpentry.github.io/git-novice/">Software Carpentry: Version Control with Git</a></p>
+<p><a href="https://github.com/cornell-seere/lab-information/wiki">SEERE Lab wiki</a></p>
+<h3 class="mume-header" id="week-4-rootfinding-and-optimization-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_44_optimizationhtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_44_optimizationpdf">Week 4: Rootfinding and optimization (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.pdf">pdf</a>)</h3>
+
+<p><strong>Theory</strong>: iterative methods, newton methods, gaussian methods, global solvers</p>
+<p>Judd (1998, Chapter 4 and 5)</p>
+<p>Miranda and Fackler (2002, Chapters 3 and 4)</p>
+<p>Nocedal and Wright (2006, Chapters 2-6)</p>
+<p><strong>Applications</strong>: transportation</p>
+<p>Donaldson, Dave, and Richard Hornbeck. &quot;Railroads and American economic growth: A &#x201C;market access&#x201D; approach.&quot; The Quarterly Journal of Economics 131, no. 2 (2016): 799-858.</p>
+<p>Kitagawa, Toru, and Aleksey Tetenov. &quot;Who should be treated? empirical welfare maximization methods for treatment choice.&quot; Econometrica 86, no. 2 (2018): 591-616.</p>
+<h3 class="mume-header" id="week-5-discrete-time-dynamic-programming-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_55_dynamicshtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_55_dynamicspdf">Week 5: Discrete time dynamic programming (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.pdf">pdf</a>)</h3>
+
+<p><strong>Theory</strong>: markov chains, principle of optimality</p>
+<p>Adda, Jerome, Russell Cooper, and Russell W. Cooper. Dynamic economics: quantitative methods and applications. MIT press, 2003.</p>
+<p>Ljungqvist, Lars, and Thomas J. Sargent. Recursive macroeconomic theory. MIT press, 2018.</p>
+<h3 class="mume-header" id="week-6-function-approximation-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_66_projectionhtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_66_projectionpdf">Week 6: Function approximation (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.pdf">pdf</a>)</h3>
+
+<p><strong>Theory</strong>: discretization, pseudospectral methods, finite element methods</p>
+<p>Fern&#xE1;ndez-Villaverde, Jes&#xFA;s, Juan Francisco Rubio-Ram&#xED;rez, and Frank Schorfheide. &quot;Solution and estimation methods for DSGE models.&quot; In Handbook of macroeconomics, vol. 2, pp. 527-724. Elsevier, 2016.</p>
+<p><strong>Application</strong>: agriculture and climate change</p>
+<p>Ortiz-Bobea, Ariel, Erwin Knippenberg, and Robert G. Chambers. &quot;Growing climatic sensitivity of US agriculture linked to technological change and regional specialization.&quot; Science advances 4, no. 12 (2018): eaat4343.</p>
+<h3 class="mume-header" id="week-7-approximating-value-and-policy-functions-for-discrete-time-models-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_77_solution_methodshtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_77_solution_methodspdf">Week 7: Approximating value and policy functions for discrete time models (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.pdf">pdf</a>)</h3>
+
+<p><strong>Theory</strong>: value function iteration, policy iteration, time iteration</p>
+<p>Aruoba, S. Bora&#x11F;an, Jesus Fernandez-Villaverde, and Juan F. Rubio-Ramirez. &quot;Comparing solution methods for dynamic equilibrium economies.&quot; Journal of Economic dynamics and Control 30, no. 12 (2006): 2477-2508.</p>
+<p>Cai, Yongyang, and Kenneth L. Judd. &quot;Advances in numerical dynamic programming and new applications.&quot; In Handbook of computational economics, vol. 3, pp. 479-516. Elsevier, 2014.</p>
+<p>Fern&#xE1;ndez-Villaverde, Jes&#xFA;s, Juan Francisco Rubio-Ram&#xED;rez, and Frank Schorfheide. &quot;Solution and estimation methods for DSGE models.&quot; In Handbook of macroeconomics, vol. 2, pp. 527-724. Elsevier, 2016.</p>
+<p><strong>Applications</strong>: climate change, bioeconomics</p>
+<p>Cai, Yongyang, and Thomas S. Lontzek. &quot;The social cost of carbon with economic and climate risks.&quot; Journal of Political Economy 127, no. 6 (2019): 2684-2734.</p>
+<h3 class="mume-header" id="week-8-continuous-time-optimal-control-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_88_optimal_controlhtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_88_optimal_controlpdf">Week 8: Continuous time optimal control (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf">pdf</a>)</h3>
+
+<p><strong>Theory</strong>: maximum principle, hamiltonians</p>
+<p>Caputo, Michael R. Foundations of dynamic economic analysis: optimal control theory and applications. Cambridge University Press, 2005.</p>
+<p><strong>Applications</strong>: oil extraction</p>
+<p>Anderson, Soren T., Ryan Kellogg, and Stephen W. Salant. &quot;Hotelling under pressure.&quot; Journal of Political Economy 126, no. 3 (2018): 984-1026.</p>
+<h3 class="mume-header" id="week-9-solving-ordinary-differential-equations-for-continuous-time-models-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_88_optimal_controlhtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_88_optimal_controlpdf">Week 9: Solving ordinary differential equations for continuous time models (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf">pdf</a>)</h3>
+
+<p><strong>Theory</strong>: shooting, backwards shooting</p>
+<p>Brunner, Martin, and Holger Strulik. &quot;Solution of perfect foresight saddlepoint problems: a simple method and applications.&quot; Journal of Economic Dynamics and Control 26, no. 5 (2002): 737-753.</p>
+<p>Judd (1998, Chapter 10)</p>
+<p><strong>Applications</strong>: climate change</p>
+<p>Lemoine, Derek, and Ivan Rudik. &quot;Steering the climate system: using inertia to lower the cost of policy.&quot; American Economic Review 107, no. 10 (2017): 2947-57.</p>
+<h3 class="mume-header" id="week-10-solving-dynamic-spatial-equilibrium-models-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_1111_spatial_modelshtml">Week 10: Solving (dynamic) spatial equilibrium models (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html">html</a>)</h3>
+
+<p><strong>Theory</strong>: exact hat algebra, dynamic hat algebra</p>
+<p>Dekle, Robert, Jonathan Eaton, and Samuel Kortum. &quot;Global rebalancing with gravity: Measuring the burden of adjustment.&quot; IMF Staff Papers 55, no. 3 (2008): 511-540.</p>
+<p>Costinot, Arnaud, and Andr&#xE9;s Rodr&#xED;guez-Clare. &quot;Trade theory with numbers: Quantifying the consequences of globalization.&quot; In Handbook of international economics, vol. 4, pp. 197-261. Elsevier, 2014.</p>
+<p>Caliendo, Lorenzo, Maximiliano Dvorkin, and Fernando Parro. &quot;Trade and labor market dynamics: General equilibrium analysis of the china trade shock.&quot; Econometrica 87, no. 3 (2019): 741-835.</p>
+<p><strong>Applications</strong>: sea level rise</p>
+<p>Shapiro, Joseph S., and Reed Walker. &quot;Why is pollution from US manufacturing declining? The roles of environmental regulation, productivity, and trade.&quot; American Economic Review 108, no. 12 (2018): 3814-54.</p>
+<p>Balboni, Clare (2020) &quot;In harm&apos;s way? infrastructure investments and the persistence of coastal cities.&quot;</p>
+<h3 class="mume-header" id="week-11-machine-learning-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_1010_machine_learninghtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_1010_machine_learningpdf">Week 11: Machine learning (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.pdf">pdf</a>)</h3>
+
+<p><strong>Theory</strong>: regularization and sparsity, prediction and model selection</p>
+<p><a href="https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.31.2.87">Mullainathan, Sendhil, and Jann Spiess. &quot;Machine learning: an applied econometric approach.&quot; Journal of Economic Perspectives 31, no. 2 (2017): 87-106.</a></p>
+<p><a href="https://www.gsb.stanford.edu/gsb-cmis/gsb-cmis-download-auth/476281">Athey, Susan, and Guido W. Imbens. &quot;Machine learning methods that economists should know about.&quot; Annual Review of Economics 11 (2019): 685-725.</a></p>
+<p><a href="https://web.stanford.edu/~hastie/ElemStatLearn/">Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. The elements of statistical learning. Vol. 1, no. 10. New York: Springer series in statistics, 2001. Chapters 3, 4 and 7.</a></p>
+<p><strong>Applications</strong>: ML for asset pricing, boosted trees for prediction</p>
+<p>Gu, Shihao, Bryan Kelly, and Dacheng Xiu. &quot;Empirical asset pricing via machine learning.&quot; The Review of Financial Studies 33, no. 5 (2020): 2223-2273.</p>
+<p>Kleinberg, Jon, Himabindu Lakkaraju, Jure Leskovec, Jens Ludwig, and Sendhil Mullainathan. &quot;Human decisions and machine predictions.&quot; The quarterly journal of economics 133, no. 1 (2018): 237-293.</p>
+<h3 class="mume-header" id="week-12-machine-learning-htmlhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_1010_machine_learninghtml-pdfhttpsrawgithackcomaem7130class-repomasterlecture-noteslecture_1010_machine_learningpdf">Week 12: Machine learning (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.html">html</a>) (<a href="https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_10/10_machine_learning.pdf">pdf</a>)</h3>
+
+<p><strong>Theory</strong>: trees, bagging, boosting, ML for synthetic control</p>
+<p><a href="https://web.stanford.edu/~hastie/ElemStatLearn/">Friedman, Jerome, Trevor Hastie, and Robert Tibshirani (2001) The elements of statistical learning, Vol. 1: Springer series in statistics New York. Chapters 8, 9, 10, and 15.</a></p>
+<p>Athey, Susan, and Guido Imbens (2016) &quot;Recursive partitioning for heterogeneous causal effects.&quot; Proceedings of the National Academy of Sciences 113, no. 27, pp. 7353-7360.</p>
+<p><a href="https://doi.org/10.31235/osf.io/fc9xt">Hollingsworth, Alex, and Coady Wing. &quot;Tactics for design and inference in synthetic control studies: An applied example using high-dimensional data.&quot; (2020).</a></p>
+<p><strong>Applications</strong>: causal trees for heterogeneous treatment effects, ridge-ish regression for returns</p>
+<p>Prest, Brian C. &quot;Peaking interest: How awareness drives the effectiveness of time-of-use electricity pricing.&quot; Journal of the Association of Environmental and Resource Economists 7, no. 1 (2020): 103-143.</p>
+<p>Athey, Susan, and Stefan Wager. &quot;Policy learning with observational data.&quot; Econometrica 89, no. 1 (2021): 133-161.</p>
+<p>Kozak, Serhiy, Stefan Nagel, and Shrihari Santosh. &quot;Shrinking the cross-section.&quot; Journal of Financial Economics 135, no. 2 (2020): 271-292.</p>
+<h3 class="mume-header" id="week-13-final-project-presentations">Week 13: Final project presentations</h3>
+
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    </body></html>
