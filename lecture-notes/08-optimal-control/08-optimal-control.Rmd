@@ -13,7 +13,49 @@ output:
       countIncrementalSlides: false
       ratio: '16:9'
 
+---
+exclude: true
+```{r setup}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall
+)
+options(htmltools.dir.version = FALSE)
+library(knitr)
+opts_chunk$set(
+  prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+  fig.align = "center", fig.width=10, fig.height=6, 
+  out.width="748px", out.length="520.75px",
+  dpi = 300, #fig.path='Figs/',
+  cache = F#, echo=F, warning=F, message=F
+  )
+## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+knit_hooks$set(
+  prompt = function(before, options, envir) {
+    options(
+      prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+      continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+      )
+})
+julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+```
+```{css, echo=FALSE}
+pre {
+  max-height: 300px;
+  overflow-y: auto;
+}
 
+pre[class] {
+  max-height: 100px;
+}
+```
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 100px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+```
 ---
 
 # Roadmap
@@ -773,7 +815,7 @@ This difference equation has solution $Y_i = (1+h)^i$ and implies the approximat
 # Euler's method errors
 
 Thus the relative error between the two is
-$$log(|Y(t)/y(t)|) = \frac{t}{h}log(1+h) - t = \frac{t}{h}(h-h^2+...)-t = -th + ...$$
+$$\log(|Y(t)/y(t)|) = \frac{t}{h}\log(1+h) - t = \frac{t}{h}(h-h^2+...)-t = -th + ...$$
 where excluded terms have order higher than $h$
 
 --
@@ -796,11 +838,6 @@ In general we can show that Euler's method has linear convergence
 
 ```{julia}
 function euler_ode(df, t0, y0, h, n)
-    # f: function representing the ODE
-    # t0: initial time
-    # y0: initial value
-    # h: step size
-    # n: number of steps
     
     t = zeros(n+1)
     y = zeros(n+1)
@@ -816,6 +853,7 @@ function euler_ode(df, t0, y0, h, n)
     end
     
     return (t, y)
+    
 end
 ```
 
@@ -824,8 +862,9 @@ end
 # Euler's method code
 
 ```{julia, results = 'hide'}
+# dy/dt = y -> y = C_0*exp(t)
 df(t, y) = y
-t, y = euler_ode(df, 1., 1., 1., 10)
+t1, y1 = euler_ode(df, 0., 1., .1, 10)
 ```
 
 Define $df/dt$ and send it to the `euler_ode` function
@@ -835,17 +874,18 @@ Define $df/dt$ and send it to the `euler_ode` function
 
 # Euler's method code
 
-```{julia, echo = FALSE}
+```{julia, echo = FALSE, fig.align = 'center'}
 using Plots
-plot(t, [y],
+plot(t1, y1,
     linestyle = [:solid],
     linewidth = [3],
     linecolor = [:red],
     tickfontsize = 12,
     grid = :yes,
+    legend = :topleft,
     xlabel = "t",
     ylabel = "f(t)",
-    label = "Integrated ODE")
+    label = "Euler")
 ```
 
 ---
@@ -882,34 +922,49 @@ Thus the implicit Euler method will get us better approximation properties, ofte
 
 Because of this we can typically use larger $h$'s with the implicit Euler method
 
+
 ---
 
 # Implicit Euler's method code
 
-THE ROOTFINDING DOESNT WORK
+```{julia}
+# rootfinding portion of implicit Euler
+function find_euler_root(df, y, t, h, y0, tol)
+
+    y_new = y0
+    y_old = y0
+    error = Inf
+
+    while error > tol
+        y_new = y + h * df(t, y_new)
+        error = abs((y_new - y_old)/y_old)
+        y_old = deepcopy(y_new)
+    end
+
+    return y_new
+    
+end
+```
+
+---
+
+# Implicit Euler's method code
 
 ```{julia}
 function euler_implicit_ode(df, t0, y0, h, n, tol = 1e-6)
+
     t = zeros(n+1)
     y = zeros(n+1)
     t[1] = t0
     y[1] = y0
-    y_old = y0
-    y_new = y0
     
     for i in 1:n
         t[i+1] = t[i] + h
-        error = Inf
-        while error > tol
-            y_new = y[i] + h * df(t[i], y_new)
-            error = abs((y_new - y_old)/y_old)
-            y_old = deepcopy(y_new)
-        end
-        y[i+1] = y_new
-        y_old = y0
+        y[i+1] = find_euler_root(df, y[i], t[i+1], h, y[i], tol)
     end
     
     return (t, y)
+    
 end
 ```
 
@@ -920,7 +975,7 @@ end
 
 ```{julia, results = 'hide'}
 df(t, y) = y
-t, y = euler_implicit_ode(df, 1., 1., 1., 10)
+t2, y2 = euler_implicit_ode(df, 0., 1., .1, 10, 1e-6)
 ```
 
 Define $df/dt$ and send it to the `euler_implicit_ode` function
@@ -932,17 +987,45 @@ Define $df/dt$ and send it to the `euler_implicit_ode` function
 
 ```{julia, echo = FALSE}
 using Plots
-plot(t, y,
+plot(t2, y2,
     linestyle = [:solid],
     linewidth = [3],
     linecolor = [:red],
     tickfontsize = 12,
     grid = :yes,
+    legend = :topleft,
     xlabel = "t",
     ylabel = "f(t)",
-    label = "Integrated ODE")
+    label = "Implicit Euler")
 ```
 
+
+---
+
+# Comparison
+
+```{julia, results = 'hide'}
+df(t, y) = y
+t1, y1 = euler_ode(df, 0., 1., .1, 10)
+t2, y2 = euler_implicit_ode(df, 0., 1., .1, 10, 1e-6)
+y_real = exp.(t1)
+```
+
+---
+
+# Comparison
+
+```{julia, echo = FALSE, fig.align = 'center'}
+plot([t1 t2 t1], [y1 y2 y_real], 
+  linestyle = [:solid :dash :dot],
+  linecolor = [:red :blue :purple],
+  tickfontsize = 12,
+  grid = :yes,
+  legend = :topleft,
+  xlabel = "t",
+  ylabel = "f(t)",
+  label = ["Euler" "Implicit Euler" "exp(t)"])
+```
 
 ---
 
@@ -985,6 +1068,97 @@ This has the same flavor as forward vs central finite differences
 
 There are higher order Runge-Kutta rules that have even more desirable properties outlined in Judd (1998)
 
+
+---
+
+# Runge-Kutta code
+
+```{julia}
+function find_euler_root_rk(df, y, t, tp, h, y0, tol)
+  
+    y_new = y0
+    y_old = y0
+    error = Inf
+
+    while error > tol
+        y_new = y + h/2 * (df(t, y) + df(tp, y_new))
+        error = abs((y_new - y_old)/y_old)
+        y_old = deepcopy(y_new)
+    end
+
+    return y_new
+    
+end
+```
+
+---
+
+# Runge-Kutta code
+
+```{julia}
+function euler_rk_ode(df, t0, y0, h, n, tol = 1e-6)
+
+    t = zeros(n+1)
+    y = zeros(n+1)
+    t[1] = t0
+    y[1] = y0
+    
+    for i in 1:n
+        t[i+1] = t[i] + h
+        y[i+1] = find_euler_root_rk(df, y[i], t[i], t[i+1], h, y0, tol)
+    end
+    
+    return (t, y)
+    
+end
+```
+
+
+---
+
+# Comparison
+
+```{julia, results = 'hide'}
+df(t, y) = y
+t1, y1 = euler_ode(df, 0., 1., .1, 100)
+t2, y2 = euler_implicit_ode(df, 0., 1., .1, 100, 1e-7)
+t2, y3 = euler_rk_ode(df, 0., 1., .1, 100, 1e-7)
+y_real = exp.(t1)
+```
+
+Check the time/memory with `@btime` in `BenchmarkTools`
+
+---
+
+# Comparison: RK has minimal error
+
+```{julia, echo = FALSE, fig.align = 'center'}
+plot([t1 t2 t1 t2], [y1 y2 y3 y_real], 
+  linestyle = [:dot :dash :dashdot :solid],
+  linecolor = [:red :blue :orange :purple],
+  tickfontsize = 12,
+  grid = :yes,
+  legend = :topleft,
+  xlabel = "t",
+  ylabel = "f(t)",
+  label = ["Euler" "Implicit Euler" "RK" "exp(t)"])
+```
+
+---
+
+# Comparison: RK has minimal error
+
+```{julia, echo = FALSE, fig.align = 'center'}
+plot([t1 t2 t1], [log10.(abs.(y1.-y_real)./y_real) log10.(abs.(y2.-y_real)./y_real) log10.(abs.(y3.-y_real)./y_real)], 
+  linestyle = [:dot :dash :dashdot],
+  linecolor = [:red :blue :orange],
+  tickfontsize = 12,
+  grid = :yes,
+  legend = :topleft,
+  xlabel = "t",
+  ylabel = "log10 Relative Error",
+  label = ["Euler" "Implicit Euler" "RK"])
+```
 
 ---
 
@@ -1151,6 +1325,140 @@ The Figure shows the phase diagram assuming that $f'(A) > r$ for all $A$
 </div>
 
 If $A(T) < 0$ when we guess $c(0) = c_H$, but $A(T) > 0$ when we guess $c(0) = c_L$, we know the correct guess lies in between and we can solve for it using the bisection method
+
+
+---
+
+# Example: Lifecycle model
+
+Let's code it up
+
+\begin{align}
+  \dot{A}(t) = f(A(t)) + w(t) - c(t) \qquad \dot{c}(t) = -\frac{u'(c(t))}{u''(c(t))}\left[f'(A(t)) - r\right]
+\end{align}
+
+- $f(A(t)) = 1.05 A(t)$
+- $u(c(t)) = \log(c(t))$
+- $w(t) = 5$
+- $r = .02$
+
+--
+
+```{julia}
+df(t,a,c) = (1.05*a + 5 - c, -1 * (1/c) / (-1/c^2) * (1.05 - .02))
+```
+
+
+---
+
+# Example: Lifecycle model
+
+We need a 2 variable ODE solver next
+
+--
+
+```{julia}
+function euler_ode(df, t0, a0, c0, h, n)
+    
+    t = zeros(n+1)
+    a = zeros(n+1)
+    c = zeros(n+1)
+    
+    t[1] = t0
+    a[1] = a0
+    c[1] = c0
+    
+    for i in 1:n
+        t[i+1] = t[i] + h
+        a[i+1] = a[i] + h * df(t[i], a[i], c[i])[1]
+        c[i+1] = c[i] + h * df(t[i], a[i], c[i])[2]
+    end
+    
+    return t, a, c
+    
+end
+```
+
+---
+
+# Example: Lifecycle model
+
+Last, wrap it in bisection method
+
+```{julia}
+function solve_bvp(df, t0, a0, aend, c0low, c0high, h, n, tol = 1e-6)
+
+    t = zeros(n+1)
+    a = zeros(n+1)
+    c = zeros(n+1)
+
+    while abs.(c0low - c0high) > tol
+
+        c0guess = (c0low + c0high)/2
+        t, a, c = euler_ode(df, t0, a0, c0guess, h, n)
+        anew = a[end]
+        
+        if sign(anew) > 0
+            c0low = c0guess
+        else
+            c0high = c0guess
+        end
+        
+    end
+
+    return t, a, c
+
+end
+```
+
+
+---
+
+# Example: Lifecycle model
+
+Now we have to find the initial bounds, one where $A(T) > 0$, one where $A(T) < 0$
+
+```{julia, results = 'hide'}
+aend = 0.
+a0 = 0.
+t0 = 0.
+h = .01
+n = 100
+c0low = 1    # low c0 guess
+c0high = 10  # high c0 guess
+```
+
+---
+
+# Example: Lifecycle model
+
+```{julia}
+a0high = euler_ode(df, t0, a0, c0high, h, n)[2][end]
+a0low = euler_ode(df, t0, a0, c0low, h, n)[2][end]
+```
+
+As expected, too high consumption $C(0)$ yields negative assets $A(T)$, too low consumption $C(0)$ yields positive assets $A(T)$
+
+The $C(0)$ that solves the problem will fall somewhere in between
+
+---
+
+# Example: Lifecycle model
+
+```{julia, results = 'hide'}
+t, a, c = solve_bvp(df, t0, a0, aend, c0low, c0high, h, n)
+```
+```{julia, echo = FALSE}
+plot([t t], [a c], 
+  linestyle = [:dot :solid],
+  linecolor = [:red :purple],
+  tickfontsize = 12,
+  grid = :yes,
+  legend = :topleft,
+  xlabel = "t",
+  ylabel = "f(t)",
+  label = ["Assets" "Consumption"])
+```
 
 ---
 
@@ -1326,6 +1634,168 @@ This allows us to exploit how paths tend to converge toward the stable manifold 
 <div align="center">
   <img src="figures/reverse_shooting_phase.png" height=550>
 </div>
+
+---
+
+# Reverse shooting example
+
+Let's code it up
+
+- $f(k) = \sqrt{k}$
+- $r = .02$
+- $u(c) = log(c)$
+
+--
+
+We know the steady state is where $f'(k) = r$ and $f(k) = c$
+
+--
+
+This is $k = 625, c = 25$
+
+--
+
+Pretend we only knew $f(k) = c$ (from $\dot{K} = 0$) and solve by searching over terminal capital
+
+
+---
+
+# Example: Lifecycle model
+
+
+```{julia}
+df(t,k,c) = (
+  -(sqrt(k) - c), 
+  -(-1 * (1/c) / (-1/c^2) * (0.5*k^(-0.5) - .02))
+  )
+```
+
+
+---
+
+# Reverse shooting example
+
+We need a 2 variable ODE solver next
+
+--
+
+```{julia}
+function euler_ode(df, t0, k0, c0, h, n)
+    
+    t = zeros(n+1)
+    k = zeros(n+1)
+    c = zeros(n+1)
+    
+    t[1] = t0
+    k[1] = k0
+    c[1] = c0
+    
+    for i in 1:n
+        t[i+1] = t[i] + h
+        k[i+1] = max(1e-6, k[i] + h * df(t[i], k[i], c[i])[1])
+        c[i+1] = max(1e-6, c[i] + h * df(t[i], k[i], c[i])[2])
+    end
+    
+    return t, k, c
+    
+end
+```
+
+---
+
+# Reverse shooting example
+
+Last, wrap it in bisection method
+
+```{julia}
+function solve_bvp_rev(df, t0, k0, klow, khigh, h, n, tol = 1e-6)
+
+    t = zeros(n+1)
+    k = zeros(n+1)
+    c = zeros(n+1)
+
+    while abs.(klow - khigh) > tol
+        kguess = (klow + khigh)/2
+        t, k, c = euler_ode(df, t0, kguess, sqrt(kguess), h, n)
+        anew = k[end]
+        if anew < k0
+            klow = kguess
+        else
+            khigh = kguess
+        end
+    end
+
+    return t, k, c
+
+end
+```
+
+
+---
+
+# Reverse shooting example
+
+Now we have to find the initial bounds, one where $A(T) > 0$, one where $A(T) < 0$
+
+```{julia, results = 'hide'}
+k0 = 10 # initial condition to hit
+t0 = 0. # time starts at 0
+
+klow = 100    # below closed-form solution of k = 625
+khigh = 1000  # above closed-form solution of k = 625 
+
+aend = (.5 / .02)^2 # closed-form solution
+cend = sqrt(aend) # closed-form solution
+
+h = .1
+n = 10000 # make the horizon long to approx infinite-horizon
+```
+
+---
+
+# Reverse shooting example
+
+```{julia, results = 'hide'}
+t, k, c = solve_bvp_rev(df, t0, k0, klow, khigh, h, n)
+```
+```{julia, echo = FALSE, results = 'hide'}
+t = reverse(t)
+```
+```{julia, echo = FALSE}
+plot([t t t t], [k aend*ones(size(k)) c cend*ones(size(c))], 
+  linestyle = [:solid :dot :solid :dot],
+  linecolor = [:red :purple :green :blue],
+  tickfontsize = 12,
+  grid = :yes,
+  legend = :right,
+  xlabel = "t",
+  ylabel = "Assets / consumption",
+  label = ["Assets" "Steady State Assets" "Consumption" "Steady State Consumption"])
+```
+
+---
+
+# Reverse shooting example
+
+```{julia, results = 'hide'}
+k0 = 800
+t, k, c = solve_bvp_rev(df, t0, k0, klow, khigh, h, n)
+```
+```{julia, echo = FALSE, results = 'hide'}
+t = reverse(t)
+```
+```{julia, echo = FALSE}
+plot([t t t t], [k aend*ones(size(k)) c cend*ones(size(c))], 
+  linestyle = [:solid :dot :solid :dot],
+  linecolor = [:red :purple :green :blue],
+  tickfontsize = 12,
+  grid = :yes,
+  legend = :right,
+  xlabel = "t",
+  ylabel = "Assets / consumption",
+  label = ["Assets" "Steady State Assets" "Consumption" "Steady State Consumption"])
+```
+
 
 ---
 
