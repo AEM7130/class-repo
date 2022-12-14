@@ -43,8 +43,6 @@ julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/b
 
 ```{julia}
 using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
 Pkg.add("ForwardDiff"); Pkg.add("Distributions"); Pkg.add("BenchmarkTools")
 ```
 
@@ -76,23 +74,22 @@ using ForwardDiff, Distributions, BenchmarkTools
 
 # What this class is about
 
-1. Learning how to compute dynamic models through approximation and estimation
-2. Other useful computational techniques and estimation approaches
-3. Learning important details about computing models
+1. Learning how to compute dynamic and spatial models
+2. Other useful computational techniques and details
 
 ---
 
 # What you need to succeed in this course
 
 1. ECON 6090 and ECON 6170
-2. Or potentially some other graduate economics classes (see me if you haven't yet)
+2. ECON 6130 or AEM 7040
 3. Previous coding experience or willingness to spend some time learning as you go
 
 ---
 
 # Course materials
 
-1. Everything we use in the course will be .hi-blue[freely available] and posted to the course GitHub (details next class on how to use Git)
+1. Everything we use in the course will be .hi[freely available] and posted to the course GitHub (details next class on how to use Git)
 2. Books (free from the library or authors' websites):
   1. Judd (1998)
   2. Miranda and Fackler (2002)
@@ -101,7 +98,8 @@ using ForwardDiff, Distributions, BenchmarkTools
 ---
 
 # Things to do before next class
-- Spend some time reading up on Julia:
+
+- Spend some time reading up on Julia if you don't use it already:
     - [Learning Julia](https://julialang.org/learning/)
     - [QuantEcon Julia lectures](https://quantecon.org)
 
@@ -109,12 +107,11 @@ using ForwardDiff, Distributions, BenchmarkTools
 
 # What we will cover in the class
 
-1. Basic computing and things you need to think about
-2. Coding, version control, reproducibility, workflow
+1. Basic computing, arithmetic, calculus, and linear algebra on a computer
+2. Shell and Julia coding, version control, reproducibility, workflow
 3. Optimization
 4. Solving dynamic models
 5. Solving spatial models
-6. Machine learning
 
 ---
 
@@ -130,9 +127,9 @@ using ForwardDiff, Distributions, BenchmarkTools
 
 # Important days / times
 
-- Office hours: Tuesday 1:30-2:00, Thursday 1:00-1:30 on Zoom
-- Final project proposal: March 23
-- Final project paper: May 25
+- Office hours: Tuesday 1:00-2:00
+- Final project proposal: XYZ
+- Final project paper: XYZ
 
 ---
 
@@ -148,11 +145,15 @@ using ForwardDiff, Distributions, BenchmarkTools
 
 # Problem sets (10% each)
 
-You .hi-blue[must] use Julia and write .jl scripts, no Jupyter notebooks
+You .hi[must] use Julia
+  - Code must be written in `.jl` scripts
+  - You must use Julia project management tools, e.g. `Pkg.generate(), Pkg.activate(), Pkg.instantiate()`
+  - Everything must be nested in a wrapper function
+  - It must work just by running the wrapper function
 
-You can work in groups of up to 3
+You can work in groups of 2
 
-Problem sets will be where you .hi-blue[implement] the techniques we learn in class on your own,
+Problem sets will be where you .hi[implement] the techniques we learn in class on your own,
 but we will be doing our fair share of coding in class
 
 ---
@@ -171,21 +172,23 @@ Julia is very good for reproducibility
 
 # Computational paper presentations (10%)
 
-Everyone will present a paper starting in 2-3 weeks
+Everyone will present a paper or package starting in a few weeks
 
 The paper can apply methods we've learned about (or will learn about),
 or can be a new method that we have not covered
 
-You must consult with me at least 1 week prior to your scheduled presentation
-date to ensure the paper is appropriate for a presentation
+The package must be something related to the methods we are learning
 
-The syllabus has some pre-approved papers you can choose from under the **Applications** header
+You must consult with me at least 1 week prior to your scheduled presentation
+date to ensure the paper/package is appropriate for a presentation
+
+The syllabus has some pre-approved papers you can choose from under the .hi[Applications] header
 
 ---
 
 # Final project (25% paper, 15% proposal)
 
-The final project will be the beginning of a .hi-blue[computationally-driven] research project or an extension of an existing paper with new methods
+The final project will be the beginning of a .hi[computationally-driven] research project or an extension of an existing paper with new methods
 
 Proposals will be due about half way through the class
 
@@ -193,8 +196,8 @@ Proposals will be due about half way through the class
 
 # Final project (25% paper, 15% proposal)
 
-The only requirement is that the project .hi-blue[cannot be computationally trivial]  
-(i.e. no 600 observation two-way FE papers)
+The only requirement is that the project .hi[cannot be computationally trivial]  
+(i.e. no reduced form applied micro papers)
 
 It can be numerical, empirical, whatever
 
@@ -250,16 +253,16 @@ Including OLS: $\hat{\beta} = (X'X)^{-1}X'Y$
 
 --
 
-.hi-red[Not all economic models have closed-form solutions,
-and others can't have closed-form solutions with losing important economic content]
+Not all economic models have closed-form solutions,
+and others can't have closed-form solutions with losing important economic content
 
-This is generally true for dynamic models
+This is generally true for dynamic and spatial models
 
 ---
 
 # What can we compute?
 
-We can use computation + theory to answer .hi-blue[quantitative] questions
+We can use computation + theory to answer .hi[quantitative] questions
 
 --
 
@@ -278,7 +281,7 @@ Theory often relies on strong assumptions like:
 
 - log utility (lose income vs substitution)
 - no transactions costs (important friction)
-- strictly concave objectives (natural phenomena don't follow this)
+- strictly linear transitions (natural phenomena don't follow this)
 - static decisionmaking
 
 It can be unclear what the cost of these assumptions are
@@ -291,7 +294,7 @@ Suppose we have a constant elasticity demand function: $q(p) = p^{-0.2}$
 
 In equilibrium, quantity demanded is $q^* = 2$
 
-.hi-blue[What price clears the market in equilibrium?]
+.hi[What price clears the market in equilibrium?]
 
 --
 
@@ -308,12 +311,13 @@ Your calculator can do the rest
 ---
 
 # Example 2
+
 Suppose the demand function is now: $q(p) = 0.5p^{-0.2} + 0.5p^{-0.5}$,
 a weighted average of two CE demand functions
 
 In equilibrium, quantity demanded is $q^* = 2$
 
-.hi-blue[What price clears the market in equilibrium?]
+.hi[What price clears the market in equilibrium?]
 
 --
 
@@ -355,6 +359,7 @@ y = price(x)
 ```
 
 Now plot $q_d$ and $q(p)$
+
 ---
 
 # Example 2
@@ -483,10 +488,9 @@ $a^* = 1$
 
 --
 
-Now suppose the government implements a price floor  
-on the crop of $p > 1$ so we have that $p(\hat{y}) = \max(1,3-2a\hat{y})$
+Now suppose the government implements a price floor on the crop of $p > 1$ so we have that $p(\hat{y}) = \max(1,3-2a\hat{y})$
 
-.hi-blue[How much acreage does the farmer plant?]
+.hi[How much acreage does the farmer plant?]
 
 ---
 
@@ -508,7 +512,7 @@ $\rightarrow$ we need to solve this numerically
 
 # Function iteration
 
-We can solve this using another technique called .hi-blue[function iteration]
+We can solve this using another technique called .hi[function iteration]
 
 ```{julia, results = 'hide'}
 # Function iteration method to find a root
@@ -556,17 +560,17 @@ name: why
 
 # Big O notation
 
-How do we quantify .hi-blue[speed] and .hi-blue[accuracy] of computational algorithms?
+How do we quantify speed and accuracy of computational algorithms?
 
-i.e. what is the .hi-blue[computational complexity] of the problem?
-
---
-
-.hi-blue[General mathematical definition:] Big O notation describes the limiting behavior of a function when the argument tends towards a particular value or infinity
+i.e. what is the .hi[computational complexity] of the problem?
 
 --
 
-.hi-blue[Programming context:] Describes the limiting behavior of algorithms in terms of run time/memory/accuracy as input size grows
+.hi[General mathematical definition:] Big O notation describes the limiting behavior of a function when the argument tends towards a particular value or infinity
+
+--
+
+.hi[Programming context:] Describes the limiting behavior of algorithms in terms of run time/memory/accuracy as input size grows
 
 --
 
@@ -583,12 +587,12 @@ Here is how to think about it:
 --
 
 **O(x):** linear
-- Time to solve increases linearly in input x
-- Accuracy changes linearly in input x
+- Time to solve increases linearly in size of input x
+- Accuracy changes linearly in size of input x
 
 --
 
-.hi-blue[Examples?]
+.hi[Examples?]
 
 --
 
@@ -606,7 +610,7 @@ $\rightarrow$ For each element, check whether it is the value we want
 
 --
 
-.hi-blue[Examples?]
+.hi[Examples?]
 
 --
 
@@ -624,7 +628,7 @@ $\mathbf{O(n!)}$: factorial
 
 --
 
-.hi-blue[Examples?]
+.hi[Examples?]
 
 --
 
@@ -694,7 +698,7 @@ Here are a few examples for fundamental computational methods
 
 # Big O Notation: O(1)
 
-**O(1):** algorithm executes in .hi-blue[constant time]
+**O(1):** algorithm executes in .hi[constant time]
 
 The size of the input does not affect execution speed
 
@@ -710,7 +714,7 @@ accessing a specific location in an array
 
 # Big O Notation: O(x)
 
-**O(x):** algorithm executes in .hi-blue[linear time]
+**O(x):** algorithm executes in .hi[linear time]
 
 Execution speed grows linearly in input size
 
@@ -726,7 +730,7 @@ Bigger array $\rightarrow$ need to shift around more elements in memory to accom
 
 # Big O Notation: $O(x^2)$
 
-$\mathbf{O(x^2):}$ algorithm executes in .hi-blue[quadratic time]
+$\mathbf{O(x^2):}$ algorithm executes in .hi[quadratic time]
 
 More generally called polynomial time for $x^n$
 
@@ -736,7 +740,7 @@ Example:
 
 --
 
-.hi-blue[bubble sort], step through a list, compare adjacent elements, swap if in the wrong order
+.hi[bubble sort], step through a list, compare adjacent elements, swap if in the wrong order
 
 ---
 
@@ -753,35 +757,35 @@ name: why
 
 # Computer arithmetic - storage
 
-.hi-blue[Question:] which numbers can be represented by a computer?
+.hi[Question:] which numbers can be represented by a computer?
 
 --
 
-Before the answer, .hi-red[how] are numbers physically represented by a computer?
+Before the answer, how are numbers physically represented by a computer?
 
 --
 
-.hi-blue[Binary:] a base 2 number system
+.hi[Binary:] a base 2 number system
 
 Each digit can only take on 0 or 1
 
 --
 
-.hi-blue[Base 10:] each digit can take on 0-9
+.hi[Base 10:] each digit can take on 0-9
 
 ---
 
 # Computer arithmetic - storage
 
-.hi-blue[Question]: which numbers can be represented by a computer?
+.hi[Question]: which numbers can be represented by a computer?
 
 --
 
-.hi-blue[Answer:] a .hi-red[subset] of the rational numbers
+.hi[Answer:] a subset of the rational numbers
 
 --
 
-Computers have .hi-blue[finite] memory and hard disk space, there are infinite rational numbers
+Computers have .hi[finite] memory and hard disk space, there are infinite rational numbers
 
 --
 
@@ -827,9 +831,9 @@ println(typeof(5))
 
 # Computer arithmetic - storage
 
-`Int64` means it is a .hi-blue[integer] with 64 bits of storage
+`Int64` means it is a .hi[integer] with 64 bits of storage
 
-`Float64` means it is a .hi-blue[floating point number] with 64 bits of storage
+`Float64` means it is a .hi[floating point number] with 64 bits of storage
 
 Floating point just means $b^{\pm n}$ can move the decimal point around in the significand
 
@@ -843,7 +847,7 @@ Limitations on storage suggest three facts
 
 --
 
-.hi-blue[1.] There exists a .hi-blue[machine epsilon] which denotes the smallest relative quantity representible by a computer
+.hi[1.] There exists a .hi[machine epsilon] which denotes the smallest relative quantity representible by a computer
 
 --
 
@@ -885,14 +889,14 @@ println("Is 1 - ϵ/2 < 1? $(Float32(1) - eps(Float32)/2 < 1)")
 
 --
 
-This means theres a tradeoff between precision and storage requirements,  
+Theres a tradeoff between precision and storage requirements,  
 this matters for low-memory systems like GPUs
 
 ---
 
 # The limits of computers
 
-.hi-blue[2.] There is a .hi-blue[smallest representable number]
+.hi[2.] There is a .hi[smallest representable number]
 
 ```{julia}
 println("64 bit smallest float is $(floatmin(Float64))")
@@ -904,7 +908,7 @@ println("16 bit smallest float is $(floatmin(Float16))")
 
 # The limits of computers
 
-.hi-blue[3.] There is a .hi-blue[largest representable number]
+.hi[3.] There is a .hi[largest representable number]
 
 ```{julia}
 println("64 bit largest float is $(floatmax(Float64))")
@@ -926,7 +930,7 @@ println("It loops us around the number line: $(typemin(Int64))")
 
 # The limits of computers
 
-.hi-red[The scale of your problem matters]
+The scale of your problem matters
 
 --
 
@@ -948,7 +952,7 @@ This means we will have error in our computations
 
 --
 
-Error comes in two major forms:
+Error comes in two major and related forms:
 
 1. Rounding
 2. Truncation
@@ -1054,8 +1058,7 @@ Why?
 
 --
 
-Adding numbers of greatly different magnitudes  
-does not always work like you would want
+Adding numbers of greatly different magnitudesdoes not always work like you would want
 
 ---
 
@@ -1133,7 +1136,7 @@ name: why
 
 # Differentiation
 
-Derivatives are obviously important in economics for finding optimal allocations, etc
+Derivatives are important in economics for finding optimal allocations, etc
 
 The formal definition of a derivative is:
 
@@ -1159,7 +1162,7 @@ How do we perform derivatives on computers if we can't take the limit?
 
 --
 
-.hi-blue[Finite difference methods]
+.hi[Finite difference methods]
 
 --
 
@@ -1203,12 +1206,11 @@ println("
 
 # Error, it's there
 
-None of the values we chose for $h$ were perfect,  
-but clearly some were better than others
+None of the values we chose for $h$ were perfect, but clearly some were better than others
 
 --
 
-.hi-blue[Why?]
+.hi[Why?]
 
 --
 
@@ -1216,13 +1218,11 @@ We face two opposing forces:
 
 --
 
-- We want $h$ to be as small as possible so that  
-we can approximate the limit as well as we possibly can, BUT
+We want $h$ to be as small as possible so thatwe can approximate the limit as well as we possibly can, BUT
 
 --
 
-- If $h$ is small then $f(x+h)$ is close to $f(x)$,  
-we can run into rounding issues like we saw for $h=10^{-30}$
+If $h$ is small then $f(x+h)$ is close to $f(x)$, we can run into rounding issues like we saw for $h=10^{-30}$
 
 ---
 
@@ -1232,7 +1232,7 @@ We can select $h$ in an optimal fashion: $h = \max\{|x|,1\}\sqrt{\epsilon}$
 
 --
 
-There's proofs for why this is the case but generally testing out different $h$'s works fine
+There are proofs for why this is the case but generally testing out different $h$'s works fine
 
 ---
 
@@ -1267,12 +1267,11 @@ $f'(x) = \frac{f(x+h) - f(x)}{h} + O(h)$ because $O(h^2)/h = O(h)$
 
 --
 
-.hi-blue[Forward differences have linearly growing errors]
+.hi[Forward differences have linear errors]
 
 --
 
-If we halve $h$, we halve the error in our approximation  
-(ignoring rounding/truncation issues)
+If we halve $h$, we halve the error in our approximation (ignoring rounding/truncation issues)
 
 ---
 
@@ -1282,7 +1281,7 @@ How can we improve the accuracy of the forward difference?
 
 --
 
-First, .hi-blue[why] do we have error?
+First, .hi[why] do we have error?
 
 --
 
@@ -1295,7 +1294,7 @@ The secant curve has the average slope of $f(x)$ on $[x,x+h]$
 
 --
 
-We want the derivative at $x$, which is on the edge of $[x,x+h]$, how about we .hi-blue[center] $x$?
+We want the derivative at $x$, which is on the edge of $[x,x+h]$, how about we .hi[center] $x$?
 
 ---
 
@@ -1305,25 +1304,26 @@ We can approximate $f'(x)$ in a slightly different way: $$f'(x) \approx \frac{f(
 
 --
 
-This leaves $x$ in the middle of the interval  
-over which we are averaging the slope of $f(x)$
+This leaves $x$ in the middle of the interval over which we are averaging the slope of $f(x)$
 
 --
 
-.hi-blue[Is this an improvement on forward differences?]
+.hi[Is this an improvement on forward differences?]
 
 ---
 
 # How much error is in a central finite difference?
 
 Lets do two second-order Taylor expansions:
+
+--
+
 - $f(x+h) = f(x) + f'(x)h + f''(x)h^2/2! + O(h^3)$
 - $f(x-h) = f(x) + f'(x)(-h) + f''(x) (-h)^2/2! + O(h^3)$
 
 --
 
-Subtract the two expressions (note that $O(h^3) - O(h^3) = O(h^3)$)  
-and then divide by $2h$ to get
+Subtract the two expressions (note that $O(h^3) - O(h^3) = O(h^3)$) and then divide by $2h$ to get
 
 --
 
@@ -1346,8 +1346,7 @@ Optimal selection of $h$ for central differences is $h = \max\{|x|,1\}\epsilon^{
 
 # Why use anything but central differences?
 
-Suppose we're computing a Jacobian of a multidimensional function,  
-why would we ever use forward differences instead of central differences?
+Why would we ever use forward differences instead of central differences?
 
 --
 
@@ -1365,8 +1364,6 @@ and then $g(x_1+h,x_2,...)$ for each $x_i$
 --
 
 Forward differences saves on # of operations at the expense of accuracy
-
-For high dimensional functions it may be worth the tradeoff
 
 ---
 
@@ -1391,11 +1388,6 @@ Add the two expressions and then divide by $h^2$ to get
 
 $$f''(x) = \frac{f(x+h) - 2f(x) + f(x-h)}{h^2} + O(h^2)$$
 
---
-
-Second derivatives are important for calculating Hessians  
-and checking maxima or minima
-
 ---
 
 # Differentiation without error?
@@ -1408,7 +1400,7 @@ Can we improve upon finite differences?
 
 --
 
-.hi-blue[Analytic derivatives]
+.hi[Analytic derivatives]
 
 One way is to code up the actual derivative
 
@@ -1429,8 +1421,7 @@ Exact solution!
 
 # Automatic differentiation
 
-Coding up analytic derivatives by hand for  
-complex problems is not always great because
+Coding up analytic derivatives by hand forcomplex problems is not always great because
 
 --
 
@@ -1442,9 +1433,9 @@ Humans are suseptible to error in coding or calculating the derivative mathemati
 
 ---
 
-# Autodiff: let the computer do it
+# Automatic differentiation
 
-Think about this: your code is .hi-blue[always] made up of simple arithmetic operations
+Think about this: your code is .hi[always] made up of simple arithmetic operations
 - add, subtract, divide, multiply
 - trig functions
 - exponentials/logs
@@ -1456,7 +1447,7 @@ The closed form derivatives of these operations is not hard, it turns out your c
 
 ---
 
-# Autodiff: let the computer do it
+# Automatic differentiation
 
 How? 
 
@@ -1468,43 +1459,39 @@ and break down the derivative into the (easy) component parts that another packa
 --
 
 ```{julia, results = 'hide'}
-# the function, it needs to be written in a particular way because the autodiff package is dumb
-# *(x,y) is the julia function way to do x*y, 
-# autodiff needs to be in terms of julia functions to work correctly ¯\_(ツ)_/¯
-ff(x) = *(x[1],x[1]) # x^2
-x = [2.]; # location to evaluate: ff(x) = 2^2
+ff(x) = x^2
+x = [2 3 4]
 ```
 
 ---
 
-# Autodiff: let the computer do it
+# Automatic differentiation
 
 ```{julia}
 using ForwardDiff
-g(f,x) = ForwardDiff.gradient(f,x); # g = ∇f
-println("ff'(x) at $(x[1]) is: $(g(ff,x)[1])") # display gradient value
+g(f,x) = ForwardDiff.derivative(f,x); # g = dff/dx
+println("ff'(x) at $(x) is: $(g.(ff,x))") # display gradient value
 ```
 
 --
 
-Exact solution!
+Exact solutions without handcoding
 
 ---
 
-# Autodiff: let the computer do it
+# Automatic differentiation
 
 Once you get the hang of coding up function for autodiff it's not that hard
 
 ```{julia, results = 'hide'}
-fff(x) = sin(*(x[1],x[1])) # x^2
+fff(x) = sin(x^2)
 ```
 
 --
 
 ```{julia}
-x = [2.]                                    # location to evaluate: ff(x) = 2^2
-g(f,x) = ForwardDiff.gradient(f,x)        # g = ∇f
-println("fff'(x) at $(x[1]) is: $(g(fff,x)[1])") # display gradient value
+x = [0 1 2]
+println("fff'(x) at $(x) is: $(g.(fff,x))") 
 ```
 
 ---
@@ -1519,12 +1506,7 @@ We integrate to do a lot of stuff in economics
 
 --
 
-- Expectations
-- Add up a continuous measure of things
-
---
-
-$\int_D f(x) dx$, $f:\mathcal{R}^n-\mathcal{R}$, $D\subset\mathcal{R}^n$
+$\int_D f(x) dx$, $f:\mathcal{R}^n \rightarrow \mathcal{R}$, $D\subset\mathcal{R}^n$
 
 ---
 
@@ -1535,6 +1517,8 @@ Integrals are effectively infinite sums
 --
 
 1 dimensional example:
+
+--
 
 $\lim_{dx_i\rightarrow0}\sum_{i=0}^{(a-b)/dx_i} f(x_i) dx_i$
 
@@ -1556,8 +1540,7 @@ Probably the most commonly used form in empirical econ
 
 --
 
-Approximate an integral by relying on LLN  
-and "randomly" sampling the integration domain
+Approximate an integral by relying on LLN and "randomly" sampling the integration domain
 
 --
 
@@ -1571,9 +1554,22 @@ But, produces a random approximation
 
 # Monte Carlo integration
 
-Integrate $\xi = \int_0^1 f(x) dx$ by drawing $N$ uniform samples, $x_1,...,x_N$ over interval $[0,1]$
+Suppose we want to integrate $\xi = \int_0^1 f(x) dx$
+
+How do we do it?
 
 --
+
+We can do so by drawing $N$ uniformly distributed samples, $x_1,...,x_N$ over interval $[0,1]$
+
+--
+
+Why?
+
+---
+
+# Monte Carlo integration
+
 
 $\xi$ is equivalent to $E[f(x)]$ with respect to a uniform distribution,
 so estimating the integral is the same as estimating the expected value of $f(x)$
@@ -1592,7 +1588,7 @@ LLN gives us that the $plim_{N\rightarrow\infty} \hat{\xi} = \xi$
 
 # Monte Carlo integration
 
-The variance of $\hat{\xi}$ is $$\sigma^2_{\hat{\xi}} = var(\frac{V}{N}\sum_{i=1}^N f(x_i)) = \frac{V^2}{N^2} \sum_{i=1}^N var(f(X)) = \frac{V^2}{N}\sigma^2_{f(X)}$$
+The variance of $\hat{\xi}$ is $$\sigma^2_{\hat{\xi}} = \mathrm{var}\left(\frac{V}{N}\sum_{i=1}^N f(x_i)\right) = \frac{V^2}{N^2} \sum_{i=1}^N \mathrm{var}(f(X)) = \frac{V^2}{N}\sigma^2_{f(X)}$$
 
 --
 
@@ -1643,7 +1639,7 @@ Pretty close!
 
 # Quadrature rules
 
-We can also approximate integrals using a technique called .hi-blue[quadrature]
+We can also approximate integrals using a technique called .hi[quadrature]
 
 --
 
@@ -1666,21 +1662,20 @@ How would you do it?
 
 --
 
-One answer is to replace the function with  
-something easy to integrate: .hi-blue[a piecewise polynomial]
+One answer is to replace the function with something easy to integrate: .hi[a piecewise polynomial]
 
 --
 
 Key things to define up front:
 - $x_i = a + (i-1)/h$ for $i=1,2,...,n$ where $h = \frac{b-a}{n-1}$
 
-$x_i$s are the .hi-blue[quadrature nodes] of the approximation scheme and divide the interval into $n-1$ equally spaced subintervals of length $h$
+$x_i$s are the .hi[quadrature nodes] of the approximation scheme and divide the interval into $n-1$ equally spaced subintervals of length $h$
 
 ---
 
 # Midpoint rule
 
-Most basic Newton-Cotes method:
+The most basic Newton-Cotes method:
 1. Split $[a,b]$ into intervals
 2. Approximate the function in each subinterval by a constant equal to the function at the midpoint of the subinterval
 
@@ -1715,14 +1710,21 @@ where $w_1=w_n = h/2$ and $w_i = h$ otherwise
 
 # How accurate is this rule?
 
-Trapezoid rule is $O(h^2)$ / first-order exact: it can integrate any linear function exactly
+Trapezoid rule is $O(h^2)$ aka first-order exact: it can integrate any linear function exactly
+
+--
+
+Seems sensible, a piecewise linear function can approximate any linear function exactly since it has more flexibility
 
 ---
 
 # Simpsons rule
 
 Increase complexity by 1 degree:
-2. Let $n$ be odd, then approximate the function across a .hi-blue[pair] of subintervals
+
+--
+
+Let $n$ be odd, then approximate the function across a .hi[pair] of subintervals
 by a quadratic interpolation passing through $(x_{2i-1},f(x_{2i-i}))$, $(x_{2i},f(x_{2i}))$, and $(x_{2i+1},f(x_{2i+1}))$
 
 --
@@ -1738,13 +1740,19 @@ where $w_1=w_n = h/3$, otherwise and $w_i = 4h/3$ if $i$ is even and $w_i = 2h/3
 
 # How accurate is this rule?
 
-Simpson's rule is $O(h^4)$ / third-order exact: it can integrate any cubic function exactly
+How accurate do you think Simpson's rule is?
 
 --
 
-That's weird! Why do we gain 2 orders of accuracy when increasing one order of approximation complexity?
+Simpson's rule is $O(h^4)$ aka third-order exact: it can integrate any cubic function exactly
 
 --
+
+Why do we gain 2 orders of accuracy when increasing one order of approximation complexity?
+
+---
+
+# How accurate is this rule?
 
 1. The approximating piecewise quadratic is exact at the end points and midpoint of the conjoined two subintervals
 --
@@ -1752,7 +1760,7 @@ That's weird! Why do we gain 2 orders of accuracy when increasing one order of a
 2. Clearly the difference between a cubic $f(x)$ and the quadratic approximation in $[x_{2i-1},x_{2i+1}]$ is another cubic function
 --
 
-3. This cubic function is .hi-blue[odd] with respect to the midpoint $\rightarrow$ integrating over the first subinterval cancels integrating over the second subinterval
+3. This cubic error is .hi[odd] with respect to the midpoint: integrating over the first subinterval cancels integrating over the second subinterval, the integration error is zero
 
 ---
 
@@ -1766,26 +1774,23 @@ Evenly spaced, but no particular reason for doing so...
 
 --
 
-Gaussian quadrature selects these nodes more efficiently  
-and relies on .hi-blue[weight functions] $w(x)$
+Gaussian quadrature selects these nodes more efficiently and relies on .hi[weight functions] $w(x)$
 
 ---
 
 # Gaussian quadrature rules
 
-Gaussian rules try to .hi-blue[exactly integrate] some finite dimensional collection of functions (i.e. polynomials up to some degree)
+Gaussian rules try to exactly integrate some finite dimensional collection of functions (i.e. polynomials up to some degree)
 
 --
 
-For a given order of approximation $n$, the weights $w_1,...,w_n$ and nodes $x_1,...,x_n$
-are chosen to satisfy $2n$ .hi-blue[moment matching conditions]:
+For a given order of approximation $n$, the weights $w_1,...,w_n$ and nodes $x_1,...,x_n$ are chosen to satisfy $2n$ .hi[moment-matching conditions]:
 
 --
 
 $\int_I x^kw(x)dx = \sum_{i=1}^n w_i x^k_i$, for $k=0,...,2n-1$
 
-where $I$ is the interval over which we are integrating  
-and $w(x)$ is a given weight function
+where $I$ is the interval over which we are integrating and $w(x)$ is a given weight function
 
 ---
 
@@ -1800,8 +1805,7 @@ $\int_i f(x) w(x)dx \approx \sum_{i=1}^n w_i f(x_i)$
 
 --
 
-Gaussian rules are $2n-1$ order exact,  
-we can exactly compute the integral of any polynomial order $2n-1$
+Gaussian rules are $2n-1$ order exact: we can exactly compute the integral of any polynomial order $2n-1$
 
 ---
 
@@ -1812,7 +1816,7 @@ into mass points (nodes) and probabilities (weights) for some other discrete dis
 
 --
 
-Given an approximation with $n$ mass points, $X$ and $\bar{X}$ have identical moments up to order $2n$,
+Given an approximation with $n$ mass points, $X$ and $\bar{X}$ have identical moments up to order $2n-1$,
 and as $n\rightarrow\infty$ we have a continuum of mass points and recover the continuous pdf
 
 --
@@ -1823,7 +1827,7 @@ But what do we pick for the weighting function $w(x)$?
 
 # Gauss-Legendre
 
-We can start out with a simple $w(x) = 1$, this gives us .hi-blue[Gauss-Legendre] quadrature
+We can start out with a simple $w(x) = 1$, this gives us .hi[Gauss-Legendre] quadrature
 
 This can approximate the integral of any function arbitrarily well by increasing $n$
 
@@ -1852,14 +1856,13 @@ Lots of computational problems break down into linear systems
 
 Many non-linear models are linearized
 
-How do we .hi-blue[actually] solve these systems inside the machine?
+How do we .hi[actually] solve these systems inside the machine?
 
 ---
 
 # L-U Factorization
 
-If $A$ in $Ax=b$ is upper or lower triangular,  
-we can solve for $x$ recursively via forward/backward substitution
+If $A$ in $Ax=b$ is upper or lower triangular, we can solve for $x$ recursively via forward/backward substitution
 
 --
 
@@ -1888,8 +1891,7 @@ Issue: we don't usually luck into an upper or lower triangular matrix
 
 --
 
-L-U factorization is an algorithm that decomposes $A$  
-into the product of lower and upper triangular matrices
+L-U factorization is an algorithm that decomposes $A$ into the product of lower and upper triangular matrices
 
 ---
 
@@ -1912,7 +1914,7 @@ Why not just use another method like Cramer's rule?
 
 --
 
-.hi-blue[Speed]
+.hi[Speed]
 
 --
 
@@ -2080,17 +2082,15 @@ We can get closed-form solutions by applying forward substitution:
 
 # Numerical issues
 
-Both variables are approximately 1 for large $M$,  
-but remember adding small numbers to big numbers causes problems numerically
+Both variables are approximately 1 for large $M$, but remember adding small numbers to big numbers causes problems numerically
 
 --
 
-If $M=10000000000000000000$, the computer will return $x_2$  
-is equal to precisely $1$, this isn't terribly wrong
+If $M=10000000000000000000$, the computer will return $x_2$ is equal to precisely $1$, this isn't terribly wrong
 
 --
 
-When we then perform the second step of backwards substitution, we solve for $x_1=-M(1-x_2)=0$, this is .hi-red[very] wrong
+When we then perform the second step of backwards substitution, we solve for $x_1=-M(1-x_2)=0$, this is .hi[very] wrong
 
 Large errors like this often occur because diagonal elements are very small
 
@@ -2131,8 +2131,7 @@ println("Julia's division operator is actually pretty smart though, true solutio
 
 # Ill-conditioning
 
-A matrix $A$ is said to be ill-conditioned if  
-a small perturbation in $b$ yields a large change in $x$
+A matrix $A$ is said to be ill-conditioned if a small perturbation in $b$ yields a large change in $x$
 
 --
 
@@ -2151,27 +2150,18 @@ If this elasticity is large, then computer representations of the system of equa
 
 --
 
-Approximate the elasticity by computing the .hi-blue[condition number]
+Approximate the elasticity by computing the .hi[condition number]
 \begin{gather*}
 	\kappa = ||A|| \cdot ||A^{-1}||
 \end{gather*}
 
 --
 
-$\kappa$ gives the least upper bound of the elasticity
-
-$\kappa$ is always larger than one and a rule of thumb is that for every order of magnitude, a significant digit is lost in the computation of $x$
+$\kappa$ gives the least upper bound of the elasticity: it is always larger than one and a rule of thumb is that for every order of magnitude, a significant digit is lost in the computation of $x$
 
 ```{julia}
 cond([1. 1.; 1. 1.00000001])
 ```
-
----
-
-# Next week
-
-## Coding, generic coding, reproducibility, the shell
-
 
 
 

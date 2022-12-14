@@ -15,13 +15,35 @@ output:
 
 
 ---
+exclude: true
+```{r setup}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall
+)
+options(htmltools.dir.version = FALSE)
+library(knitr)
+opts_chunk$set(
+  prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+  fig.align = "center", fig.width=10, fig.height=6, 
+  out.width="748px", out.length="520.75px",
+  dpi = 300, #fig.path='Figs/',
+  cache = F#, echo=F, warning=F, message=F
+  )
+## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+knit_hooks$set(
+  prompt = function(before, options, envir) {
+    options(
+      prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+      continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+      )
+})
+julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+```
+
+---
 
 # Roadmap
-
-```{r, echo = F, results = 'hide'}
-library(JuliaCall)
-julia_setup(JULIA_HOME = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin/")
-```
 
 1. How do we think about solving dynamic economic models
 2. Value function iteration
@@ -667,15 +689,11 @@ We then perform multi-dimensional function iteration to solve for the fixed poin
 
 --
 
-This ends up being very simple and it works on any dimension function
+It does not bear a terrible computational cost and is derivative-free
 
 --
 
-It is also does not bear a terrible computational cost and is derivative-free
-
---
-
-The drawback is that it will not always converge and is generally unstable
+The drawback is that it will not always converge and may be unstable
 
 --
 
@@ -686,7 +704,11 @@ This can be solved by .hi-blue[damping]
 
 # Eq condition: Euler equation
 
-Often we will iterate on the Euler equation which for our problem is
+Standard procedure is to iterate on the Euler equation
+
+--
+
+For our problem it is
 $$u'(c_t) = \beta u'(c_{t+1}) f'(k_{t+1})$$
 
 --
@@ -712,7 +734,7 @@ We have defined $c_{t}$ in two ways, once as an outcome of the policy function, 
 
 --
 
-Now we can form our consumption policy function as a fixed point by substituting $C(k_t)$ into the the Euler fixed point as follows
+Now we can form our consumption policy function as a fixed point in $C(\cdot)$ by substituting $C(k_t)$ into the the Euler fixed point:
 $$C(k_t) = u'^{(-1)}\left(\beta u'(C(k_{t+1})) f'(k_{t+1}(C(k_t),k_t))\right)$$
 
 ---

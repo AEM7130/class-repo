@@ -1,0 +1,4523 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 02</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Ivan Rudik" />
+    <script src="02-coding_files/header-attrs/header-attrs.js"></script>
+    <link href="02-coding_files/remark-css/default.css" rel="stylesheet" />
+    <link href="02-coding_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="02-coding_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="my-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Lecture 02
+]
+.subtitle[
+## Shell and Julia
+]
+.author[
+### Ivan Rudik
+]
+.date[
+### AEM 7130
+]
+
+---
+
+exclude: true
+
+
+```r
+ if (!require("pacman")) install.packages("pacman")
+ pacman::p_load(
+   xaringanExtra, JuliaCall
+ )
+ options(htmltools.dir.version = FALSE)
+ library(knitr)
+ opts_chunk$set(
+   prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+   fig.align = "center", fig.width=10, fig.height=6, 
+   out.width="748px", out.length="520.75px",
+   dpi = 300, #fig.path='Figs/',
+   cache = F#, echo=F, warning=F, message=F
+   )
+ ## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+ knit_hooks$set(
+   prompt = function(before, options, envir) {
+     options(
+       prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+       continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+       )
+ })
+ julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+```
+
+---
+
+# Software and stuff
+
+Necessary things to do:
+
+- Windows users: Install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and a Unix distribution or use https://repl.it
+
+- Install [Julia](https://julialang.org/downloads/)
+
+- Install these Julia packages: `Expectations, Distributions, LinearAlgebra, BenchmarkTools`
+
+--
+
+These slides are based on Software Carpentry, notes by Grant Mcdermott, QuantEcon, Julia documentation, etc
+
+---
+
+class: inverse, center, middle
+name: shell
+
+# The shell
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+
+---
+
+# Why learn the shell?
+
+What is the shell?
+
+The shell is the interface for interacting with your operating system,
+typically we are referring to the command line interface (terminal, command prompt, bash, etc)
+
+--
+
+A lot of what you can do in the shell can be done in Julia itself, why bother with it?
+
+---
+
+# Why learn the shell?
+
+Not everything can be done directily in your usual programming language
+
+--
+
+Command line is fast, powerful, and relatively easy to use,
+especially with modern shells like zsh or fish
+
+--
+
+Writing shell scripts is reproducible and fast, unlike clicking buttons on a GUI
+
+--
+
+If you want to use servers or any high performance computing you are likely to need to use shell
+
+---
+
+# Why learn the shell?
+
+You can automate your entire research pipeline with shell scripts (e.g. write something that calls multiple languages to execute your code then compiles your latex for the paper)
+
+--
+
+It really gets to the fundamentals of interacting with a computer (loops, tab-completions, saving scripts, etc)
+
+--
+
+It gets you understanding how to write code in terms of functions which will be important for any programming you do in scripting languages like Julia, R, MATLAB, or Stata
+
+---
+
+# What is the shell?
+
+The shell is basically just a program where you can
+type in commands to interact with the **kernel** and hardware
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/shell.png" height=450&gt;
+&lt;/div&gt;
+
+---
+
+# What is the shell?
+
+The most common one is .hi-blue[bash], Bourne again shell, because it comes default on Macs and Linux
+
+--
+
+I use .hi-blue[fish], friendly interactive shell, because it comes default with a lot of nice features,
+all the commands still work identically to bash
+
+---
+
+# Shell basics
+
+When you open up the shell you should see a prompt, usually starting with `$ ` (don't type this)
+
+```bash
+$ 
+```
+
+---
+
+# Shell basics
+
+We can type in one .hi-blue[command], `ls` which lists the contents of your current directory
+
+--
+
+
+```bash
+$ ls
+```
+
+```
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## figures
+## my-css.css
+## sandbox
+```
+
+My current directory is the one for this set of slides
+
+---
+
+# Shell basics
+
+Commands come with potential .hi-blue[options] or .hi-blue[flags] that modify how they act
+
+```bash
+$ ls
+```
+
+```
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## figures
+## my-css.css
+## sandbox
+```
+
+```bash
+$ ls -l # long form command
+```
+
+```
+## total 496
+## -rw-r--r--   1 ir229  CORNELL\Domain Users   44641 Dec 14 15:57 02-coding.Rmd
+## -rw-r--r--   1 ir229  CORNELL\Domain Users  133845 Dec 14 15:55 02-coding.html
+## drwxr-xr-x   5 ir229  CORNELL\Domain Users     160 Dec 14 15:55 02-coding_files
+## drwxr-xr-x   8 ir229  CORNELL\Domain Users     256 Jul 12 14:55 figures
+## -rw-r--r--@  1 ir229  CORNELL\Domain Users    8387 Dec 12 14:00 my-css.css
+## drwxr-xr-x  10 ir229  CORNELL\Domain Users     320 Dec 14 12:53 sandbox
+```
+
+---
+
+# Shell basics
+
+Options start with a dash and then a sequence of letters denoting which options you want
+
+e.g. this lists files in long form `l`, sorted descending by size (`S`), with sizes in a human-readable format (`h`)
+
+
+```bash
+$ ls -lSh
+```
+
+```
+## total 496
+## -rw-r--r--   1 ir229  CORNELL\Domain Users   131K Dec 14 15:55 02-coding.html
+## -rw-r--r--   1 ir229  CORNELL\Domain Users    44K Dec 14 15:57 02-coding.Rmd
+## -rw-r--r--@  1 ir229  CORNELL\Domain Users   8.2K Dec 12 14:00 my-css.css
+## drwxr-xr-x  10 ir229  CORNELL\Domain Users   320B Dec 14 12:53 sandbox
+## drwxr-xr-x   8 ir229  CORNELL\Domain Users   256B Jul 12 14:55 figures
+## drwxr-xr-x   5 ir229  CORNELL\Domain Users   160B Dec 14 15:55 02-coding_files
+```
+
+---
+
+# Shell basics
+
+Finally commands have an .hi-blue[argument] that the command operates on
+
+--
+
+The previous `ls` calls were operating on the current directory,  
+but we could use it on any directory we want
+
+--
+
+
+```bash
+$ ls -lSh ~/Desktop/git
+```
+
+```
+## total 0
+## drwxr-xr-x  94 ir229  CORNELL\Domain Users   2.9K Dec  6 16:10 climate-trade
+## drwxr-xr-x  26 ir229  CORNELL\Domain Users   832B Mar 22  2022 aem2850
+## drwxr-xr-x@ 26 ir229  CORNELL\Domain Users   832B Dec  9 09:54 aem4510
+## drwxr-xr-x  20 ir229  CORNELL\Domain Users   640B Nov 30 15:21 irudik.github.io
+## drwxr-xr-x  19 ir229  CORNELL\Domain Users   608B Nov  1 15:43 hurricane-forecasts
+## drwxr-xr-x  19 ir229  CORNELL\Domain Users   608B Nov 15 20:52 lead-education
+## drwxr-xr-x  18 ir229  CORNELL\Domain Users   576B Aug 27 18:02 enviro-transport
+## drwxr-xr-x  16 ir229  CORNELL\Domain Users   512B Dec 14 11:31 aem7130
+## drwxr-xr-x  14 ir229  CORNELL\Domain Users   448B May 25  2022 biodiversity
+## drwxr-xr-x  14 ir229  CORNELL\Domain Users   448B Nov  6 19:14 climate-networks
+## drwxr-xr-x  14 ir229  CORNELL\Domain Users   448B Oct 24 17:26 regulation-markups
+## drwxr-xr-x  12 ir229  CORNELL\Domain Users   384B Jul 12 14:53 aem6510
+## drwxr-xr-x  12 ir229  CORNELL\Domain Users   384B Aug 25 10:11 scc-structural
+## drwxr-xr-x  10 ir229  CORNELL\Domain Users   320B Oct 27 21:43 0.ARCHIVE
+## drwxr-xr-x   9 ir229  CORNELL\Domain Users   288B Aug 14 17:59 amenities-complementarity
+## drwxr-xr-x   9 ir229  CORNELL\Domain Users   288B May 13  2022 climate-concentration
+## drwxr-xr-x   9 ir229  CORNELL\Domain Users   288B May 20  2022 dropbox-template
+## drwxr-xr-x   9 ir229  CORNELL\Domain Users   288B May 20  2022 repo-template
+## drwxr-xr-x   7 ir229  CORNELL\Domain Users   224B Sep  4 15:28 climate-reading-group
+## drwxr-xr-x   7 ir229  CORNELL\Domain Users   224B Feb 14  2022 config-files
+```
+
+---
+
+# Shell basics
+
+To see what commands and their options do, use the `man` (manual) command
+
+`q` exits the man page, and spacebar lets you skip down by a page
+
+```bash
+$ man ls
+```
+
+```
+## LS(1)                        General Commands Manual                       LS(1)
+## 
+## NNAAMMEE
+##      llss – list directory contents
+## 
+## SSYYNNOOPPSSIISS
+##      llss [--@@AABBCCFFGGHHIILLOOPPRRSSTTUUWWaabbccddeeffgghhiikkllmmnnooppqqrrssttuuvvwwxxyy11%%,,] [----ccoolloorr=_w_h_e_n]
+##         [--DD _f_o_r_m_a_t] [_f_i_l_e _._._.]
+## 
+## DDEESSCCRRIIPPTTIIOONN
+##      For each operand that names a _f_i_l_e of a type other than directory, llss
+##      displays its name as well as any requested, associated information.  For
+##      each operand that names a _f_i_l_e of type directory, llss displays the names of
+##      files contained within that directory, as well as any requested, associated
+##      information.
+## 
+##      If no operands are given, the contents of the current directory are
+##      displayed.  If more than one operand is given, non-directory operands are
+##      displayed first; directory and non-directory operands are sorted separately
+##      and in lexicographical order.
+## 
+##      The following options are available:
+## 
+##      --@@      Display extended attribute keys and sizes in long (--ll) output.
+## 
+##      --AA      Include directory entries whose names begin with a dot (‘_.’) except
+##              for _. and _._..  Automatically set for the super-user unless --II is
+##              specified.
+## 
+##      --BB      Force printing of non-printable characters (as defined by ctype(3)
+##              and current locale settings) in file names as \_x_x_x, where _x_x_x is
+##              the numeric value of the character in octal.  This option is not
+##              defined in IEEE Std 1003.1-2008 (“POSIX.1”).
+## 
+##      --CC      Force multi-column output; this is the default when output is to a
+##              terminal.
+## 
+##      --DD _f_o_r_m_a_t
+##              When printing in the long (--ll) format, use _f_o_r_m_a_t to format the
+##              date and time output.  The argument _f_o_r_m_a_t is a string used by
+##              strftime(3).  Depending on the choice of format string, this may
+##              result in a different number of columns in the output.  This option
+##              overrides the --TT option.  This option is not defined in IEEE Std
+##              1003.1-2008 (“POSIX.1”).
+## 
+##      --FF      Display a slash (‘/’) immediately after each pathname that is a
+##              directory, an asterisk (‘*’) after each that is executable, an at
+##              sign (‘@’) after each symbolic link, an equals sign (‘=’) after
+##              each socket, a percent sign (‘%’) after each whiteout, and a
+##              vertical bar (‘|’) after each that is a FIFO.
+## 
+##      --GG      Enable colorized output.  This option is equivalent to defining
+##              CLICOLOR or COLORTERM in the environment and setting ----ccoolloorr=_a_u_t_o.
+##              (See below.)  This functionality can be compiled out by removing
+##              the definition of COLORLS.  This option is not defined in IEEE Std
+##              1003.1-2008 (“POSIX.1”).
+## 
+##      --HH      Symbolic links on the command line are followed.  This option is
+##              assumed if none of the --FF, --dd, or --ll options are specified.
+## 
+##      --II      Prevent --AA from being automatically set for the super-user.  This
+##              option is not defined in IEEE Std 1003.1-2008 (“POSIX.1”).
+## 
+##      --LL      Follow all symbolic links to final target and list the file or
+##              directory the link references rather than the link itself.  This
+##              option cancels the --PP option.
+## 
+##      --OO      Include the file flags in a long (--ll) output.  This option is
+##              incompatible with IEEE Std 1003.1-2008 (“POSIX.1”).  See chflags(1)
+##              for a list of file flags and their meanings.
+## 
+##      --PP      If argument is a symbolic link, list the link itself rather than
+##              the object the link references.  This option cancels the --HH and --LL
+##              options.
+## 
+##      --RR      Recursively list subdirectories encountered.
+## 
+##      --SS      Sort by size (largest file first) before sorting the operands in
+##              lexicographical order.
+## 
+##      --TT      When printing in the long (--ll) format, display complete time
+##              information for the file, including month, day, hour, minute,
+##              second, and year.  The --DD option gives even more control over the
+##              output format.  This option is not defined in IEEE Std 1003.1-2008
+##              (“POSIX.1”).
+## 
+##      --UU      Use time when file was created for sorting or printing.  This
+##              option is not defined in IEEE Std 1003.1-2008 (“POSIX.1”).
+## 
+##      --WW      Display whiteouts when scanning directories.  This option is not
+##              defined in IEEE Std 1003.1-2008 (“POSIX.1”).
+## 
+##      --aa      Include directory entries whose names begin with a dot (‘_.’).
+## 
+##      --bb      As --BB, but use C escape codes whenever possible.  This option is
+##              not defined in IEEE Std 1003.1-2008 (“POSIX.1”).
+## 
+##      --cc      Use time when file status was last changed for sorting or printing.
+## 
+##      ----ccoolloorr=_w_h_e_n
+##              Output colored escape sequences based on _w_h_e_n, which may be set to
+##              either aallwwaayyss, aauuttoo, or nneevveerr.
+## 
+##              aallwwaayyss will make llss always output color.  If TERM is unset or set
+##              to an invalid terminal, then llss will fall back to explicit ANSI
+##              escape sequences without the help of termcap(5).  aallwwaayyss is the
+##              default if ----ccoolloorr is specified without an argument.
+## 
+##              aauuttoo will make llss output escape sequences based on termcap(5), but
+##              only if stdout is a tty and either the --GG flag is specified or the
+##              COLORTERM environment variable is set and not empty.
+## 
+##              nneevveerr will disable color regardless of environment variables.
+##              nneevveerr is the default when neither ----ccoolloorr nor --GG is specified.
+## 
+##              For compatibility with GNU coreutils, llss supports yyeess or ffoorrccee as
+##              equivalent to aallwwaayyss, nnoo or nnoonnee as equivalent to nneevveerr, and ttttyy or
+##              iiff--ttttyy as equivalent to aauuttoo.
+## 
+##      --dd      Directories are listed as plain files (not searched recursively).
+## 
+##      --ee      Print the Access Control List (ACL) associated with the file, if
+##              present, in long (--ll) output.
+## 
+##      --ff      Output is not sorted.  This option turns on --aa.  It also negates
+##              the effect of the --rr, --SS and --tt options.  As allowed by IEEE Std
+##              1003.1-2008 (“POSIX.1”), this option has no effect on the --dd, --ll,
+##              --RR and --ss options.
+## 
+##      --gg      This option has no effect.  It is only available for compatibility
+##              with 4.3BSD, where it was used to display the group name in the
+##              long (--ll) format output.  This option is incompatible with IEEE Std
+##              1003.1-2008 (“POSIX.1”).
+## 
+##      --hh      When used with the --ll option, use unit suffixes: Byte, Kilobyte,
+##              Megabyte, Gigabyte, Terabyte and Petabyte in order to reduce the
+##              number of digits to four or fewer using base 2 for sizes.  This
+##              option is not defined in IEEE Std 1003.1-2008 (“POSIX.1”).
+## 
+##      --ii      For each file, print the file's file serial number (inode number).
+## 
+##      --kk      This has the same effect as setting environment variable BLOCKSIZE
+##              to 1024, except that it also nullifies any --hh options to its left.
+## 
+##      --ll      (The lowercase letter “ell”.) List files in the long format, as
+##              described in the _T_h_e _L_o_n_g _F_o_r_m_a_t subsection below.
+## 
+##      --mm      Stream output format; list files across the page, separated by
+##              commas.
+## 
+##      --nn      Display user and group IDs numerically rather than converting to a
+##              user or group name in a long (--ll) output.  This option turns on the
+##              --ll option.
+## 
+##      --oo      List in long format, but omit the group id.
+## 
+##      --pp      Write a slash (‘/’) after each filename if that file is a
+##              directory.
+## 
+##      --qq      Force printing of non-graphic characters in file names as the
+##              character ‘?’; this is the default when output is to a terminal.
+## 
+##      --rr      Reverse the order of the sort.
+## 
+##      --ss      Display the number of blocks used in the file system by each file.
+##              Block sizes and directory totals are handled as described in _T_h_e
+##              _L_o_n_g _F_o_r_m_a_t subsection below, except (if the long format is not
+##              also requested) the directory totals are not output when the output
+##              is in a single column, even if multi-column output is requested.
+##              (--ll) format, display complete time information for the file,
+##              including month, day, hour, minute, second, and year.  The --DD
+##              option gives even more control over the output format.  This option
+##              is not defined in IEEE Std 1003.1-2008 (“POSIX.1”).
+## 
+##      --tt      Sort by descending time modified (most recently modified first).
+##              If two files have the same modification timestamp, sort their names
+##              in ascending lexicographical order.  The --rr option reverses both of
+##              these sort orders.
+## 
+##              Note that these sort orders are contradictory: the time sequence is
+##              in descending order, the lexicographical sort is in ascending
+##              order.  This behavior is mandated by IEEE Std 1003.2 (“POSIX.2”).
+##              This feature can cause problems listing files stored with
+##              sequential names on FAT file systems, such as from digital cameras,
+##              where it is possible to have more than one image with the same
+##              timestamp.  In such a case, the photos cannot be listed in the
+##              sequence in which they were taken.  To ensure the same sort order
+##              for time and for lexicographical sorting, set the environment
+##              variable LS_SAMESORT or use the --yy option.  This causes llss to
+##              reverse the lexicographical sort order when sorting files with the
+##              same modification timestamp.
+## 
+##      --uu      Use time of last access, instead of time of last modification of
+##              the file for sorting (--tt) or long printing (--ll).
+## 
+##      --vv      Force unedited printing of non-graphic characters; this is the
+##              default when output is not to a terminal.
+## 
+##      --ww      Force raw printing of non-printable characters.  This is the
+##              default when output is not to a terminal.  This option is not
+##              defined in IEEE Std 1003.1-2001 (“POSIX.1”).
+## 
+##      --xx      The same as --CC, except that the multi-column output is produced
+##              with entries sorted across, rather than down, the columns.
+## 
+##      --yy      When the --tt option is set, sort the alphabetical output in the same
+##              order as the time output.  This has the same effect as setting
+##              LS_SAMESORT.  See the description of the --tt option for more
+##              details.  This option is not defined in IEEE Std 1003.1-2001
+##              (“POSIX.1”).
+## 
+##      --%%      Distinguish dataless files and directories with a '%' character in
+##              long
+## 
+##      --11      (The numeric digit “one”.) Force output to be one entry per line.
+##              This is the default when output is not to a terminal.  (--ll) output,
+##              and don't materialize dataless directories when listing them.
+## 
+##      --,      (Comma) When the --ll option is set, print file sizes grouped and
+##              separated by thousands using the non-monetary separator returned by
+##              localeconv(3), typically a comma or period.  If no locale is set,
+##              or the locale does not have a non-monetary separator, this option
+##              has no effect.  This option is not defined in IEEE Std 1003.1-2001
+##              (“POSIX.1”).
+## 
+##      The --11, --CC, --xx, and --ll options all override each other; the last one
+##      specified determines the format used.
+## 
+##      The --cc, --uu, and --UU options all override each other; the last one specified
+##      determines the file time used.
+## 
+##      The --SS and --tt options override each other; the last one specified
+##      determines the sort order used.
+## 
+##      The --BB, --bb, --ww, and --qq options all override each other; the last one
+##      specified determines the format used for non-printable characters.
+## 
+##      The --HH, --LL and --PP options all override each other (either partially or
+##      fully); they are applied in the order specified.
+## 
+##      By default, llss lists one entry per line to standard output; the exceptions
+##      are to terminals or when the --CC or --xx options are specified.
+## 
+##      File information is displayed with one or more ⟨blank⟩s separating the
+##      information associated with the --ii, --ss, and --ll options.
+## 
+##    TThhee LLoonngg FFoorrmmaatt
+##      If the --ll option is given, the following information is displayed for each
+##      file: file mode, number of links, owner name, group name, number of bytes
+##      in the file, abbreviated month, day-of-month file was last modified, hour
+##      file last modified, minute file last modified, and the pathname.  If the
+##      file or directory has extended attributes, the permissions field printed by
+##      the --ll option is followed by a '@' character.  Otherwise, if the file or
+##      directory has extended security information (such as an access control
+##      list), the permissions field printed by the --ll option is followed by a '+'
+##      character.  If the --%% option is given, a '%' character follows the
+##      permissions field for dataless files and directories, possibly replacing
+##      the '@' or '+' character.
+## 
+##      If the modification time of the file is more than 6 months in the past or
+##      future, and the --DD or --TT are not specified, then the year of the last
+##      modification is displayed in place of the hour and minute fields.
+## 
+##      If the owner or group names are not a known user or group name, or the --nn
+##      option is given, the numeric ID's are displayed.
+## 
+##      If the file is a character special or block special file, the device number
+##      for the file is displayed in the size field.  If the file is a symbolic
+##      link the pathname of the linked-to file is preceded by “-&gt;”.
+## 
+##      The listing of a directory's contents is preceded by a labeled total number
+##      of blocks used in the file system by the files which are listed as the
+##      directory's contents (which may or may not include _. and _._. and other files
+##      which start with a dot, depending on other options).
+## 
+##      The default block size is 512 bytes.  The block size may be set with option
+##      --kk or environment variable BLOCKSIZE.  Numbers of blocks in the output will
+##      have been rounded up so the numbers of bytes is at least as many as used by
+##      the corresponding file system blocks (which might have a different size).
+## 
+##      The file mode printed under the --ll option consists of the entry type and
+##      the permissions.  The entry type character describes the type of file, as
+##      follows:
+## 
+##            --     Regular file.
+##            bb     Block special file.
+##            cc     Character special file.
+##            dd     Directory.
+##            ll     Symbolic link.
+##            pp     FIFO.
+##            ss     Socket.
+##            ww     Whiteout.
+## 
+##      The next three fields are three characters each: owner permissions, group
+##      permissions, and other permissions.  Each field has three character
+##      positions:
+## 
+##            1.   If rr, the file is readable; if --, it is not readable.
+## 
+##            2.   If ww, the file is writable; if --, it is not writable.
+## 
+##            3.   The first of the following that applies:
+## 
+##                       SS     If in the owner permissions, the file is not
+##                             executable and set-user-ID mode is set.  If in the
+##                             group permissions, the file is not executable and
+##                             set-group-ID mode is set.
+## 
+##                       ss     If in the owner permissions, the file is executable
+##                             and set-user-ID mode is set.  If in the group
+##                             permissions, the file is executable and setgroup-ID
+##                             mode is set.
+## 
+##                       xx     The file is executable or the directory is
+##                             searchable.
+## 
+##                       --     The file is neither readable, writable, executable,
+##                             nor set-user-ID nor set-group-ID mode, nor sticky.
+##                             (See below.)
+## 
+##                 These next two apply only to the third character in the last
+##                 group (other permissions).
+## 
+##                       TT     The sticky bit is set (mode 1000), but not execute
+##                             or search permission.  (See chmod(1) or sticky(7).)
+## 
+##                       tt     The sticky bit is set (mode 1000), and is searchable
+##                             or executable.  (See chmod(1) or sticky(7).)
+## 
+##      The next field contains a plus (‘+’) character if the file has an ACL, or a
+##      space (‘ ’) if it does not.  The llss utility does not show the actual ACL;
+##      use getfacl(1) to do this.
+## 
+## EENNVVIIRROONNMMEENNTT
+##      The following environment variables affect the execution of llss:
+## 
+##      BLOCKSIZE           If this is set, its value, rounded up to 512 or down to
+##                          a multiple of 512, will be used as the block size in
+##                          bytes by the --ll and --ss options.  See _T_h_e _L_o_n_g _F_o_r_m_a_t
+##                          subsection for more information.
+## 
+##      CLICOLOR            Use ANSI color sequences to distinguish file types.
+##                          See LSCOLORS below.  In addition to the file types
+##                          mentioned in the --FF option some extra attributes
+##                          (setuid bit set, etc.) are also displayed.  The
+##                          colorization is dependent on a terminal type with the
+##                          proper termcap(5) capabilities.  The default “cons25”
+##                          console has the proper capabilities, but to display the
+##                          colors in an xterm(1), for example, the TERM variable
+##                          must be set to “xterm-color”.  Other terminal types may
+##                          require similar adjustments.  Colorization is silently
+##                          disabled if the output is not directed to a terminal
+##                          unless the CLICOLOR_FORCE variable is defined or
+##                          ----ccoolloorr is set to “always”.
+## 
+##      CLICOLOR_FORCE      Color sequences are normally disabled if the output is
+##                          not directed to a terminal.  This can be overridden by
+##                          setting this variable.  The TERM variable still needs
+##                          to reference a color capable terminal however otherwise
+##                          it is not possible to determine which color sequences
+##                          to use.
+## 
+##      COLORTERM           See description for CLICOLOR above.
+## 
+##      COLUMNS             If this variable contains a string representing a
+##                          decimal integer, it is used as the column position
+##                          width for displaying multiple-text-column output.  The
+##                          llss utility calculates how many pathname text columns to
+##                          display based on the width provided.  (See --CC and --xx.)
+## 
+##      LANG                The locale to use when determining the order of day and
+##                          month in the long --ll format output.  See environ(7) for
+##                          more information.
+## 
+##      LSCOLORS            The value of this variable describes what color to use
+##                          for which attribute when colors are enabled with
+##                          CLICOLOR or COLORTERM.  This string is a concatenation
+##                          of pairs of the format _f_b, where _f is the foreground
+##                          color and _b is the background color.
+## 
+##                          The color designators are as follows:
+## 
+##                                aa     black
+##                                bb     red
+##                                cc     green
+##                                dd     brown
+##                                ee     blue
+##                                ff     magenta
+##                                gg     cyan
+##                                hh     light grey
+##                                AA     bold black, usually shows up as dark grey
+##                                BB     bold red
+##                                CC     bold green
+##                                DD     bold brown, usually shows up as yellow
+##                                EE     bold blue
+##                                FF     bold magenta
+##                                GG     bold cyan
+##                                HH     bold light grey; looks like bright white
+##                                xx     default foreground or background
+## 
+##                          Note that the above are standard ANSI colors.  The
+##                          actual display may differ depending on the color
+##                          capabilities of the terminal in use.
+## 
+##                          The order of the attributes are as follows:
+## 
+##                                1.   directory
+##                                2.   symbolic link
+##                                3.   socket
+##                                4.   pipe
+##                                5.   executable
+##                                6.   block special
+##                                7.   character special
+##                                8.   executable with setuid bit set
+##                                9.   executable with setgid bit set
+##                                10.  directory writable to others, with sticky
+##                                     bit
+##                                11.  directory writable to others, without sticky
+##                                     bit
+## 
+##                          The default is "exfxcxdxbxegedabagacad", i.e., blue
+##                          foreground and default background for regular
+##                          directories, black foreground and red background for
+##                          setuid executables, etc.
+## 
+##      LS_COLWIDTHS        If this variable is set, it is considered to be a
+##                          colon-delimited list of minimum column widths.
+##                          Unreasonable and insufficient widths are ignored (thus
+##                          zero signifies a dynamically sized column).  Not all
+##                          columns have changeable widths.  The fields are, in
+##                          order: inode, block count, number of links, user name,
+##                          group name, flags, file size, file name.
+## 
+##      LS_SAMESORT         If this variable is set, the --tt option sorts the names
+##                          of files with the same modification timestamp in the
+##                          same sense as the time sort.  See the description of
+##                          the --tt option for more details.
+## 
+##      TERM                The CLICOLOR and COLORTERM functionality depends on a
+##                          terminal type with color capabilities.
+## 
+##      TZ                  The timezone to use when displaying dates.  See
+##                          environ(7) for more information.
+## 
+## EEXXIITT SSTTAATTUUSS
+##      The llss utility exits 0 on success, and &gt;0 if an error occurs.
+## 
+## EEXXAAMMPPLLEESS
+##      List the contents of the current working directory in long format:
+## 
+##            $ ls -l
+## 
+##      In addition to listing the contents of the current working directory in
+##      long format, show inode numbers, file flags (see chflags(1)), and suffix
+##      each filename with a symbol representing its file type:
+## 
+##            $ ls -lioF
+## 
+##      List the files in _/_v_a_r_/_l_o_g, sorting the output such that the most recently
+##      modified entries are printed first:
+## 
+##            $ ls -lt /var/log
+## 
+## CCOOMMPPAATTIIBBIILLIITTYY
+##      The group field is now automatically included in the long listing for files
+##      in order to be compatible with the IEEE Std 1003.2 (“POSIX.2”)
+##      specification.
+## 
+## LLEEGGAACCYY DDEESSCCRRIIPPTTIIOONN
+##      In legacy mode, the --ff option does not turn on the --aa option and the --gg,
+##      --nn, and --oo options do not turn on the --ll option.
+## 
+##      Also, the --oo option causes the file flags to be included in a long (-l)
+##      output; there is no --OO option.
+## 
+##      When --HH is specified (and not overridden by --LL or --PP) and a file argument
+##      is a symlink that resolves to a non-directory file, the output will reflect
+##      the nature of the link, rather than that of the file.  In legacy operation,
+##      the output will describe the file.
+## 
+##      For more information about legacy mode, see compat(5).
+## 
+## SSEEEE AALLSSOO
+##      chflags(1), chmod(1), getfacl(1), sort(1), xterm(1), localeconv(3),
+##      strftime(3), strmode(3), compat(5), termcap(5), sticky(7), symlink(7)
+## 
+## SSTTAANNDDAARRDDSS
+##      With the exception of options --gg, --nn and --oo, the llss utility conforms to
+##      IEEE Std 1003.1-2001 (“POSIX.1”) and IEEE Std 1003.1-2008 (“POSIX.1”).  The
+##      options --BB, --DD, --GG, --II, --TT, --UU, --WW, --ZZ, --bb, --hh, --ww, --yy and --, are non-
+##      standard extensions.
+## 
+##      The ACL support is compatible with IEEE Std 1003.2c (“POSIX.2c”) Draft 17
+##      (withdrawn).
+## 
+## HHIISSTTOORRYY
+##      An llss command appeared in Version 1 AT&amp;T UNIX.
+## 
+## BBUUGGSS
+##      To maintain backward compatibility, the relationships between the many
+##      options are quite complex.
+## 
+##      The exception mentioned in the --ss option description might be a feature
+##      that was based on the fact that single-column output usually goes to
+##      something other than a terminal.  It is debatable whether this is a design
+##      bug.
+## 
+##      IEEE Std 1003.2 (“POSIX.2”) mandates opposite sort orders for files with
+##      the same timestamp when sorting with the --tt option.
+## 
+## macOS 12.6                       August 31, 2020                      macOS 12.6
+```
+
+---
+
+# Shell basics
+
+Pressing `h` within a man page brings up the help page for how to navigate them
+
+`/terms_here` lets you search within the man page for particular terms
+
+Use `n` and `shift+n` to move forward and backward between matches
+
+---
+
+# Navigation
+
+We already learned how to list the files in a particular directory, but we need a few other tools to navigate around our machine
+
+--
+
+We often will want to know our .hi-blue[current working directory] so we know where we are before we start running commands
+
+--
+
+We do this with `pwd`
+
+--
+
+
+```bash
+$ pwd
+```
+
+```
+## /Users/ir229/Desktop/git/aem7130/lecture-notes/02-coding
+```
+
+---
+
+# Navigation
+
+Directories are organized in a hierarchical structure, at the top is the root directory, `/`
+
+
+```bash
+$ ls /
+```
+
+```
+## Applications
+## Library
+## Network
+## System
+## Users
+## Volumes
+## bin
+## cores
+## dev
+## etc
+## home
+## opt
+## private
+## sbin
+## tmp
+## usr
+## var
+```
+
+
+---
+
+# Navigation
+
+The root directory contains everything else
+
+--
+
+Other directories are inside the root directory and come afterward in the file path separated by forward slashes `/`
+
+
+```bash
+$ ls -lSh /Users
+```
+
+```
+## total 0
+## drwxr-x---+ 64 ir229           CORNELL\Domain Users   2.0K Dec 14 15:43 ir229
+## drwxr-x---+ 19 cals_oit        staff                  608B Feb  9  2022 cals_oit
+## drwxr-x---+ 15 ag-jjp34-doc10  CORNELL\Domain Users   480B Feb  9  2022 ag-jjp34-doc10
+## drwxrwxrwt  13 root            wheel                  416B Dec 12 19:19 Shared
+```
+
+---
+
+# Navigation
+
+The root directory contains everything else
+
+Other directories are inside the root directory and come afterward in the file path separated by forward slashes `/`
+
+
+```bash
+$ ls -lSh /Users/ir229
+```
+
+```
+## total 0
+## drwx------@ 365 ir229  CORNELL\Domain Users    11K Dec 14 11:39 Downloads
+## drwx------@  93 ir229  CORNELL\Domain Users   2.9K May 20  2022 Library
+## drwx------@  41 ir229  CORNELL\Domain Users   1.3K Sep  7 12:25 Dropbox
+## drwxr-xr-x   33 ir229  CORNELL\Domain Users   1.0K Dec 12 14:52 languageserver-library
+## drwxr-xr-x   18 ir229  CORNELL\Domain Users   576B Dec 12 19:19 Zotero
+## drwx------@  16 ir229  CORNELL\Domain Users   512B Sep  8 12:39 Box-Box-Backup
+## drwx------@   7 ir229  CORNELL\Domain Users   224B Dec 12 13:04 Desktop
+## drwx------+   5 ir229  CORNELL\Domain Users   160B Oct  5 12:03 Documents
+## drwx------    5 ir229  CORNELL\Domain Users   160B May 10  2022 Movies
+## drwx------+   5 ir229  CORNELL\Domain Users   160B May 10  2022 Music
+## drwx------+   5 ir229  CORNELL\Domain Users   160B May 10  2022 Pictures
+## drwxr-xr-x    4 ir229  CORNELL\Domain Users   128B May 10  2022 Applications
+## drwx------@   4 ir229  CORNELL\Domain Users   128B Nov  5 13:42 Creative Cloud Files
+## drwx------@   4 ir229  CORNELL\Domain Users   128B Aug  2 11:31 Creative Cloud Files irudik@gmail.com ffd387f23bd1f53514a9de8d75abe8c7fb5ffaa6109df102045adaf1928dcdd9
+## drwxr-xr-x+   4 ir229  CORNELL\Domain Users   128B Feb 14  2022 Public
+```
+
+---
+
+# Navigation
+
+Next we need to be able to change directories, we can do this with `cd` (change directory)
+
+--
+
+
+```bash
+$ cd /Users/ir229/Desktop/git
+$ pwd
+```
+
+```
+## /Users/ir229/Desktop/git
+```
+
+--
+
+When navigating, it is often easier and more reproducible to use .hi-blue[relative paths]
+
+--
+
+This is when arguments are relative to your current working directory, instead of using absolute paths (e.g. /Users/ir229/Desktop/git)
+
+---
+
+# Navigation
+
+There's a few expressions that make this possible
+
+- `~` is your .hi-blue[home directory]
+- `.` is your current directory
+- `..` is the parent directory
+- `-` is the previous directory you were in
+
+---
+
+# Navigation
+
+
+```bash
+$ cd ~ # move to home directory (will vary computer-to-computer)
+$ pwd
+$ cd - # move to previous directory (lecture notes 2 directory)
+$ cd .. # move to parent directory (general lecture notes directory)
+$ pwd
+$ cd . # move to current directory (nothing changes)
+$ pwd
+```
+
+```
+## /Users/ir229
+## /Users/ir229/Desktop/git/aem7130/lecture-notes/02-coding
+## /Users/ir229/Desktop/git/aem7130/lecture-notes
+## /Users/ir229/Desktop/git/aem7130/lecture-notes
+```
+
+--
+
+You can see `.` and `..` in your current directory when using `ls` with the `a` flag
+
+```bash
+$ ls -a
+```
+
+```
+## .
+## ..
+## .DS_Store
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## figures
+## my-css.css
+## sandbox
+```
+---
+
+# Navigation
+
+This makes navigation much easier
+
+If we wanted to move from the current directory to the parent directory for this year's course we can just do
+
+--
+
+
+```bash
+$ pwd
+$ cd ../..
+$ pwd
+```
+
+```
+## /Users/ir229/Desktop/git/aem7130/lecture-notes/02-coding
+## /Users/ir229/Desktop/git/aem7130
+```
+
+--
+
+instead of
+
+```bash
+$ cd /Users/ir229/Desktop/git/aem7130
+$ pwd
+```
+
+```
+## /Users/ir229/Desktop/git/aem7130
+```
+
+---
+
+# Navigation
+
+Relative paths are very important for reproducible code
+
+--
+
+Your directory structure starting at root `/` will not be the same as someone else's
+
+--
+
+Using relative paths lets you circumvent this as long as the project's directory structure is consistent 
+
+--
+
+If you use Git or Dropbox it should be
+
+---
+
+# Creating files and directories
+
+We learned how to move around directories but how do we make them?
+
+--
+
+We do so with `mkdir` (make directory)
+
+--
+
+
+```bash
+$ mkdir test_directory
+$ ls
+```
+
+```
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## figures
+## my-css.css
+## sandbox
+## test_directory
+```
+
+---
+
+# Creating files and directories
+
+We create blank files using `touch`
+
+--
+
+
+```bash
+$ touch test_directory/test.txt test_directory/test1.txt
+$ ls test_directory
+```
+
+```
+## test.txt
+## test1.txt
+```
+
+`touch` is useful if you have a program that can't create a file itself but can edit them
+
+---
+
+# Creating files and directories
+
+If you have a Unix system pre-installed with nano
+you can use `nano` to create and edit the file
+
+```bash
+$ nano test_directory/test.txt
+```
+
+---
+
+# Creating files and directories
+
+Here are some tips for naming files and directories
+
+--
+
+1. .hi-red[DON'T USE SPACES]
+    - Spaces are used to separate commands, you generally want to avoid them in names in favor of underscores or dashes
+2. Use letters, numbers, underscores, periods, and dashes only
+
+---
+
+# Creating files and directories
+
+If you really, really, want to use spaces in names you'll have to do one of two things, enclose in quotes or backslash the space
+
+--
+
+
+```bash
+$ mkdir "123test directory"
+$ ls
+```
+
+```
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## 123test directory
+## figures
+## my-css.css
+## sandbox
+## test_directory
+```
+
+---
+
+# Creating files and directories
+
+If you really, really, want to use spaces in names you'll have to do one of two things, enclose in quotes or backslash the space
+
+
+```bash
+$ mkdir 123test\ directory\ 2
+$ ls
+```
+
+```
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## 123test directory
+## 123test directory 2
+## figures
+## my-css.css
+## sandbox
+## test_directory
+```
+
+
+```
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## figures
+## my-css.css
+## sandbox
+## test_directory
+```
+
+---
+
+# Moving files and directories
+
+We can move files and directories with `mv` (move)
+
+--
+
+
+```bash
+$ mv test_directory/test.txt ..
+$ ls ..
+```
+
+The first argument is the (relative) path of the file you want to move, the second argument is where you're moving it to
+
+---
+
+# Moving files and directories
+
+
+```bash
+$ mv test_directory/test.txt ..
+$ ls ..
+```
+
+```
+## 01-intro
+## 02-coding
+## 03-git
+## 04-optimization
+## 05-dynamic-programming
+## 06-function-approximation
+## 07-dp-solution-methods
+## 08-optimal-control
+## 09-advanced-dp-methods
+## 10-spatial-models
+## archive
+## figures
+## test.txt
+```
+
+We moved the test.txt file from  `test_directory` to the parent directory
+
+
+
+
+---
+
+# Moving files and directories
+
+
+```bash
+$ mv ../test.txt test_directory
+$ ls test_directory
+```
+
+```
+## test.txt
+## test1.txt
+```
+
+Here we moved it from the parent directory back to `test_directory`
+
+--
+
+Note that `mv` will overwrite any file with the move, use the `-i` option to make it ask you for confirmation
+
+---
+
+# Moving files and directories
+
+`mv` can also be used to rename files by just moving them to the same directory
+
+--
+
+
+```bash
+$ mv test_directory/test.txt test_directory/test_new_name.txt
+$ ls test_directory
+```
+
+```
+## test1.txt
+## test_new_name.txt
+```
+
+```bash
+$ mv test_directory/test_new_name.txt test_directory/test.txt
+$ ls test_directory
+```
+
+```
+## test.txt
+## test1.txt
+```
+---
+
+# Moving files and directories
+
+Now that we've made the directory and file, how do we get rid of them? With `rm`
+
+--
+
+
+```bash
+$ rm test_directory/test.txt
+$ ls
+```
+
+```
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## figures
+## my-css.css
+## sandbox
+## test_directory
+```
+
+---
+
+# Moving files and directories
+
+We remove directories with `rmdir`
+
+--
+
+
+```bash
+$ rmdir test_directory
+$ ls
+```
+
+```
+## rmdir: test_directory: Directory not empty
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## figures
+## my-css.css
+## sandbox
+## test_directory
+```
+
+Notice that if a directory isn't empty you can't delete it
+
+---
+
+# Moving files and directories
+
+To delete a non-empty directory, you need to use `rm` on the directory, but apply the recursive option `-r` to delete everything inside of it first
+
+--
+
+
+```bash
+$ rm -r test_directory
+$ ls
+```
+
+```
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## figures
+## my-css.css
+## sandbox
+```
+
+Sometimes you might want to add the force option `-f` so it doesn't ask you if you want to delete each file
+
+---
+
+# Copying files and directories
+
+To copy files and directories just use `cp`, it works similarly to `mv`
+
+--
+
+
+```bash
+$ mkdir test_directory
+$ touch test_directory/test_copy.txt
+$ cp test_directory/test_copy.txt .
+$ ls test_directory
+```
+
+```
+## test_copy.txt
+```
+
+---
+
+# Copying files and directories
+
+
+
+```bash
+$ mkdir test_directory
+$ touch test_directory/test_copy.txt
+$ cp test_directory/test_copy.txt .
+$ ls test_directory
+```
+
+```bash
+$ ls
+```
+
+```
+## 02-coding.Rmd
+## 02-coding.html
+## 02-coding_files
+## figures
+## my-css.css
+## sandbox
+## test_copy.txt
+## test_directory
+```
+
+
+
+---
+
+# Copying files and directories
+
+You copy directories the same way, but if you want to copy the full file contents you need to apply the recursive option `-r`
+
+--
+
+
+```bash
+$ cp -r test_directory ..
+$ ls .. test_directory
+```
+
+```
+## ..:
+## 01-intro
+## 02-coding
+## 03-git
+## 04-optimization
+## 05-dynamic-programming
+## 06-function-approximation
+## 07-dp-solution-methods
+## 08-optimal-control
+## 09-advanced-dp-methods
+## 10-spatial-models
+## archive
+## figures
+## test_directory
+## 
+## test_directory:
+## test_copy.txt
+```
+
+```bash
+$ ls ../test_directory
+```
+
+```
+## test_copy.txt
+```
+
+
+
+---
+
+# Copying multiple files
+
+How do we copy multiple files?
+
+Let's make two directories for copying and a set of similar files
+
+
+```bash
+$ mkdir main_directory copy_directory
+$ touch main_directory/file1.txt main_directory/file2.txt main_directory/file3.txt
+$ ls main_directory
+```
+
+```
+## file1.txt
+## file2.txt
+## file3.txt
+```
+
+---
+
+# Copying multiple files
+
+To copy them we can just use `cp` as we did before
+
+--
+
+
+```bash
+$ cp main_directory/file1.txt main_directory/file2.txt main_directory/file3.txt copy_directory
+$ ls copy_directory
+```
+
+```
+## file1.txt
+## file2.txt
+## file3.txt
+```
+
+--
+
+We remove them the same way with `rm`
+
+--
+
+
+```bash
+$ rm main_directory/file1.txt main_directory/file2.txt main_directory/file3.txt
+```
+
+Or we could use the `mv` rename trick into a new directory named `copy_directory`
+
+---
+
+# Renaming multiple files
+
+We can rename multiple files in an easier way using `rename` (`brew install rename` to install using Homebrew)
+
+We can change all of our txt files to csvs, `-s` indicates that the first argument is to be the text we are changing, and the second argument is the text we are changing it to, the third argument is the location of the files we are renaming
+
+---
+
+# Renaming multiple files
+
+
+```bash
+$ ls copy_directory
+```
+
+```
+## file1.txt
+## file2.txt
+## file3.txt
+```
+
+
+```bash
+$ rename -s .txt .csv copy_directory/*
+$ ls copy_directory
+```
+
+```
+## bash: rename: command not found
+## file1.txt
+## file2.txt
+## file3.txt
+```
+
+We can change all of our txt files to csvs, `-s` indicates that the first argument is to be the text we are changing, and the second argument is the text we are changing it to, the third argument is the location of the files we are renaming
+
+---
+
+# Accessing multiple files
+
+We can access multiple things at once using .hi-blue[wildcards] `*`,
+which replaces zero to any number of characters in the expression
+
+--
+
+
+```bash
+$ touch copy_directory/test1.txt copy_directory/test2.txt copy_directory/test3.txt copy_directory/test123.txt
+$ ls copy_directory/* # return everything in copy_directory
+```
+
+```
+## copy_directory/file1.txt
+## copy_directory/file2.txt
+## copy_directory/file3.txt
+## copy_directory/test1.txt
+## copy_directory/test123.txt
+## copy_directory/test2.txt
+## copy_directory/test3.txt
+```
+
+
+
+---
+
+# Word count
+
+The shell really shines when you try to combine multiple commands into one
+
+Lets play around with the `sandbox` directory and count the number of words in `animals.txt` using `wc`
+
+
+---
+
+# Word count
+
+
+```bash
+$ ls sandbox
+$ wc sandbox/animals.txt
+```
+
+```
+## animals.txt
+## classes
+## hey_jude.txt
+## lengths.txt
+## lucy_in_the_sky.txt
+## shell_script.sh
+## trees.txt
+##        0       7      33 sandbox/animals.txt
+```
+
+The first number is the number of lines, the second is the number of words, and the third is the number of characters
+
+---
+
+# Word count
+
+We can run this using the wildcard for all text files and also get the totals
+
+
+```bash
+$ wc sandbox/*.txt
+```
+
+```
+##        0       7      33 sandbox/animals.txt
+##       29     195     979 sandbox/hey_jude.txt
+##        6      12     167 sandbox/lengths.txt
+##       45     220    1191 sandbox/lucy_in_the_sky.txt
+##       12      19     135 sandbox/trees.txt
+##       92     453    2505 total
+```
+
+---
+
+# Redirecting
+
+Now suppose we had 1 million files and wanted to find the one with the most words? Just printing to the screen doesn't work, we'd want to save the output and use it somewhere else, we can do that by .hi-blue[redirecting] with the greater than symbol `&gt;`
+
+--
+
+
+```bash
+$ wc -w sandbox/*.txt &gt; sandbox/lengths.txt
+$ ls sandbox
+```
+
+```
+## animals.txt
+## classes
+## hey_jude.txt
+## lengths.txt
+## lucy_in_the_sky.txt
+## shell_script.sh
+## trees.txt
+```
+
+---
+
+# Printing and cating
+
+We can print the file to the screen using `cat` (print the full file) or `less` (one screenful)
+
+--
+
+
+```bash
+$ cat sandbox/lengths.txt
+```
+
+```
+##        7 sandbox/animals.txt
+##      195 sandbox/hey_jude.txt
+##        0 sandbox/lengths.txt
+##      220 sandbox/lucy_in_the_sky.txt
+##       19 sandbox/trees.txt
+##      441 total
+```
+
+The `w` option made it so we only got the number of words, not characters or lines
+
+---
+
+# Sorting
+
+If we want to return the output sorted we can use `sort`
+
+--
+
+
+```bash
+$ sort -n sandbox/lengths.txt
+```
+
+```
+##        0 sandbox/lengths.txt
+##        7 sandbox/animals.txt
+##       19 sandbox/trees.txt
+##      195 sandbox/hey_jude.txt
+##      220 sandbox/lucy_in_the_sky.txt
+##      441 total
+```
+
+where the `n` option means to sort numerically
+
+---
+
+# Sorting
+
+We can look at only the first few lines using `head`, (`tail` gets the last lines)
+
+--
+
+
+```bash
+$ head -n 1 sandbox/lengths.txt
+```
+
+```
+##        7 sandbox/animals.txt
+```
+
+Where the 1 means we only want the first line
+
+---
+
+# Redirecting
+
+`&gt;` will always overwrite a file, we can use the double greater than symbol `&gt;&gt;` to append to a file
+
+--
+
+Lets use `echo` for an example which prints text
+
+--
+
+
+```bash
+$ echo Hello world!
+```
+
+```
+## Hello world!
+```
+
+
+```bash
+$ echo \ walnut &gt;&gt; sandbox/trees.txt
+$ cat sandbox/trees.txt
+```
+
+```
+## maple pine birch oak beechnut palm fig redwood
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+##  walnut
+```
+
+---
+
+# Piping
+
+We've learned a few options for manipulating text files, we can combine them in easy ways using .hi-blue[piping] (same idea as Julia's queryverse and R's tidyverse)
+
+--
+
+Pipes `|` allow you sequentially write out commands that use the previous command's output as the next command's input
+
+---
+
+# Piping
+
+Suppose we wanted to find the file in a directory with the most number of characters, we could do this with
+
+--
+
+
+```bash
+$ wc -m sandbox/* | sort -n | tail -n 2
+```
+
+```
+## wc: sandbox/classes: read: Is a directory
+##     1191 sandbox/lucy_in_the_sky.txt
+##     2711 total
+```
+
+`lucy_in_the_sky.txt` is the longest in the sandbox directory
+
+---
+
+# Piping
+
+Look at the file `sandbox/hey_jude.txt`, how would we get the second verse?
+
+--
+
+We can pipe a `head` and `tail` together:
+
+--
+
+
+```bash
+$ head -n 9 sandbox/hey_jude.txt | tail -n 4
+```
+
+```
+## Hey jude, don't be afraid.
+## You were made to go out and get her.
+## The minute you let her under your skin,
+## Then you begin to make it better.
+```
+
+`head` grabs the first two verses (with the empty line inbetween),  
+`tail` grabs second verse
+
+---
+
+# Looping example 1
+
+What if we wanted the second verse of *multiple songs*?
+
+--
+
+We can do that with a loop
+
+--
+
+
+```bash
+$ for thing in list
+$ do
+$     operation_using $thing    # Indentation is good style
+$ done
+```
+
+`$` preprends any variables, here the variables are the things we're looping over
+
+---
+
+# Looping example 1
+
+
+```bash
+$ for song in sandbox/hey_jude.txt sandbox/lucy_in_the_sky.txt
+$ do
+$     head -n 9 $song | tail -n 4
+$ done
+```
+
+```
+## Hey jude, don't be afraid.
+## You were made to go out and get her.
+## The minute you let her under your skin,
+## Then you begin to make it better.
+## Cellophane flowers of yellow and green
+## Towering over your head
+## Look for the girl with the sun in her eyes
+## And she's gone
+```
+
+---
+
+# Looping example 2
+
+How about a more realistic one that is real world useful (taken from [Grant Mcdermott](https://raw.githack.com/uo-ec607/lectures/master/03-shell/03-shell.html#109))
+
+--
+
+Let's combine a bunch of csvs using the shell
+
+This is particularly useful with many or large datasets, because when done through shell, you do not need to load them into memory
+
+--
+
+The files are in `/sandbox/classes` and report a fake class schedule
+
+Let's combine them into one
+
+---
+
+# Looping example 2
+
+First we need to make our class schedule file
+
+--
+
+
+```bash
+$ touch sandbox/classes/class_schedule.csv
+```
+
+--
+
+Then we need to add each day's schedule to the file
+
+--
+
+
+```bash
+$ for day in $(ls sandbox/classes/*day.csv)
+$ do
+$     cat $day &gt;&gt; sandbox/classes/class_schedule.csv
+$ done
+```
+
+where we treat what `ls` returns as a variable since its the output of a command
+
+---
+
+# Looping example 2
+
+
+```bash
+$ cat sandbox/classes/class_schedule.csv
+```
+
+```
+## day,morning,afternoon,evening
+## friday,nothing,workshop,nothing
+## day,morning,afternoon,evening
+## monday,micro,macro,metrics
+## day,morning,afternoon,evening
+## thursday,game theory,seminar,nothings
+## day,morning,afternoon,evening
+## tuesday,game theory,seminar,nothings
+## day,morning,afternoon,evening
+## wednesday,micro,macro,metrics
+```
+
+--
+
+Looks like it worked but we have the header every other line, how do we get rid of it?
+
+---
+
+# Looping example 2
+
+.hi-blue[Hint:] we only need the header once, and then we want the last line of the csv for each file
+
+--
+
+First lets remove the old file
+
+--
+
+
+```bash
+$ rm -f sandbox/classes/class_schedule.csv
+```
+
+--
+
+Next create the new file by grabbing the header from Monday
+
+--
+
+
+```bash
+$ head -1 sandbox/classes/monday.csv &gt; sandbox/classes/class_schedule.csv
+$ cat sandbox/classes/class_schedule.csv
+```
+
+```
+## day,morning,afternoon,evening
+```
+
+---
+
+# Looping example 2
+
+So we've got the file started, now we need to fill in the days using our looping skills
+
+--
+
+We need to add each day's schedule to the file
+
+--
+
+
+```bash
+$ for day in $(ls sandbox/classes/*day.csv)
+$ do
+$     tail -1 $day | cat &gt;&gt; sandbox/classes/class_schedule.csv
+$ done
+$ cat sandbox/classes/class_schedule.csv
+```
+
+```
+## day,morning,afternoon,evening
+## friday,nothing,workshop,nothing
+## monday,micro,macro,metrics
+## thursday,game theory,seminar,nothings
+## tuesday,game theory,seminar,nothings
+## wednesday,micro,macro,metrics
+```
+
+
+
+
+---
+
+# Finding things
+
+How can we find things within files?
+
+--
+
+We use the command `grep` (global/regular expression/print)
+
+--
+
+`grep` finds and prints lines that match a certain pattern
+
+For example, lets find the lines in Hey Jude that contain "make"
+
+--
+
+
+```bash
+$ grep make sandbox/hey_jude.txt
+```
+
+```
+## Hey jude, don't make it bad.
+## Take a sad song and make it better.
+## Then you can start to make it better.
+## Then you begin to make it better.
+## Then you can start to make it better.
+## Hey jude, don't make it bad.
+## Take a sad song and make it better.
+## Then you'll begin to make it
+```
+
+---
+
+# Finding things
+
+
+```bash
+$ grep make sandbox/hey_jude.txt
+```
+
+Here `make` is the pattern we are searching for inside Hey Jude
+
+
+---
+
+# Finding things
+
+Now lets search Lucy in the Sky for "in"
+
+--
+
+
+```bash
+$ grep in sandbox/lucy_in_the_sky.txt | head -5
+```
+
+```
+## Picture yourself in a boat on a river
+## With tangerine trees and marmalade skies
+## Towering over your head
+## Look for the girl with the sun in her eyes
+## Lucy in the sky with diamonds
+```
+
+--
+
+This gave us words that contained "in" but weren't actually the word "in"
+
+---
+
+# Finding things
+
+We can restrict the search to words with the `w` option
+
+--
+
+
+```bash
+$ grep -w in sandbox/lucy_in_the_sky.txt | head -5
+```
+
+```
+## Picture yourself in a boat on a river
+## Look for the girl with the sun in her eyes
+## Lucy in the sky with diamonds
+## Lucy in the sky with diamonds
+## Lucy in the sky with diamonds
+```
+
+---
+
+# Grepping
+
+`grep`s real power comes from using .hi-blue[regular expressions]
+
+These are complex expressions that allow you to search for very specific things
+
+--
+
+For example, lets find lines with "a" as the second letter
+
+--
+
+
+```bash
+$ grep -E "^.a" sandbox/lucy_in_the_sky.txt | head -5
+```
+
+```
+## Waiting to take you away
+```
+
+---
+
+# Finding things
+
+`grep` shows up in most programming languages as well
+
+You can imagine using it to do things like dynamically renaming a set of variables, dealing with weirdly reported FIPS codes, etc
+
+---
+
+# Shell scripts
+
+A nice thing about shell that's pretty underused by economists is putting the commands into scripts so we can re-use them
+
+--
+
+
+```bash
+$ # writing a shell script using echo is kind of silly
+$ # but I want to show you what I'm doing on the slides
+$ touch sandbox/shell_script.sh
+$ echo echo "Hello World!" &gt;&gt; sandbox/shell_script.sh
+$ cat sandbox/shell_script.sh
+```
+
+```
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+## echo Hello World!
+```
+
+We can the execute it using bash
+
+```bash
+$ bash sandbox/shell_script.sh
+```
+
+```
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+## Hello World!
+```
+
+---
+
+class: inverse, center, middle
+name: julia
+
+# Julia
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+
+---
+
+# Why am I doing this to you?
+
+Why are we using Julia?
+
+1. It's a high-level language, much easier to use than C++, Fortran, etc
+2. It delivers C++ and Fortran speed
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/julia_speed_2.png" height=330&gt;
+&lt;/div&gt;
+
+---
+
+# Intro to programming
+
+### Programming `\(\equiv\)` writing a set of instructions
+
+1. There are hard and fast rules you can't break if you want it to work
+2. There are elements of style (e.g. Strunk and White) that make for clearer and more efficient code
+
+
+---
+
+# Intro to programming
+
+If you will be doing computational work there are:
+
+1. Language-independent coding basics you should know
+    - Arrays are stored in memory in particular ways
+2. Language-independent best practices you should use
+    - Indent to convey program structure (or function in Python)
+3. Language-dependent idiosyncracies that matter for function, speed, etc
+    - Julia: type stability; R: vectorize
+
+---
+
+# Intro to programming
+
+Learning these early will:
+
+1. Make coding a lot easier
+--
+
+2. Reduce total programmer time
+--
+
+3. Reduce total computer time
+--
+
+4. Make your code understandable by someone else or your future self
+--
+
+5. Make your code flexible
+
+---
+
+# A broad view of programming
+
+Your goal is to make a **program**
+
+A program is made of different components and sub-components
+
+--
+
+The most basic component is a **statement**, more commonly called a **line of code**
+
+
+---
+
+# A broad view of programming
+
+Here's pseudoprogram:
+```julia
+*deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+shuffled_deck = shuffle(deck)
+first_card = shuffled_deck[1]
+println("The first drawn card was " * shuffled_deck ".")
+```
+
+This program is real simple:
+
+1. Create a deck of cards
+
+---
+
+# A broad view of programming
+
+Here's pseudoprogram:
+```julia
+deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+*shuffled_deck = shuffle(deck)
+first_card = shuffled_deck[1]
+println("The first drawn card was " * shuffled_deck ".")
+```
+
+This program is real simple:
+
+1. Create a deck of cards
+2. Shuffle the deck
+
+---
+
+# A broad view of programming
+
+Here's pseudoprogram:
+```julia
+deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+shuffled_deck = shuffle(deck)
+*first_card = shuffled_deck[1]
+println("The first drawn card was " * shuffled_deck ".")
+```
+
+This program is real simple:
+
+1. Create a deck of cards
+2. Shuffle the deck
+3. Draw the top card
+
+---
+
+# A broad view of programming
+
+Here's pseudoprogram:
+```julia
+deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+shuffled_deck = shuffle(deck)
+first_card = shuffled_deck[1]
+*println("The first drawn card was " * shuffled_deck ".")
+```
+
+This program is real simple:
+
+1. Create a deck of cards
+2. Shuffle the deck
+3. Draw the top card
+4. Print it
+
+---
+
+# A broad view of programming
+
+```julia
+deck = ["4 of hearts", "King of clubs", "Ace of spades"]
+shuffled_deck = shuffle(deck)
+first_card = shuffled_deck[1]
+println("The first drawn card was " * shuffled_deck ".")
+```
+
+What are the parentheses and why are they different from square brackets?
+
+How does shuffle work?
+
+What’s println?
+
+It’s important to know that a good program has understandable code
+
+---
+
+# Julia specifics
+
+We will discuss coding in the context of Julia
+but a lot of this ports to Python, MATLAB, etc
+
+To do:
+
+1. Types
+2. Operators
+3. Scope
+4. Generic functions
+5. Multiple dispatch
+
+---
+
+# Types
+
+All languages have some kind of **data types** like integers or arrays
+
+--
+
+The first type you will often use is a boolean (`Bool`) variable that takes on a value of `true` or `false`:
+
+```julia
+ x = true
+```
+
+```
+## true
+```
+
+```julia
+ typeof(x)
+```
+
+```
+## Bool
+```
+
+---
+
+# Types
+
+We can save the boolean value of actual statements in variables this way:
+
+```julia
+ @show y = 1 &gt; 2
+```
+
+```
+## y = 1 &gt; 2 = false
+```
+
+```
+## false
+```
+
+`@show` is a Julia macro for showing the operation
+
+---
+
+# Numbers
+
+Two other data types you will use frequently are integers
+
+```julia
+ typeof(1)
+```
+
+```
+## Int64
+```
+
+--
+
+and floating point numbers
+
+```julia
+ typeof(1.0)
+```
+
+```
+## Float64
+```
+
+--
+
+Recall from lecture 1 the 64 means 64 bits of storage for the number, which is probably the default on your machine
+
+---
+
+# Numbers
+
+You can always instantiate alternative floating point number types
+
+
+```julia
+ converted_int = convert(Float32, 1.0);
+ typeof(converted_int)
+```
+
+```
+## Float32
+```
+
+---
+
+# Numbers
+
+### Math works like you would expect:
+
+```julia
+ a = 2; b = 1.0;
+ a * b
+```
+
+```
+## 2.0
+```
+
+--
+
+
+```julia
+ a^2
+```
+
+```
+## 4
+```
+
+---
+
+# Numbers
+
+
+```julia
+ 2a - 4b
+```
+
+```
+## 0.0
+```
+
+--
+
+
+```julia
+ @show 4a + 3b^2
+```
+
+```
+## 4a + 3 * b ^ 2 = 11.0
+```
+
+```
+## 11.0
+```
+
+--
+
+You dont need `*` inbetween numeric literals (numbers) and variables
+
+---
+
+# Strings
+
+Strings store sequences of characters
+
+--
+
+You implement them with double quotations:
+
+
+```julia
+ x = "Hello World!";
+ typeof(x)
+```
+
+```
+## String
+```
+
+--
+
+Note that `;` suppresses output for that line of code but is unnecessary in Julia
+
+---
+
+# Strings
+
+It's easy to work with strings, use `$` to interpolate a variable/expression
+
+```julia
+ x = 10; y = 20; println("x + y =  $(x+y).")
+```
+
+```
+## x + y =  30.
+```
+
+--
+
+Use `*` to concatenate strings
+
+```julia
+ a = "Aww"; b = "Yeah!!!"; println(a * " " * b)
+```
+
+```
+## Aww Yeah!!!
+```
+
+--
+
+You probably won't use strings too often unless you're working with text data or printing output
+
+---
+
+# Containers
+
+Containers are types that store collections of data
+
+--
+
+The most basic container is the `Array` which is denoted by square brackets
+
+--
+
+
+
+```julia
+ a1 = [1 2; 3 4]; typeof(a1)
+```
+
+```
+## Matrix{Int64} (alias for Array{Int64, 2})
+```
+
+--
+
+Arrays are **mutable** which means you can change their values
+
+--
+
+
+```julia
+ a1[1,1] = 5; a1
+```
+
+```
+## 2×2 Matrix{Int64}:
+##  5  2
+##  3  4
+```
+
+You reference elements in a container with square brackets
+
+---
+
+# Containers
+
+An alternative to the `Array` is the `Tuple` which is denoted by parentheses
+
+--
+
+
+```julia
+ a2 = (1, 2, 3, 4); typeof(a2)
+```
+
+```
+## NTuple{4, Int64}
+```
+`a2` is a `Tuple` of 4 `Int64`s, tuples have no dimension
+
+---
+
+# Containers
+
+Tuples are **immutable** which means you **can't** change their values
+
+```julia
+ try
+   a2[1,1] = 5;
+ catch
+   println("Error, can't change value of a tuple.")
+ end
+```
+
+```
+## Error, can't change value of a tuple.
+```
+
+---
+
+# Containers
+
+Tuples don't need parentheses (but it's probably best practice for clarity)
+
+```julia
+ a3 = 5, 6; typeof(a3)
+```
+
+```
+## Tuple{Int64, Int64}
+```
+
+---
+
+# Containers
+
+Tuples can be **unpacked** (see [`NamedTuple`](https://docs.julialang.org/en/v1/manual/types/#Named-Tuple-Types-1) for an alternative and more efficient container)
+
+--
+
+
+```julia
+ a3_x, a3_y = a3;
+ a3_x
+```
+
+```
+## 5
+```
+
+```julia
+ a3_y
+```
+
+```
+## 6
+```
+
+--
+
+This is basically how functions return output when you call them
+
+---
+
+# Containers
+
+A `Dictionary` is the last main container type,
+they are arrays but are indexed by keys (names) instead of numbers
+
+--
+
+
+```julia
+ d1 = Dict("class" =&gt; "AEM7130", "grade" =&gt; 97);
+ typeof(d1)
+```
+
+```
+## Dict{String, Any}
+```
+
+--
+
+`d1` is a dictionary where the key are strings and the values are any kind of type
+
+---
+
+# Containers
+
+Reference specific values you want in the dictionary by referencing the key
+
+--
+
+
+```julia
+ d1["class"]
+```
+
+```
+## "AEM7130"
+```
+
+```julia
+ d1["grade"]
+```
+
+```
+## 97
+```
+
+---
+
+# Containers
+
+If you just want all the keys or all the values you can use the base functions
+
+--
+
+
+```julia
+ keys_d1 = keys(d1)
+```
+
+```
+## KeySet for a Dict{String, Any} with 2 entries. Keys:
+##   "class"
+##   "grade"
+```
+
+```julia
+ values_d1 = values(d1)
+```
+
+```
+## ValueIterator for a Dict{String, Any} with 2 entries. Values:
+##   "AEM7130"
+##   97
+```
+
+---
+
+# Iterating
+
+As in other languages we have loops at our disposal:
+
+`for` loops iterate over containers
+
+```julia
+ for count in 1:10
+   random_number = rand()
+   if random_number &gt; 0.2
+     println("We drew a $random_number.")
+   end
+ end
+```
+
+```
+## We drew a 0.9187983920317281.
+## We drew a 0.7961107667211885.
+## We drew a 0.469825200482593.
+## We drew a 0.7949657615494699.
+## We drew a 0.2915781006362058.
+## We drew a 0.8358737346799731.
+## We drew a 0.6169394866442824.
+## We drew a 0.9825516210853693.
+```
+
+---
+
+# Iterating
+
+`while` loops iterate until a logical expression is false
+
+```julia
+ while rand() &gt; 0.5
+   random_number = rand()
+   if random_number &gt; 0.2
+     println("We drew a $random_number.")
+   end
+ end
+```
+
+---
+
+# Iterating
+
+An `Iterable` is something you can loop over, like arrays
+
+--
+
+
+```julia
+ actions = ["codes well", "skips class"];
+ for action in actions
+     println("Charlie $action")
+ end
+```
+
+```
+## Charlie codes well
+## Charlie skips class
+```
+
+---
+
+# Iterating
+
+There's a type that's a subset of iterables, `Iterator`, that are particularly convenient
+
+--
+
+These include things like the dictionary keys:
+
+```julia
+ for key in keys(d1)
+   println(d1[key])
+ end
+```
+
+```
+## AEM7130
+## 97
+```
+
+---
+
+# Iterating
+
+Iterating on `Iterator`s is more memory efficient than iterating on arrays
+
+--
+
+Here's a **very** simple example, the top function iterates on an `Array`, the bottom function iterates on an `Iterator`:
+
+--
+
+
+```julia
+ function show_array_speed()
+   m = 1
+   for i = [1, 2, 3, 4, 5, 6]
+     m = m*i
+   end
+ end;
+ 
+ function show_iterator_speed()
+   m = 1
+   for i = 1:6
+     m = m*i
+   end
+ end;
+```
+
+---
+
+# Iterating
+
+
+
+```julia
+ using BenchmarkTools
+ @btime show_array_speed()
+```
+
+```
+##   32.729 ns (1 allocation: 112 bytes)
+```
+
+```julia
+ @btime show_iterator_speed()
+```
+
+```
+##   2.083 ns (0 allocations: 0 bytes)
+```
+
+The `Iterator` approach is faster and allocates no memory
+
+`@btime` is a macro from `BenchmarkTools` that shows you the elasped time and memory allocation
+
+---
+
+# Neat looping
+
+The nice thing about Julia vs MATLAB is your loops can be much neater since you don't need to index if you just want the container elements
+
+--
+
+
+```julia
+ f(x) = x^2;
+ x_values = 0:20:100;
+ for x in x_values
+   println(f(x))
+ end
+```
+
+```
+## 0
+## 400
+## 1600
+## 3600
+## 6400
+## 10000
+```
+
+---
+
+# Neat looping
+
+The loop directly assigns the elements of `x_values` to `x` instead of having to do something clumsy like `x_values[i]`
+
+--
+
+`0:20:100` creates something called a `StepRange` (a type of `Iterator`) which starts at `0`, steps up by `20` and ends at `100`
+
+
+---
+
+# Neat looping
+
+You can also pull out an index and the element value by enumerating
+
+
+```julia
+ f(x) = x^2;
+ x_values = 0:20:100;
+ for (index, x) in enumerate(x_values)
+   println("f(x) at value $index is $(f(x)).")
+ end
+```
+
+```
+## f(x) at value 1 is 0.
+## f(x) at value 2 is 400.
+## f(x) at value 3 is 1600.
+## f(x) at value 4 is 3600.
+## f(x) at value 5 is 6400.
+## f(x) at value 6 is 10000.
+```
+
+`enumerate` basically assigns an index vector
+
+---
+
+# Neat looping
+
+There is also a lot of Python-esque functionality
+
+--
+
+For example: `zip` lets you loop over multiple different iterables at once
+
+--
+
+
+```julia
+ last_name = ("Lincoln", "Bond", "Walras");
+ first_name = ("Abraham", "James", "Leon");
+ 
+ for (first_idx, last_idx) in zip(first_name, last_name)
+   println("The name's $last_idx, $first_idx $last_idx.")
+ end
+```
+
+```
+## The name's Lincoln, Abraham Lincoln.
+## The name's Bond, James Bond.
+## The name's Walras, Leon Walras.
+```
+
+---
+
+# Neat looping
+
+Nested loops can also be made very neatly
+
+--
+
+
+```julia
+ for x in 1:3, y in 3:-1:1
+   println(y-x)
+ end
+```
+
+```
+## 2
+## 1
+## 0
+## 1
+## 0
+## -1
+## 0
+## -1
+## -2
+```
+
+--
+
+The first loop is the inner loop, the second loop is the outer loop
+
+---
+
+# Comprehensions: the neatest looping
+
+Comprehensions are super nice ways to use iterables that make your code cleaner and more compact
+
+--
+
+
+```julia
+ squared = [y^2 for y in 1:2:11]
+```
+
+```
+## 6-element Vector{Int64}:
+##    1
+##    9
+##   25
+##   49
+##   81
+##  121
+```
+
+--
+
+This created a 1-dimension `Array` using one line
+
+---
+
+# Comprehensions: the neatest looping
+
+We can also use nested loops for comprehensions
+
+--
+
+
+```julia
+ squared_2 = [(y+z)^2 for y in 1:2:11, z in 1:6]
+```
+
+```
+## 6×6 Matrix{Int64}:
+##    4    9   16   25   36   49
+##   16   25   36   49   64   81
+##   36   49   64   81  100  121
+##   64   81  100  121  144  169
+##  100  121  144  169  196  225
+##  144  169  196  225  256  289
+```
+
+--
+
+This created a 2-dimensional `Array`
+
+--
+
+Use this (and the compact nested loop) sparingly since it's hard to follow
+
+---
+
+# Dot syntax: broadcasting/vectorization
+
+Vectorizing operations (e.g. applying it to a whole array or vector at once) is easy in Julia, just use dot syntax like you would in MATLAB, etc
+
+--
+
+
+```julia
+ g(x) = x^2;
+ squared_2 = g.(1:2:11)
+```
+
+```
+## 6-element Vector{Int64}:
+##    1
+##    9
+##   25
+##   49
+##   81
+##  121
+```
+
+--
+
+This is actually called **broadcasting**
+
+--
+
+When broadcasting, you might want to consider **pre-allocating** arrays
+
+---
+
+# Dot syntax: broadcasting/vectorization
+
+Vectorization creates *temporary allocations*, temporary arrays in the middle of the process that aren't actually needed for the final product
+
+Julia can do broadcasting in a nicer, faster way by .hi-blue[fusing] operations together and avoiding these temporary allocations
+
+---
+
+# Dot syntax: broadcasting/vectorization
+
+Let's write two functions that do the same thing:
+
+
+```julia
+ function show_vec_speed(x)
+   out = [3x.^2 + 4x + 7x.^3 for i = 1:1]
+ end
+ function show_fuse_speed(x)
+   out = @. [3x.^2 + 4x + 7x.^3 for i = 1:1]
+ end
+```
+
+The top one is vectorized for the operations, the `@.` in the bottom one vectorizes everything in one swoop: the function call, the operation, and the assignment to a variable
+
+---
+
+# Dot syntax: broadcasting/vectorization
+
+First, precompile the functions
+
+
+```julia
+ x = rand(10^6);
+ @time show_vec_speed(x);
+ @time show_fuse_speed(x);
+```
+
+
+```julia
+ @time show_vec_speed(x)
+```
+
+```
+##   0.005698 seconds (13 allocations: 45.777 MiB)
+```
+
+```
+## 1-element Vector{Vector{Float64}}:
+##  [3.212440847418054, 9.314967819494925, 6.981777771141973, 4.29409051288116, 6.050692416279498, 8.431973221114234, 13.231849055864119, 12.593976402980738, 1.8504195397839591, 6.894363112003198  …  3.8105904435297724, 1.0050811256571799, 1.447220826867133, 0.09636976731790715, 8.044390255123602, 6.136535453922386, 2.1036887366864385, 2.8683802947228427, 12.881422214244001, 0.8326254017132486]
+```
+
+```julia
+ @time show_fuse_speed(x)
+```
+
+```
+##   0.001432 seconds (3 allocations: 7.630 MiB)
+```
+
+```
+## 1-element Vector{Vector{Float64}}:
+##  [3.212440847418054, 9.314967819494925, 6.981777771141973, 4.29409051288116, 6.050692416279498, 8.431973221114234, 13.231849055864119, 12.593976402980738, 1.8504195397839591, 6.894363112003198  …  3.8105904435297724, 1.0050811256571799, 1.447220826867133, 0.09636976731790715, 8.044390255123602, 6.136535453922386, 2.1036887366864385, 2.8683802947228427, 12.881422214244001, 0.8326254017132486]
+```
+
+Full vectorization using `@.` is 10x faster with 1/6 of the memory allocation
+
+---
+
+# Dot syntax: vectorization
+
+Not pre-allocated:
+
+
+```julia
+ h(y,z) = y^2 + sin(z);   # function to evaluate
+ y = 1:2:1e6+1;           # input y
+ z = rand(length(y));     # input z
+```
+
+---
+
+# Dot syntax
+
+Here we are vectorizing the function call
+
+
+```julia
+ # precompile h so first timer isn't picking up on compile time
+ h(1,2)
+```
+
+```julia
+ @time out_1 = h.(y,z)    # evaluate h.(y,z) and time
+```
+
+```
+##   0.020525 seconds (145.14 k allocations: 10.631 MiB, 83.50% compilation time: 100% of which was recompilation)
+```
+
+```
+## 500001-element Vector{Float64}:
+##    1.4869217334046803
+##    9.338070160057983
+##   25.54346083907623
+##   49.229841935323215
+##   81.81325973857075
+##  121.34132326667225
+##  169.03138847450302
+##  225.48303560820747
+##  289.81470736971175
+##  361.29055372371295
+##    ⋮
+##    9.999700002253453e11
+##    9.999740001695679e11
+##    9.999780001213821e11
+##    9.999820000810813e11
+##    9.999860000490939e11
+##    9.999900000257325e11
+##    9.999940000098402e11
+##    9.999980000015447e11
+##    1.0000020000013784e12
+```
+
+---
+# Dot syntax: vectorization
+
+Here we are vectorizing the function call and assignment
+
+
+```julia
+ out_2 = similar(out_1)
+```
+
+```julia
+ @time out_2 .= h.(y,z)
+```
+
+```
+##   0.014254 seconds (27.01 k allocations: 1.167 MiB, 74.83% compilation time: 100% of which was recompilation)
+```
+
+```
+## 500001-element Vector{Float64}:
+##    1.4869217334046803
+##    9.338070160057983
+##   25.54346083907623
+##   49.229841935323215
+##   81.81325973857075
+##  121.34132326667225
+##  169.03138847450302
+##  225.48303560820747
+##  289.81470736971175
+##  361.29055372371295
+##    ⋮
+##    9.999700002253453e11
+##    9.999740001695679e11
+##    9.999780001213821e11
+##    9.999820000810813e11
+##    9.999860000490939e11
+##    9.999900000257325e11
+##    9.999940000098402e11
+##    9.999980000015447e11
+##    1.0000020000013784e12
+```
+
+---
+# Dot syntax: vectorization
+
+Here we are vectorizing the function call, assignment, and operations
+
+
+```julia
+ out_3 = similar(out_1)
+```
+
+```julia
+ @time out_3 = @. h(y,z)
+```
+
+```
+##   0.003366 seconds (4 allocations: 3.815 MiB)
+```
+
+```
+## 500001-element Vector{Float64}:
+##    1.4869217334046803
+##    9.338070160057983
+##   25.54346083907623
+##   49.229841935323215
+##   81.81325973857075
+##  121.34132326667225
+##  169.03138847450302
+##  225.48303560820747
+##  289.81470736971175
+##  361.29055372371295
+##    ⋮
+##    9.999700002253453e11
+##    9.999740001695679e11
+##    9.999780001213821e11
+##    9.999820000810813e11
+##    9.999860000490939e11
+##    9.999900000257325e11
+##    9.999940000098402e11
+##    9.999980000015447e11
+##    1.0000020000013784e12
+```
+
+---
+# Logical operators work like you'd think
+
+- `==` (equal equal) tests for equality
+
+--
+
+
+```julia
+ 1 == 1
+```
+
+```
+## true
+```
+
+--
+
+- `!=` (exclaimation point equal) tests for inequality
+
+--
+
+
+```julia
+ 2 != 2
+```
+
+```
+## false
+```
+
+--
+
+- You can also test for approximate equality with `\(\approx\)` (type `\approx&lt;TAB&gt;`)
+
+--
+
+
+```julia
+ 1.00000001 ≈ 1
+```
+
+```
+## true
+```
+
+---
+
+# Scope
+
+
+The .hi-blue[scope] of a variable name determines when it is valid to refer to it
+
+--
+
+Scope can be a frustrating concept
+
+--
+
+If you want to dive into the details: the type of scoping in Julia is called **lexical scoping**
+
+--
+
+Different scopes can have the same name, i.e. `saving_rate`, but be assigned to different variables
+
+--
+
+Let's walk through some simple examples to see how it works
+
+---
+
+# Scope
+
+First, functions have their own local scope
+
+--
+
+
+```julia
+ ff(xx) = xx^2;
+ yy = 5;
+ ff(yy)
+```
+
+```
+## 25
+```
+
+`xx` isn't bound to any values outside the function `ff`
+
+This is pretty natural for those of you who have done any programming before
+
+---
+# Scope
+
+Locally scoped functions allow us to do things like:
+
+
+```julia
+ xx = 10;
+ fff(xx) = xx^2;
+ fff(5)
+```
+
+```
+## 25
+```
+
+Although `xx` was declared equal to 10, the function still evaluated at 5
+
+--
+
+This is all kind of obvious so far
+
+---
+
+# Scope
+
+But, this type of scoping also has (initially) counterintuitive results like:
+
+
+```julia
+ zz = 0;
+ for ii = 1:10
+   zz = ii
+ end
+ println("zz = $zz")
+```
+
+```
+## zz = 0
+```
+
+---
+
+# Scope
+
+What happened?
+
+--
+
+The `zz` outside the for loop has a different scope,
+the .hi-blue[global scope], than the `zz` inside it
+
+--
+
+The global scope is the outer most scope, outside all functions and loops
+
+--
+
+The `zz` inside the for loop has a scope .hi-blue[local] to the loop
+
+--
+
+Since the outside `zz` has global scope the locally scoped variables in the loop can't change it
+
+---
+
+# Scope
+
+Generally you want to avoid global scope because it can cause conflicts, slowness, etc, but you can use `global` to force it if you want something to have global scope
+
+
+```julia
+ zz = 0;
+ for ii = 1:10
+   global zz
+   zz = ii
+ end
+ println("zz = $zz")
+```
+
+```
+## zz = 10
+```
+
+---
+
+# Scope
+
+Local scope kicks in whenever you have a new block keyword (i.e. you indented something) except for `if`
+
+Global variables inside a local scope are inherted for .hi-blue[reading], not writing
+
+
+```julia
+ x, y = 1, 2;
+ function foo()
+   x = 2        # assignment introduces a new local
+   return x + y # y refers to the global
+ end;
+ foo()
+```
+
+```
+## 4
+```
+
+```julia
+ x
+```
+
+```
+## 1
+```
+
+
+---
+
+# Scope
+
+Important piece: nested functions can modify their parent scope's .hi-blue[local] variables
+
+--
+
+
+```julia
+ x, y = 1, 2; # set globals
+ 
+ function f_outer()
+   x = 2                # introduces a new local
+   function f_inner()
+     x = 10             # modifies the parent's x
+     return x + y       # y is global
+   end
+   return f_inner() + x # 12 + 10 (x is modified in call of f_inner())
+ end;
+ f_outer()
+ x, y                   # verify that global x and y are unchanged
+```
+
+---
+
+# Scope
+
+
+```julia
+ function f_outer()
+   x = 2                # introduces a new local
+   function f_inner()
+     x = 10             # modifies the parent's x
+     return x + y       # y is global
+   end
+   return f_inner() + x # 12 + 10 (x is modified in call of f_inner())
+ end;
+ f_outer()
+```
+
+```
+## 22
+```
+
+```julia
+ x, y                   # verify that global x and y are unchanged
+```
+
+```
+## (1, 2)
+```
+
+---
+
+# Scope
+
+
+```julia
+ function f_outer()
+   x = 2                # introduces a new local
+   function f_inner()
+     x = 10             # modifies the parent's x
+     return x + y       # y is global
+   end
+   return f_inner() + x # 12 + 10 (x is modified in call of f_inner())
+ end;
+ f_outer()
+ x, y                   # verify that global x and y are unchanged
+```
+
+--
+
+If `f_inner` was not nested and was in the global scope we'd get `14` not `22`, this is also a way to handle the issue with loops editing variables not created in their local scope
+
+---
+
+# Scope
+
+We can fix looping issues with global scope by using a wrapper function that doesn't do anything but change the parent scope so it is not global
+
+
+```julia
+ function wrapper()
+   zzz = 0;
+   for iii = 1:10
+     zzz = iii
+   end
+   println("zzz = $zzz")
+ end
+```
+
+```
+## wrapper (generic function with 1 method)
+```
+
+```julia
+ wrapper()
+```
+
+```
+## zzz = 10
+```
+
+---
+
+# Closures
+
+These inner functions we've been looking at are called .hi-blue[closures]
+
+When a function `f` is parsed in Julia, it looks to see if any of the variables have been previously defined in the current scope
+
+
+```julia
+ a = 0.2;
+ f(x) = a * x^2;    # refers to the `a` in the outer scope
+```
+
+```
+## f (generic function with 1 method)
+```
+
+```julia
+ f(1)               # univariate function
+```
+
+```
+## 0.2
+```
+
+---
+
+# Closures
+
+
+```julia
+ function g(a)
+     f(x) = a * x^2; # refers to the `a` passed in the function
+     f(1);           # univariate function
+ end
+```
+
+```
+## g (generic function with 2 methods)
+```
+
+```julia
+ g(0.2)
+```
+
+```
+## 0.2
+```
+
+--
+
+In both of these examples `f` is a closure designed to .hi-blue[capture] a variable from an outer scope
+
+---
+
+# Closures
+
+Here's a complicated example that actually returns a closure (a function!) itself:
+
+---
+
+# Closures
+
+
+```julia
+ x = 0;
+ function toplevel(y)
+   println("x = ", x, " is a global variable")
+   println("y = ", y, " is a parameter")
+   z = 2
+   println("z = ", z, " is a local variable")
+ 
+   function closure(v)
+     println("v = ", v, " is a parameter")
+     w = 3
+     println("w = ", w, " is a local variable")
+     println("x = ", x, " is a global variable")
+     println("y = ", y, " is a closed variable (a parameter of the outer function)")
+     println("z = ", z, " is a closed variable (a local of the outer function)")
+   end;
+   return closure
+ end;
+```
+What will be returned when we call these functions?
+
+---
+
+# Closures
+
+Here's a complicated example:
+
+
+```julia
+ c_func = toplevel(10)
+```
+
+```
+## x = 0 is a global variable
+## y = 10 is a parameter
+## z = 2 is a local variable
+```
+
+```
+## (::var"#closure#11712"{Int64, Int64}) (generic function with 1 method)
+```
+
+```julia
+ c_func(20)
+```
+
+```
+## v = 20 is a parameter
+## w = 3 is a local variable
+## x = 0 is a global variable
+## y = 10 is a closed variable (a parameter of the outer function)
+## z = 2 is a closed variable (a local of the outer function)
+```
+
+The returned closure still has access to the outer function's local scope!
+
+
+
+---
+
+# Generic functions
+
+If you use Julia to write code for research you should aim to write .hi-blue[generic functions]
+
+--
+
+These are functions that are flexible (e.g. can deal with someone using an `Int` instead of a `Float`)
+and have high performance (e.g. comparable speed to C)
+
+--
+
+Functions are made generic by paying attention to types and making sure types are .hi-blue[stable]
+
+
+---
+
+# Generic functions
+
+.hi-blue[Type stability:] Given an input into a function, operations on that input should maintain the type so Julia **knows** what its type will be throughout the full function call
+
+--
+
+This allows it to compile type-specialized versions of the functions, which will yield higher performance
+
+--
+
+The question you might have is: Type stability sounds like mandating types (e.g. what C and Fortran do, not what R/Python/etc do), so how do we make it flexible?
+
+--
+
+We'll see next
+
+---
+
+# These two functions look the same, but are they?
+
+
+```julia
+ function t1(n)
+   s = 0
+   t = 1
+   for i in 1:n
+      s += s/i
+      t = div(t, i)
+   end
+   return t
+ end
+```
+
+```julia
+ function t2(n)
+   s  = 0.0
+   t = 1
+   for i in 1:n
+      s += s/i
+      t = div(t, i)
+   end
+   return t
+ end
+```
+
+---
+
+# No! t1 is not type stable
+
+--
+
+`t1` starts with `s` as an `Int64` but then we have `s += s/i` which will mean it must hold a `Float64`
+
+--
+
+It must be converted to `Float` so it is not type stable
+
+---
+
+# No! t1 is not type stable
+
+We can see this when calling the macro `@code_warntype` where it reports `t1` at some point handles `s` that has type `Union{Float64,Int64}`, either `Float64` or `Int64`
+
+Julia now can't assume `s`'s type and produce pure integer or floating point code `\(\rightarrow\)` performance degradation
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/t1_codewarn.png" height=150&gt;
+  &lt;img src="figures/t2_codewarn.png" height=150&gt;
+&lt;/div&gt;
+
+---
+
+# THIS MATTERS
+
+2x difference between two simple functions
+
+```julia
+ # Type instable
+ function type_unstable()
+   x = 1
+   for i = 1:1e6
+     x = x/2
+   end
+   return x
+ end
+ # Type stable
+ function type_stable()
+   x = 1.0
+   for i = 1:1e6
+     x = x/2
+   end
+   return x
+ end
+```
+
+---
+
+# THIS MATTERS
+
+2x difference between two simple functions
+
+
+```julia
+ @time type_unstable()
+```
+
+```
+##   0.004571 seconds
+```
+
+```
+## 0.0
+```
+
+```julia
+ @time type_stable()
+```
+
+```
+##   0.003024 seconds
+```
+
+```
+## 0.0
+```
+
+---
+
+# Concrete vs abstract types
+
+A **concrete type** is one that can be instantiated (`Float64` `Bool` `Int32`)
+
+--
+
+An **abstract type** cannot (`Real`, `Number`, `Any`)
+
+---
+
+# Concrete vs abstract types
+
+Abstract types are for organizing the types
+
+You can check where types are in the hierarchy
+
+
+```julia
+ @show Float64 &lt;: Real
+```
+
+```
+## Float64 &lt;: Real = true
+```
+
+```
+## true
+```
+
+```julia
+ @show Array &lt;: Real
+```
+
+```
+## Array &lt;: Real = false
+```
+
+```
+## false
+```
+
+---
+
+# Concrete vs abstract types
+
+You can see the type hierarchy with the supertypes and subtypes commands
+
+
+```julia
+ using Base: show_supertypes
+ show_supertypes(Float64)
+```
+
+```
+## Float64 &lt;: AbstractFloat &lt;: Real &lt;: Number &lt;: Any
+```
+
+---
+
+# Creating new types
+
+We can actually create new composite types using `struct`
+
+--
+
+
+```julia
+ struct FoobarNoType # This will be immutable by default
+   a
+   b
+   c
+ end
+```
+
+---
+
+# Creating new types
+
+This creates a new type called `FoobarNoType`, and we can generate a variable of this type using its **constructor** which will have the same name
+
+--
+
+
+```julia
+ newfoo = FoobarNoType(1.3, 2, "plzzz");
+ typeof(newfoo)
+```
+
+```
+## FoobarNoType
+```
+
+```julia
+ newfoo.a
+```
+
+```
+## 1.3
+```
+
+--
+
+.hi-red[You should always declare types for the fields of a new composite type]
+
+---
+
+# Creating new types
+
+You can declare types with the double colon
+
+
+
+```julia
+ struct FoobarType # This will be immutable by default
+   a::Float64
+   b::Int
+   c::String
+ end
+```
+
+---
+
+# Creating new types
+
+
+```julia
+ newfoo_typed = FoobarType(1.3, 2, "plzzz");
+ typeof(newfoo_typed)
+```
+
+```
+## FoobarType
+```
+
+```julia
+ newfoo.a
+```
+
+```
+## 1.3
+```
+
+This lets the compiler generate efficient code because it knows the types of the fields when you construct a `FoobarType`
+
+---
+
+# Parametric types are what help deliver flexibility
+
+We can create types that hold different types of fields
+by declaring subsets of abstract types
+
+
+```julia
+ struct FooParam{t1 &lt;: Real, t2 &lt;: Real, t3 &lt;: AbstractArray{&lt;:Real}}
+   a::t1
+   b::t2
+   c::t3
+ end
+ newfoo_para = FooParam(1.0, 7, [1., 4., 6.])
+```
+
+```
+## FooParam{Float64, Int64, Vector{Float64}}(1.0, 7, [1.0, 4.0, 6.0])
+```
+
+--
+
+The curly brackets declare all the different type subsets we will use in `FooParam`
+
+--
+
+This actually delivers high performance code!
+
+---
+
+# Delivering flexibility
+
+We want to make sure types are stable but code is flexible
+
+Ex: if want to preallocate an array to store data,
+how do we know how to declare it's type?
+
+--
+
+We don't need to
+
+---
+
+# Delivering flexibility
+
+
+```julia
+ using LinearAlgebra               # necessary for I
+ function sametypes(x)
+   y = similar(x)                  # creates an array that is `similar` to x, use this for preallocating
+   z = I                           # creates a scalable identity matrix
+   q = ones(eltype(x), length(x))  # one is a type generic array of ones, fill creates the array of length(x)
+   y .= z * x + q
+   return y
+ end
+```
+
+```
+## sametypes (generic function with 1 method)
+```
+
+```julia
+ 
+ x = [5.5, 7.0, 3.1];
+ y = [7, 8, 9];
+```
+
+---
+
+# Delivering flexibility
+
+We did not declare any types but the function is type stable
+
+
+
+```julia
+ sametypes(x)
+ sametypes(y)
+```
+
+&lt;div align="center"&gt;
+  &lt;img src="figures/generic_codewarn_float.png" height=125&gt;
+  &lt;img src="figures/generic_codewarn_int.png" height=125&gt;
+&lt;/div&gt;
+
+--
+
+There's a lot of other functions out there that help with writing flexible, type stable code
+
+---
+
+# Multiple dispatch
+
+.hi-red[Why type stability really matters: multiple dispatch]
+
+Neat thing about Julia: the same function name can perform different operations depending on the underlying type of the inputs
+
+A function specifies different **methods**, each of which operates on a specific set of types
+
+---
+
+# Multiple dispatch
+
+When you write a function that's type stable, you are actually writing many different methods, each of which are optimized for certain types
+
+--
+
+If your function isn't type stable, the optimized method may not be used
+
+This is why Julia can achieve C speeds: it compiles to C (or faster) code
+
+---
+
+# Multiple dispatch
+
+`/` has 103 different methods depending on the input types, these are 103 specialized sets of codes
+
+
+```julia
+ methods(/)
+```
+
+```
+## # 197 methods for generic function "/":
+## [1] /(x::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}, y::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}) in Base at int.jl:97
+## [2] /(x::T, y::T) where T&lt;:Union{Float16, Float32, Float64} in Base at float.jl:386
+## [3] /(x::Union{Integer, Complex{&lt;:Union{Integer, Rational}}}, y::Rational) in Base at rational.jl:347
+## [4] /(x::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}, y::BigInt) in Base.GMP at gmp.jl:547
+## [5] /(c::Union{UInt16, UInt32, UInt64, UInt8}, x::BigFloat) in Base.MPFR at mpfr.jl:441
+## [6] /(c::Union{Int16, Int32, Int64, Int8}, x::BigFloat) in Base.MPFR at mpfr.jl:453
+## [7] /(c::Union{Float16, Float32, Float64}, x::BigFloat) in Base.MPFR at mpfr.jl:465
+## [8] /(U::Union{UnitUpperTriangular{var"#s884", S} where S&lt;:AbstractMatrix{var"#s884"}, UpperTriangular{var"#s884", S} where S&lt;:AbstractMatrix{var"#s884"}} where var"#s884"&lt;:Number, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:879
+## [9] /(U::Union{UnitUpperTriangular{T, S} where S&lt;:AbstractMatrix{T}, UpperTriangular{T, S} where S&lt;:AbstractMatrix{T}} where T, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:884
+## [10] /(L::Union{LowerTriangular{var"#s884", S} where S&lt;:AbstractMatrix{var"#s884"}, UnitLowerTriangular{var"#s884", S} where S&lt;:AbstractMatrix{var"#s884"}} where var"#s884"&lt;:Number, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:888
+## [11] /(L::Union{LowerTriangular{T, S} where S&lt;:AbstractMatrix{T}, UnitLowerTriangular{T, S} where S&lt;:AbstractMatrix{T}} where T, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:893
+## [12] /(X::StridedArray{P}, y::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/deprecated.jl:44
+## [13] /(X::StridedArray{P}, y::Real) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/deprecated.jl:44
+## [14] /(x::Union{SparseArrays.SparseVector{Tv, Ti}, SubArray{Tv, 1, &lt;:SparseArrays.AbstractSparseMatrixCSC{Tv, Ti}, Tuple{Base.Slice{Base.OneTo{Int64}}, Int64}, false}, SubArray{Tv, 1, &lt;:SparseArrays.AbstractSparseVector{Tv, Ti}, Tuple{Base.Slice{Base.OneTo{Int64}}}, false}} where {Tv, Ti}, a::Number) in SparseArrays at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/SparseArrays/src/sparsevector.jl:1506
+## [15] /(a::Union{LMS, XYZ}, k::Number) in Colors at /Users/ir229/.julia/packages/Colors/yDxFN/src/algorithms.jl:9
+## [16] /(c::C, f::AbstractFloat) where C&lt;:Union{AbstractRGB, Transparent3{C} where C&lt;:AbstractRGB} in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:273
+## [17] /(c::Union{TransparentColor{C, T}, C} where {T, C&lt;:Union{AbstractRGB{T}, AbstractGray{T}}}, f::Real) in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:253
+## [18] /(B::Union{Adjoint{T, &lt;:Union{StaticArraysCore.StaticArray{Tuple{var"#s2"}, T, 1} where var"#s2", StaticArraysCore.StaticArray{Tuple{var"#s3", var"#s4"}, T, 2} where {var"#s3", var"#s4"}}}, Diagonal{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s13"}, T, 1} where var"#s13"}, Hermitian{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s10", var"#s11"}, T, 2} where {var"#s10", var"#s11"}}, LowerTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s18", var"#s19"}, T, 2} where {var"#s18", var"#s19"}}, Symmetric{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s7", var"#s8"}, T, 2} where {var"#s7", var"#s8"}}, Transpose{T, &lt;:Union{StaticArraysCore.StaticArray{Tuple{var"#s2"}, T, 1} where var"#s2", StaticArraysCore.StaticArray{Tuple{var"#s3", var"#s4"}, T, 2} where {var"#s3", var"#s4"}}}, UnitLowerTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s24", var"#s25"}, T, 2} where {var"#s24", var"#s25"}}, UnitUpperTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s21", var"#s22"}, T, 2} where {var"#s21", var"#s22"}}, UpperTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s15", var"#s16"}, T, 2} where {var"#s15", var"#s16"}}, StaticArraysCore.StaticArray{Tuple{var"#s1", var"#s3"}, T, 2} where {var"#s1", var"#s3"}} where T, A::Cholesky{T, &lt;:StaticArraysCore.StaticArray{Tuple{N, N}, T, 2}}) where {N, T} in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/cholesky.jl:80
+## [19] /(A::Union{Adjoint{T, &lt;:Union{StaticArraysCore.StaticArray{Tuple{var"#s2"}, T, 1} where var"#s2", StaticArraysCore.StaticArray{Tuple{var"#s3", var"#s4"}, T, 2} where {var"#s3", var"#s4"}}}, Diagonal{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s13"}, T, 1} where var"#s13"}, Hermitian{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s10", var"#s11"}, T, 2} where {var"#s10", var"#s11"}}, LowerTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s18", var"#s19"}, T, 2} where {var"#s18", var"#s19"}}, Symmetric{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s7", var"#s8"}, T, 2} where {var"#s7", var"#s8"}}, Transpose{T, &lt;:Union{StaticArraysCore.StaticArray{Tuple{var"#s2"}, T, 1} where var"#s2", StaticArraysCore.StaticArray{Tuple{var"#s3", var"#s4"}, T, 2} where {var"#s3", var"#s4"}}}, UnitLowerTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s24", var"#s25"}, T, 2} where {var"#s24", var"#s25"}}, UnitUpperTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s21", var"#s22"}, T, 2} where {var"#s21", var"#s22"}}, UpperTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s15", var"#s16"}, T, 2} where {var"#s15", var"#s16"}}, StaticArraysCore.StaticArray{Tuple{var"#s25"}, T, 1} where var"#s25", StaticArraysCore.StaticArray{Tuple{var"#s1", var"#s3"}, T, 2} where {var"#s1", var"#s3"}} where T, B::Union{LowerTriangular{TA, &lt;:StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}}, UnitLowerTriangular{TA, &lt;:StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}}, UnitUpperTriangular{TA, &lt;:StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}}, UpperTriangular{TA, &lt;:StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}}} where TA) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/triangular.jl:29
+## [20] /(x::RoundingMode, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
+## [21] /(A::Symmetric, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/symmetric.jl:608
+## [22] /(m1::Measures.Length{:pct}, m2::Measures.AbsoluteLength) in Plots.PlotMeasures at /Users/ir229/.julia/packages/Plots/Hxe7H/src/plotmeasures.jl:19
+## [23] /(x::AbstractVecOrMat, a::PDMats.PDMat) in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/pdmat.jl:51
+## [24] /(x::AbstractVecOrMat, a::PDMats.ScalMat) in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/scalmat.jl:54
+## [25] /(x::AbstractVecOrMat{T}, a::PDMats.PDSparseMat{T}) where T&lt;:Real in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/pdsparsemat.jl:50
+## [26] /(B::AbstractMatrix, F::StaticArrays.LU) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/lu.jl:212
+## [27] /(x::AbstractVecOrMat, a::PDMats.PDiagMat) in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/pdiagmat.jl:55
+## [28] /(::ChainRulesCore.AbstractThunk, x::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:49
+## [29] /(a::ChainRulesCore.AbstractThunk, b::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:39
+## [30] /(a::ChainRulesCore.AbstractThunk, b) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:37
+## [31] /(A::UnitUpperTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:873
+## [32] /(A::UnitUpperTriangular, B::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1605
+## [33] /(A::UnitUpperTriangular, B::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1617
+## [34] /(A::UnitUpperTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:551
+## [35] /(A::Hermitian, x::Real) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/symmetric.jl:609
+## [36] /(A::LowerTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:871
+## [37] /(A::LowerTriangular, B::LowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1575
+## [38] /(A::LowerTriangular, B::UnitLowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1587
+## [39] /(A::LowerTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:550
+## [40] /(r::StepRangeLen{&lt;:Real, &lt;:Base.TwicePrecision}, x::Real) in Base at twiceprecision.jl:555
+## [41] /(A::UpperTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:871
+## [42] /(A::UpperTriangular, B::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1599
+## [43] /(A::UpperTriangular, B::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1611
+## [44] /(A::UpperTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:550
+## [45] /(a::AbstractGray, b::AbstractGray) in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:335
+## [46] /(x::Number, B::BitArray) in Base at bitarray.jl:1205
+## [47] /(::Number, ::Missing) in Base at missing.jl:124
+## [48] /(x::Number, v::AbstractVector) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/generic.jl:1146
+## [49] /(n::Number, c::AbstractGray) in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:325
+## [50] /(a::StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}, b::UniformScaling) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/linalg.jl:46
+## [51] /(B::StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}, D::Diagonal{T, StaticArraysCore.SVector{N, T}} where {N, T}) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/SDiagonal.jl:25
+## [52] /(x::RObject, y::RObject) in RCall at /Users/ir229/.julia/packages/RCall/Wyd74/src/operators.jl:6
+## [53] /(x::ForwardDiff.Dual{Tx}, y::RoundingMode) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
+## [54] /(x::ForwardDiff.Dual{Tx}, y::Rational) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
+## [55] /(x::ForwardDiff.Dual{Tx}, y::Integer) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
+## [56] /(x::ForwardDiff.Dual{Tx}, y::Irrational) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
+## [57] /(x::ForwardDiff.Dual{Tx}, y::AbstractFloat) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
+## [58] /(x::ForwardDiff.Dual{Txy}, y::ForwardDiff.Dual{Txy}) where Txy in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:139
+## [59] /(x::ForwardDiff.Dual{Tx}, y::ForwardDiff.Dual{Ty}) where {Tx, Ty} in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:140
+## [60] /(x::ForwardDiff.Dual{Tx}, y::Real) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
+## [61] /(a::PDMats.ScalMat, c::Real) in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/scalmat.jl:41
+## [62] /(a::PDMats.AbstractPDMat, c::T) where T&lt;:Real in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/generics.jl:18
+## [63] /(H::UpperHessenberg, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:118
+## [64] /(H::UpperHessenberg, x::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:118
+## [65] /(A::AbstractMatrix, J::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:269
+## [66] /(v::AbstractVector, J::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:270
+## [67] /(H::UpperHessenberg, x::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:118
+## [68] /(H::UpperHessenberg, U::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:136
+## [69] /(H::UpperHessenberg, U::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:142
+## [70] /(H::UpperHessenberg{var"#s884", S} where {var"#s884"&lt;:Number, S&lt;:AbstractMatrix{var"#s884"}}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:174
+## [71] /(H::UpperHessenberg, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:173
+## [72] /(A::SymTridiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/tridiag.jl:212
+## [73] /(S::SymTridiagonal, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:500
+## [74] /(a::StaticArrays.SHermitianCompact, b::Number) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/SHermitianCompact.jl:155
+## [75] /(a::StaticArraysCore.StaticArray, b::Number) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/linalg.jl:24
+## [76] /(x::T, y::T) where T&lt;:FixedPointNumbers.Normed in FixedPointNumbers at /Users/ir229/.julia/packages/FixedPointNumbers/HAGk2/src/normed.jl:253
+## [77] /(A::UnitLowerTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:873
+## [78] /(A::UnitLowerTriangular, B::LowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1581
+## [79] /(A::UnitLowerTriangular, B::UnitLowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1593
+## [80] /(A::UnitLowerTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:551
+## [81] /(x::AbstractIrrational, y::AbstractIrrational) in Base at irrationals.jl:158
+## [82] /(x::Irrational, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
+## [83] /(a::Tuple{Vararg{Measures.Measure, N}} where N, b::Number) in Measures at /Users/ir229/.julia/packages/Measures/PKOxJ/src/point.jl:17
+## [84] /(a::ColorVectorSpace.RGBRGB, α::Real) in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:435
+## [85] /(A::Union{BitMatrix, BitVector}, B::Union{BitMatrix, BitVector}) in Base at bitarray.jl:1201
+## [86] /(B::BitArray, x::Number) in Base at bitarray.jl:1204
+## [87] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2667
+## [88] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2666
+## [89] /(A::Adjoint{T, &lt;:AbstractVector} where T, B::Transpose{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:921
+## [90] /(B::Adjoint{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization{&lt;:Real}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:136
+## [91] /(B::Adjoint{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:138
+## [92] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::Transpose{&lt;:Any, &lt;:AbstractMatrix}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:326
+## [93] /(adjA::Adjoint{&lt;:Any, &lt;:AbstractMatrix}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:445
+## [94] /(adjA::Adjoint{&lt;:Any, &lt;:AbstractVector}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:444
+## [95] /(adjB::Adjoint{T, &lt;:AbstractVector} where T, adjF::Adjoint{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:113
+## [96] /(A::Adjoint{T, &lt;:AbstractVector} where T, B::Adjoint{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:923
+## [97] /(u::Adjoint{T, &lt;:AbstractVector} where T, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:756
+## [98] /(A::Adjoint{&lt;:Number, &lt;:AbstractVector}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:917
+## [99] /(A::Adjoint{T, &lt;:AbstractVector} where T, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:919
+## [100] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::AbstractMatrix) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:324
+## [101] /(z::Complex, x::Real) in Base at complex.jl:346
+## [102] /(x::ChainRulesCore.AbstractZero, ::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:47
+## [103] /(a::ChainRulesCore.AbstractZero, ::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:42
+## [104] /(z::ChainRulesCore.AbstractZero, ::Any) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/abstract_zero.jl:29
+## [105] /(r::AbstractRange{&lt;:P}, x::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/ranges.jl:68
+## [106] /(d::UnivariateDistribution, x::Real) in Distributions at /Users/ir229/.julia/packages/Distributions/gggmX/src/univariate/locationscale.jl:147
+## [107] /(x::FixedPointNumbers.Fixed{T, f}, y::FixedPointNumbers.Fixed{T, f}) where {T, f} in FixedPointNumbers at /Users/ir229/.julia/packages/FixedPointNumbers/HAGk2/src/fixed.jl:102
+## [108] /(D::Diagonal, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:204
+## [109] /(D::Diagonal{var"#s884", V} where {var"#s884"&lt;:Number, V&lt;:AbstractVector{var"#s884"}}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:908
+## [110] /(Da::Diagonal{T, StaticArraysCore.SVector{N, T}} where {N, T}, Db::Diagonal{T, StaticArraysCore.SVector{N, T}} where {N, T}) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/SDiagonal.jl:27
+## [111] /(A::Diagonal, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:444
+## [112] /(x::Rational, y::Union{Integer, Complex{&lt;:Union{Integer, Rational}}, Rational}) in Base at rational.jl:346
+## [113] /(x::Rational, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
+## [114] /(x::AbstractFloat, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
+## [115] /(partials::ForwardDiff.Partials{0, V}, x::Real) where V in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/partials.jl:138
+## [116] /(partials::ForwardDiff.Partials, x::Real) in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/partials.jl:114
+## [117] /(A::SparseArrays.AbstractSparseMatrixCSC, D::Diagonal) in SparseArrays at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/SparseArrays/src/linalg.jl:152
+## [118] /(x::P, y::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/periods.jl:80
+## [119] /(x::P, y::Real) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/periods.jl:81
+## [120] /(x::Dates.Period, y::Dates.Period) in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/periods.jl:99
+## [121] /(A::Bidiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:386
+## [122] /(B::Bidiagonal{var"#s884", V} where {var"#s884"&lt;:Number, V&lt;:AbstractVector{var"#s884"}}, U::Union{UnitUpperTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}, UpperTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}} where var"#s883"&lt;:Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:897
+## [123] /(B::Bidiagonal{var"#s884", V} where {var"#s884"&lt;:Number, V&lt;:AbstractVector{var"#s884"}}, L::Union{LowerTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}, UnitLowerTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}} where var"#s883"&lt;:Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:902
+## [124] /(A::Tridiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/tridiag.jl:743
+## [125] /(A::AbstractArray, B::Number) in Base at arraymath.jl:24
+## [126] /(T::Tridiagonal, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:507
+## [127] /(x::Integer, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
+## [128] /(A::Transpose{&lt;:Number, &lt;:AbstractVector}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:918
+## [129] /(A::AbstractMatrix{&lt;:Number}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:871
+## [130] /(A::Transpose{T, &lt;:AbstractVector} where T, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:920
+## [131] /(A::AbstractMatrix, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:876
+## [132] /(trA::Transpose{&lt;:Any, &lt;:AbstractVector}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:446
+## [133] /(B::Transpose{T, &lt;:AbstractVector} where T, adjF::Adjoint{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:114
+## [134] /(trA::Transpose{&lt;:Any, &lt;:AbstractMatrix}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:450
+## [135] /(A::AbstractMatrix, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:439
+## [136] /(A::Transpose{T, &lt;:AbstractVector} where T, B::Adjoint{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:924
+## [137] /(A::AbstractMatrix, B::Adjoint{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:915
+## [138] /(u::Transpose{T, &lt;:AbstractVector} where T, A::Adjoint{&lt;:Any, &lt;:AbstractMatrix}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:327
+## [139] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitUpperTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
+## [140] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitUpperTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
+## [141] /(B::Transpose{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization{&lt;:Real}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:137
+## [142] /(B::AbstractMatrix, F::Transpose{&lt;:Any, &lt;:Factorization{&lt;:Real}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:134
+## [143] /(B::Transpose{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:139
+## [144] /(B::AbstractMatrix, F::Transpose{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:135
+## [145] /(A::Transpose{T, &lt;:AbstractVector} where T, B::Transpose{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:922
+## [146] /(A::AbstractMatrix, B::Transpose{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:914
+## [147] /(u::Transpose{T, &lt;:AbstractVector} where T, A::LowerTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
+## [148] /(u::Transpose{T, &lt;:AbstractVector} where T, A::LowerTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
+## [149] /(u::Transpose{T, &lt;:AbstractVector} where T, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:757
+## [150] /(A::AbstractVecOrMat, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:397
+## [151] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UpperTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
+## [152] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UpperTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
+## [153] /(u::Transpose{T, &lt;:AbstractVector} where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2669
+## [154] /(A::AbstractMatrix, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1662
+## [155] /(A::AbstractVector, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1662
+## [156] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitLowerTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
+## [157] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitLowerTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
+## [158] /(u::Transpose{T, &lt;:AbstractVector} where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2670
+## [159] /(A::AbstractMatrix, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1655
+## [160] /(A::AbstractVector, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1655
+## [161] /(u::Transpose{T, &lt;:AbstractVector} where T, A::AbstractMatrix) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:325
+## [162] /(A::AbstractVecOrMat, B::AbstractVecOrMat) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/generic.jl:1140
+## [163] /(J1::UniformScaling, J2::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:266
+## [164] /(J::UniformScaling, A::AbstractMatrix) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:267
+## [165] /(J::UniformScaling, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:272
+## [166] /(a::R, z::S) where {R&lt;:Real, S&lt;:Complex} in Base at complex.jl:345
+## [167] /(x::Real, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
+## [168] /(a::Measures.Measure, b::Number) in Measures at /Users/ir229/.julia/packages/Measures/PKOxJ/src/operations.jl:45
+## [169] /(z::DualNumbers.Dual, w::DualNumbers.Dual) in DualNumbers at /Users/ir229/.julia/packages/DualNumbers/5knFX/src/dual.jl:250
+## [170] /(z::Number, w::DualNumbers.Dual) in DualNumbers at /Users/ir229/.julia/packages/DualNumbers/5knFX/src/dual.jl:251
+## [171] /(z::DualNumbers.Dual, x::Number) in DualNumbers at /Users/ir229/.julia/packages/DualNumbers/5knFX/src/dual.jl:252
+## [172] /(B::Union{Array{Complex{T}, 1}, Array{Complex{T}, 2}}, F::Factorization{T}) where T&lt;:Union{Float32, Float64} in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:96
+## [173] /(B::AbstractMatrix, F::Union{Adjoint{&lt;:Any, &lt;:Factorization}, Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:108
+## [174] /(x::Base.TwicePrecision, v::Number) in Base at twiceprecision.jl:326
+## [175] /(x::Base.TwicePrecision, y::Base.TwicePrecision) in Base at twiceprecision.jl:330
+## [176] /(z::ComplexF64, w::ComplexF64) in Base at complex.jl:388
+## [177] /(z::Complex{T}, w::Complex{T}) where T&lt;:Union{Float16, Float32} in Base at complex.jl:367
+## [178] /(a::Complex{T}, b::Complex{T}) where T&lt;:Real in Base at complex.jl:348
+## [179] /(x::ChainRulesCore.NotImplemented, ::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:48
+## [180] /(a, b::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:38
+## [181] /(x::ChainRulesCore.NotImplemented, ::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:44
+## [182] /(::Any, x::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:43
+## [183] /(x::ChainRulesCore.NotImplemented, ::Any) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:42
+## [184] /(x::BigInt, y::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}) in Base.GMP at gmp.jl:546
+## [185] /(x::BigInt, y::BigInt) in Base.GMP at gmp.jl:497
+## [186] /(x::T, y::T) where T&lt;:Integer in Base at int.jl:95
+## [187] /(m1::Measures.AbsoluteLength, m2::Measures.Length{:pct}) in Plots.PlotMeasures at /Users/ir229/.julia/packages/Plots/Hxe7H/src/plotmeasures.jl:18
+## [188] /(a::T, b::T) where T&lt;:Measures.Measure in Measures at /Users/ir229/.julia/packages/Measures/PKOxJ/src/operations.jl:46
+## [189] /(x::BigFloat, c::Union{UInt16, UInt32, UInt64, UInt8}) in Base.MPFR at mpfr.jl:436
+## [190] /(x::BigFloat, c::Union{Int16, Int32, Int64, Int8}) in Base.MPFR at mpfr.jl:448
+## [191] /(x::BigFloat, c::Union{Float16, Float32, Float64}) in Base.MPFR at mpfr.jl:460
+## [192] /(x::BigFloat, y::BigFloat) in Base.MPFR at mpfr.jl:429
+## [193] /(x::BigFloat, c::BigInt) in Base.MPFR at mpfr.jl:472
+## [194] /(x::T, y::T) where T&lt;:Number in Base at promotion.jl:466
+## [195] /(x::Number, y::Number) in Base at promotion.jl:391
+## [196] /(::Missing, ::Number) in Base at missing.jl:123
+## [197] /(::Missing, ::Missing) in Base at missing.jl:122
+```
+
+
+---
+
+# Coding practices etc
+
+See [JuliaPraxis](https://github.com/JuliaPraxis) for best practices for naming, spacing, comments, etc
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

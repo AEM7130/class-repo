@@ -14,6 +14,33 @@ output:
       ratio: '16:9'
 
 
+---
+exclude: true
+```{r setup}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall
+)
+options(htmltools.dir.version = FALSE)
+library(knitr)
+opts_chunk$set(
+  prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+  fig.align = "center", fig.width=10, fig.height=6, 
+  out.width="748px", out.length="520.75px",
+  dpi = 300, #fig.path='Figs/',
+  cache = F#, echo=F, warning=F, message=F
+  )
+## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+knit_hooks$set(
+  prompt = function(before, options, envir) {
+    options(
+      prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+      continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+      )
+})
+julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+```
+
 
 ---
 
@@ -225,8 +252,7 @@ plot!(1:time_horizon, params.steady_state*ones(time_horizon), color = :purple, l
 
 # Endogenous grid method (Carroll, 2006)
 
-Suppose now we are working with a model with an inelastic labor supply with logarithmic utility $\eta=1$,
-and capital that fully depreciates
+Suppose now we are working with a model with an inelastic labor supply with logarithmic utility $\eta=1$, and capital that fully depreciates
 
 --
 
