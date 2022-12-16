@@ -46,8 +46,8 @@ julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/b
 
 Necessary things to do:
 
-- Install the QuantEcon Julia package
-- Install the Optim or NLOpt Julia packages
+- Install the `QuantEcon` Julia package
+- Install the `Optim` Julia package
 
 ---
 
@@ -201,8 +201,7 @@ What does the intermediate value theorem tell us?
 
 --
 
-If a continuous real-valued function on a given interval takes on two values $a$ and $b$,  
-it achieves all values in the set $[a,b]$ somewhere in its domain
+If a continuous real-valued function on a given interval takes on two values $a$ and $b$, it achieves all values in the set $[a,b]$ somewhere in its domain
 
 --
 
@@ -222,9 +221,20 @@ We know a root exists by IVT, what's an efficient way to find it?
 
 Continually bisect the interval!
 
---
+---
 
-.hi-blue[Write out the code to do it]
+# The bisection method
+
+The bisection method works by continually bisecting the interval and only keeping the half interval with a zero until "convergence"
+
+1. Select the midpoint of $[a,b]$, $(a+b)/2$
+2. Zero must be in the lower or upper half
+3. Check the sign of the midpoint, if it has the same sign as the lower bound a root must be the right subinterval
+4. Select the midpoint of $[(a+b)/2,b]$...
+
+
+.hi[Write out the code to do it]
+
 
 ---
 
@@ -232,11 +242,12 @@ Continually bisect the interval!
 
 ```{julia}
 function bisection(f, lower_bound, upper_bound)
+
     tolerance = 1e-3                                # tolerance for solution
     guess = 0.5*(upper_bound + lower_bound)         # initial guess, bisect the interval
     difference = (upper_bound - lower_bound)/2      # initialize bound difference
 
-    while difference > tolerance              # loop until convergence
+    while difference > tolerance                    # loop until convergence
         println("Intermediate guess of $guess.")
         difference = difference/2
         if sign(f(lower_bound)) == sign(f(guess))   # if the guess has the same sign as the lower bound
@@ -247,11 +258,9 @@ function bisection(f, lower_bound, upper_bound)
             guess = guess - difference
         end
         
-        
-        
     end
     println("The root of f(x) is at $guess.")
-end;
+end
 ```
 
 ---
@@ -259,7 +268,7 @@ end;
 # The bisection method
 
 ```{julia}
-f(x) = x^3
+f(x) = x^3;
 bisection(f, -4, 1)
 ```
 
@@ -268,36 +277,24 @@ bisection(f, -4, 1)
 # The bisection method
 
 ```{julia}
-g(x) = 3x^3 + 2x -4
+g(x) = 3x^3 + 2x -4;
 bisection(g, -6, 4)
 ```
 
 ---
 
 ```{julia}
-h(x) = cos(x)
+h(x) = cos(x);
 bisection(h, -pi, pi)
 ```
 
----
-
-# The bisection method
-
-The bisection method works by continually bisecting the interval and only keeping the half interval with the zero until "convergence"
-
-1. Select the midpoint of $[a,b]$, $(a+b)/2$
-2. Zero must be in the lower or upper half
-3. Check the sign of the midpoint, if it has the same sign as the lower bound a root must be the right subinterval
-4. Select the midpoint of $[(a+b)/2,b]$...
-
-
 
 ---
 
 # The bisection method
 
 
-The bisection method is incredibly robust: if a function $f$ satisfies the IVT, it is .hi-blue[guaranteed to converge in a specific number of iterations]
+The bisection method is incredibly robust: if a function $f$ satisfies the IVT, it is .hi[guaranteed to converge in a specific number of iterations]
 
 --
 
@@ -319,39 +316,6 @@ Fixed points can be computed using function iteration
 
 Since we can recast fixed points as rootfinding problems we can use function iteration to find roots too
 
---
-
-.hi-blue[Code up a function iteration problem]
-
----
-
-# Function iteration
-
-Function iteration is pretty simple to implement
-
-```{julia}
-function function_iteration(f, guess)
-    tolerance = 1e-3                                # tolerance for solution
-    x_old = guess                                   # initialize old x value
-    x = 1e-10                                       # initialize current x
-    difference = 1e10                               # initialize bound difference
-
-    @time while abs(difference) > tolerance         # loop until convergence
-        println("Intermediate guess of $x.")
-        x = f(x_old)                                # new x = f(old x)
-        difference = x - x_old
-        x_old = x  
-    end
-    println("The fixed point of f(x) is at $x.")
-end;
-```
-
----
-
-```{julia}
-f(x) = x^(-0.5)
-function_iteration(f, 2.)
-```
 
 ---
 
@@ -366,6 +330,205 @@ function_iteration(f, 2.)
 # Function iteration
 
 Function iteration can be quick, but is not always guaranteed to converge
+
+--
+
+In general, it can be quite unstable as we will see
+
+--
+
+.hi[Code up a function iteration algorithm for an arbitrary function f]
+
+---
+
+# Function iteration
+
+Function iteration is pretty simple to implement
+
+```{julia}
+function function_iteration(f, guess)
+    tolerance = 1e-2                                   # tolerance for solution
+    max_it = 10                                        # maximum number of iterations
+    x_old = guess                                      # initialize old x value
+    x = guess                                          # initialize current x
+    error = 1e10                                       # initialize error
+    it = 1
+    
+    while abs(error) > tolerance && it < max_it
+        println("Intermediate guess of $x.")
+        x = f(x_old)                                   # new x = f(old x)
+        error = x - x_old                              # error
+        x_old = x  
+        it = it + 1
+    end
+    println("The fixed point of f(x) is at $x.")
+end;
+```
+
+---
+
+# Function iteration
+
+Analytic solution: 1
+
+```{julia}
+f(x) = x^(-0.5);
+function_iteration(f, 2.)
+```
+
+Works!
+
+
+---
+
+# Function iteration
+
+Analytic solution: $\sqrt{3} \approx 1.73$
+
+```{julia}
+f(x) = 3 + x - x^2;
+function_iteration(f, 2.)
+```
+
+=(
+
+---
+
+# Function iteration
+
+Analytic solution: $1.5$
+
+```{julia}
+f(x) = 3 - x;
+function_iteration(f, 2.)
+```
+
+=(
+
+
+---
+
+# Function iteration
+
+Analytic solution: 1 or 0
+
+```{julia}
+f(x) = x^2;
+function_iteration(f, 1.01)
+```
+
+=(
+
+
+---
+
+# Function iteration
+
+Is function iteration fundamentally flawed?
+--
+ Not quite
+
+--
+
+Some of these issues can be solved by .hi[damping]
+
+--
+
+Damping is where you do not do a full update of x, but a convex combination of the new value $f(x)$ and the old value $x$: $x_{new} = \alpha f(x_{old}) + (1-\alpha) x_{old}$
+
+--
+
+Damping improves the stability of iterative algorithms
+
+--
+
+Rewrite your algorithm with damping and try again
+
+--
+
+For some $\alpha$, you need to decrease your tolerance by a factor of $1/\alpha$ to account for how the damped error will be smaller by the same factor
+
+
+---
+
+# Function iteration
+
+Function iteration is pretty simple to implement
+
+```{julia}
+function function_iteration_damped(f, guess)
+    tolerance = 1e-4                                   # tolerance for solution
+    max_it = 1000                                      # maximum number of iterations
+    x_old = guess                                      # initialize old x value
+    x = guess                                          # initialize current x
+    error = 1e10                                       # initialize error
+    it = 1
+    
+    while abs(error) > tolerance && it < max_it
+        x = 0.1 * f(x_old) + 0.9 * x_old
+        error = x - x_old                              # error
+        x_old = x  
+        it = it + 1
+    end
+    println("The fixed point of f(x) is at $x.")
+end;
+```
+
+---
+
+# Function iteration
+
+Analytic solution: 1
+
+```{julia}
+f(x) = x^(-0.5);
+function_iteration_damped(f, 2.)
+```
+
+Works!
+
+
+---
+
+# Function iteration
+
+Analytic solution: $\sqrt{3} \approx 1.73$
+
+```{julia}
+f(x) = 3 + x - x^2;
+function_iteration_damped(f, 2.)
+```
+
+Works!
+
+
+---
+
+# Function iteration
+
+Analytic solution: $1.5$
+
+```{julia}
+f(x) = 3 - x;
+function_iteration_damped(f, 2.)
+```
+
+Works!
+
+---
+
+# Function iteration
+
+Analytic solution: 1 or 0
+
+```{julia}
+f(x) = x^2;
+function_iteration_damped(f, 1.01)
+```
+
+=(
+
+Function iteration does struggle with some functions even with damping
 
 ---
 
@@ -447,7 +610,7 @@ f(\mathbf{x}) \approx f(\mathbf{x^{(k)}}) + f'(\mathbf{x^{(k)}})(\mathbf{x^{(k+1
 
 # Newton's method
 
-.hi-blue[Code up Newton's method]
+.hi[Code up a one variable Newton's method algorithm for an arbitrary function f]
 
 --
 
@@ -662,7 +825,7 @@ How fast do the methods we've seen converge?
 
 # Convergence speed
 
-Convergence rates only account for the number of .hi-blue[iterations] of the method 
+Convergence rates only account for the number of .hi[iterations] of the method 
 
 The steps taken in a given iteration of each solution method may vary in computational cost 
 because of differences in the number of arithmetic operations 
@@ -700,195 +863,187 @@ What does convergence look like across our main approaches in terms of the $L^1-
 </div>
 
 
----
+<!-- --- -->
 
-# Complementarity problems: rootfinding
+<!-- # Complementarity problems: rootfinding -->
 
-Let: 
+<!-- Let:  -->
 
-- $x$ be an n-dimensional vector of some economic action
-- $a_i$ denotes a lower bound on action $i$, and $b_i$ denotes the upper bound on action $i$
-- $f_i(x)$ denotes the marginal arbitrage profit of action $i$
+<!-- - $x$ be an n-dimensional vector of some economic action -->
+<!-- - $a_i$ denotes a lower bound on action $i$, and $b_i$ denotes the upper bound on action $i$ -->
+<!-- - $f_i(x)$ denotes the marginal arbitrage profit of action $i$ -->
 
---
+<!-- -- -->
 
-There are disequilibrium profit opportunities if 
-1. $x_i < b_i$ and $f_i(x) > 0$ (here we can increase profits by raising $x_i$)
-2. $x_i > a_i$ and $f_i(x) < 0$ (we can increase profits by decreasing $x_i$)
+<!-- There are disequilibrium profit opportunities if  -->
+<!-- 1. $x_i < b_i$ and $f_i(x) > 0$ (here we can increase profits by raising $x_i$) -->
+<!-- 2. $x_i > a_i$ and $f_i(x) < 0$ (we can increase profits by decreasing $x_i$) -->
 
----
+<!-- --- -->
 
-# Complementarity problems
+<!-- # Complementarity problems -->
 
-We obtain a no-arbitrage equilibrium if and only if $x$ solves the complementary problem $CP(f,a,b)$
+<!-- We obtain a no-arbitrage equilibrium if and only if $x$ solves the complementary problem $CP(f,a,b)$ -->
 
---
+<!-- -- -->
 
-We can write out the problem as finding a vector $x \in [a,b]$ that solves
-\begin{align}
-	x_i > a_i \Rightarrow f_i(x) \geq 0 \,\,\, \forall i = 1,...,n \notag\\ 
-	x_i < b_i \Rightarrow f_i(x) \leq 0 \,\,\, \forall i = 1,...,n \notag
-\end{align}
+<!-- We can write out the problem as finding a vector $x \in [a,b]$ that solves -->
+<!-- \begin{align} -->
+<!-- 	x_i > a_i \Rightarrow f_i(x) \geq 0 \,\,\, \forall i = 1,...,n \notag\\  -->
+<!-- 	x_i < b_i \Rightarrow f_i(x) \leq 0 \,\,\, \forall i = 1,...,n \notag -->
+<!-- \end{align} -->
 
---
+<!-- -- -->
 
-At interior solution, the function be precisely be zero
+<!-- At interior solution, the function be precisely be zero -->
 
-Corner solution at the upper bound $b_i$ for $x_i$ $\rightarrow$ $f$ must be increasing in direction $i$
+<!-- Corner solution at the upper bound $b_i$ for $x_i$ $\rightarrow$ $f$ must be increasing in direction $i$ -->
 
-The opposite is true if we are at the lower bound
+<!-- The opposite is true if we are at the lower bound -->
 
----
+<!-- --- -->
 
-# Complementarity problems
+<!-- # Complementarity problems -->
 
-Economic problems are complementarity problems where we are  
-finding a root of a function (e.g. marginal profit) subject to some constraint (e.g. price floors)
+<!-- Economic problems are complementarity problems where we are   -->
+<!-- finding a root of a function (e.g. marginal profit) subject to some constraint (e.g. price floors) -->
 
-The Karush-Kuhn-Tucker theorem shows that $x$ solves the constrained optimization problem 
-if and only if it solves the complementarity problem
+<!-- The Karush-Kuhn-Tucker theorem shows that $x$ solves the constrained optimization problem  -->
+<!-- if and only if it solves the complementarity problem -->
 
----
+<!-- --- -->
 
-# Complementarity problems
+<!-- # Complementarity problems -->
 
-.hi-blue[Example:] single commodity competitive spatial price equilibrium model
+<!-- .hi[Example:] single commodity competitive spatial price equilibrium model -->
 
-- $n$ regions of the world
-- excess demand for the commodity in region $i$ is $E_i(p_i)$
+<!-- - $n$ regions of the world -->
+<!-- - excess demand for the commodity in region $i$ is $E_i(p_i)$ -->
 
---
+<!-- -- -->
 
-If no trade $\rightarrow$ equilibrium condition is $E_i(p_i) = 0$ in all regions of the world: a simple rootfinding problem
+<!-- If no trade $\rightarrow$ equilibrium condition is $E_i(p_i) = 0$ in all regions of the world: a simple rootfinding problem -->
 
---
+<!-- -- -->
 
-Trade between regions has marginal transportation cost between regions $i$ and $j$ of $c_{ij}$
+<!-- Trade between regions has marginal transportation cost between regions $i$ and $j$ of $c_{ij}$ -->
 
-- $x_{ij}$: the amount of the good shipped from region $i$ to region $j$
-- capacity constraint: $b_{ij}$
+<!-- - $x_{ij}$: the amount of the good shipped from region $i$ to region $j$ -->
+<!-- - capacity constraint: $b_{ij}$ -->
 
----
+<!-- --- -->
 
-# Complementarity problems
+<!-- # Complementarity problems -->
 
-Marginal arbitrage profit from shipping a unit of the good from $i$ to $j$ is $p_j - p_i - c_{ij}$
+<!-- Marginal arbitrage profit from shipping a unit of the good from $i$ to $j$ is $p_j - p_i - c_{ij}$ -->
 
---
+<!-- -- -->
 
-If it's positive: incentive to ship more goods to region $i$ from region $j$
+<!-- If it's positive: incentive to ship more goods to region $i$ from region $j$ -->
 
-If it's negative: incentive to decrease shipments
+<!-- If it's negative: incentive to decrease shipments -->
 
---
+<!-- -- -->
 
-At an equilibrium only if all the arbitrage opportunities are gone: for all region pairs $i$ and $j$
-\begin{gather}
-	0 \leq x_{ij} \leq b_{ij} \notag \\
-	x_{ij} > 0 \Rightarrow p_j - p_i - c_{ij} \geq 0 \notag \\
-	x_{ij} < b_{ij} \Rightarrow p_j - p_i - c_{ij} \leq 0 \notag
-\end{gather}
+<!-- At an equilibrium only if all the arbitrage opportunities are gone: for all region pairs $i$ and $j$ -->
+<!-- \begin{gather} -->
+<!-- 	0 \leq x_{ij} \leq b_{ij} \notag \\ -->
+<!-- 	x_{ij} > 0 \Rightarrow p_j - p_i - c_{ij} \geq 0 \notag \\ -->
+<!-- 	x_{ij} < b_{ij} \Rightarrow p_j - p_i - c_{ij} \leq 0 \notag -->
+<!-- \end{gather} -->
 
----
+<!-- --- -->
 
-# Complementarity problems
+<!-- # Complementarity problems -->
 
-At an equilibrium only if all the arbitrage opportunities are gone: for all region pairs $i$ and $j$
-\begin{gather}
-	0 \leq x_{ij} \leq b_{ij} \notag \\
-	x_{ij} > 0 \Rightarrow p_j - p_i - c_{ij} \geq 0 \notag \\
-	x_{ij} < b_{ij} \Rightarrow p_j - p_i - c_{ij} \leq 0 \notag
-\end{gather}
+<!-- At an equilibrium only if all the arbitrage opportunities are gone: for all region pairs $i$ and $j$ -->
+<!-- \begin{gather} -->
+<!-- 	0 \leq x_{ij} \leq b_{ij} \notag \\ -->
+<!-- 	x_{ij} > 0 \Rightarrow p_j - p_i - c_{ij} \geq 0 \notag \\ -->
+<!-- 	x_{ij} < b_{ij} \Rightarrow p_j - p_i - c_{ij} \leq 0 \notag -->
+<!-- \end{gather} -->
 
 
 
----
+<!-- --- -->
 
-# Complementarity problems
+<!-- # Complementarity problems -->
 
 
-How do we formulate this as a complementarity problem? 
+<!-- How do we formulate this as a complementarity problem?  -->
 
---
+<!-- -- -->
 
-Market clearing in each region $i$ requires that net imports = excess demand
+<!-- Market clearing in each region $i$ requires that net imports = excess demand -->
 
---
+<!-- -- -->
 
-$$\sum_k [x_{ki} - x_{ik}] = E_i(p_i)$$
+<!-- $$\sum_k [x_{ki} - x_{ik}] = E_i(p_i)$$ -->
 
---
+<!-- -- -->
 
-This implies that we can solve for the price in region $i$,
+<!-- This implies that we can solve for the price in region $i$, -->
 
-$$p_i = E_i^{-1}\left( \sum_k [x_{ki} - x_{ik}]\right)$$
----
+<!-- $$p_i = E_i^{-1}\left( \sum_k [x_{ki} - x_{ik}]\right)$$ -->
+<!-- --- -->
 
-# Complementarity problems
+<!-- # Complementarity problems -->
 
-Finally, if we define marginal arbitrage profit from shipping another unit from $i$ to $j$ as
+<!-- Finally, if we define marginal arbitrage profit from shipping another unit from $i$ to $j$ as -->
 
-$$f_{ij}(x) = E_j^{-1}\left( \sum_k[x_{kj} - x_{jk}] \right) - E_i^{-1}\left( \sum_k[x_{ki} - x_{ik}] \right) - c_{ij}$$
+<!-- $$f_{ij}(x) = E_j^{-1}\left( \sum_k[x_{kj} - x_{jk}] \right) - E_i^{-1}\left( \sum_k[x_{ki} - x_{ik}] \right) - c_{ij}$$ -->
 
-then $x$ is an equilibrium vector of trade flows if and only if $x$ solves $CP(f,0,b)$ and $x$, $f$, and $b$ are $n^2 \times 1$  vectors
+<!-- then $x$ is an equilibrium vector of trade flows if and only if $x$ solves $CP(f,0,b)$ and $x$, $f$, and $b$ are $n^2 \times 1$  vectors -->
 
-Even this complex trade-equilibrium model can be reduced to a simple complementarity problem
+<!-- Even this complex trade-equilibrium model can be reduced to a simple complementarity problem -->
 
----
+<!-- --- -->
 
-# Complementarity problems
+<!-- # Complementarity problems -->
 
-Decentralized models can generally be solved by reducing them to complementarity problems, e.g:
-1. Competitive energy markets with cross-market cap and trade or capacity constraints
-2. Federalism models
-3. etc etc 
+<!-- Decentralized models can generally be solved by reducing them to complementarity problems, e.g: -->
+<!-- 1. Competitive energy markets with cross-market cap and trade or capacity constraints -->
+<!-- 2. Federalism models -->
+<!-- 3. etc etc  -->
 
----
+<!-- --- -->
 
-# Complementarity problems
+<!-- # Complementarity problems -->
 
-Four plots of marginal arbitrage profit $f_i(x)$, what is the equilibrium choice of $x$?
+<!-- Four plots of marginal arbitrage profit $f_i(x)$, what is the equilibrium choice of $x$? -->
 
-<div align="center">
-  <img src="figures/complementarity.png" height=400>
-</div>
+<!-- <div align="center"> -->
+<!--   <img src="figures/complementarity.png" height=400> -->
+<!-- </div> -->
 
----
+<!-- --- -->
 
-# How do we solve them?
+<!-- # How do we solve them? -->
 
-A complementarity problem $CP(f, a, b)$ can be re-framed as a rootfinding problem easily
-$$\hat{f}(x) = min(max(f(x),a-x),b-x) = 0$$
+<!-- A complementarity problem $CP(f, a, b)$ can be re-framed as a rootfinding problem easily -->
+<!-- $$\hat{f}(x) = min(max(f(x),a-x),b-x) = 0$$ -->
 
-<div align="center">
-  <img src="figures/complementarity_minmax.png" height=370>
-</div>
+<!-- <div align="center"> -->
+<!--   <img src="figures/complementarity_minmax.png" height=370> -->
+<!-- </div> -->
 
----
+<!-- --- -->
 
-# How do we solve them?
+<!-- # How do we solve them? -->
 
 
-We can then solve the problem with conventional rootfinding techniques  
-or approximate this with a smooth function to make it easier on a rootfinder
+<!-- We can then solve the problem with conventional rootfinding techniques   -->
+<!-- or approximate this with a smooth function to make it easier on a rootfinder -->
 
---
+<!-- -- -->
 
-The workhorse solver for complementarity problems is the PATH solver: Julia wrapper can be found [here](https://github.com/chkwon/Complementarity.jl)
+<!-- The workhorse solver for complementarity problems is the PATH solver: Julia wrapper can be found [here](https://github.com/chkwon/Complementarity.jl) -->
 
 ---
 
 # Maximization (minimization) methods
 
 How we solve maximization problems has many similarities to rootfinding and complementarity problems
-
---
-
-FOCs of an unconstrained maximization problem are just a rootfinding problem
-
---
-
-FOCs of a constrained maximization problem are just a complementarity problem
 
 --
 
@@ -914,19 +1069,17 @@ I'll focus on local solvers, common global solvers I won't cover:
 1. Genetic algorithms
 2. Simulated annealing
 3. DIRECT
-4. Sto-go
 
 
 ---
 
 # Derivative free optimization: Golden search
 
-Similar to bisection, **golden search** looks for a solution of a one-dimensional problem over smaller and smaller brackets
+Similar to bisection, .hi[golden search] looks for a solution of a one-dimensional problem over smaller and smaller brackets
 
 --
 
-If we have a continuous one dimensional function, $f(x)$,  
-and we want to find a local minimum in some interval $[a,b]$
+If we have a continuous one dimensional function, $f(x)$, and we want to find a local minimum in some interval $[a,b]$
 
 ---
 
@@ -979,7 +1132,7 @@ The value of $\alpha_2$ is called the golden ratio and is where the algorithm ge
 
 --
 
-.hi-blue[Write out a golden search algorithm]
+.hi[Write out a golden search algorithm]
 
 ---
 
@@ -1005,11 +1158,23 @@ function golden_search(f, lower_bound, upper_bound)
 end;
 ```
 
---
+---
+
+# Golden search
 
 ```{julia}
 f(x) = 2x^2 + 9x;
 golden_search(f, -10, 10)
+```
+
+```{julia}
+f(x) = x^4;
+golden_search(f, -5, 3)
+```
+
+```{julia}
+f(x) = sin(x);
+golden_search(f, 0, 1)
 ```
 
 ---
@@ -1019,7 +1184,7 @@ golden_search(f, -10, 10)
 Golden search is nice and simple but only works in one dimension
 
 There are several derivative free methods for minimization that work in multiple dimensions,
-the most commonly used one is .hi-blue[Nelder-Mead (NM)]
+the most commonly used one is .hi[Nelder-Mead (NM)]
 
 --
 
@@ -1090,7 +1255,7 @@ $x^*$ is a global minimizer if $f(x^*) \leq f(x)$ for all $x$ over the domain of
 
 --
 
-.hi-blue[Problem:] most algorithms are *local* minimizers that find a point $x^*$  
+.hi[Problem:] most algorithms are *local* minimizers that find a point $x^*$  
 such that $f(x^*) \leq f(x)$ for all $x \in N$, where $N$ is a neighborhood of $x^*$
 
 --
@@ -1373,7 +1538,7 @@ We then search for a minimizer of $m_k$
 
 --
 
-**Solution:** Restrict the search for a minimizer to be within some region of $x_k$, called a .hi-blue[trust region]
+**Solution:** Restrict the search for a minimizer to be within some region of $x_k$, called a .hi[trust region]
 
 ---
 
@@ -1425,11 +1590,11 @@ This is just the steepest descent solution for the line search problem
 
 # Problem scaling
 
-The .hi-blue[scaling] of a problem matters for optimization performance
+The .hi[scaling] of a problem matters for optimization performance
 
 --
 
-A problem is .hi-blue[poorly scaled] if changes to $x$ in a certain direction  
+A problem is .hi[poorly scaled] if changes to $x$ in a certain direction  
 produce much bigger changes in $f$ than changes to in $x$ in another direction
 
 --
@@ -1447,8 +1612,7 @@ Ex: $f(x) = 10^9 x_1^2 + x_2^2$ is poorly scaled
 --
 
 This happens when things change at different rates:
-- Investment rates are between 0 and 1
-- Consumption can be in trillions of dollars
+- Investment rates between 0 and 1, but global consumption is in dollars
 
 --
 
@@ -1456,8 +1620,7 @@ How do we solve this issue?
 
 --
 
-Rescale the problem: put them in units that are  
-generally within an order of magnitude of 1
+Rescale the problem: put them in units that are generally within an order of magnitude of 1
 - Investment rate in percentage terms: $0\%-100\%$
 - Consumption in units of trillion dollars instead of dollars
 

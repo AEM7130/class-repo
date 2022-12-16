@@ -1,6 +1,6 @@
 ---
 title: "Lecture 6"
-subtitle: "Projection methods"
+subtitle: "Function approximation"
 author: Ivan Rudik
 date: AEM 7130
 output:
@@ -13,47 +13,63 @@ output:
       countIncrementalSlides: false
       ratio: '16:9'
 
+
+---
+exclude: true
+```{r setup}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall
+)
+options(htmltools.dir.version = FALSE)
+library(knitr)
+opts_chunk$set(
+  prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+  fig.align = "center", fig.width=10, fig.height=6, 
+  out.width="748px", out.length="520.75px",
+  dpi = 300, #fig.path='Figs/',
+  cache = F#, echo=F, warning=F, message=F
+  )
+## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+knit_hooks$set(
+  prompt = function(before, options, envir) {
+    options(
+      prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+      continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+      )
+})
+julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+```
+
+```{julia}
+using Pkg
+Pkg.add("ForwardDiff"); Pkg.add("Distributions"); Pkg.add("BenchmarkTools")
+```
+
+
 ---
 
 # Roadmap
 
-1. What is projection
-2. How we approximate functions
+1. Projection theory
+2. Spectral and finite element methods
 
 ---
 
-# Our basic dynamic model
+class: inverse, center, middle
+name: theory
 
-An arbitrary infinite horizon problem can be represented using a Bellman equation
-$$V(S_t) = \max_{q_t} u(q_t) + \beta\,V(S_{t+1}(q_t))$$
+# Projection theory
 
---
-
-We can start from any arbitrary initial state vector and simulate the optimal policy paths in deterministic or stochastic settings
-
---
-
-We know that this problem has a fixed point (solution) $V^*$ from previous lectures, but *how* do we approximate $V^*$?
-
----
-
-# Our basic dynamic model
-
-One way to do this is via .hi-blue[projection]
-
---
-
-Or perturbation, or discretization, or some analytic approaches for specific models
-
---
-
-We'll focus on value functions here, but we can approximate policy functions as well
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 ---
 
 # Projection methods
 
-.hi-blue[Main idea:] build some function $\hat{V}$ indexed by coefficients that approximately solves the Bellman
+We often need to approximate functions in economics, a common way to do this is via projection
+
+.hi[Main idea:] build some function $\hat{V}$ indexed by coefficients that approximates the function we are interested in
 
 --
 
@@ -61,20 +77,7 @@ What do I mean by approximately?
 
 --
 
-The coefficients of $\hat{V}$ are selected to minimize some residual function  
-that tells us how far away our solution is from solving the Bellman 
-
----
-
-# Projection methods
-
-Rearrange the Bellman equation and define a new functional $H$ that maps the problem into a more general framework
-$$H(V) = V(S_t) - \max_{q_t} u(q_t) + \beta\,V(S_{t+1}(q_t))$$
-
---
-
-We can find some function $V$ that solves $H(V) = 0$
- 
+The coefficients of $\hat{V}$ are selected to minimize some residual function that tells us how far away our approximation is to the true function on some set of points
 
 ---
 
@@ -84,7 +87,7 @@ How do we do this?
 
 --
 
-We solve this by specifying some linear combination of **basis functions** $\Psi_i(\mathbf{S})$
+First we specify our approximating function: some linear combination of **basis functions** $\Psi_i(\mathbf{S})$
 $$V^j(\mathbf{S}|\theta) = \sum_{i=0}^j \theta_i \Psi_i(\mathbf{S})$$
 with coefficients $\theta_0,...,\theta_j$
 
@@ -92,33 +95,28 @@ with coefficients $\theta_0,...,\theta_j$
 
 # Projection methods
 
-We then define a residual
+We then choose some residual function $R$ which is a function of $V^j$:
 $$R(\mathbf{S}|\theta) = H(V^j(\mathbf{S}|\theta))$$
+
+
+
 and select the coefficient values to minimize the residual, given some measure of distance
 
 --
 
-This step of selecting the coefficients is called .hi-blue[projecting] $H$ against our basis
-
----
-
-# Projection methods
-
-We still have some choices to make: 
-
-What basis do we select? 
-
-How do we project (select the coefficients)?
-
----
-
-# Projection methods
-
-At first this may be a pretty confusing concept
+This step of selecting the coefficients is called .hi[projecting] $H$ against our basis
 
 --
 
-Simple example to get intuition?
+What basis do we select? 
+
+How do we project (select the coefficients / residual function)?
+
+---
+
+# Projection methods
+
+Let's work a simple example to get intuition
 
 --
 
@@ -132,30 +130,24 @@ We can think of the problem as searching for some unknown conditional expectatio
 
 # Projection methods
 
-We don't know the true functional form, but we can approximate it using the first two monomials on $X$: $1$ and $X$
+We don't know the true functional form of $E[Y|X]$, but we can approximate it using the first two monomials on $X$: $1$ and $X$
 $$E[Y|X] \approx \theta_0 + \theta_1 X$$
 
 --
 
-These are the first two elements of the *monomial basis*
+These are the first two elements of the .hi[monomial basis]
 
 --
 
-One residual function is then: $R(Y,X|\theta_0,\theta_1) = abs(Y-\theta_0-\theta_1 X)$
-
----
-
-# Projection methods
-
-In econometrics we often minimize the square of this residual, which is just OLS
+One residual function is then: $R(Y,X|\theta_0,\theta_1) = abs(Y-\theta_0-\theta_1 X)$, the absolute error
 
 --
 
-So OLS is within the class of projection methods
+For OLS we would then square this
 
 --
 
-In OLS we use observed data, but in theory we use the operator $H(V)$
+OLS is within the class of projection methods
 
 ---
 
@@ -196,7 +188,7 @@ Which is closer to zero over the interval? It will depend on our selection of $\
 
 # We want to use weighted residuals
 
-We move from the plain residual to $\rho$ because we want to set a *weighted residual* equal to zero (more general)
+We move from the plain residual to $\rho$ because we want to set a *weighted residual* equal to zero
 
 --
 
@@ -230,7 +222,7 @@ We can solve this using standard rootfinding techniques
 
 --
 
-.hi-blue[Big remaining question:] how do we choose our $j+1$ weight functions?
+.hi[Big remaining question:] how do we choose our $j+1$ weight functions?
 
 --
 
@@ -265,20 +257,20 @@ where the weights are determined by the partial derivatives of the residual
 
 --
 
-The partial derivative weight function solves the least squares problem!
+OLS minimizes residuals weighted by how they change in the coefficients
 
 
 ---
 
 # Collocation
 
-The most commonly used weight function gives us a methodology called .hi-blue[collocation]
+The simplest weight function gives us a methodology called .hi[collocation]
 
 --
 
 Here our weight function is
 $$\phi_i(\mathbf{S}) = \delta(\mathbf{S}-\mathbf{S}_i)$$
-Where $\delta$ is the *Dirac delta function* and $\mathbf{S}_i$ are the j+1 *collocation points* or *collocation nodes* selected by the researcher
+Where $\delta$ is the *Dirac delta function* and $\mathbf{S}_i$ are j+1 points or nodes selected by the researcher, called .hi[collocation points/nodes]
 
 --
 
@@ -303,149 +295,36 @@ So the solution to our problem must set the residual to zero at these collocatio
 Since we have a finite set of points we do not need to solve difficult integrals but only a system of equations
 $$R(\mathbf{S}_i|\theta) = 0, i=1,...,j+1$$
 
----
-
-# Rough idea of how we proceed
-
-Collocation methods aim to approximate the value function $V(S_t)$ with 
-some linear combination of known, and usually orthogonal $(\int f(x)g(x)w(x)=0)$, basis functions
-
 --
 
-One example of a possible class of basis functions is the monomial basis: $x, x^2, x^3,...$
-
---
-
-But how do we implement collocation?
+In class we will mostly be using collocation for function approximation
 
 ---
 
-# Rough idea of how we proceed
-
-Recall we solve for coefficients $\theta$ by setting the residual to be zero at all of our collocation points
-
---
-
-But the residual is a function of $V$, and thus will be a function of $\theta$, a loop seemingly impossible to escape
-
---
-
-We can solve this problem by *iterating* on the problem, continually setting the residuals equal to zero, recovering new $\theta$s, and repeating
-
----
-
-# Rough idea of how we proceed
-
-In any given iteration, we:
-
---
-
-- Begin with a vector of coefficients on the basis functions (e.g. a random guess)
-
---
-
-- Use a linear combination of the basis functions as an approximation to the value function on the right hand side of the Bellman
-
----
-
-# Rough idea of how we proceed
-
-- Solve the Bellman with the approximated value function in it, at our set of collocation points
-
---
-
-- Recover a set maximized continuation values at these points in our state space conditional on the previous value function approximant we used
-
---
-
-- Use these new maximized values to obtain updated coefficients solving the system of linear equations, and repeat the process until we have "converged"
-
-
----
-
-# Still have some questions
-
-By the contraction mapping theorem this is guaranteed to converge from any arbitrary initial set of coefficients! (conditional on satisfying the assumptions and there being no numerical error..)
-
---
-
-This still leaves several questions unanswered
-
---
-
-- Where in the state space do we place the collocation points?
-
---
-
-- What basis functions do we use?
-
---
-
-Do your answers to the previous two questions really matter?
-
---
-
-**Yes they are crucial**
-
----
-
-# Still have some questions
-
-Schemes exist to generate high quality approximations, and to obtain the approximation at low computational cost
-
---
-
-Once we have recovered an adequate approximation to the value function, we have effectively solved the entire problem!
-
---
-
-We know how the policymaker's expected discounted stream of future payoffs changes as we move through the state space
-
----
-
-# Still have some questions
-
-We can solve the Bellman at some initial state and know that solving the Bellman will yield us optimal policies
-
---
-
-Therefore we can simulate anything we want and recover optimal policy functions  
-given many different sets of initial conditions or realizations of random variables
-
----
-
-# Interpolation
+# Collocation
 
 What points in our state space do we select to be collocation points?
 
 --
 
-We often have continuous states in economics (capital, temperature, oil reserves, technology shocks, etc.), 
-so we must have some way to reduce the infinity of points in our state space into something more manageable
+We do so by selecting a specific finite number of points in our state space and use them to construct a .hi[collocation grid] that spans the domain of our problem
 
 --
 
-We do so by selecting a specific finite number of points in our state space 
-and use them to construct a *collocation grid* that spans the domain of our problem
+We often have continuous states in economics (capital, technology, etc.), so how does collocation manage to work?
+
+--
+
+Using our knowledge of how the value function behaves at the limited set of points on our grid, 
+we can interpolate our approximating function at all points off the grid points, 
+but *within* the domain of our grid
+
 
 ---
 
 # Interpolation
 
-Using our knowledge of how the value function behaves at the limited set of points on our grid, 
-we can interpolate our value function approximant at all points off the grid points,
-but *within* the domain of our grid
-
---
-
-**Note:** The value function approximant is not very good outside the grid's domain since that would mean 
-extrapolating beyond whatever information we have gained from analyzing our value function on the grid
-
----
-
-# Basis functions
-
-Let $V$ be the value function we wish to approximate with some $\hat{V}$
+Let $V$ be the function we wish to approximate with some $\hat{V}$
 
 --
 
@@ -458,7 +337,7 @@ Each $\psi_j(x)$ is a basis function, and the coefficients $c_j$ determine how t
 
 ---
 
-# Basis functions
+# Interpolation
 
 The number of basis functions we select, $n$, is the degree of interpolation
 
@@ -478,10 +357,12 @@ to be equal to the number of coefficients (which induces a Dirac delta weighting
 
 ---
 
-# Basis functions
+# Interpolation
 
-Solve a system of equations, *linear in $c_j$* that equates the function approximant at the grid points to the recovered values
+Solve a system of equations, *linear in $c_j$* that equates the approximating function at the grid points to the recovered values
+
 $$\Psi \mathbf{c} = \mathbf{y}$$
+
 where $\Psi$ is the matrix of basis functions, $c$ is a vector of coefficients, and $y$ is a vector of the recovered values
 
 --
@@ -491,7 +372,7 @@ $$\mathbf{c} = \Psi^{-1}\mathbf{y}$$
 
 ---
 
-# Basis functions
+# Interpolation
 
 If we have more equations, or grid points, than coefficients, 
 then we can just use OLS to solve for the coefficients by minimizing the sum of squared errors
@@ -499,6 +380,24 @@ then we can just use OLS to solve for the coefficients by minimizing the sum of 
 --
 
 $$\mathbf{c} = (\Psi'\Psi)^{-1}\Psi'\mathbf{y}$$
+
+--
+
+We will learn how to interpolate using two different approaches:
+
+1. Spectral methods
+2. Finite element methods
+
+
+---
+
+class: inverse, center, middle
+name: theory
+
+# Spectral methods
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
 
 ---
 
@@ -535,18 +434,8 @@ For any continuous function $f(x)$, we can approximate it arbitrarily well with 
 
 --
 
-This means the function can even have kinks
-
---
-
-Unfortunately we do not have infinite computational power so solving kinked problems with spectral methods is not advised
-
---
-
 Note that the SW theorem *does not* say what kind of polynomial can approximate $f$ arbitrarily well, 
 just that some polynomial exists
-
-
 
 ---
 
@@ -578,9 +467,7 @@ We will be plotting stuff, see [http://docs.juliaplots.org/latest/generated/gr/]
 
 ---
 
-# The monomial basis
-
-Let's approximate `sin(x)`
+# Approximate `sin(x)` with monomials
 
 ```{julia}
 using Plots
@@ -609,7 +496,15 @@ function project_monomial(f, n, lb, ub)
 
     return coefficients
 
-end;
+end
+```
+
+
+---
+
+# Approximating sin(x)
+
+```{julia}
 coefficients_4 = project_monomial(f, 4, 0, 2pi);
 coefficients_5 = project_monomial(f, 5, 0, 2pi);
 coefficients_10 = project_monomial(f, 10, 0, 2pi)
@@ -620,7 +515,7 @@ coefficients_10 = project_monomial(f, 10, 0, 2pi)
 # Approximating sin(x)
 
 Now we need to construct a function `f_approx(coefficients, plot_points)` that takes in the `coefficients` vector,
-and an arbitrary vector of points to evaluate the approximant at (for plotting)
+and an arbitrary vector of points to evaluate the approximating function at (for plotting)
 
 --
 
@@ -690,32 +585,12 @@ any continuous function arbitrarily well as `n` goes to infinity
 
 --
 
-To approximate any function we'd need to feed in some basis function `g(x, n)`
+To approximate *any* function we'd need to feed in some basis function `g(x, n)`
 as opposed to hard-coding it like I did in the previous slides
 
 --
 
-Turns out we never use the monomial basis though
-
---
-
-<div align="center">
-  <img src="figures/shrug.jpeg" height=250>
-</div>
-
----
-
-# Cool!
-
-Turns out we never use the monomial basis though
-
---
-
-Why?
-
---
-
-Try approximating **Runge's function**: `f(x) = 1/(1 + 25x^2)`
+Now try approximating **Runge's function**: `f(x) = 1/(1 + 25x^2)`
 
 ---
 
@@ -811,13 +686,15 @@ basis_matrix = hcat(basis_functions...);
 println("Condition number: $(cond(basis_matrix))")
 ```
 
+---
+
+# Monomials are not good
+ 
+Example: $x^{11}$ goes from .0001 to about 90 when moving x from 0.5 to 1.5
+
 --
 
-Example: $x^11$ goes from $1e-4$ to about 90 when moving x from 0.5 to 1.5
-
---
-
-Ideally we want an .hi-blue[orthogonal basis:] when we add another element of the basis,
+Ideally we want an .hi[orthogonal basis:] when we add another element of the basis,
 it has sufficiently different behavior than the elements before it so it can capture
 features of the unknown function that the previous elements couldn't
 
@@ -825,7 +702,7 @@ features of the unknown function that the previous elements couldn't
 
 # The Chebyshev basis
 
-Most frequently used is the **Chebyshev basis**
+Most frequently used is the .HI[Chebyshev basis]
 
 --
 
@@ -849,7 +726,7 @@ Chebyshev polynomials are often selected because they minimize the oscillations 
 
 --
 
-The Chebyshev polynomial closely approximates the *minimax polynomial*: the polynomial, given degree $d$,
+The Chebyshev polynomial closely approximates the .hi[minimax polynomial]: the polynomial, given degree $d$,
 that minimizes any approximation error to the true function
 
 ---
@@ -884,7 +761,7 @@ Chebyshev polynomials are defined by a recurrence relation,
 \end{gather}
 
 Write two functions: `cheb_polys(n, x)` and `monomials(n, x)` with a degree of approximation `n` and vector of points `x`,
-that return the values of the approximant at `x`
+that return the values of the approximating function at `x`
 
 If you can't get the recurrence relation to work, you can use an alternative: $$T_n(x) = cos(n \, arccos(x))$$
 
@@ -902,12 +779,12 @@ Next, a plotting function `plot_function(basis_function, x, n)` that takes an ar
 # Chebyshev polynomial function
 function cheb_polys(x, n)
     if n == 0
-        return x./x                 # T_0(x) = 1
+        return x ./ x               # T_0(x) = 1
     elseif n == 1
         return x                    # T_1(x) = x
     else
         cheb_recursion(x, n) =
-            2x.*cheb_polys.(x, n - 1) .- cheb_polys.(x, n - 2)
+            2x .* cheb_polys.(x, n-1) .- cheb_polys.(x, n-2)
         return cheb_recursion(x, n) # T_n(x) = 2xT_{n-1}(x) - T_{n-2}(x)
     end
 end;
@@ -978,7 +855,7 @@ plot_function(cheb_polys, x, 10)
 
 ---
 
-# Chebyshev polynomials rule
+# Chebyshev polynomials
 
 Chebyshev polynomials span the space
 
@@ -986,16 +863,9 @@ Chebyshev polynomials span the space
 
 Monomials  clump together
 
----
-
-# Chebyshev polynomials rule
-
-Chebyshev polynomials are nice for approximation because they are *orthogonal*
-and they form a basis with respect to the weight function $\phi(x) = 1/\sqrt{1-x^2}$
-
 --
 
-They span the polynomial vector space
+Chebyshev polynomials are nice for approximation because they are orthogonal and they span the polynomial vector space
 
 --
 
@@ -1004,18 +874,6 @@ This means that you can form any polynomial of degree equal to less than the Che
 --
 
 It also guarantees that $\Phi$ has full rank and is invertible
-
----
-
-# Chebyshev zeros and alternative rep
-
-Also note that the Chebyshev polynomial of order $n$ has $n$ zeros given by
-$$x_k = cos\left(\frac{2k-1}{2n}\pi \right), \,\,\, k=1,...,n$$
-which tend to cluster quadratically towards the edges of the domain
-
---
-
-You can think about this as projecting sequentially finer uniform grids from a hemicircle onto the x-axis
 
 ---
 
@@ -1101,12 +959,12 @@ John Boyd summarizes decades of experience with function approximation with his 
 
 # Grid point selection
 
-We construct the basis function approximant by evaluating the function on a predefined grid in the domain of $V$
+We construct the approximating function by evaluating the basis functions on a predefined grid in the domain of $V$
 
 --
 
 If we have precisely $n$ nodes, $x_i$, we then have
-$$\sum_{j=1}^n c_j \phi_j(x_i) = V(x_i) \,\, \forall i=1,2,...,n \tag{interpolation conditions} $$
+$$\sum_{j=1}^n c_j \phi_j(x_i) = V(x_i) \,\, \forall i=1,2,...,n$$
 ---
 
 # Grid point selection
@@ -1135,7 +993,7 @@ A good selection of points are called *Chebyshev nodes*
 
 --
 
-These are simply the roots of the Chebyshev polynomials above on the domain $[-1,1]$
+These are simply the roots of the Chebyshev polynomials on the domain $[-1,1]$
 
 --
 
@@ -1193,15 +1051,20 @@ plot!(cheb_nodes(11), zeros(11, 1), label = "11 Nodes",
     markersize = 5)
 ```
 
+
 ---
 
-# Chebyshev node locations
+# Chebyshev zeros and alternative rep
 
-The nodes are heavily focused near the end points, why is that?
+The zeros tend to cluster quadratically towards the edges of the domain
 
 --
 
-Imagine areas of our approximant near the center of our domain but not at a node
+You can think about this as projecting sequentially finer uniform grids from a hemicircle onto the x-axis
+
+--
+
+Imagine areas of our approximating function near the center of our domain but not at a node
 
 --
 
@@ -1217,7 +1080,7 @@ because we know whats happening nearby in several different directions
 --
 
 If we moved to an area closer to the edge of the domain, there may only one node
-to the left or right of it providing information on what the value of our approximant should be
+to the left or right of it providing information on what the value of our approximating function should be
 
 --
 
@@ -1232,7 +1095,7 @@ How do we handle a discrete state $S_d$ when trying to approximate $V$?
 
 --
 
-Just like you might expect, we effectively have a different function approximant over the continuous states for each value of $S_d$
+Just like you might expect, we effectively have a different approximating function over the continuous states for each value of $S_d$
 
 ---
 
@@ -1276,23 +1139,29 @@ The computational complexity here grows exponentially: $\text{total # points} = 
 
 Exponential complexity is costly, often called the **Curse of dimensionality**
 
---
+---
 
-We will cover smart ways to deal with this later
+class: inverse, center, middle
+name: theory
+
+# Finite element methods
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
 
 ---
 
 # Finite element methods
 
-An alternative to pseudo-spectral methods is the class of **finite element methods**
+An alternative to spectral methods are finite element methods
 
 --
 
-Finite element methods use basis functions that are non-zero over *subintervals* of the domain of our grid
+Finite element methods use basis functions that are non-zero over .subintervals of the domain of our grid
 
 --
 
-For example, we can use **splines** (piecewise polynomials) over segments of our domains
+For example, we can use .hi[splines] (piecewise polynomials) over segments of our domains
 where they are spliced together at prespecified breakpoints, which are called knots
 
 ---
@@ -1303,7 +1172,7 @@ The higher the order the polynomial we use, the higher the order of derivatives 
 
 --
 
-For example, a linear spline yields an approximant that is continuous,
+For example, a linear spline yields an approximating function that is continuous,
 but its first derivatives are discontinuous step functions unless the underlying value function happened to be precisely linear
 
 --
@@ -1331,7 +1200,7 @@ These are what ensure continuity of higher order derivatives at the knots as the
 # Finite element methods
 
 
-With linear splines, each segment of our value function approximant is defined by a linear function
+With linear splines, each segment of our approximating function is defined by a linear function
 
 --
 
@@ -1364,7 +1233,7 @@ We need $N$ cubic polynomials when entails $4N$ coefficients to determine
 
 --
 
-We can obtain $3(N-1)$ equations by ensuring that the approximant is continuous at all interior knots,
+We can obtain $3(N-1)$ equations by ensuring that the approximating function is continuous at all interior knots,
 and its first and second derivatives are continuous at all interior knots $[3\times(N+1-1-1)]$
 
 --
@@ -1375,7 +1244,7 @@ This means that the value of the left cubic polynomial equals the value of the r
 
 # Cubic splines
 
-Ensuring the the approximant equals the function's value at all of the nodes adds another $N+1$ equations
+Ensuring the approximating function equals the function's value at all of the nodes adds another $N+1$ equations
 
 --
 
@@ -1387,7 +1256,7 @@ We need two more conditions to solve the problem
 
 --
 
-What is often used is that the approximant's first or second derivative matches that of the function at the end points
+What is often used is that the approximating function's first or second derivative matches that of the function at the end points
 
 ---
 
@@ -1408,12 +1277,6 @@ One large benefit of splines is that they can handle kinks or areas of high curv
 
 By having the modeler place many knots in a concentrated region
 
----
-
-# Splines can potentially handle lots of curvature
-
-If the knots are stacked on top of one another, this actually allows for a *kink* to be explicitly represented in the value function approximant, but the economist must know precisely where the kink is
-
 --
 
 Useful spline packages out there: `Dierckx`, `Interpolations`, `QuantEcon`
@@ -1426,7 +1289,7 @@ Let's code up our own linear spline approximation function `linear_spline_approx
 where `f` is the function we are approximating and `knots` are the knots
 
 Have it return a function a function `spline_eval` that takes in `evaluation_points` as an argument
-where `evaluation_points` are the points we want to evaluate the spline approximant at
+where `evaluation_points` are the points we want to evaluate the spline approximating function at
 
 **Hint:** Linear splines are pretty easy, given two points $(x_{i+1}, y_{i+1})$ and $(x_i, y_i)$,
 the spline in between these points is given by
@@ -1511,3 +1374,157 @@ plot!(x_vals, y_vals_fine, color = :purple, linewidth = 4.0, linestyle = :dot, l
 ```{julia, echo=FALSE}
 plot!(x_vals, y_vals_superfine, color = :orange, linewidth = 4.0, linestyle = :dashdot, label = "24 knot spline grid")
 ```
+
+
+
+<!-- --- -->
+
+<!-- # Projection methods -->
+
+<!-- Rearrange the Bellman equation and define a new functional $H$ that maps the problem into a more general framework -->
+<!-- $$H(V) = V(S_t) - \max_{q_t} u(q_t) + \beta\,V(S_{t+1}(q_t))$$ -->
+
+<!-- -- -->
+
+<!-- We can find some function $V$ that solves $H(V) = 0$ -->
+
+
+
+<!-- --- -->
+
+<!-- # Our basic dynamic model -->
+
+<!-- An arbitrary infinite horizon problem can be represented using a Bellman equation -->
+<!-- $$V(S_t) = \max_{q_t} u(q_t) + \beta\,V(S_{t+1}(q_t))$$ -->
+
+<!-- -- -->
+
+<!-- We can start from any arbitrary initial state vector and simulate the optimal policy paths in deterministic or stochastic settings -->
+
+<!-- -- -->
+
+<!-- We know that this problem has a fixed point (solution) $V^*$ from previous lectures, but *how* do we approximate $V^*$? -->
+
+<!-- --- -->
+
+<!-- # Our basic dynamic model -->
+
+<!-- One way to do this is via .hi[projection] -->
+
+<!-- -- -->
+
+<!-- Or perturbation, or discretization, or some analytic approaches for specific models -->
+
+<!-- -- -->
+
+<!-- We'll focus on value functions here, but we can approximate policy functions as well -->
+
+
+<!-- --- -->
+
+<!-- # Rough idea of how we proceed -->
+
+<!-- Collocation methods aim to approximate the value function $V(S_t)$ with  -->
+<!-- some linear combination of known, and usually orthogonal $(\int f(x)g(x)w(x)=0)$, basis functions -->
+
+<!-- -- -->
+
+<!-- One example of a possible class of basis functions is the monomial basis: $x, x^2, x^3,...$ -->
+
+<!-- -- -->
+
+<!-- But how do we implement collocation? -->
+
+<!-- --- -->
+
+<!-- # Rough idea of how we proceed -->
+
+<!-- Recall we solve for coefficients $\theta$ by setting the residual to be zero at all of our collocation points -->
+
+<!-- -- -->
+
+<!-- But the residual is a function of $V$, and thus will be a function of $\theta$, a loop seemingly impossible to escape -->
+
+<!-- -- -->
+
+<!-- We can solve this problem by *iterating* on the problem, continually setting the residuals equal to zero, recovering new $\theta$s, and repeating -->
+
+<!-- --- -->
+
+<!-- # Rough idea of how we proceed -->
+
+<!-- In any given iteration, we: -->
+
+<!-- -- -->
+
+<!-- - Begin with a vector of coefficients on the basis functions (e.g. a random guess) -->
+
+<!-- -- -->
+
+<!-- - Use a linear combination of the basis functions as an approximation to the value function on the right hand side of the Bellman -->
+
+<!-- --- -->
+
+<!-- # Rough idea of how we proceed -->
+
+<!-- - Solve the Bellman with the approximated value function in it, at our set of collocation points -->
+
+<!-- -- -->
+
+<!-- - Recover a set maximized continuation values at these points in our state space conditional on the previous value function approximant we used -->
+
+<!-- -- -->
+
+<!-- - Use these new maximized values to obtain updated coefficients solving the system of linear equations, and repeat the process until we have "converged" -->
+
+
+<!-- --- -->
+
+<!-- # Still have some questions -->
+
+<!-- By the contraction mapping theorem this is guaranteed to converge from any arbitrary initial set of coefficients! (conditional on satisfying the assumptions and there being no numerical error..) -->
+
+<!-- -- -->
+
+<!-- This still leaves several questions unanswered -->
+
+<!-- -- -->
+
+<!-- - Where in the state space do we place the collocation points? -->
+
+<!-- -- -->
+
+<!-- - What basis functions do we use? -->
+
+<!-- -- -->
+
+<!-- Do your answers to the previous two questions really matter? -->
+
+<!-- -- -->
+
+<!-- **Yes they are crucial** -->
+
+<!-- --- -->
+
+<!-- # Still have some questions -->
+
+<!-- Schemes exist to generate high quality approximations, and to obtain the approximation at low computational cost -->
+
+<!-- -- -->
+
+<!-- Once we have recovered an adequate approximation to the value function, we have effectively solved the entire problem! -->
+
+<!-- -- -->
+
+<!-- We know how the policymaker's expected discounted stream of future payoffs changes as we move through the state space -->
+
+<!-- --- -->
+
+<!-- # Still have some questions -->
+
+<!-- We can solve the Bellman at some initial state and know that solving the Bellman will yield us optimal policies -->
+
+<!-- -- -->
+
+<!-- Therefore we can simulate anything we want and recover optimal policy functions   -->
+<!-- given many different sets of initial conditions or realizations of random variables -->

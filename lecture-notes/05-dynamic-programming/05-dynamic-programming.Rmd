@@ -15,13 +15,6 @@ output:
 
 ---
 
-# Roadmap
-
-1. Review Markov chains and dynamic models
-3. Review theory for numerical methods
-
----
-
 # Building a dynamic economic model
 
 We need 5 things for a dynamic economic model
@@ -54,25 +47,24 @@ Dynamic problems can generally be solved in two ways
 
 --
 
-.hi-blue[Open-loop:] treat the model as a sequence of static optimization problems solved simultaneously
+.hi-blue[Open-loop:] treat the model as one optimization problem
 
 --
 
-- Transitions act as constraints
-- Ends up being just a potentially giant (but simple) non-linear optimization problem
+- Transitions act like constraints, solve for optimal controls at each time
 - Drawback: solutions will be just a function of time so we can't introduce uncertainty, strategic behavior, etc
 
 ---
 
 # Two types of solutions
 
-.hi-blue[Feedback:] treat the model as a single-period optimization problem with the immediate payoff and the *continuation value*
+.hi-blue[Feedback:] treat the model as a bunch of single-period optimization problems with the immediate payoff and the *continuation value*
 
 --
 
 - Yields a solution that is a function of states
 - Permits uncertainty, game structures
-- Drawback: need to solve for the continuation value function 
+- Drawback: need to solve for the continuation value function or policy function
 
 ---
 
@@ -274,9 +266,6 @@ Conditional on having $V(x)$ we can solve our dynamic programming problem
 
 Instead of solving for an infinite dimensional set of policies, we instead find the $V(x)$ and $h$ that solves the continuum of maximization problems, where there is a unique maximization problem for each $x$
 
---
-
-This is often easier
 
 ---
 
@@ -536,9 +525,13 @@ This operator takes some value function $W(s)$, maximizes it, and returns anothe
 
 It is easy to see that any $V(s)$ that satisfies $V(s) = T(V)(s) \,\,\, \forall s \in S$ solves the Bellman equation
 
---
+---
 
-Therefore we simply search for the .hi-blue[fixed point] of $T(W)$ to solve our dynamic problem, but how do we find the fixed point?
+# Intuitive sketch of the proof
+
+$$T(W)(s) = \max_{s' \in \Gamma(s)} r(s,s') + \beta\,W(s'), \,\,\, \forall s \in S$$
+
+We simply search for the .hi-blue[fixed point] of $T(W)$ to solve our dynamic problem, but how do we find the fixed point?
 
 --
 
