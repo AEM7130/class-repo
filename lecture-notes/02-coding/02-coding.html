@@ -33,28 +33,28 @@ exclude: true
 
 
 ```r
- if (!require("pacman")) install.packages("pacman")
- pacman::p_load(
-   xaringanExtra, JuliaCall
- )
- options(htmltools.dir.version = FALSE)
- library(knitr)
- opts_chunk$set(
-   prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
-   fig.align = "center", fig.width=10, fig.height=6, 
-   out.width="748px", out.length="520.75px",
-   dpi = 300, #fig.path='Figs/',
-   cache = F#, echo=F, warning=F, message=F
-   )
- ## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
- knit_hooks$set(
-   prompt = function(before, options, envir) {
-     options(
-       prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
-       continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
-       )
- })
- julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall
+)
+options(htmltools.dir.version = FALSE)
+library(knitr)
+opts_chunk$set(
+  prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+  fig.align = "center", fig.width=10, fig.height=6, 
+  out.width="748px", out.length="520.75px",
+  dpi = 300, #fig.path='Figs/',
+  cache = F#, echo=F, warning=F, message=F
+  )
+## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+knit_hooks$set(
+  prompt = function(before, options, envir) {
+    options(
+      prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+      continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+      )
+})
+julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
 ```
 
 ---
@@ -63,15 +63,26 @@ exclude: true
 
 Necessary things to do:
 
+- Install [VSCode](http://code.visualstudio.com) with these extensions: `Julia, Git Graph, Project Manager`
+
 - Windows users: Install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and a Unix distribution or use https://repl.it
 
-- Install [Julia](https://julialang.org/downloads/)
-
-- Install these Julia packages: `Expectations, Distributions, LinearAlgebra, BenchmarkTools`
+- Install [Julia](https://julialang.org/downloads/) with these Julia packages: `Expectations, Distributions, LinearAlgebra, BenchmarkTools`
+    - Or use homebrew/other package manager
 
 --
 
 These slides are based on Software Carpentry, notes by Grant Mcdermott, QuantEcon, Julia documentation, etc
+
+---
+
+class: inverse, center, middle
+name: vscode
+
+# Visual Studio Code
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
 
 ---
 
@@ -209,13 +220,13 @@ $ ls -l # long form command
 ```
 
 ```
-## total 496
-## -rw-r--r--   1 ir229  CORNELL\Domain Users   44641 Dec 14 15:57 02-coding.Rmd
-## -rw-r--r--   1 ir229  CORNELL\Domain Users  133845 Dec 14 15:55 02-coding.html
-## drwxr-xr-x   5 ir229  CORNELL\Domain Users     160 Dec 14 15:55 02-coding_files
-## drwxr-xr-x   8 ir229  CORNELL\Domain Users     256 Jul 12 14:55 figures
-## -rw-r--r--@  1 ir229  CORNELL\Domain Users    8387 Dec 12 14:00 my-css.css
-## drwxr-xr-x  10 ir229  CORNELL\Domain Users     320 Dec 14 12:53 sandbox
+## total 368
+## -rw-r--r--   1 ir229  11103514   44947 Dec 16 08:09 02-coding.Rmd
+## -rw-r--r--   1 ir229  11103514  124345 Dec 16 08:08 02-coding.html
+## drwxr-xr-x   5 ir229  11103514     160 Dec 16 08:08 02-coding_files
+## drwxr-xr-x   8 ir229  11103514     256 Jul 12 14:55 figures
+## -rw-r--r--@  1 ir229  11103514    8387 Dec 12 14:00 my-css.css
+## drwxr-xr-x  10 ir229  11103514     320 Dec 14 12:53 sandbox
 ```
 
 ---
@@ -232,13 +243,13 @@ $ ls -lSh
 ```
 
 ```
-## total 496
-## -rw-r--r--   1 ir229  CORNELL\Domain Users   131K Dec 14 15:55 02-coding.html
-## -rw-r--r--   1 ir229  CORNELL\Domain Users    44K Dec 14 15:57 02-coding.Rmd
-## -rw-r--r--@  1 ir229  CORNELL\Domain Users   8.2K Dec 12 14:00 my-css.css
-## drwxr-xr-x  10 ir229  CORNELL\Domain Users   320B Dec 14 12:53 sandbox
-## drwxr-xr-x   8 ir229  CORNELL\Domain Users   256B Jul 12 14:55 figures
-## drwxr-xr-x   5 ir229  CORNELL\Domain Users   160B Dec 14 15:55 02-coding_files
+## total 368
+## -rw-r--r--   1 ir229  11103514   121K Dec 16 08:08 02-coding.html
+## -rw-r--r--   1 ir229  11103514    44K Dec 16 08:09 02-coding.Rmd
+## -rw-r--r--@  1 ir229  11103514   8.2K Dec 12 14:00 my-css.css
+## drwxr-xr-x  10 ir229  11103514   320B Dec 14 12:53 sandbox
+## drwxr-xr-x   8 ir229  11103514   256B Jul 12 14:55 figures
+## drwxr-xr-x   5 ir229  11103514   160B Dec 16 08:08 02-coding_files
 ```
 
 ---
@@ -261,26 +272,26 @@ $ ls -lSh ~/Desktop/git
 
 ```
 ## total 0
-## drwxr-xr-x  94 ir229  CORNELL\Domain Users   2.9K Dec  6 16:10 climate-trade
-## drwxr-xr-x  26 ir229  CORNELL\Domain Users   832B Mar 22  2022 aem2850
-## drwxr-xr-x@ 26 ir229  CORNELL\Domain Users   832B Dec  9 09:54 aem4510
-## drwxr-xr-x  20 ir229  CORNELL\Domain Users   640B Nov 30 15:21 irudik.github.io
-## drwxr-xr-x  19 ir229  CORNELL\Domain Users   608B Nov  1 15:43 hurricane-forecasts
-## drwxr-xr-x  19 ir229  CORNELL\Domain Users   608B Nov 15 20:52 lead-education
-## drwxr-xr-x  18 ir229  CORNELL\Domain Users   576B Aug 27 18:02 enviro-transport
-## drwxr-xr-x  16 ir229  CORNELL\Domain Users   512B Dec 14 11:31 aem7130
-## drwxr-xr-x  14 ir229  CORNELL\Domain Users   448B May 25  2022 biodiversity
-## drwxr-xr-x  14 ir229  CORNELL\Domain Users   448B Nov  6 19:14 climate-networks
-## drwxr-xr-x  14 ir229  CORNELL\Domain Users   448B Oct 24 17:26 regulation-markups
-## drwxr-xr-x  12 ir229  CORNELL\Domain Users   384B Jul 12 14:53 aem6510
-## drwxr-xr-x  12 ir229  CORNELL\Domain Users   384B Aug 25 10:11 scc-structural
-## drwxr-xr-x  10 ir229  CORNELL\Domain Users   320B Oct 27 21:43 0.ARCHIVE
-## drwxr-xr-x   9 ir229  CORNELL\Domain Users   288B Aug 14 17:59 amenities-complementarity
-## drwxr-xr-x   9 ir229  CORNELL\Domain Users   288B May 13  2022 climate-concentration
-## drwxr-xr-x   9 ir229  CORNELL\Domain Users   288B May 20  2022 dropbox-template
-## drwxr-xr-x   9 ir229  CORNELL\Domain Users   288B May 20  2022 repo-template
-## drwxr-xr-x   7 ir229  CORNELL\Domain Users   224B Sep  4 15:28 climate-reading-group
-## drwxr-xr-x   7 ir229  CORNELL\Domain Users   224B Feb 14  2022 config-files
+## drwxr-xr-x  94 ir229  11103514   2.9K Dec  6 16:10 climate-trade
+## drwxr-xr-x  26 ir229  11103514   832B Mar 22  2022 aem2850
+## drwxr-xr-x@ 26 ir229  11103514   832B Dec  9 09:54 aem4510
+## drwxr-xr-x  20 ir229  11103514   640B Nov 30 15:21 irudik.github.io
+## drwxr-xr-x  19 ir229  11103514   608B Nov  1 15:43 hurricane-forecasts
+## drwxr-xr-x  19 ir229  11103514   608B Nov 15 20:52 lead-education
+## drwxr-xr-x  18 ir229  11103514   576B Dec 15 13:51 enviro-transport
+## drwxr-xr-x  16 ir229  11103514   512B Dec 16 07:51 aem7130
+## drwxr-xr-x  14 ir229  11103514   448B May 25  2022 biodiversity
+## drwxr-xr-x  14 ir229  11103514   448B Nov  6 19:14 climate-networks
+## drwxr-xr-x  14 ir229  11103514   448B Oct 24 17:26 regulation-markups
+## drwxr-xr-x  12 ir229  11103514   384B Jul 12 14:53 aem6510
+## drwxr-xr-x  12 ir229  11103514   384B Aug 25 10:11 scc-structural
+## drwxr-xr-x  10 ir229  11103514   320B Oct 27 21:43 0.ARCHIVE
+## drwxr-xr-x   9 ir229  11103514   288B Aug 14 17:59 amenities-complementarity
+## drwxr-xr-x   9 ir229  11103514   288B May 13  2022 climate-concentration
+## drwxr-xr-x   9 ir229  11103514   288B May 20  2022 dropbox-template
+## drwxr-xr-x   9 ir229  11103514   288B May 20  2022 repo-template
+## drwxr-xr-x   7 ir229  11103514   224B Sep  4 15:28 climate-reading-group
+## drwxr-xr-x   7 ir229  11103514   224B Feb 14  2022 config-files
 ```
 
 ---
@@ -893,10 +904,10 @@ $ ls -lSh /Users
 
 ```
 ## total 0
-## drwxr-x---+ 64 ir229           CORNELL\Domain Users   2.0K Dec 14 15:43 ir229
-## drwxr-x---+ 19 cals_oit        staff                  608B Feb  9  2022 cals_oit
-## drwxr-x---+ 15 ag-jjp34-doc10  CORNELL\Domain Users   480B Feb  9  2022 ag-jjp34-doc10
-## drwxrwxrwt  13 root            wheel                  416B Dec 12 19:19 Shared
+## drwxr-x---+ 64 ir229           11103514   2.0K Dec 14 15:43 ir229
+## drwxr-x---+ 19 cals_oit        staff      608B Feb  9  2022 cals_oit
+## drwxr-x---+ 15 ag-jjp34-doc10  11103514   480B Feb  9  2022 ag-jjp34-doc10
+## drwxrwxrwt  13 root            wheel      416B Dec 12 19:19 Shared
 ```
 
 ---
@@ -914,21 +925,21 @@ $ ls -lSh /Users/ir229
 
 ```
 ## total 0
-## drwx------@ 365 ir229  CORNELL\Domain Users    11K Dec 14 11:39 Downloads
-## drwx------@  93 ir229  CORNELL\Domain Users   2.9K May 20  2022 Library
-## drwx------@  41 ir229  CORNELL\Domain Users   1.3K Sep  7 12:25 Dropbox
-## drwxr-xr-x   33 ir229  CORNELL\Domain Users   1.0K Dec 12 14:52 languageserver-library
-## drwxr-xr-x   18 ir229  CORNELL\Domain Users   576B Dec 12 19:19 Zotero
-## drwx------@  16 ir229  CORNELL\Domain Users   512B Sep  8 12:39 Box-Box-Backup
-## drwx------@   7 ir229  CORNELL\Domain Users   224B Dec 12 13:04 Desktop
-## drwx------+   5 ir229  CORNELL\Domain Users   160B Oct  5 12:03 Documents
-## drwx------    5 ir229  CORNELL\Domain Users   160B May 10  2022 Movies
-## drwx------+   5 ir229  CORNELL\Domain Users   160B May 10  2022 Music
-## drwx------+   5 ir229  CORNELL\Domain Users   160B May 10  2022 Pictures
-## drwxr-xr-x    4 ir229  CORNELL\Domain Users   128B May 10  2022 Applications
-## drwx------@   4 ir229  CORNELL\Domain Users   128B Nov  5 13:42 Creative Cloud Files
-## drwx------@   4 ir229  CORNELL\Domain Users   128B Aug  2 11:31 Creative Cloud Files irudik@gmail.com ffd387f23bd1f53514a9de8d75abe8c7fb5ffaa6109df102045adaf1928dcdd9
-## drwxr-xr-x+   4 ir229  CORNELL\Domain Users   128B Feb 14  2022 Public
+## drwx------@ 375 ir229  11103514    12K Dec 15 17:11 Downloads
+## drwx------@  93 ir229  11103514   2.9K May 20  2022 Library
+## drwx------@  41 ir229  11103514   1.3K Sep  7 12:25 Dropbox
+## drwxr-xr-x   33 ir229  11103514   1.0K Dec 12 14:52 languageserver-library
+## drwxr-xr-x   18 ir229  11103514   576B Dec 12 19:19 Zotero
+## drwx------@  16 ir229  11103514   512B Sep  8 12:39 Box-Box-Backup
+## drwx------@   7 ir229  11103514   224B Dec 12 13:04 Desktop
+## drwx------+   5 ir229  11103514   160B Oct  5 12:03 Documents
+## drwx------    5 ir229  11103514   160B May 10  2022 Movies
+## drwx------+   5 ir229  11103514   160B May 10  2022 Music
+## drwx------+   5 ir229  11103514   160B May 10  2022 Pictures
+## drwxr-xr-x    4 ir229  11103514   128B May 10  2022 Applications
+## drwx------@   4 ir229  11103514   128B Nov  5 13:42 Creative Cloud Files
+## drwx------@   4 ir229  11103514   128B Aug  2 11:31 Creative Cloud Files irudik@gmail.com ffd387f23bd1f53514a9de8d75abe8c7fb5ffaa6109df102045adaf1928dcdd9
+## drwxr-xr-x+   4 ir229  11103514   128B Feb 14  2022 Public
 ```
 
 ---
@@ -1627,8 +1638,8 @@ $ wc sandbox/*.txt
 ##       29     195     979 sandbox/hey_jude.txt
 ##        6      12     167 sandbox/lengths.txt
 ##       45     220    1191 sandbox/lucy_in_the_sky.txt
-##       12      19     135 sandbox/trees.txt
-##       92     453    2505 total
+##       14      21     151 sandbox/trees.txt
+##       94     455    2521 total
 ```
 
 ---
@@ -1673,8 +1684,8 @@ $ cat sandbox/lengths.txt
 ##      195 sandbox/hey_jude.txt
 ##        0 sandbox/lengths.txt
 ##      220 sandbox/lucy_in_the_sky.txt
-##       19 sandbox/trees.txt
-##      441 total
+##       21 sandbox/trees.txt
+##      443 total
 ```
 
 The `w` option made it so we only got the number of words, not characters or lines
@@ -1695,10 +1706,10 @@ $ sort -n sandbox/lengths.txt
 ```
 ##        0 sandbox/lengths.txt
 ##        7 sandbox/animals.txt
-##       19 sandbox/trees.txt
+##       21 sandbox/trees.txt
 ##      195 sandbox/hey_jude.txt
 ##      220 sandbox/lucy_in_the_sky.txt
-##      441 total
+##      443 total
 ```
 
 where the `n` option means to sort numerically
@@ -1763,6 +1774,8 @@ $ cat sandbox/trees.txt
 ##  walnut
 ##  walnut
 ##  walnut
+##  walnut
+##  walnut
 ```
 
 ---
@@ -1791,7 +1804,7 @@ $ wc -m sandbox/* | sort -n | tail -n 2
 ```
 ## wc: sandbox/classes: read: Is a directory
 ##     1191 sandbox/lucy_in_the_sky.txt
-##     2711 total
+##     2763 total
 ```
 
 `lucy_in_the_sky.txt` is the longest in the sandbox directory
@@ -2160,6 +2173,8 @@ $ cat sandbox/shell_script.sh
 ## echo Hello World!
 ## echo Hello World!
 ## echo Hello World!
+## echo Hello World!
+## echo Hello World!
 ```
 
 We can the execute it using bash
@@ -2169,6 +2184,8 @@ $ bash sandbox/shell_script.sh
 ```
 
 ```
+## Hello World!
+## Hello World!
 ## Hello World!
 ## Hello World!
 ## Hello World!
@@ -2786,14 +2803,15 @@ As in other languages we have loops at our disposal:
 ```
 
 ```
-## We drew a 0.9187983920317281.
-## We drew a 0.7961107667211885.
-## We drew a 0.469825200482593.
-## We drew a 0.7949657615494699.
-## We drew a 0.2915781006362058.
-## We drew a 0.8358737346799731.
-## We drew a 0.6169394866442824.
-## We drew a 0.9825516210853693.
+## We drew a 0.4253211966755881.
+## We drew a 0.3255949850784017.
+## We drew a 0.8243281502235291.
+## We drew a 0.2588992039584045.
+## We drew a 0.9593965430497486.
+## We drew a 0.7456698492180078.
+## We drew a 0.6734561463323796.
+## We drew a 0.3213310631205646.
+## We drew a 0.6363684759943303.
 ```
 
 ---
@@ -2809,6 +2827,10 @@ As in other languages we have loops at our disposal:
      println("We drew a $random_number.")
    end
  end
+```
+
+```
+## We drew a 0.7506407914008593.
 ```
 
 ---
@@ -2894,7 +2916,7 @@ Here's a **very** simple example, the top function iterates on an `Array`, the b
 ```
 
 ```
-##   32.729 ns (1 allocation: 112 bytes)
+##   17.952 ns (1 allocation: 112 bytes)
 ```
 
 ```julia
@@ -2902,7 +2924,7 @@ Here's a **very** simple example, the top function iterates on an `Array`, the b
 ```
 
 ```
-##   2.083 ns (0 allocations: 0 bytes)
+##   2.084 ns (0 allocations: 0 bytes)
 ```
 
 The `Iterator` approach is faster and allocates no memory
@@ -3166,12 +3188,12 @@ First, precompile the functions
 ```
 
 ```
-##   0.005698 seconds (13 allocations: 45.777 MiB)
+##   0.006177 seconds (13 allocations: 45.777 MiB)
 ```
 
 ```
 ## 1-element Vector{Vector{Float64}}:
-##  [3.212440847418054, 9.314967819494925, 6.981777771141973, 4.29409051288116, 6.050692416279498, 8.431973221114234, 13.231849055864119, 12.593976402980738, 1.8504195397839591, 6.894363112003198  …  3.8105904435297724, 1.0050811256571799, 1.447220826867133, 0.09636976731790715, 8.044390255123602, 6.136535453922386, 2.1036887366864385, 2.8683802947228427, 12.881422214244001, 0.8326254017132486]
+##  [8.770228433428649, 0.999427128498331, 4.592768201983578, 3.5758051966449815, 0.47538599944933396, 11.641570713299728, 1.6753690089280475, 3.695692767683883, 8.003046562695298, 0.22692177855823786  …  10.853235460758516, 8.6050578735147, 5.965101891998337, 6.369416340943955, 7.796904684485174, 13.921359426804976, 3.5873767718874863, 0.03752713814071207, 13.296034386871302, 3.4244522437106664]
 ```
 
 ```julia
@@ -3179,12 +3201,12 @@ First, precompile the functions
 ```
 
 ```
-##   0.001432 seconds (3 allocations: 7.630 MiB)
+##   0.004938 seconds (3 allocations: 7.630 MiB, 80.45% gc time)
 ```
 
 ```
 ## 1-element Vector{Vector{Float64}}:
-##  [3.212440847418054, 9.314967819494925, 6.981777771141973, 4.29409051288116, 6.050692416279498, 8.431973221114234, 13.231849055864119, 12.593976402980738, 1.8504195397839591, 6.894363112003198  …  3.8105904435297724, 1.0050811256571799, 1.447220826867133, 0.09636976731790715, 8.044390255123602, 6.136535453922386, 2.1036887366864385, 2.8683802947228427, 12.881422214244001, 0.8326254017132486]
+##  [8.770228433428649, 0.999427128498331, 4.592768201983578, 3.5758051966449815, 0.47538599944933396, 11.641570713299728, 1.6753690089280475, 3.695692767683883, 8.003046562695298, 0.22692177855823786  …  10.853235460758516, 8.6050578735147, 5.965101891998337, 6.369416340943955, 7.796904684485174, 13.921359426804976, 3.5873767718874863, 0.03752713814071207, 13.296034386871302, 3.4244522437106664]
 ```
 
 Full vectorization using `@.` is 10x faster with 1/6 of the memory allocation
@@ -3219,31 +3241,31 @@ Here we are vectorizing the function call
 ```
 
 ```
-##   0.020525 seconds (145.14 k allocations: 10.631 MiB, 83.50% compilation time: 100% of which was recompilation)
+##   0.020049 seconds (145.13 k allocations: 10.628 MiB, 83.13% compilation time: 100% of which was recompilation)
 ```
 
 ```
 ## 500001-element Vector{Float64}:
-##    1.4869217334046803
-##    9.338070160057983
-##   25.54346083907623
-##   49.229841935323215
-##   81.81325973857075
-##  121.34132326667225
-##  169.03138847450302
-##  225.48303560820747
-##  289.81470736971175
-##  361.29055372371295
+##    1.1975513088207916
+##    9.616708647490325
+##   25.717767741222644
+##   49.19991792987932
+##   81.83256464756876
+##  121.19893869527684
+##  169.6749604500155
+##  225.78121145059785
+##  289.1094960823563
+##  361.7421323253961
 ##    ⋮
-##    9.999700002253453e11
-##    9.999740001695679e11
-##    9.999780001213821e11
-##    9.999820000810813e11
-##    9.999860000490939e11
-##    9.999900000257325e11
-##    9.999940000098402e11
-##    9.999980000015447e11
-##    1.0000020000013784e12
+##    9.999700002253796e11
+##    9.999740001697755e11
+##    9.999780001213108e11
+##    9.999820000817015e11
+##    9.999860000492054e11
+##    9.99990000025079e11
+##    9.9999400000983e11
+##    9.999980000010669e11
+##    1.0000020000013855e12
 ```
 
 ---
@@ -3261,31 +3283,31 @@ Here we are vectorizing the function call and assignment
 ```
 
 ```
-##   0.014254 seconds (27.01 k allocations: 1.167 MiB, 74.83% compilation time: 100% of which was recompilation)
+##   0.013242 seconds (27.01 k allocations: 1.167 MiB, 76.01% compilation time: 100% of which was recompilation)
 ```
 
 ```
 ## 500001-element Vector{Float64}:
-##    1.4869217334046803
-##    9.338070160057983
-##   25.54346083907623
-##   49.229841935323215
-##   81.81325973857075
-##  121.34132326667225
-##  169.03138847450302
-##  225.48303560820747
-##  289.81470736971175
-##  361.29055372371295
+##    1.1975513088207916
+##    9.616708647490325
+##   25.717767741222644
+##   49.19991792987932
+##   81.83256464756876
+##  121.19893869527684
+##  169.6749604500155
+##  225.78121145059785
+##  289.1094960823563
+##  361.7421323253961
 ##    ⋮
-##    9.999700002253453e11
-##    9.999740001695679e11
-##    9.999780001213821e11
-##    9.999820000810813e11
-##    9.999860000490939e11
-##    9.999900000257325e11
-##    9.999940000098402e11
-##    9.999980000015447e11
-##    1.0000020000013784e12
+##    9.999700002253796e11
+##    9.999740001697755e11
+##    9.999780001213108e11
+##    9.999820000817015e11
+##    9.999860000492054e11
+##    9.99990000025079e11
+##    9.9999400000983e11
+##    9.999980000010669e11
+##    1.0000020000013855e12
 ```
 
 ---
@@ -3303,31 +3325,31 @@ Here we are vectorizing the function call, assignment, and operations
 ```
 
 ```
-##   0.003366 seconds (4 allocations: 3.815 MiB)
+##   0.003169 seconds (4 allocations: 3.815 MiB)
 ```
 
 ```
 ## 500001-element Vector{Float64}:
-##    1.4869217334046803
-##    9.338070160057983
-##   25.54346083907623
-##   49.229841935323215
-##   81.81325973857075
-##  121.34132326667225
-##  169.03138847450302
-##  225.48303560820747
-##  289.81470736971175
-##  361.29055372371295
+##    1.1975513088207916
+##    9.616708647490325
+##   25.717767741222644
+##   49.19991792987932
+##   81.83256464756876
+##  121.19893869527684
+##  169.6749604500155
+##  225.78121145059785
+##  289.1094960823563
+##  361.7421323253961
 ##    ⋮
-##    9.999700002253453e11
-##    9.999740001695679e11
-##    9.999780001213821e11
-##    9.999820000810813e11
-##    9.999860000490939e11
-##    9.999900000257325e11
-##    9.999940000098402e11
-##    9.999980000015447e11
-##    1.0000020000013784e12
+##    9.999700002253796e11
+##    9.999740001697755e11
+##    9.999780001213108e11
+##    9.999820000817015e11
+##    9.999860000492054e11
+##    9.99990000025079e11
+##    9.9999400000983e11
+##    9.999980000010669e11
+##    1.0000020000013855e12
 ```
 
 ---
@@ -3680,7 +3702,7 @@ When a function `f` is parsed in Julia, it looks to see if any of the variables 
 ```
 
 ```
-## g (generic function with 2 methods)
+## g (generic function with 1 method)
 ```
 
 ```julia
@@ -3745,7 +3767,7 @@ Here's a complicated example:
 ```
 
 ```
-## (::var"#closure#11712"{Int64, Int64}) (generic function with 1 method)
+## (::var"#closure#524"{Int64, Int64}) (generic function with 1 method)
 ```
 
 ```julia
@@ -3889,7 +3911,7 @@ Julia now can't assume `s`'s type and produce pure integer or floating point cod
 ```
 
 ```
-##   0.004571 seconds
+##   0.004338 seconds
 ```
 
 ```
@@ -3901,7 +3923,7 @@ Julia now can't assume `s`'s type and produce pure integer or floating point cod
 ```
 
 ```
-##   0.003024 seconds
+##   0.002997 seconds
 ```
 
 ```
@@ -4178,7 +4200,7 @@ This is why Julia can achieve C speeds: it compiles to C (or faster) code
 ```
 
 ```
-## # 197 methods for generic function "/":
+## # 153 methods for generic function "/":
 ## [1] /(x::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}, y::Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8}) in Base at int.jl:97
 ## [2] /(x::T, y::T) where T&lt;:Union{Float16, Float32, Float64} in Base at float.jl:386
 ## [3] /(x::Union{Integer, Complex{&lt;:Union{Integer, Rational}}}, y::Rational) in Base at rational.jl:347
@@ -4193,189 +4215,145 @@ This is why Julia can achieve C speeds: it compiles to C (or faster) code
 ## [12] /(X::StridedArray{P}, y::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/deprecated.jl:44
 ## [13] /(X::StridedArray{P}, y::Real) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/deprecated.jl:44
 ## [14] /(x::Union{SparseArrays.SparseVector{Tv, Ti}, SubArray{Tv, 1, &lt;:SparseArrays.AbstractSparseMatrixCSC{Tv, Ti}, Tuple{Base.Slice{Base.OneTo{Int64}}, Int64}, false}, SubArray{Tv, 1, &lt;:SparseArrays.AbstractSparseVector{Tv, Ti}, Tuple{Base.Slice{Base.OneTo{Int64}}}, false}} where {Tv, Ti}, a::Number) in SparseArrays at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/SparseArrays/src/sparsevector.jl:1506
-## [15] /(a::Union{LMS, XYZ}, k::Number) in Colors at /Users/ir229/.julia/packages/Colors/yDxFN/src/algorithms.jl:9
-## [16] /(c::C, f::AbstractFloat) where C&lt;:Union{AbstractRGB, Transparent3{C} where C&lt;:AbstractRGB} in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:273
-## [17] /(c::Union{TransparentColor{C, T}, C} where {T, C&lt;:Union{AbstractRGB{T}, AbstractGray{T}}}, f::Real) in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:253
-## [18] /(B::Union{Adjoint{T, &lt;:Union{StaticArraysCore.StaticArray{Tuple{var"#s2"}, T, 1} where var"#s2", StaticArraysCore.StaticArray{Tuple{var"#s3", var"#s4"}, T, 2} where {var"#s3", var"#s4"}}}, Diagonal{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s13"}, T, 1} where var"#s13"}, Hermitian{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s10", var"#s11"}, T, 2} where {var"#s10", var"#s11"}}, LowerTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s18", var"#s19"}, T, 2} where {var"#s18", var"#s19"}}, Symmetric{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s7", var"#s8"}, T, 2} where {var"#s7", var"#s8"}}, Transpose{T, &lt;:Union{StaticArraysCore.StaticArray{Tuple{var"#s2"}, T, 1} where var"#s2", StaticArraysCore.StaticArray{Tuple{var"#s3", var"#s4"}, T, 2} where {var"#s3", var"#s4"}}}, UnitLowerTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s24", var"#s25"}, T, 2} where {var"#s24", var"#s25"}}, UnitUpperTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s21", var"#s22"}, T, 2} where {var"#s21", var"#s22"}}, UpperTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s15", var"#s16"}, T, 2} where {var"#s15", var"#s16"}}, StaticArraysCore.StaticArray{Tuple{var"#s1", var"#s3"}, T, 2} where {var"#s1", var"#s3"}} where T, A::Cholesky{T, &lt;:StaticArraysCore.StaticArray{Tuple{N, N}, T, 2}}) where {N, T} in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/cholesky.jl:80
-## [19] /(A::Union{Adjoint{T, &lt;:Union{StaticArraysCore.StaticArray{Tuple{var"#s2"}, T, 1} where var"#s2", StaticArraysCore.StaticArray{Tuple{var"#s3", var"#s4"}, T, 2} where {var"#s3", var"#s4"}}}, Diagonal{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s13"}, T, 1} where var"#s13"}, Hermitian{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s10", var"#s11"}, T, 2} where {var"#s10", var"#s11"}}, LowerTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s18", var"#s19"}, T, 2} where {var"#s18", var"#s19"}}, Symmetric{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s7", var"#s8"}, T, 2} where {var"#s7", var"#s8"}}, Transpose{T, &lt;:Union{StaticArraysCore.StaticArray{Tuple{var"#s2"}, T, 1} where var"#s2", StaticArraysCore.StaticArray{Tuple{var"#s3", var"#s4"}, T, 2} where {var"#s3", var"#s4"}}}, UnitLowerTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s24", var"#s25"}, T, 2} where {var"#s24", var"#s25"}}, UnitUpperTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s21", var"#s22"}, T, 2} where {var"#s21", var"#s22"}}, UpperTriangular{T, &lt;:StaticArraysCore.StaticArray{Tuple{var"#s15", var"#s16"}, T, 2} where {var"#s15", var"#s16"}}, StaticArraysCore.StaticArray{Tuple{var"#s25"}, T, 1} where var"#s25", StaticArraysCore.StaticArray{Tuple{var"#s1", var"#s3"}, T, 2} where {var"#s1", var"#s3"}} where T, B::Union{LowerTriangular{TA, &lt;:StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}}, UnitLowerTriangular{TA, &lt;:StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}}, UnitUpperTriangular{TA, &lt;:StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}}, UpperTriangular{TA, &lt;:StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}}} where TA) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/triangular.jl:29
-## [20] /(x::RoundingMode, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
-## [21] /(A::Symmetric, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/symmetric.jl:608
-## [22] /(m1::Measures.Length{:pct}, m2::Measures.AbsoluteLength) in Plots.PlotMeasures at /Users/ir229/.julia/packages/Plots/Hxe7H/src/plotmeasures.jl:19
-## [23] /(x::AbstractVecOrMat, a::PDMats.PDMat) in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/pdmat.jl:51
-## [24] /(x::AbstractVecOrMat, a::PDMats.ScalMat) in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/scalmat.jl:54
-## [25] /(x::AbstractVecOrMat{T}, a::PDMats.PDSparseMat{T}) where T&lt;:Real in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/pdsparsemat.jl:50
-## [26] /(B::AbstractMatrix, F::StaticArrays.LU) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/lu.jl:212
-## [27] /(x::AbstractVecOrMat, a::PDMats.PDiagMat) in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/pdiagmat.jl:55
-## [28] /(::ChainRulesCore.AbstractThunk, x::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:49
-## [29] /(a::ChainRulesCore.AbstractThunk, b::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:39
-## [30] /(a::ChainRulesCore.AbstractThunk, b) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:37
-## [31] /(A::UnitUpperTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:873
-## [32] /(A::UnitUpperTriangular, B::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1605
-## [33] /(A::UnitUpperTriangular, B::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1617
-## [34] /(A::UnitUpperTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:551
-## [35] /(A::Hermitian, x::Real) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/symmetric.jl:609
-## [36] /(A::LowerTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:871
-## [37] /(A::LowerTriangular, B::LowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1575
-## [38] /(A::LowerTriangular, B::UnitLowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1587
-## [39] /(A::LowerTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:550
-## [40] /(r::StepRangeLen{&lt;:Real, &lt;:Base.TwicePrecision}, x::Real) in Base at twiceprecision.jl:555
-## [41] /(A::UpperTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:871
-## [42] /(A::UpperTriangular, B::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1599
-## [43] /(A::UpperTriangular, B::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1611
-## [44] /(A::UpperTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:550
-## [45] /(a::AbstractGray, b::AbstractGray) in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:335
-## [46] /(x::Number, B::BitArray) in Base at bitarray.jl:1205
-## [47] /(::Number, ::Missing) in Base at missing.jl:124
-## [48] /(x::Number, v::AbstractVector) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/generic.jl:1146
-## [49] /(n::Number, c::AbstractGray) in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:325
-## [50] /(a::StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}, b::UniformScaling) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/linalg.jl:46
-## [51] /(B::StaticArraysCore.StaticArray{Tuple{N, M}, T, 2} where {N, M, T}, D::Diagonal{T, StaticArraysCore.SVector{N, T}} where {N, T}) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/SDiagonal.jl:25
-## [52] /(x::RObject, y::RObject) in RCall at /Users/ir229/.julia/packages/RCall/Wyd74/src/operators.jl:6
-## [53] /(x::ForwardDiff.Dual{Tx}, y::RoundingMode) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
-## [54] /(x::ForwardDiff.Dual{Tx}, y::Rational) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
-## [55] /(x::ForwardDiff.Dual{Tx}, y::Integer) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
-## [56] /(x::ForwardDiff.Dual{Tx}, y::Irrational) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
-## [57] /(x::ForwardDiff.Dual{Tx}, y::AbstractFloat) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
-## [58] /(x::ForwardDiff.Dual{Txy}, y::ForwardDiff.Dual{Txy}) where Txy in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:139
-## [59] /(x::ForwardDiff.Dual{Tx}, y::ForwardDiff.Dual{Ty}) where {Tx, Ty} in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:140
-## [60] /(x::ForwardDiff.Dual{Tx}, y::Real) where Tx in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:144
-## [61] /(a::PDMats.ScalMat, c::Real) in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/scalmat.jl:41
-## [62] /(a::PDMats.AbstractPDMat, c::T) where T&lt;:Real in PDMats at /Users/ir229/.julia/packages/PDMats/ZW0lN/src/generics.jl:18
-## [63] /(H::UpperHessenberg, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:118
-## [64] /(H::UpperHessenberg, x::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:118
-## [65] /(A::AbstractMatrix, J::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:269
-## [66] /(v::AbstractVector, J::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:270
-## [67] /(H::UpperHessenberg, x::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:118
-## [68] /(H::UpperHessenberg, U::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:136
-## [69] /(H::UpperHessenberg, U::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:142
-## [70] /(H::UpperHessenberg{var"#s884", S} where {var"#s884"&lt;:Number, S&lt;:AbstractMatrix{var"#s884"}}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:174
-## [71] /(H::UpperHessenberg, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:173
-## [72] /(A::SymTridiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/tridiag.jl:212
-## [73] /(S::SymTridiagonal, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:500
-## [74] /(a::StaticArrays.SHermitianCompact, b::Number) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/SHermitianCompact.jl:155
-## [75] /(a::StaticArraysCore.StaticArray, b::Number) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/linalg.jl:24
-## [76] /(x::T, y::T) where T&lt;:FixedPointNumbers.Normed in FixedPointNumbers at /Users/ir229/.julia/packages/FixedPointNumbers/HAGk2/src/normed.jl:253
-## [77] /(A::UnitLowerTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:873
-## [78] /(A::UnitLowerTriangular, B::LowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1581
-## [79] /(A::UnitLowerTriangular, B::UnitLowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1593
-## [80] /(A::UnitLowerTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:551
-## [81] /(x::AbstractIrrational, y::AbstractIrrational) in Base at irrationals.jl:158
-## [82] /(x::Irrational, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
-## [83] /(a::Tuple{Vararg{Measures.Measure, N}} where N, b::Number) in Measures at /Users/ir229/.julia/packages/Measures/PKOxJ/src/point.jl:17
-## [84] /(a::ColorVectorSpace.RGBRGB, α::Real) in ColorVectorSpace at /Users/ir229/.julia/packages/ColorVectorSpace/bhkoO/src/ColorVectorSpace.jl:435
-## [85] /(A::Union{BitMatrix, BitVector}, B::Union{BitMatrix, BitVector}) in Base at bitarray.jl:1201
-## [86] /(B::BitArray, x::Number) in Base at bitarray.jl:1204
-## [87] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2667
-## [88] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2666
-## [89] /(A::Adjoint{T, &lt;:AbstractVector} where T, B::Transpose{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:921
-## [90] /(B::Adjoint{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization{&lt;:Real}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:136
-## [91] /(B::Adjoint{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:138
-## [92] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::Transpose{&lt;:Any, &lt;:AbstractMatrix}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:326
-## [93] /(adjA::Adjoint{&lt;:Any, &lt;:AbstractMatrix}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:445
-## [94] /(adjA::Adjoint{&lt;:Any, &lt;:AbstractVector}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:444
-## [95] /(adjB::Adjoint{T, &lt;:AbstractVector} where T, adjF::Adjoint{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:113
-## [96] /(A::Adjoint{T, &lt;:AbstractVector} where T, B::Adjoint{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:923
-## [97] /(u::Adjoint{T, &lt;:AbstractVector} where T, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:756
-## [98] /(A::Adjoint{&lt;:Number, &lt;:AbstractVector}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:917
-## [99] /(A::Adjoint{T, &lt;:AbstractVector} where T, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:919
-## [100] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::AbstractMatrix) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:324
-## [101] /(z::Complex, x::Real) in Base at complex.jl:346
-## [102] /(x::ChainRulesCore.AbstractZero, ::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:47
-## [103] /(a::ChainRulesCore.AbstractZero, ::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:42
-## [104] /(z::ChainRulesCore.AbstractZero, ::Any) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/abstract_zero.jl:29
-## [105] /(r::AbstractRange{&lt;:P}, x::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/ranges.jl:68
-## [106] /(d::UnivariateDistribution, x::Real) in Distributions at /Users/ir229/.julia/packages/Distributions/gggmX/src/univariate/locationscale.jl:147
-## [107] /(x::FixedPointNumbers.Fixed{T, f}, y::FixedPointNumbers.Fixed{T, f}) where {T, f} in FixedPointNumbers at /Users/ir229/.julia/packages/FixedPointNumbers/HAGk2/src/fixed.jl:102
-## [108] /(D::Diagonal, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:204
-## [109] /(D::Diagonal{var"#s884", V} where {var"#s884"&lt;:Number, V&lt;:AbstractVector{var"#s884"}}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:908
-## [110] /(Da::Diagonal{T, StaticArraysCore.SVector{N, T}} where {N, T}, Db::Diagonal{T, StaticArraysCore.SVector{N, T}} where {N, T}) in StaticArrays at /Users/ir229/.julia/packages/StaticArrays/B0HhH/src/SDiagonal.jl:27
-## [111] /(A::Diagonal, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:444
-## [112] /(x::Rational, y::Union{Integer, Complex{&lt;:Union{Integer, Rational}}, Rational}) in Base at rational.jl:346
-## [113] /(x::Rational, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
-## [114] /(x::AbstractFloat, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
-## [115] /(partials::ForwardDiff.Partials{0, V}, x::Real) where V in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/partials.jl:138
-## [116] /(partials::ForwardDiff.Partials, x::Real) in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/partials.jl:114
-## [117] /(A::SparseArrays.AbstractSparseMatrixCSC, D::Diagonal) in SparseArrays at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/SparseArrays/src/linalg.jl:152
-## [118] /(x::P, y::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/periods.jl:80
-## [119] /(x::P, y::Real) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/periods.jl:81
-## [120] /(x::Dates.Period, y::Dates.Period) in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/periods.jl:99
-## [121] /(A::Bidiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:386
-## [122] /(B::Bidiagonal{var"#s884", V} where {var"#s884"&lt;:Number, V&lt;:AbstractVector{var"#s884"}}, U::Union{UnitUpperTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}, UpperTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}} where var"#s883"&lt;:Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:897
-## [123] /(B::Bidiagonal{var"#s884", V} where {var"#s884"&lt;:Number, V&lt;:AbstractVector{var"#s884"}}, L::Union{LowerTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}, UnitLowerTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}} where var"#s883"&lt;:Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:902
-## [124] /(A::Tridiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/tridiag.jl:743
-## [125] /(A::AbstractArray, B::Number) in Base at arraymath.jl:24
-## [126] /(T::Tridiagonal, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:507
-## [127] /(x::Integer, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
-## [128] /(A::Transpose{&lt;:Number, &lt;:AbstractVector}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:918
-## [129] /(A::AbstractMatrix{&lt;:Number}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:871
-## [130] /(A::Transpose{T, &lt;:AbstractVector} where T, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:920
-## [131] /(A::AbstractMatrix, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:876
-## [132] /(trA::Transpose{&lt;:Any, &lt;:AbstractVector}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:446
-## [133] /(B::Transpose{T, &lt;:AbstractVector} where T, adjF::Adjoint{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:114
-## [134] /(trA::Transpose{&lt;:Any, &lt;:AbstractMatrix}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:450
-## [135] /(A::AbstractMatrix, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:439
-## [136] /(A::Transpose{T, &lt;:AbstractVector} where T, B::Adjoint{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:924
-## [137] /(A::AbstractMatrix, B::Adjoint{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:915
-## [138] /(u::Transpose{T, &lt;:AbstractVector} where T, A::Adjoint{&lt;:Any, &lt;:AbstractMatrix}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:327
-## [139] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitUpperTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
-## [140] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitUpperTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
-## [141] /(B::Transpose{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization{&lt;:Real}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:137
-## [142] /(B::AbstractMatrix, F::Transpose{&lt;:Any, &lt;:Factorization{&lt;:Real}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:134
-## [143] /(B::Transpose{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:139
-## [144] /(B::AbstractMatrix, F::Transpose{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:135
-## [145] /(A::Transpose{T, &lt;:AbstractVector} where T, B::Transpose{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:922
-## [146] /(A::AbstractMatrix, B::Transpose{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:914
-## [147] /(u::Transpose{T, &lt;:AbstractVector} where T, A::LowerTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
-## [148] /(u::Transpose{T, &lt;:AbstractVector} where T, A::LowerTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
-## [149] /(u::Transpose{T, &lt;:AbstractVector} where T, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:757
-## [150] /(A::AbstractVecOrMat, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:397
-## [151] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UpperTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
-## [152] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UpperTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
-## [153] /(u::Transpose{T, &lt;:AbstractVector} where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2669
-## [154] /(A::AbstractMatrix, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1662
-## [155] /(A::AbstractVector, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1662
-## [156] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitLowerTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
-## [157] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitLowerTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
-## [158] /(u::Transpose{T, &lt;:AbstractVector} where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2670
-## [159] /(A::AbstractMatrix, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1655
-## [160] /(A::AbstractVector, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1655
-## [161] /(u::Transpose{T, &lt;:AbstractVector} where T, A::AbstractMatrix) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:325
-## [162] /(A::AbstractVecOrMat, B::AbstractVecOrMat) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/generic.jl:1140
-## [163] /(J1::UniformScaling, J2::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:266
-## [164] /(J::UniformScaling, A::AbstractMatrix) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:267
-## [165] /(J::UniformScaling, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:272
-## [166] /(a::R, z::S) where {R&lt;:Real, S&lt;:Complex} in Base at complex.jl:345
-## [167] /(x::Real, y::ForwardDiff.Dual{Ty}) where Ty in ForwardDiff at /Users/ir229/.julia/packages/ForwardDiff/QdStj/src/dual.jl:145
-## [168] /(a::Measures.Measure, b::Number) in Measures at /Users/ir229/.julia/packages/Measures/PKOxJ/src/operations.jl:45
-## [169] /(z::DualNumbers.Dual, w::DualNumbers.Dual) in DualNumbers at /Users/ir229/.julia/packages/DualNumbers/5knFX/src/dual.jl:250
-## [170] /(z::Number, w::DualNumbers.Dual) in DualNumbers at /Users/ir229/.julia/packages/DualNumbers/5knFX/src/dual.jl:251
-## [171] /(z::DualNumbers.Dual, x::Number) in DualNumbers at /Users/ir229/.julia/packages/DualNumbers/5knFX/src/dual.jl:252
-## [172] /(B::Union{Array{Complex{T}, 1}, Array{Complex{T}, 2}}, F::Factorization{T}) where T&lt;:Union{Float32, Float64} in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:96
-## [173] /(B::AbstractMatrix, F::Union{Adjoint{&lt;:Any, &lt;:Factorization}, Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:108
-## [174] /(x::Base.TwicePrecision, v::Number) in Base at twiceprecision.jl:326
-## [175] /(x::Base.TwicePrecision, y::Base.TwicePrecision) in Base at twiceprecision.jl:330
-## [176] /(z::ComplexF64, w::ComplexF64) in Base at complex.jl:388
-## [177] /(z::Complex{T}, w::Complex{T}) where T&lt;:Union{Float16, Float32} in Base at complex.jl:367
-## [178] /(a::Complex{T}, b::Complex{T}) where T&lt;:Real in Base at complex.jl:348
-## [179] /(x::ChainRulesCore.NotImplemented, ::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:48
-## [180] /(a, b::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:38
-## [181] /(x::ChainRulesCore.NotImplemented, ::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:44
-## [182] /(::Any, x::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:43
-## [183] /(x::ChainRulesCore.NotImplemented, ::Any) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:42
-## [184] /(x::BigInt, y::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}) in Base.GMP at gmp.jl:546
-## [185] /(x::BigInt, y::BigInt) in Base.GMP at gmp.jl:497
-## [186] /(x::T, y::T) where T&lt;:Integer in Base at int.jl:95
-## [187] /(m1::Measures.AbsoluteLength, m2::Measures.Length{:pct}) in Plots.PlotMeasures at /Users/ir229/.julia/packages/Plots/Hxe7H/src/plotmeasures.jl:18
-## [188] /(a::T, b::T) where T&lt;:Measures.Measure in Measures at /Users/ir229/.julia/packages/Measures/PKOxJ/src/operations.jl:46
-## [189] /(x::BigFloat, c::Union{UInt16, UInt32, UInt64, UInt8}) in Base.MPFR at mpfr.jl:436
-## [190] /(x::BigFloat, c::Union{Int16, Int32, Int64, Int8}) in Base.MPFR at mpfr.jl:448
-## [191] /(x::BigFloat, c::Union{Float16, Float32, Float64}) in Base.MPFR at mpfr.jl:460
-## [192] /(x::BigFloat, y::BigFloat) in Base.MPFR at mpfr.jl:429
-## [193] /(x::BigFloat, c::BigInt) in Base.MPFR at mpfr.jl:472
-## [194] /(x::T, y::T) where T&lt;:Number in Base at promotion.jl:466
-## [195] /(x::Number, y::Number) in Base at promotion.jl:391
-## [196] /(::Missing, ::Number) in Base at missing.jl:123
-## [197] /(::Missing, ::Missing) in Base at missing.jl:122
+## [15] /(A::Symmetric, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/symmetric.jl:608
+## [16] /(::ChainRulesCore.AbstractThunk, x::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:49
+## [17] /(a::ChainRulesCore.AbstractThunk, b::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:39
+## [18] /(a::ChainRulesCore.AbstractThunk, b) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:37
+## [19] /(A::UnitUpperTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:873
+## [20] /(A::UnitUpperTriangular, B::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1605
+## [21] /(A::UnitUpperTriangular, B::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1617
+## [22] /(A::UnitUpperTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:551
+## [23] /(A::Hermitian, x::Real) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/symmetric.jl:609
+## [24] /(A::LowerTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:871
+## [25] /(A::LowerTriangular, B::LowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1575
+## [26] /(A::LowerTriangular, B::UnitLowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1587
+## [27] /(A::LowerTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:550
+## [28] /(r::StepRangeLen{&lt;:Real, &lt;:Base.TwicePrecision}, x::Real) in Base at twiceprecision.jl:555
+## [29] /(A::UpperTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:871
+## [30] /(A::UpperTriangular, B::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1599
+## [31] /(A::UpperTriangular, B::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1611
+## [32] /(A::UpperTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:550
+## [33] /(x::Number, B::BitArray) in Base at bitarray.jl:1205
+## [34] /(::Number, ::Missing) in Base at missing.jl:124
+## [35] /(x::Number, v::AbstractVector) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/generic.jl:1146
+## [36] /(x::RObject, y::RObject) in RCall at /Users/ir229/.julia/packages/RCall/Wyd74/src/operators.jl:6
+## [37] /(H::UpperHessenberg, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:118
+## [38] /(H::UpperHessenberg, x::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:118
+## [39] /(A::AbstractMatrix, J::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:269
+## [40] /(v::AbstractVector, J::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:270
+## [41] /(H::UpperHessenberg, x::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:118
+## [42] /(H::UpperHessenberg, U::UpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:136
+## [43] /(H::UpperHessenberg, U::UnitUpperTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:142
+## [44] /(H::UpperHessenberg{var"#s884", S} where {var"#s884"&lt;:Number, S&lt;:AbstractMatrix{var"#s884"}}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:174
+## [45] /(H::UpperHessenberg, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/hessenberg.jl:173
+## [46] /(A::SymTridiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/tridiag.jl:212
+## [47] /(S::SymTridiagonal, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:500
+## [48] /(A::UnitLowerTriangular, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:873
+## [49] /(A::UnitLowerTriangular, B::LowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1581
+## [50] /(A::UnitLowerTriangular, B::UnitLowerTriangular) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1593
+## [51] /(A::UnitLowerTriangular, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:551
+## [52] /(x::AbstractIrrational, y::AbstractIrrational) in Base at irrationals.jl:158
+## [53] /(A::Union{BitMatrix, BitVector}, B::Union{BitMatrix, BitVector}) in Base at bitarray.jl:1201
+## [54] /(B::BitArray, x::Number) in Base at bitarray.jl:1204
+## [55] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2667
+## [56] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2666
+## [57] /(A::Adjoint{T, &lt;:AbstractVector} where T, B::Transpose{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:921
+## [58] /(B::Adjoint{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization{&lt;:Real}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:136
+## [59] /(B::Adjoint{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:138
+## [60] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::Transpose{&lt;:Any, &lt;:AbstractMatrix}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:326
+## [61] /(adjA::Adjoint{&lt;:Any, &lt;:AbstractMatrix}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:445
+## [62] /(adjA::Adjoint{&lt;:Any, &lt;:AbstractVector}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:444
+## [63] /(adjB::Adjoint{T, &lt;:AbstractVector} where T, adjF::Adjoint{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:113
+## [64] /(A::Adjoint{T, &lt;:AbstractVector} where T, B::Adjoint{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:923
+## [65] /(u::Adjoint{T, &lt;:AbstractVector} where T, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:756
+## [66] /(A::Adjoint{&lt;:Number, &lt;:AbstractVector}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:917
+## [67] /(A::Adjoint{T, &lt;:AbstractVector} where T, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:919
+## [68] /(u::Adjoint{T, &lt;:AbstractVector} where T, A::AbstractMatrix) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:324
+## [69] /(z::Complex, x::Real) in Base at complex.jl:346
+## [70] /(x::ChainRulesCore.AbstractZero, ::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:47
+## [71] /(a::ChainRulesCore.AbstractZero, ::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:42
+## [72] /(z::ChainRulesCore.AbstractZero, ::Any) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/abstract_zero.jl:29
+## [73] /(r::AbstractRange{&lt;:P}, x::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/ranges.jl:68
+## [74] /(D::Diagonal, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:204
+## [75] /(A::Diagonal, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:444
+## [76] /(D::Diagonal{var"#s884", V} where {var"#s884"&lt;:Number, V&lt;:AbstractVector{var"#s884"}}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:908
+## [77] /(x::Rational, y::Union{Integer, Complex{&lt;:Union{Integer, Rational}}, Rational}) in Base at rational.jl:346
+## [78] /(A::SparseArrays.AbstractSparseMatrixCSC, D::Diagonal) in SparseArrays at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/SparseArrays/src/linalg.jl:152
+## [79] /(x::P, y::P) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/periods.jl:80
+## [80] /(x::P, y::Real) where P&lt;:Dates.Period in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/periods.jl:81
+## [81] /(x::Dates.Period, y::Dates.Period) in Dates at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/Dates/src/periods.jl:99
+## [82] /(A::Bidiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:386
+## [83] /(B::Bidiagonal{var"#s884", V} where {var"#s884"&lt;:Number, V&lt;:AbstractVector{var"#s884"}}, U::Union{UnitUpperTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}, UpperTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}} where var"#s883"&lt;:Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:897
+## [84] /(B::Bidiagonal{var"#s884", V} where {var"#s884"&lt;:Number, V&lt;:AbstractVector{var"#s884"}}, L::Union{LowerTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}, UnitLowerTriangular{var"#s883", S} where S&lt;:AbstractMatrix{var"#s883"}} where var"#s883"&lt;:Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:902
+## [85] /(A::Tridiagonal, B::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/tridiag.jl:743
+## [86] /(A::AbstractArray, B::Number) in Base at arraymath.jl:24
+## [87] /(T::Tridiagonal, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:507
+## [88] /(A::Transpose{&lt;:Number, &lt;:AbstractVector}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:918
+## [89] /(A::AbstractMatrix{&lt;:Number}, B::Bidiagonal{var"#s883", V} where {var"#s883"&lt;:Number, V&lt;:AbstractVector{var"#s883"}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:871
+## [90] /(A::Transpose{T, &lt;:AbstractVector} where T, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:920
+## [91] /(A::AbstractMatrix, B::Bidiagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:876
+## [92] /(trA::Transpose{&lt;:Any, &lt;:AbstractVector}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:446
+## [93] /(B::Transpose{T, &lt;:AbstractVector} where T, adjF::Adjoint{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:114
+## [94] /(trA::Transpose{&lt;:Any, &lt;:AbstractMatrix}, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:450
+## [95] /(A::AbstractMatrix, F::Adjoint{&lt;:Any, &lt;:LU}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/lu.jl:439
+## [96] /(A::Transpose{T, &lt;:AbstractVector} where T, B::Adjoint{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:924
+## [97] /(A::AbstractMatrix, B::Adjoint{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:915
+## [98] /(u::Transpose{T, &lt;:AbstractVector} where T, A::Adjoint{&lt;:Any, &lt;:AbstractMatrix}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:327
+## [99] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitUpperTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
+## [100] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitUpperTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
+## [101] /(B::Transpose{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization{&lt;:Real}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:137
+## [102] /(B::AbstractMatrix, F::Transpose{&lt;:Any, &lt;:Factorization{&lt;:Real}}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:134
+## [103] /(B::Transpose{T, &lt;:AbstractVector} where T, F::Transpose{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:139
+## [104] /(B::AbstractMatrix, F::Transpose{&lt;:Any, &lt;:Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:135
+## [105] /(A::Transpose{T, &lt;:AbstractVector} where T, B::Transpose{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:922
+## [106] /(A::AbstractMatrix, B::Transpose{&lt;:Any, &lt;:Bidiagonal}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/bidiag.jl:914
+## [107] /(u::Transpose{T, &lt;:AbstractVector} where T, A::LowerTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
+## [108] /(u::Transpose{T, &lt;:AbstractVector} where T, A::LowerTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
+## [109] /(u::Transpose{T, &lt;:AbstractVector} where T, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:757
+## [110] /(A::AbstractVecOrMat, D::Diagonal) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/diagonal.jl:397
+## [111] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UpperTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
+## [112] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UpperTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
+## [113] /(u::Transpose{T, &lt;:AbstractVector} where T, A::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2669
+## [114] /(A::AbstractMatrix, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1662
+## [115] /(A::AbstractVector, B::Union{LowerTriangular, UpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1662
+## [116] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitLowerTriangular{&lt;:Any, &lt;:Transpose}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2677
+## [117] /(u::Transpose{T, &lt;:AbstractVector} where T, A::UnitLowerTriangular{&lt;:Any, &lt;:Adjoint}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2676
+## [118] /(u::Transpose{T, &lt;:AbstractVector} where T, A::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:2670
+## [119] /(A::AbstractMatrix, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1655
+## [120] /(A::AbstractVector, B::Union{UnitLowerTriangular, UnitUpperTriangular}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/triangular.jl:1655
+## [121] /(u::Transpose{T, &lt;:AbstractVector} where T, A::AbstractMatrix) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:325
+## [122] /(A::AbstractVecOrMat, B::AbstractVecOrMat) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/generic.jl:1140
+## [123] /(J1::UniformScaling, J2::UniformScaling) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:266
+## [124] /(J::UniformScaling, A::AbstractMatrix) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:267
+## [125] /(J::UniformScaling, x::Number) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/uniformscaling.jl:272
+## [126] /(a::R, z::S) where {R&lt;:Real, S&lt;:Complex} in Base at complex.jl:345
+## [127] /(z::DualNumbers.Dual, w::DualNumbers.Dual) in DualNumbers at /Users/ir229/.julia/packages/DualNumbers/5knFX/src/dual.jl:250
+## [128] /(z::Number, w::DualNumbers.Dual) in DualNumbers at /Users/ir229/.julia/packages/DualNumbers/5knFX/src/dual.jl:251
+## [129] /(z::DualNumbers.Dual, x::Number) in DualNumbers at /Users/ir229/.julia/packages/DualNumbers/5knFX/src/dual.jl:252
+## [130] /(B::Union{Array{Complex{T}, 1}, Array{Complex{T}, 2}}, F::Factorization{T}) where T&lt;:Union{Float32, Float64} in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:96
+## [131] /(B::AbstractMatrix, F::Union{Adjoint{&lt;:Any, &lt;:Factorization}, Factorization}) in LinearAlgebra at /Applications/Julia-1.8.app/Contents/Resources/julia/share/julia/stdlib/v1.8/LinearAlgebra/src/factorization.jl:108
+## [132] /(x::Base.TwicePrecision, v::Number) in Base at twiceprecision.jl:326
+## [133] /(x::Base.TwicePrecision, y::Base.TwicePrecision) in Base at twiceprecision.jl:330
+## [134] /(z::ComplexF64, w::ComplexF64) in Base at complex.jl:388
+## [135] /(z::Complex{T}, w::Complex{T}) where T&lt;:Union{Float16, Float32} in Base at complex.jl:367
+## [136] /(a::Complex{T}, b::Complex{T}) where T&lt;:Real in Base at complex.jl:348
+## [137] /(x::ChainRulesCore.NotImplemented, ::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:48
+## [138] /(a, b::ChainRulesCore.AbstractThunk) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/thunks.jl:38
+## [139] /(x::ChainRulesCore.NotImplemented, ::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:44
+## [140] /(::Any, x::ChainRulesCore.NotImplemented) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:43
+## [141] /(x::ChainRulesCore.NotImplemented, ::Any) in ChainRulesCore at /Users/ir229/.julia/packages/ChainRulesCore/C73ay/src/tangent_types/notimplemented.jl:42
+## [142] /(x::BigInt, y::Union{Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}) in Base.GMP at gmp.jl:546
+## [143] /(x::BigInt, y::BigInt) in Base.GMP at gmp.jl:497
+## [144] /(x::T, y::T) where T&lt;:Integer in Base at int.jl:95
+## [145] /(x::BigFloat, c::Union{UInt16, UInt32, UInt64, UInt8}) in Base.MPFR at mpfr.jl:436
+## [146] /(x::BigFloat, c::Union{Int16, Int32, Int64, Int8}) in Base.MPFR at mpfr.jl:448
+## [147] /(x::BigFloat, c::Union{Float16, Float32, Float64}) in Base.MPFR at mpfr.jl:460
+## [148] /(x::BigFloat, y::BigFloat) in Base.MPFR at mpfr.jl:429
+## [149] /(x::BigFloat, c::BigInt) in Base.MPFR at mpfr.jl:472
+## [150] /(x::T, y::T) where T&lt;:Number in Base at promotion.jl:466
+## [151] /(x::Number, y::Number) in Base at promotion.jl:391
+## [152] /(::Missing, ::Number) in Base at missing.jl:123
+## [153] /(::Missing, ::Missing) in Base at missing.jl:122
 ```
 
 

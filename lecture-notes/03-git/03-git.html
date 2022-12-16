@@ -1,23 +1,39 @@
----
-title: "Lecture 3"
-subtitle: "Git and GitHub"
-author: Ivan Rudik
-date: AEM 7130
-output:
-  xaringan::moon_reader:
-    css: ['default', 'metropolis', 'metropolis-fonts', 'my-css.css']
-    # self_contained: true
-    nature:
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-      ratio: '16:9'
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 3</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Ivan Rudik" />
+    <script src="03-git_files/header-attrs/header-attrs.js"></script>
+    <link href="03-git_files/remark-css/default.css" rel="stylesheet" />
+    <link href="03-git_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="03-git_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="my-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Lecture 3
+]
+.subtitle[
+## Git and GitHub
+]
+.author[
+### Ivan Rudik
+]
+.date[
+### AEM 7130
+]
 
 ---
+
 name: toc
 exclude: true
 
-```{r setup}
+
+```r
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(
   xaringanExtra, JuliaCall
@@ -40,6 +56,18 @@ knit_hooks$set(
       )
 })
 julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+```
+
+```
+## Julia version 1.8.0 at location /Applications/Julia-1.8.app/Contents/Resources/julia/bin will be used.
+```
+
+```
+## Loading setup script for JuliaCall...
+```
+
+```
+## Finish loading setup script for JuliaCall.
 ```
 
 ---
@@ -70,9 +98,9 @@ If you're interested in more data science-y (similar to Ariel's class) and less 
 
 The classic .hi[date your file name method] is not good
 
-<div align="center">
-  <img src="figures/bad_version_control.png" height=300>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/bad_version_control.png" height=300&gt;
+&lt;/div&gt;
 
 --
 
@@ -86,9 +114,9 @@ How do you undo only **some** changes from one update to the next?
 
 The classic .hi[date your file name method] is not good
 
-<div align="center">
-  <img src="figures/bad_version_control.png" height=300>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/bad_version_control.png" height=300&gt;
+&lt;/div&gt;
 
 If you've ever had a disaster managing code changes (you will), Git can help
 
@@ -98,7 +126,7 @@ If you've ever had a disaster managing code changes (you will), Git can help
 
 ## What is git?
 
->> Git is a distributed version control system for tracking changes in source code during software development. It is designed for coordinating work among programmers, but it can be used to track changes in any set of files. Its goals include speed, data integrity, and support for distributed, non-linear workflows.
+&gt;&gt; Git is a distributed version control system for tracking changes in source code during software development. It is designed for coordinating work among programmers, but it can be used to track changes in any set of files. Its goals include speed, data integrity, and support for distributed, non-linear workflows.
 
 ---
 
@@ -130,9 +158,9 @@ Git combines a bunch of very useful features:
 
 # Git histories in GitHub Desktop
 
-<div style="float: right">
-  <img src="figures/git_history.png" height=500>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/git_history.png" height=500&gt;
+&lt;/div&gt;
 
 Some apps can give you a pretty visual of the history of changes to your code (shell can too, but not as nice)
 
@@ -148,7 +176,7 @@ Some apps can give you a pretty visual of the history of changes to your code (s
 
 # GitHub
 
-## Git $\neq$ GitHub
+## Git `\(\neq\)` GitHub
 
 --
 
@@ -237,9 +265,9 @@ This is the directory for a project
 - .hi[Local:] a directory with a `.git` subdirectory that stores the history of changes to the repository
 - .hi[Remote:] a website, e.g. see the GitHub repo for the [Optim](https://github.com/JuliaNLSolvers/Optim.jl) package in Julia
 
-<div align="center">
-  <img src="figures/repo_example.png" height=450>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/repo_example.png" height=450&gt;
+&lt;/div&gt;
 
 ---
 
@@ -250,9 +278,9 @@ This is the directory for a project
 --
 
 This is pretty easy from the GitHub website: just click on that green `new` button from the launch page
-<div align="center">
-  <img src="figures/create_repo.png" height=350>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/create_repo.png" height=350&gt;
+&lt;/div&gt;
 
 ---
 
@@ -263,9 +291,9 @@ Next steps:
 2. Choose a description
 3. Choose whether the repo is public or private
 4. Choose whether you want to add a `README.md` (yes), or a `.gitignore` or a `LICENSE.md` file (more next slide) 
-<div align="center">
-  <img src="figures/create_repo_2.png" height=400>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/create_repo_2.png" height=400&gt;
+&lt;/div&gt;
 
 ---
 
@@ -281,9 +309,9 @@ Repos come with some common files in them
 
 # Git basics
 
-<div align="center">
-  <img src="figures/repo_example.png" height=600>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/repo_example.png" height=600&gt;
+&lt;/div&gt;
 
 ---
 
@@ -291,9 +319,9 @@ Repos come with some common files in them
 
 You can find the repo at [https://github.com/irudik/example-repo-7130](https://github.com/irudik/example-repo-7130)
 
-<div align="center">
-  <img src="figures/create_repo_3.png" height=350>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/create_repo_3.png" height=350&gt;
+&lt;/div&gt;
 
 
 ---
@@ -312,9 +340,9 @@ Key thing: this will .hi[link] your local repository to the remote, you'll be ab
 
 # Cloning
 
-<div style="float: right">
-  <img src="figures/cloning.png" height=400>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/cloning.png" height=400&gt;
+&lt;/div&gt;
 
 1. If you want to use the GitHub desktop app instead of command line, click on "Open in Desktop"
 2. You can use command line `git clone https://github.com/irudik/example-repo-7130.git`
@@ -324,18 +352,18 @@ Key thing: this will .hi[link] your local repository to the remote, you'll be ab
 # Cloning
 
 You're done! Now create and clone your own repository, initialized with a `README.md`, and follow along.
-<div align="center">
-  <img src="figures/terminal_cloning.png">
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/terminal_cloning.png"&gt;
+&lt;/div&gt;
 
 ---
 
 # Cloning
 
 You're done! Now create and clone your own repository, initialized with a `README.md`, and follow along.
-<div align="center">
-  <img src="figures/github_desk_cloning.png" height=450>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/github_desk_cloning.png" height=450&gt;
+&lt;/div&gt;
 
 ---
 
@@ -345,9 +373,9 @@ You're done! Now create and clone your own repository, initialized with a `READM
 .hi[Repository:] your saved local history of changes to the files in the repository  
 .hi[Remote:] The remote repository on GitHub that allows for sharing across collaborators
 
-<div align="center">
-  <img src="figures/git_flow.png">
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/git_flow.png"&gt;
+&lt;/div&gt;
 
 ---
 
@@ -464,13 +492,13 @@ Did the changes show up your repo's GitHub page?
 
 # Teaming up
 
-<div style="float: right">
-  <img src="figures/collab.png" height=450>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/collab.png" height=450&gt;
+&lt;/div&gt;
 
 Find a partner for this next piece:
 
-One of you invite the other to collaborate on the project (GitHub page $\rightarrow$ Settings $\rightarrow$ Manage access $\rightarrow$ invite a collaborator)
+One of you invite the other to collaborate on the project (GitHub page `\(\rightarrow\)` Settings `\(\rightarrow\)` Manage access `\(\rightarrow\)` invite a collaborator)
 
 
 
@@ -500,9 +528,9 @@ Now do the following:
 # Can't push changes when you aren't updated
 
 ### Shell
-<div align="center">
-  <img src="figures/push_error.png" height=200>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/push_error.png" height=200&gt;
+&lt;/div&gt;
 
 It turns out that the second person can't push their local changes to the remote
 
@@ -516,9 +544,9 @@ But the remote is already one commit ahead because of the first person, so the s
 
 You need to pull the remote changes first, but then you get the following message:
 
-<div align="center">
-  <img src="figures/merge_conflict.png" height=300>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/merge_conflict.png" height=300&gt;
+&lt;/div&gt;
 
 And we got a .hi[merge conflict] in `README.md`
 
@@ -528,9 +556,9 @@ And we got a .hi[merge conflict] in `README.md`
 
 You need to pull the remote changes first, but then you get the following message:
 
-<div align="center">
-  <img src="figures/merge_conflict.png" height=300>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/merge_conflict.png" height=300&gt;
+&lt;/div&gt;
 
 This means there were differences between the remote and your local that conflicted
 
@@ -551,12 +579,13 @@ When you try to merge these histories by pushing to the remote, Git will throw a
 # Merge conflicts
 
 When you get a merge conflict, the conflicted part of the code in your file will look like:
-```{bash, eval = FALSE}   
-<<<<<<< HEAD
-# nascar_and_unleaded <-- my local version
-=======
-# nascar_and_leaded <-- the remote version
->>>>>>> 03c774b0e9baff0230855822a11e6ed24a0aa6b2
+
+```bash
+$ &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+$ # nascar_and_unleaded &lt;-- my local version
+$ =======
+$ # nascar_and_leaded &lt;-- the remote version
+$ &gt;&gt;&gt;&gt;&gt;&gt;&gt; 03c774b0e9baff0230855822a11e6ed24a0aa6b2
 
 ```
 
@@ -564,22 +593,23 @@ When you get a merge conflict, the conflicted part of the code in your file will
 
 # Merge conflicts
 
-```{bash, eval = FALSE}   
-<<<<<<< HEAD
-# nascar_and_unleaded <-- my local version
-=======
-# nascar_and_leaded <-- the remote version
->>>>>>> 03c774b0e9baff0230855822a11e6ed24a0aa6b2
+
+```bash
+$ &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+$ # nascar_and_unleaded &lt;-- my local version
+$ =======
+$ # nascar_and_leaded &lt;-- the remote version
+$ &gt;&gt;&gt;&gt;&gt;&gt;&gt; 03c774b0e9baff0230855822a11e6ed24a0aa6b2
 
 ```
 
-`<<<<<<< HEAD` indicates the start of the conflicted code  
+`&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD` indicates the start of the conflicted code  
 --
 
 `=======` separates the two different conflicting histories  
 --
 
-`>>>>>>> lots of numbers and letters` indicates the end of the conflicted code and the hash (don't worry about it) for the specific commit
+`&gt;&gt;&gt;&gt;&gt;&gt;&gt; lots of numbers and letters` indicates the end of the conflicted code and the hash (don't worry about it) for the specific commit
 
 
 
@@ -589,9 +619,9 @@ When you get a merge conflict, the conflicted part of the code in your file will
 
 Merge conflicts can be fixed by directly editing the file, then doing an `add` of the conflicted file, a `commit`, and then a `push` to the remote
 
-<div align="center">
-  <img src="figures/merge_conflict_2.png" height=200>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/merge_conflict_2.png" height=200&gt;
+&lt;/div&gt;
 
 --
 
@@ -601,12 +631,13 @@ Fixed!
 
 # Git help pages are excellent, so is StackExchange
 
-```{bash,eval = FALSE}
-git help add
+
+```bash
+$ git help add
 ```
-<div align="center">
-  <img src="figures/git_help.png" height=525>
-</div>
+&lt;div align="center"&gt;
+  &lt;img src="figures/git_help.png" height=525&gt;
+&lt;/div&gt;
 
 ---
 
@@ -622,9 +653,9 @@ Let's look at the issues for the `Optim` package in Julia
 
 # Issues
 
-<div style="float: right">
-  <img src="figures/issues_1.png" height=450>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/issues_1.png" height=450&gt;
+&lt;/div&gt;
 
 The issues tab reports a list of 56 open issues (286 closed, meaning the task or problem has been solved)
 
@@ -636,9 +667,9 @@ Lets check out the issue about the `Double64` type
 
 # Issues
 
-<div style="float: right">
-  <img src="figures/issues_2.png" height=450>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/issues_2.png" height=450&gt;
+&lt;/div&gt;
 
 The issue is because one person has found an error with the package where it doesn't seem to work correctly with a certain type of variable `Double64`
 
@@ -648,9 +679,9 @@ Someone else has responded with some feedback
 
 # Issues
 
-<div style="float: right">
-  <img src="figures/issues_3.png" height=450>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/issues_3.png" height=450&gt;
+&lt;/div&gt;
 
 From the issues tab, click the green **new issue** button which takes you here
 
@@ -664,9 +695,9 @@ You can:
 
 # Issues
 
-<div style="float: right">
-  <img src="figures/issues_4.png" height=550>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/issues_4.png" height=550&gt;
+&lt;/div&gt;
 
 The issue keeps track of the history of everything that's happened to it
 
@@ -674,9 +705,9 @@ The issue keeps track of the history of everything that's happened to it
 
 # Issues
 
-<div style="float: right">
-  <img src="figures/issues_5.png" height=550>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/issues_5.png" height=550&gt;
+&lt;/div&gt;
 
 You can reference people with `@` which brings up a dropdown menu of all collaborators on the project
 
@@ -684,9 +715,9 @@ You can reference people with `@` which brings up a dropdown menu of all collabo
 
 # Issues
 
-<div style="float: right">
-  <img src="figures/issues_6.png" height=550>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/issues_6.png" height=550&gt;
+&lt;/div&gt;
 
 You can also reference *other issues* if they're related by using `#` which brings up a dropdown of all issues for your repository
 
@@ -696,17 +727,17 @@ You can also reference *other issues* if they're related by using `#` which brin
 
 Issues can also be referenced in your commits to your project by adding `#issue_number_here` to the commit message
 
-<div align = "center">
-  <img src="figures/issues_7.png" height=350>
-</div>
+&lt;div align = "center"&gt;
+  &lt;img src="figures/issues_7.png" height=350&gt;
+&lt;/div&gt;
 
 ---
 
 # Issues
 
-<div style="float: right">
-  <img src="figures/issues_8.png" height=550>
-</div>
+&lt;div style="float: right"&gt;
+  &lt;img src="figures/issues_8.png" height=550&gt;
+&lt;/div&gt;
 
 Then those commits show up in your issue so you have a history of what code changes have been made.
 
@@ -717,6 +748,143 @@ Then those commits show up in your issue so you have a history of what code chan
 
 If you click on the commit, it takes you to the `git diff` which shows you any changes to files made in that commit
 
-<div align = "center">
-  <img src="figures/issues_9.png">
-</div>
+&lt;div align = "center"&gt;
+  &lt;img src="figures/issues_9.png"&gt;
+&lt;/div&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

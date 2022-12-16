@@ -29,6 +29,34 @@ class: center, middle, inverse, title-slide
 
 ---
 
+exclude: true
+
+```r
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall
+)
+options(htmltools.dir.version = FALSE)
+library(knitr)
+opts_chunk$set(
+  prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+  fig.align = "center", fig.width=10, fig.height=6, 
+  out.width="748px", out.length="520.75px",
+  dpi = 300, #fig.path='Figs/',
+  cache = F#, echo=F, warning=F, message=F
+  )
+## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+knit_hooks$set(
+  prompt = function(before, options, envir) {
+    options(
+      prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+      continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+      )
+})
+julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+```
+
+---
 
 # Software and stuff
 
@@ -220,27 +248,27 @@ Continually bisect the interval!
 
 
 ```julia
-function bisection(f, lower_bound, upper_bound)
-    tolerance = 1e-3                                # tolerance for solution
-    guess = 0.5*(upper_bound + lower_bound)         # initial guess, bisect the interval
-    difference = (upper_bound - lower_bound)/2      # initialize bound difference
-
-    while difference &gt; tolerance              # loop until convergence
-        println("Intermediate guess of $guess.")
-        difference = difference/2
-        if sign(f(lower_bound)) == sign(f(guess))   # if the guess has the same sign as the lower bound
-            lower_bound = guess                     # solution is in the upper half of the interval
-            guess = guess + difference
-        else                                        # else the solution is in the lower half of the interval
-            upper_bound = guess
-            guess = guess - difference
-        end
-        
-        
-        
-    end
-    println("The root of f(x) is at $guess.")
-end;
+ function bisection(f, lower_bound, upper_bound)
+     tolerance = 1e-3                                # tolerance for solution
+     guess = 0.5*(upper_bound + lower_bound)         # initial guess, bisect the interval
+     difference = (upper_bound - lower_bound)/2      # initialize bound difference
+ 
+     while difference &gt; tolerance              # loop until convergence
+         println("Intermediate guess of $guess.")
+         difference = difference/2
+         if sign(f(lower_bound)) == sign(f(guess))   # if the guess has the same sign as the lower bound
+             lower_bound = guess                     # solution is in the upper half of the interval
+             guess = guess + difference
+         else                                        # else the solution is in the lower half of the interval
+             upper_bound = guess
+             guess = guess - difference
+         end
+         
+         
+         
+     end
+     println("The root of f(x) is at $guess.")
+ end;
 ```
 
 ---
@@ -249,7 +277,7 @@ end;
 
 
 ```julia
-f(x) = x^3
+ f(x) = x^3
 ```
 
 ```
@@ -257,7 +285,7 @@ f(x) = x^3
 ```
 
 ```julia
-bisection(f, -4, 1)
+ bisection(f, -4, 1)
 ```
 
 ```
@@ -282,15 +310,15 @@ bisection(f, -4, 1)
 
 
 ```julia
-g(x) = 3x^3 + 2x -4
+ g(x) = 3x^3 + 2x -4
 ```
 
 ```
-## g (generic function with 2 methods)
+## g (generic function with 1 method)
 ```
 
 ```julia
-bisection(g, -6, 4)
+ bisection(g, -6, 4)
 ```
 
 ```
@@ -314,15 +342,15 @@ bisection(g, -6, 4)
 
 
 ```julia
-h(x) = cos(x)
+ h(x) = cos(x)
 ```
 
 ```
-## h (generic function with 1 method)
+## h (generic function with 2 methods)
 ```
 
 ```julia
-bisection(h, -pi, pi)
+ bisection(h, -pi, pi)
 ```
 
 ```
@@ -393,27 +421,27 @@ Function iteration is pretty simple to implement
 
 
 ```julia
-function function_iteration(f, guess)
-    tolerance = 1e-3                                # tolerance for solution
-    x_old = guess                                   # initialize old x value
-    x = 1e-10                                       # initialize current x
-    difference = 1e10                               # initialize bound difference
-
-    @time while abs(difference) &gt; tolerance         # loop until convergence
-        println("Intermediate guess of $x.")
-        x = f(x_old)                                # new x = f(old x)
-        difference = x - x_old
-        x_old = x  
-    end
-    println("The fixed point of f(x) is at $x.")
-end;
+ function function_iteration(f, guess)
+     tolerance = 1e-3                                # tolerance for solution
+     x_old = guess                                   # initialize old x value
+     x = 1e-10                                       # initialize current x
+     difference = 1e10                               # initialize bound difference
+ 
+     @time while abs(difference) &gt; tolerance         # loop until convergence
+         println("Intermediate guess of $x.")
+         x = f(x_old)                                # new x = f(old x)
+         difference = x - x_old
+         x_old = x  
+     end
+     println("The fixed point of f(x) is at $x.")
+ end;
 ```
 
 ---
 
 
 ```julia
-f(x) = x^(-0.5)
+ f(x) = x^(-0.5)
 ```
 
 ```
@@ -421,7 +449,7 @@ f(x) = x^(-0.5)
 ```
 
 ```julia
-function_iteration(f, 2.)
+ function_iteration(f, 2.)
 ```
 
 ```
@@ -437,7 +465,7 @@ function_iteration(f, 2.)
 ## Intermediate guess of 0.9986471128909702.
 ## Intermediate guess of 1.0006771306930664.
 ## Intermediate guess of 0.9996616064962437.
-##   0.001880 seconds (899 allocations: 248.079 KiB, 72.85% compilation time)
+##   0.002153 seconds (855 allocations: 244.377 KiB, 77.66% compilation time)
 ## The fixed point of f(x) is at 1.0001692397053021.
 ```
 
@@ -541,19 +569,19 @@ f(\mathbf{x}) \approx f(\mathbf{x^{(k)}}) + f'(\mathbf{x^{(k)}})(\mathbf{x^{(k+1
 
 
 ```julia
-function newtons_method(f, f_prime, guess)
-    diff = Inf     # Initialize problem
-    tol = 1e-5
-    x_old = guess
-    x = 1e10
-
-    while abs(diff) &gt; tol
-        x = f(x_old) - f(x_old)/f_prime(x_old) # Root of linear approximation
-        diff = x - x_old
-        x_old = x
-    end
-    println("The root of f(x) is at $x.")
-end;
+ function newtons_method(f, f_prime, guess)
+     diff = Inf     # Initialize problem
+     tol = 1e-5
+     x_old = guess
+     x = 1e10
+ 
+     while abs(diff) &gt; tol
+         x = f(x_old) - f(x_old)/f_prime(x_old) # Root of linear approximation
+         diff = x - x_old
+         x_old = x
+     end
+     println("The root of f(x) is at $x.")
+ end;
 ```
 
 ---
@@ -562,9 +590,9 @@ end;
 
 
 ```julia
-f(x) = x^3;
-f_prime(x) = 3x^2;
-newtons_method(f, f_prime, 1.)
+ f(x) = x^3;
+ f_prime(x) = 3x^2;
+ newtons_method(f, f_prime, 1.)
 ```
 
 ```
@@ -575,9 +603,9 @@ newtons_method(f, f_prime, 1.)
 
 
 ```julia
-f(x) = sin(x);
-f_prime(x) = cos(x);
-newtons_method(f, f_prime, pi/4)
+ f(x) = sin(x);
+ f_prime(x) = cos(x);
+ newtons_method(f, f_prime, pi/4)
 ```
 
 ```
@@ -1086,31 +1114,31 @@ The value of `\(\alpha_2\)` is called the golden ratio and is where the algorith
 
 
 ```julia
-function golden_search(f, lower_bound, upper_bound)
-    alpha_1 = (3 - sqrt(5))/2  # GS parameter 1
-    alpha_2 = (sqrt(5) - 1)/2  # GS parameter 2
-    tolerance = 1e-2           # tolerance for convergence
-    difference = 1e10
-    while difference &gt; tolerance
-        x_1 = lower_bound + alpha_1*(upper_bound - lower_bound)  # new x_1
-        x_2 = lower_bound + alpha_2*(upper_bound - lower_bound)  # new x_2
-        if f(x_1) &lt; f(x_2)     # reset bounds
-            upper_bound = x_2
-        else
-            lower_bound = x_1
-        end
-        difference = x_2 - x_1
-    end
-    println("Minimum is at x = $((lower_bound+upper_bound)/2).")
-end;
+ function golden_search(f, lower_bound, upper_bound)
+     alpha_1 = (3 - sqrt(5))/2  # GS parameter 1
+     alpha_2 = (sqrt(5) - 1)/2  # GS parameter 2
+     tolerance = 1e-2           # tolerance for convergence
+     difference = 1e10
+     while difference &gt; tolerance
+         x_1 = lower_bound + alpha_1*(upper_bound - lower_bound)  # new x_1
+         x_2 = lower_bound + alpha_2*(upper_bound - lower_bound)  # new x_2
+         if f(x_1) &lt; f(x_2)     # reset bounds
+             upper_bound = x_2
+         else
+             lower_bound = x_1
+         end
+         difference = x_2 - x_1
+     end
+     println("Minimum is at x = $((lower_bound+upper_bound)/2).")
+ end;
 ```
 
 --
 
 
 ```julia
-f(x) = 2x^2 + 9x;
-golden_search(f, -10, 10)
+ f(x) = 2x^2 + 9x;
+ golden_search(f, -10, 10)
 ```
 
 ```

@@ -47,15 +47,26 @@ julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/b
 
 Necessary things to do:
 
+- Install [VSCode](http://code.visualstudio.com) with these extensions: `Julia, Git Graph, Project Manager`
+
 - Windows users: Install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and a Unix distribution or use https://repl.it
 
-- Install [Julia](https://julialang.org/downloads/)
-
-- Install these Julia packages: `Expectations, Distributions, LinearAlgebra, BenchmarkTools`
+- Install [Julia](https://julialang.org/downloads/) with these Julia packages: `Expectations, Distributions, LinearAlgebra, BenchmarkTools`
+    - Or use homebrew/other package manager
 
 --
 
 These slides are based on Software Carpentry, notes by Grant Mcdermott, QuantEcon, Julia documentation, etc
+
+---
+
+class: inverse, center, middle
+name: vscode
+
+# Visual Studio Code
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
 
 ---
 
