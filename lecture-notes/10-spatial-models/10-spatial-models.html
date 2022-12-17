@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 11</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Ivan Rudik" />
+    <script src="10-spatial-models_files/header-attrs/header-attrs.js"></script>
+    <link href="10-spatial-models_files/remark-css/default.css" rel="stylesheet" />
+    <link href="10-spatial-models_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="10-spatial-models_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="my-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Lecture 11
+]
+.subtitle[
+## Spatial Models
+]
+.author[
+### Ivan Rudik
+]
+.date[
+### AEM 7130
+]
+
+---
+
+exclude: true
+
+```r
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall
+)
+options(htmltools.dir.version = FALSE)
+library(knitr)
+opts_chunk$set(
+  prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+  fig.align = "center", fig.width=10, fig.height=6, 
+  out.width="748px", out.length="520.75px",
+  dpi = 300, #fig.path='Figs/',
+  cache = F#, echo=F, warning=F, message=F
+  )
+## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+knit_hooks$set(
+  prompt = function(before, options, envir) {
+    options(
+      prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+      continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+      )
+})
+julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+```
+
+---
+
+# Roadmap
+
+1. The Armington model
+2. Model inversion
+3. Exact hat algebra
+
+---
+
+# Spatial models
+
+So far we have been focusing on .hi[dynamics]
+ 
+--
+
+Now we are going to look at the other dimension: .hi[space]
+
+--
+
+To start, we will work with static models
+
+--
+
+But we will introduce multiple regions across space, and frictions inhibiting mobility of goods and factors of production
+
+
+---
+
+class: inverse, center, middle
+name: armington
+
+# The Armington model
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+
+---
+
+# Armington and gravity
+
+Classic trade theory (e.g. Ricardo) highlights economic forces driving trade of goods
+  - Comparative advantage
+  
+--
+
+Empirical work has long used the .hi[gravity model:]
+`$$X_{ij} = \alpha \frac{Y_i Y_j}{D_{ij}}$$`
+
+
+---
+
+# Armington and gravity
+
+`$$X_{ij} = \alpha \frac{Y_i Y_j}{D_{ij}}$$`
+
+`\(X_{ij}\)` trade flow from i to j
+
+`\(Y_i\)` GDP of origin
+
+`\(Y_j\)` GDP of destination
+
+`\(D_{ij}\)` distance and other frictions affecting trade flows
+
+
+---
+
+# Armington and gravity
+
+`$$X_{ij} = \alpha \frac{Y_i Y_j}{D_{ij}}$$`
+
+The gravity model is widely used and empirically matches the data
+
+.hi[But:] no real theoretical foundation, can't do counterfactuals
+
+--
+
+The .hi[Armington] model provides a simple theoretical foundation for gravity with two key ingredients:
+
+1. Spatially differentiated products
+2. Love-of-variety preferences
+
+---
+
+# Armington
+
+The set up:
+
+`\(N\)` regions
+
+--
+
+Each region produces a differentiated product
+
+--
+
+Representative household in each region can purchase goods from all locations
+
+--
+
+Trade frictions (e.g. distance) result in different prices offered by different producers
+
+---
+
+# Armington: preferences
+
+The representative household in region `\(j\)` has CES preferences:
+
+`$$U_j = \left(\sum_{i \in N} a_{ij}^{1 \over \sigma} q_{ij}^{\sigma-1 \over \sigma}\right)^{\sigma \over \sigma-1}$$`
+
+`\(\sigma\)` is the elasticity of substitution with `\(\sigma &gt; 1\)`
+
+`\(a_{ij}\)` is an exogenous taste parameter
+
+`\(q_{ij}\)` is the quantity of goods imported from `\(i\)` to `\(j\)`
+
+---
+
+# Armington: demand
+
+The consumer maximizes utility subject to a budget:
+
+`$$\max_{\{q_{ij}\}_{i \in N}} \left(\sum_{i \in N} a_{ij}^{1 \over \sigma} q_{ij}^{\sigma-1 \over \sigma}\right)^{\sigma \over \sigma-1} \quad \text{subject to:} \quad \sum_{i \in N} q_{ij} p_{ij} \leq Y_j$$`
+
+--
+
+Standard result gives demand for goods from `\(i\)` by `\(j\)`:
+`$$q_{ij} = a_{ij} p_{ij}^{-\sigma} Y_j P_j^{\sigma-1} \quad \text{where} \quad P_j = \left(\sum_{k \in N} a_{kj} p_{kj}^{1-\sigma}\right)^{1 \over 1-\sigma}$$`
+
+`\(P_j\)` is the usual Dixit-Stiglitz price index
+
+---
+
+# Armington: demand
+
+`$$q_{ij} = a_{ij} p_{ij}^{-\sigma} Y_j P_j^{\sigma-1} \quad \text{where} \quad P_j = \left(\sum_{k \in N} a_{kj} p_{kj}^{1-\sigma}\right)^{1 \over 1-\sigma}$$`
+
+Multiply by prices to get trade flows in dollar terms:
+
+`$$X_{ij} = q_{ij} p_{ij} = a_{ij} p_{ij}^{1-\sigma} Y_j P_j^{\sigma-1}$$`
+
+Trade flows .hi-red[decrease] in bilateral prices, .hi-blue[increase] in the local price index, and .hi-blue[increase] in local size/GDP
+
+---
+
+# Armington: supply
+
+.hi[Armington assumption:] each region produces a distinct variety of a good
+
+--
+
+There are .hi[iceberg trade costs] `\(\tau_{ij} \geq 1\)`: for 1 unit of `\(q_{ij}\)` to arrive at `\(j\)` from `\(i\)` you need to ship `\(\tau_{ij}\)` units
+
+--
+
+Market structure:
+- Producers compete in perfect competition
+- Regions are endowed with `\(L_i\)` workers supplying 1 unit of labor
+- Each unit of labor can produce `\(A_i\)` units so total output is `\(A_i L_i\)`
+- Workers are paid a wage `\(w_i\)` so that `\(Y_i = w_i L_i\)`
+
+---
+
+# Armington: supply
+
+Given a labor endowment `\(L_i\)` and productivity `\(A_i\)` the marginal cost of production is `\(w_i \over A_i\)`
+
+--
+
+Perfect competition means the factory-door price is marginal cost: `\(w_i \over A_i\)`
+
+--
+
+The price in `\(j\)` to buy a unit of the good from `\(i\)` is then:
+`$$p_{ij} = \tau_{ij} {w_i \over A_i}$$`
+
+Plug back into demand to get:
+`$$X_{ij} = a_{ij} \tau_{ij}^{1-\sigma} \left(w_i \over A_i\right)^{1-\sigma} Y_j P_j^{\sigma-1}$$`
+
+---
+
+# Armington: market clearing
+
+`$$X_{ij} = a_{ij} \tau_{ij}^{1-\sigma} \left(w_i \over A_i\right)^{1-\sigma} Y_j P_j^{\sigma-1}$$`
+
+Define .hi[expenditure shares] as the expenditures on `\(i\)` by `\(j\)` relative to `\(j\)`s total expenditures:
+`\begin{align}
+  \lambda_{ij} &amp;= {X_{ij} \over \sum_{k \in N} X_{kj}}
+\end{align}`
+
+---
+
+# Armington: market clearing
+
+`\begin{align}
+  \lambda_{ij} &amp;= {X_{ij} \over \sum_{k \in N} X_{kj}} \\
+  &amp; = \frac{a_{ij} \tau_{ij}^{1-\sigma} \left(w_i \over A_i\right)^{1-\sigma} Y_j P_j^{\sigma-1}}{\sum_{k \in N} a_{kj} \tau_{kj}^{1-\sigma} \left(w_k \over A_k\right)^{1-\sigma} Y_j P_j^{\sigma-1}} \\
+  &amp; = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma} }
+\end{align}`
+
+
+---
+
+# Armington: market clearing
+
+`$$\lambda_{ij} = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}}$$`
+
+`\(j\)` spends more on `\(i\)` relative to other places if `\(i\)` has lower wages, higher productivity, or lower trade costs relative to other locations
+
+
+---
+
+# Armington: market clearing
+
+In perfect competition the expenditures on inputs in `\(j\)` need to match the spending by other locations `\(i\)` on `\(j\)`s goods:
+
+`$$w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i$$`
+
+Perfect competition `\(\rightarrow\)` labor costs = revenues
+
+
+---
+
+# Armington: equilibrium
+
+Our equilibrium is then defined by two sets of equations:
+
+`$$\lambda_{ij} = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}} \qquad w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i$$`
+
+where the endogenous variables are the `\(N^2\)` `\(\lambda_{ij}\)` terms and the `\(N\)` `\(w_j\)` terms
+
+---
+
+# Armington: equilibrium
+
+`$$\lambda_{ij} = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}} \qquad w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i$$`
+
+Given the exogenous parameters `\(a_{ij}, \tau_{ij}, A_i, L_i, \sigma\)`, how do we solve for the equilibrium?
+
+--
+
+We can use function iteration after substituting in for `\(\lambda{ij}\)` in market clearing:
+
+`$$w_j L_j = \sum_{i \in N} \frac{a_{ji} \left(\tau_{ji} w_j \over A_j\right)^{1-\sigma} }{\sum_{k \in N} a_{ki} \left(\tau_{ki} w_k \over A_k\right)^{1-\sigma}} w_i L_i$$`
+
+
+---
+
+# Armington: equilibrium
+
+`$$w_j L_j = \sum_{i \in N} \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}} w_i L_i$$`
+
+We have `\(N\)` market clearing conditions and `\(N\)` unknown `\(w_i\)` terms
+
+--
+
+Write up a function `solve_armington_eq(sigma, tau, A, L, a, tol, damp)` that solves for the equilibrium wages and expenditure shares
+
+
+
+---
+
+# Armington: equilibrium
+
+
+```julia
+ function solve_armington_eq(σ, τ, A, L, a, tol = 1e-5, damp = .1)
+     w, λ, N  = ones(size(A)), zeros(size(a)), length(A)
+     wage_error = 1e5
+     while wage_error &gt; tol
+         denominator, wL = zeros(size(A)), zeros(size(A))
+         for k in 1:N
+             denominator .+= a[k,:] .* (τ[k,:] * w[k] / A[k]).^(1 .- σ)
+         end
+         for i in 1:N
+             wL .+= a[:,i] .* (τ[:,i] .* w ./ A).^(1 .- σ) .* w[i] .* L[i] ./ denominator[i]
+         end
+         wnew = wL ./ L 
+         wage_error = maximum(abs.(wnew .- w)./w)
+         w = damp .* wnew .+ (1 - damp) .* w
+     end
+     for o in 1:N, d in 1:N
+         λ[o,d] = a[o,d] * (τ[o,d] * w[o] / A[o])^(1 - σ) / sum(a[:,d] .* (τ[:,d] .* w[:] ./ A[:]).^(1 .- σ))
+     end
+     return w, λ
+ end
+```
+
+```
+## solve_armington_eq (generic function with 3 methods)
+```
+
+---
+
+# Symmetric + cross-region trade costs of 5
+
+
+```julia
+ τ = [1. 5; 5. 1.]; 
+ a = [1. 1.; 1. 1.];
+ A = [1., 1.];
+ L = [1., 1.];
+ σ = 2.;
+ w, λ = solve_armington_eq(σ, τ, A, L, a);
+ display(w)
+```
+
+```
+## 2-element Vector{Float64}:
+##  1.0
+##  1.0
+```
+
+```julia
+ display(λ)
+```
+
+```
+## 2×2 Matrix{Float64}:
+##  0.833333  0.166667
+##  0.166667  0.833333
+```
+
+---
+
+# Productivity shock to region 1
+
+
+```julia
+ τ = [1. 5; 5. 1.]; 
+ a = [1. 1.; 1. 1.];
+ A = [10., 1.];
+ L = [1., 1.];
+ σ = 2.;
+ w, λ = solve_armington_eq(σ, τ, A, L, a);
+ display(w)
+```
+
+```
+## 2-element Vector{Float64}:
+##  1.6143181095745787
+##  0.38568189042542783
+```
+
+```julia
+ display(λ)
+```
+
+```
+## 2×2 Matrix{Float64}:
+##  0.922754  0.323331
+##  0.077246  0.676669
+```
+
+
+---
+
+# Increased labor supply in region 1
+
+
+```julia
+ τ = [1. 5; 5. 1.]; 
+ a = [1. 1.; 1. 1.];
+ A = [1., 1.];
+ L = [5., 1.];
+ σ = 2.;
+ w, λ = solve_armington_eq(σ, τ, A, L, a);
+ display(w)
+```
+
+```
+## 2-element Vector{Float64}:
+##  0.8780637781792023
+##  1.6096811091040044
+```
+
+```julia
+ display(λ)
+```
+
+```
+## 2×2 Matrix{Float64}:
+##  0.901634   0.26828
+##  0.0983663  0.73172
+```
+
+---
+
+# Return to autarky
+
+
+```julia
+ τ = [1. 1e9; 1e9 1.]; 
+ a = [1. 1.; 1. 1.];
+ A = [1., 1.];
+ L = [1., 1.];
+ σ = 2.;
+ w, λ = solve_armington_eq(σ, τ, A, L, a);
+ display(w)
+```
+
+```
+## 2-element Vector{Float64}:
+##  1.0
+##  1.0
+```
+
+```julia
+ display(λ)
+```
+
+```
+## 2×2 Matrix{Float64}:
+##  1.0     1.0e-9
+##  1.0e-9  1.0
+```
+
+---
+
+# Free trade
+
+
+```julia
+ τ = [1. 1.0001; 1.0001 1.]; 
+ a = [1. 1.; 1. 1.];
+ A = [1., 1.];
+ L = [1., 1.];
+ σ = 2.;
+ w, λ = solve_armington_eq(σ, τ, A, L, a);
+ display(w)
+```
+
+```
+## 2-element Vector{Float64}:
+##  1.0
+##  1.0
+```
+
+```julia
+ display(λ)
+```
+
+```
+## 2×2 Matrix{Float64}:
+##  0.500025  0.499975
+##  0.499975  0.500025
+```
+
+---
+
+# New trading partner
+
+
+```julia
+ τ = [1. 2. 3.; 3. 1. 2.; 1e9 5. 1.]; 
+ a = [1. 1. 1.; 1. 1. 1.; 1. 1. 1.];
+ A = [1., 1., 1.];
+ L = [1., 1., 1.];
+ σ = 2.;
+ w, λ = solve_armington_eq(σ, τ, A, L, a);
+ display(w)
+```
+
+```
+## 3-element Vector{Float64}:
+##  1.2539609132194725
+##  1.095427131707213
+##  0.6506119550733213
+```
+
+```julia
+ display(λ)
+```
+
+```
+## 3×3 Matrix{Float64}:
+##  0.723812    0.246282  0.117659
+##  0.276188    0.563849  0.20203
+##  1.39504e-9  0.189869  0.680311
+```
+
+
+---
+
+# Solving Armington
+
+We solved for the Armington equilibrium
+
+--
+
+If we have values for all the exogenous parameters, we can then perform counterfactuals where we explore the equilibrium effects of changes in trade costs, productivity, etc
+
+--
+
+This is a bit unsatisfying: we'd like to not have to take a stand on numerous region-specific and bilateral parameters
+
+---
+
+class: inverse, center, middle
+name: exacthat
+
+# Exact hat algebra
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+---
+
+# Exact hat algebra
+
+A workhorse method for solving for counterfactual is .hi[exact hat algebra]
+
+--
+
+There are two key pieces to it:
+
+1. Real world data (wages, trade flows) are essentially sufficient statistics for unobservable parameters (productivity, trade costs)
+2. Spatial models are built in a way where we can express a counterfactual equilibrium in terms of changes relative to the factual
+
+--
+
+Going forward, primes will indicate counterfactual quantities `\((w'_i)\)`, hats will indicate relative quantities `\((\hat{w}_i = {w'_i \over w_i})\)`
+
+---
+
+# Exact hat algebra
+
+In our working example, our factual equilibrium will be the real world
+
+--
+
+We observe the data for this equilibrium (wages, trade flows, etc)
+
+--
+
+We want to understand the equilibrium effects of some arbitrary changes in the distribution of productivity: `\(\{\hat{A}_1, \hat{A}_2, \dots \}\)`
+
+--
+
+Assume no other exogenous variables are changing: `\(\hat{\tau}_{ij} = 1, \hat{a}_{ij} = 1, \hat{\sigma} = 1, \hat{L} = 1\)`
+
+
+---
+
+# Exact hat algebra
+
+Recall our equilibrium conditions were:
+
+`$$\lambda_{ij} = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}} \qquad w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i$$`
+
+Let's start by manipulating the market clearing condition which holds in the factual and counterfactual equilibria:
+
+--
+
+`$$w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i \qquad w'_j L'_j = \sum_{i \in N} \lambda'_{ji} w'_i L_i'$$`
+
+---
+
+# Exact hat algebra
+
+First by definition: `\(\lambda_{ji} w_i L_i = X_{ji}\)` so that
+
+`$$w_j' L_j' = \sum_{i \in N} \lambda_{ji}' w_i' L_i' = \sum_{i \in N} X'_{ji}$$`
+
+--
+
+Next, put the left hand side into hat form by dividing both sides by `\(w_j L_j\)`:
+
+`$$\hat{w}_j \underbrace{\hat{L}_j}_{=1} = \sum_{i \in N} \frac{X'_{ji}}{w_j L_j}$$`
+
+
+---
+
+# Exact hat algebra
+
+`$$\hat{w}_j  = \sum_{i \in N} \frac{X'_{ji}}{w_j L_j}$$`
+
+Multiply and divide the right and side by `\(X_{ji}\)` to put it into hat form:
+
+`$$\hat{w}_j  = \sum_{i \in N} \frac{X_{ji}}{w_j L_j}\hat{X}_{ji}$$`
+
+---
+
+# Exact hat algebra
+
+Finally, we know that `\(X_{ji} = \lambda_{ji} w_i L_i\)` so that `\(\hat{X}_{ji} = \hat{\lambda}_{ji} \hat{w}_i \hat{L}_i\)` and 
+
+`$$\hat{w}_j = \sum_{i \in N} \frac{X_{ji}}{w_j L_j}\hat{\lambda}_{ji} \hat{w}_i$$`
+
+The change in wages depends on the change in endogenous wages and expenditure shares, and the observed factual bilateral expenditures, wages, and labor
+
+---
+
+# Exact hat algebra
+
+Now let's go to the gravity equation:
+
+`$$\lambda'_{ij} = \frac{a_{ij} \left(\tau_{ij} w'_i \over A'_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}$$`
+
+--
+
+Put this into hat form:
+
+`$$\lambda'_{ij} / \lambda_{ij} = \left[\frac{a_{ij} \left(\tau_{ij} w'_i \over A'_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}\right] \Bigg/ \left[\frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{l \in N} a_{lj} \left(\tau_{lj} w_l \over A_l\right)^{1-\sigma}}\right]$$`
+
+
+---
+
+# Exact hat algebra
+
+The numerator goes into hats easily, the denominator is trickier:
+
+`$$\hat{\lambda}_{ij} = \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{ \left[\frac{\sum_{k \in N} a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} w_l \over A_l\right)^{1-\sigma}}\right]}$$`
+
+
+Next, bring the bottom sum inside the top sum since it is a function of `\(j\)` and does not depend on k
+
+---
+
+# Exact hat algebra
+
+`$$\hat{\lambda}_{ij} = \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{\sum_{k \in N} \left[\frac{ a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} w_l \over A_l\right)^{1-\sigma}}\right]}$$`
+
+
+--
+
+Inside the square brackets, multiply and divide by `\(a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}\)`
+
+---
+
+# Exact hat algebra
+
+`$$\hat{\lambda}_{ij} = \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{\sum_{k \in N} \left[ \underbrace{\frac{ a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}{a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}}}_{\left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}} \underbrace{\frac{a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} w_l \over A_l\right)^{1-\sigma}}}_{\lambda_{kj}}\right]}$$`
+
+---
+
+# Exact hat algebra
+
+This finally gives us that:
+
+`$$\hat{\lambda}_{ij} =  \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{\sum_{k \in N}\lambda_{kj} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$`
+
+The change in expenditure shares depends on the change in exogenous productivity, endogenous wages, and the observed factual expenditure shares
+
+---
+
+# Exact hat algebra
+
+We now have our two equilibrium conditions in changes:
+
+`$$\hat{\lambda}_{ij} =  \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{\sum_{k \in N}\lambda_{kj} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}} \qquad \hat{w}_j = \sum_{i \in N} \frac{X_{ji}}{w_j L_j}\hat{\lambda}_{ji} \hat{w}_i$$`
+
+and can combine them into a single equilibrium condition in changes:
+
+`$$\hat{w}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$`
+
+---
+
+# Exact hat algebra
+
+`$$\hat{w}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$`
+
+Notice that it does not depend on any structural parameters except for `\(\sigma\)`
+
+---
+
+# Exact hat algebra
+
+`$$\hat{w}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$`
+
+`\(\lambda_{ij}, X_{ij}, w_i, L_i\)` are all observable data:
+
+--
+
+`\(\hat{A}_i\)` is a chosen counterfactual
+
+--
+
+`\(\hat{w}_i\)` are unknown but can be solved through function iteration
+
+--
+
+We also will want to solve for `\(\hat{P}_i\)` to understand how the price index is changing
+
+---
+
+# Exact hat algebra
+
+Recall: 
+
+`$$P_j = \left(\sum_{k \in N} a_{kj} p_{kj}^{1-\sigma}\right)^{1 \over 1-\sigma} = \left(\sum_{k \in N} a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}\right)^{1 \over 1-\sigma}$$`
+
+`$$\hat{P}_j^{1-\sigma} = \frac{\sum_{k \in N} a_{kj} \left(\tau_{kj} {w'_k \over A'_k}\right)^{1-\sigma} }{\sum_{l \in N} a_{lj} \left(\tau_{lj} {w_l \over A_l}\right)^{1-\sigma}}$$`
+
+Like before, bring the denominator inside the numerator sum
+
+---
+
+# Exact hat algebra
+
+`$$\hat{P}_j^{1-\sigma} = \sum_{k \in N}\frac{ a_{kj} \left(\tau_{kj} {w'_k \over A'_k}\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} {w_l \over A_l}\right)^{1-\sigma}}$$`
+
+multiply and divide by `\(a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}\)` to get:
+
+`$$\hat{P}_j^{1-\sigma} = \sum_{k \in N}\frac{ a_{kj} \left(\tau_{kj} {w'_k \over A'_k}\right)^{1-\sigma}}{a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}} \frac{a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} {w_l \over A_l}\right)^{1-\sigma}}$$`
+
+---
+
+# Exact hat algebra
+
+`$$\hat{P}_j^{1-\sigma} = \sum_{k \in N}  \left( {\hat{w}_k \over \hat{A}_k}\right)^{1-\sigma} \underbrace{\frac{a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} {w_l \over A_l}\right)^{1-\sigma}}}_{\lambda_{kj}}$$`
+
+`$$\hat{P}_j = \left(\sum_{k \in N}  \left( {\hat{w}_k \over \hat{A}_k}\right)^{1-\sigma} \lambda_{kj}\right)^{1 \over 1-\sigma}$$`
+
+---
+
+# Exact hat algebra
+
+`$$\hat{w}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$`
+
+We have `\(N\)` market clearing conditions and `\(N\)` unknown `\(\hat{w}_i\)` terms
+
+--
+
+Write up a function `solve_armington_exact_hat(X, lambda, w, L, Ahat, sigma, tol, damp)` that solves for the new equilibrium in changes
+
+--
+
+.hi[Key thing to keep in mind:] we haven't defined a numeraire yet, use the consumption price index
+
+---
+
+# Exact hat algebra
+
+Here are the data to use:
+
+
+```julia
+ w = [1., 1.];
+ L = [1., 1.];
+ λ = [.8 .2; .2 .8];
+ X = (w .* L)' .* λ;
+ Ahat = [10., 1.];
+ σ = 2.;
+```
+
+Columns of `\(\lambda\)` should sum to 1, `\(X\)` is generated to be consistent with `\(w, L, \lambda\)`
+
+---
+
+# Exact hat algebra
+
+
+```julia
+ function solve_armington_exact_hat(X, λ, w, L, Ahat, σ, tol = 1e-5, damp = .1)
+     what, N = ones(size(Ahat)), length(Ahat)
+     wage_error = 1e5
+     while wage_error &gt; tol
+         denominator, what_new = zeros(size(Ahat)), zeros(size(Ahat))
+         for k in 1:N
+             denominator .+= λ[k,:] .* (what[k] / Ahat[k]).^(1 .- σ)
+         end
+         for i in 1:N
+             what_new .+= (X[:,i] ./ (w .* L) ) .* (what ./ Ahat).^(1 .- σ) .* what[i] ./ denominator[i]
+         end
+         wage_error = maximum(abs.(what_new .- what)./what)
+         what = damp .* what_new .+ (1 - damp) .* what
+     end
+     λhat = (what ./ Ahat).^(1 .- σ) ./ sum(λ .* (what ./ Ahat).^(1 .- σ), dims = 1)
+     Phat = vec((sum(λ .* (what ./ Ahat).^(1 .- σ), dims = 1)).^(1 ./ (1 .- σ)))
+     return what, λhat, Phat
+ end
+```
+
+```
+## solve_armington_exact_hat (generic function with 3 methods)
+```
+
+
+---
+
+# Exact hat algebra
+
+
+```julia
+ Ahat = [10., 1.];
+ what, λhat, Phat = solve_armington_exact_hat(X, λ, w, L, Ahat, σ);
+ what ./ Phat
+```
+
+```
+## 2-element Vector{Float64}:
+##  8.817954095849839
+##  1.289024997893565
+```
+
+When region 1 becomes more productive: their real wages increase &gt; 800%, region 2's real wages increase 30%
+
+---
+
+# Exact hat algebra
+
+
+```julia
+ λhat
+```
+
+```
+## 2×2 Matrix{Float64}:
+##  1.13405  1.89688
+##  0.4638   0.77578
+```
+
+Both region's expenditures tilt toward region 1
+
+---
+
+# Exact hat algebra
+
+There was nothing special about productivity here
+
+--
+
+We could have looked at changes in trade costs, preference parameters, labor endowments, or any combination of them
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

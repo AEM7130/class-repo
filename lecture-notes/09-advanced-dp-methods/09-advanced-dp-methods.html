@@ -85,9 +85,7 @@ We then build our basis function matrix `\(\Psi\)`, but instead of being `\(n \t
 Finally we use the standard least-squares equation
 `$$c = (\Psi'\Psi)^{-1}\Psi'y$$`
 
---
-
-Fun fact: `\((\Psi'\Psi)^{-1}\Psi'\)` is a pseudoinverse called the Moore-Penrose matrix inverse
+Where `\((\Psi'\Psi)^{-1}\Psi'\)` is the Moore-Penrose matrix inverse
 
 --
 
@@ -107,7 +105,7 @@ Go back to our original VFI example and convert it to a regression approach
  params = (alpha = 0.75, beta = 0.95, eta = 2,
                  steady_state = (0.75*0.95)^(1/(1 - 0.75)), k_0 = (0.75*0.95)^(1/(1 - 0.75))*.75,
                  capital_upper = (0.75*0.95)^(1/(1 - 0.75))*1.5, capital_lower = (0.75*0.95)^(1/(1 - 0.75))/2,
-                 num_basis = 7, num_points = 9, tolerance = 0.0001, fin_diff = 1e-6, mpi_start = 5);
+                 num_basis = 7, num_points = 15, tolerance = 1e-6, fin_diff = 1e-6, mpi_start = 5);
  
  coefficients = zeros(params.num_basis);
  coefficients[1:2] = [100 5];
@@ -131,16 +129,22 @@ Go back to our original VFI example and convert it to a regression approach
 ```
 
 ```
-## 9-element Vector{Float64}:
-##   0.984807753012208
+## 15-element Vector{Float64}:
+##   0.9945218953682733
+##   0.9510565162951535
 ##   0.8660254037844387
-##   0.6427876096865394
-##   0.3420201433256688
-##   6.123233995736766e-17
-##  -0.3420201433256687
-##  -0.642787609686539
-##  -0.8660254037844385
-##  -0.984807753012208
+##   0.7431448254773942
+##   0.5877852522924731
+##   0.4067366430758004
+##   0.20791169081775945
+##   2.83276944882399e-16
+##  -0.20791169081775912
+##  -0.4067366430758001
+##  -0.587785252292473
+##  -0.7431448254773941
+##  -0.8660254037844387
+##  -0.9510565162951535
+##  -0.9945218953682733
 ```
 
 ```julia
@@ -156,17 +160,39 @@ Go back to our original VFI example and convert it to a regression approach
 ```
 
 ```
-## 9-element Vector{Float64}:
-##  0.3846146682813062
+## 15-element Vector{Float64}:
+##  0.38586640773961633
+##  0.3802655705208513
 ##  0.3693086795455801
-##  0.3405428302079919
-##  0.3017867062373766
-##  0.2577148681640623
-##  0.21364303009074814
-##  0.17488690612013275
-##  0.14612105678254464
-##  0.13081506804681853
+##  0.35347460352641824
+##  0.33345536756572974
+##  0.31012590833794895
+##  0.28450583515849537
+##  0.25771486816406236
+##  0.2309239011696293
+##  0.20530382799017577
+##  0.18197436876239492
+##  0.16195513280170648
+##  0.1461210567825446
+##  0.1351641658072734
+##  0.1295633285885084
 ```
+
+---
+
+# Chebyshev regression: practice
+
+Make the inverse function to shrink from capital to Chebyshev space `shrink_grid(capital)`
+
+--
+
+
+```julia
+ shrink_grid(capital) = 
+   2*(capital - params.capital_lower)/(params.capital_upper - params.capital_lower) - 1;
+```
+
+`shrink_grid` will inherit `params` from wrapper functions
 
 ---
 
@@ -186,21 +212,29 @@ Go back to our original VFI example and convert it to a regression approach
          return cheb_recursion(x, n) # T_n(x) = 2xT_{n-1}(x) - T_{n-2}(x)
      end
  end;
- 
- basis_matrix = [cheb_polys.(grid, n) for n = 0:params.num_basis - 1];
- basis_matrix = hcat(basis_matrix...);
- basis_inverse = inv(basis_matrix'*basis_matrix)*(basis_matrix'); # pre-compute pseudoinverse for regressions
+```
+
+
+---
+
+# Chebyshev regression: practice
+
+
+```julia
+ construct_basis_matrix(grid, params) = hcat([cheb_polys.(shrink_grid.(grid), n) for n = 0:params.num_basis - 1]...);
+ basis_matrix = construct_basis_matrix(capital_grid, params);
+ basis_inverse = inv(basis_matrix'*basis_matrix)*(basis_matrix') # pre-compute pseudoinverse for regressions
 ```
 
 ```
-## 7×9 Matrix{Float64}:
-##  0.111111   0.111111      0.111111   …   0.111111    0.111111      0.111111
-##  0.218846   0.19245       0.142842      -0.142842   -0.19245      -0.218846
-##  0.208821   0.111111     -0.0385885     -0.0385885   0.111111      0.208821
-##  0.19245   -3.13858e-17  -0.19245        0.19245     2.41508e-16  -0.19245
-##  0.170232  -0.111111     -0.208821      -0.208821   -0.111111      0.170232
-##  0.142842  -0.19245      -0.0760045  …   0.0760045   0.19245      -0.142842
-##  0.111111  -0.222222      0.111111       0.111111   -0.222222      0.111111
+## 7×15 Matrix{Float64}:
+##  0.0666667   0.0666667     0.0666667    …   0.0666667     0.0666667
+##  0.132603    0.126808      0.11547         -0.126808     -0.132603
+##  0.13042     0.107869      0.0666667        0.107869      0.13042
+##  0.126808    0.0783714     4.46986e-16     -0.0783714    -0.126808
+##  0.121806    0.0412023    -0.0666667        0.0412023     0.121806
+##  0.11547    -8.47892e-17  -0.11547      …  -1.85126e-16  -0.11547
+##  0.107869   -0.0412023    -0.133333        -0.0412023     0.107869
 ```
 
 ---
@@ -209,9 +243,7 @@ Go back to our original VFI example and convert it to a regression approach
 
 
 ```julia
- shrink_grid(capital) = 2*(capital - params.capital_lower)/(params.capital_upper - params.capital_lower) - 1;
- eval_value_function(coefficients, capital, params) = 
-     coefficients' * [cheb_polys.(shrink_grid(capital), n) for n = 0:params.num_basis - 1];
+ eval_value_function(coefficients, grid, params) = construct_basis_matrix(grid, params) * coefficients;
 ```
 
 ---
@@ -220,14 +252,14 @@ Go back to our original VFI example and convert it to a regression approach
 
 
 ```julia
- function loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+ function loop_grid_regress(params, capital_grid, coefficients)
      max_value = -.0*ones(params.num_points);
      consumption_store = -.0*ones(params.num_points);
  
      for (iteration, capital) in enumerate(capital_grid)
          function bellman(consumption)
              capital_next = capital^params.alpha - consumption
-             cont_value = eval_value_function(coefficients, capital_next, params)
+             cont_value = eval_value_function(coefficients, capital_next, params)[1]
              value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
              return -value_out
          end;
@@ -247,7 +279,7 @@ Go back to our original VFI example and convert it to a regression approach
 
 
 ```julia
- function solve_vfi_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+ function solve_vfi_regress(params, basis_inverse, capital_grid, coefficients)
  
      max_value = -.0*ones(params.num_points);
      error = 1e10;
@@ -257,11 +289,11 @@ Go back to our original VFI example and convert it to a regression approach
      iteration = 1
  
      while error &gt; params.tolerance
-         max_value, consumption_store = loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+         max_value, consumption_store = loop_grid_regress(params, capital_grid, coefficients)
          coefficients = basis_inverse*max_value
          error = maximum(abs.((max_value - value_prev)./(value_prev)))
          value_prev = deepcopy(max_value)
-         if mod(iteration, 5) == 0
+         if mod(iteration, 25) == 0
              println("Maximum Error of $(error) on iteration $(iteration).")
              append!(coefficients_store, [coefficients])
          end
@@ -278,41 +310,23 @@ Go back to our original VFI example and convert it to a regression approach
 
 ```julia
  @time solution_coeffs, max_value, intermediate_coefficients =
-     solve_vfi_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+     solve_vfi_regress(params, basis_inverse, capital_grid, coefficients)
 ```
 
 ```
-## Maximum Error of 0.33656462321563546 on iteration 5.
-## Maximum Error of 15.324437748785257 on iteration 10.
-## Maximum Error of 0.19176452946373146 on iteration 15.
-## Maximum Error of 0.07999511358219082 on iteration 20.
-## Maximum Error of 0.0455754939681826 on iteration 25.
-## Maximum Error of 0.029268260045592073 on iteration 30.
-## Maximum Error of 0.020007154816710206 on iteration 35.
-## Maximum Error of 0.014198326541473252 on iteration 40.
-## Maximum Error of 0.010323846907305917 on iteration 45.
-## Maximum Error of 0.007632084134370531 on iteration 50.
-## Maximum Error of 0.005708492913566266 on iteration 55.
-## Maximum Error of 0.004305925733500567 on iteration 60.
-## Maximum Error of 0.003268177593053183 on iteration 65.
-## Maximum Error of 0.0024920065993268136 on iteration 70.
-## Maximum Error of 0.0019067690948824706 on iteration 75.
-## Maximum Error of 0.0014628021447219033 on iteration 80.
-## Maximum Error of 0.0011244465442100749 on iteration 85.
-## Maximum Error of 0.0008656712708538149 on iteration 90.
-## Maximum Error of 0.0006672266517800869 on iteration 95.
-## Maximum Error of 0.0005147333938726661 on iteration 100.
-## Maximum Error of 0.0003973654835929178 on iteration 105.
-## Maximum Error of 0.00030692204191609364 on iteration 110.
-## Maximum Error of 0.0002371610957818922 on iteration 115.
-## Maximum Error of 0.00018331403775187195 on iteration 120.
-## Maximum Error of 0.00014172736178258514 on iteration 125.
-## Maximum Error of 0.00010959565499985235 on iteration 130.
-##   0.581542 seconds (8.87 M allocations: 214.767 MiB, 6.98% gc time, 40.79% compilation time: 1% of which was recompilation)
+## Maximum Error of 0.04560791678414923 on iteration 25.
+## Maximum Error of 0.007635436575597669 on iteration 50.
+## Maximum Error of 0.0019075236037348097 on iteration 75.
+## Maximum Error of 0.0005149316099488123 on iteration 100.
+## Maximum Error of 0.00014178153569906261 on iteration 125.
+## Maximum Error of 3.92482976918936e-5 on iteration 150.
+## Maximum Error of 1.0880896630296866e-5 on iteration 175.
+## Maximum Error of 3.0177727176252443e-6 on iteration 200.
+##   0.847524 seconds (22.49 M allocations: 515.604 MiB, 5.23% gc time, 0.25% compilation time)
 ```
 
 ```
-## ([-194.51557325731787, 14.142103107652055, -2.6644223024373233, 0.5749555213583148, -0.13337383271711795, 0.034569849242611805, -0.008457437727749343], [-182.67782728821018, -183.55636277379813, -185.34986962790762, -188.12961711272612, -191.9763675748722, -196.87361104938967, -202.51418932831817, -207.98861711010005, -211.57369745053882], Vector[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [36.80824360742958, 8.655023913144976, -1.483288308822478, 0.31548230941626676, -0.0704179524965467, 0.015491954698058905, -0.0031249287075875818], [-15.489112132969467, 12.459720560253233, -2.3788570165631397, 0.5220670595504612, -0.12339307775844895, 0.0308680215371702, -0.007025248507320953], [-56.149142130428814, 13.65330039841521, -2.587293221282717, 0.5617619282534533, -0.1316736705756989, 0.03392533675691004, -0.00811259703266288], [-87.56105719304848, 14.000160018116718, -2.6421055644479194, 0.5710812787118758, -0.13292760400931444, 0.034416774459782515, -0.0083644578779202], [-111.84446197783181, 14.10101702985609, -2.6579273899477873, 0.5738078239826391, -0.1332412706281449, 0.03452659722295687, -0.008430772885008262], [-130.62706192298657, 14.1302361426601, -2.6625399953996833, 0.5746203316572468, -0.13333474637697418, 0.034557277217562424, -0.0084497147763615], [-145.15842871089106, 14.13867857607071, -2.663878278905609, 0.5748583874456623, -0.13336245582577536, 0.03456620363025852, -0.008455204294232958], [-156.40186295227778, 14.141115170781706, -2.6642652585232938, 0.5749274575028426, -0.13337054025397946, 0.03456879532540852, -0.008456792812691087], [-165.10162644542007, 14.141818128829598, -2.6643769902769274, 0.5749474217843956, -0.13337288189926438, 0.03456954498563605, -0.008457251630833568]  …  [-191.03462199910558, 14.142103093996631, -2.6644223002657883, 0.5749555209700655, -0.13337383267153322, 0.034569849228042446, -0.008457437718853707], [-191.89971736884283, 14.142103103713293, -2.6644223018109816, 0.5749555212463173, -0.133373832703987, 0.03456984923841513, -0.008457437725202318], [-192.56911167429894, 14.142103106516029, -2.664422302256689, 0.5749555213259997, -0.1333738327133583, 0.034569849241395625, -0.008457437727020449], [-193.08707622731092, 14.142103107324461, -2.6644223023852627, 0.574955521348975, -0.1333738327160189, 0.034569849242266214, -0.008457437727546986], [-193.48786732466854, 14.142103107557618, -2.664422302422341, 0.5749555213556261, -0.13337383271680678, 0.03456984924250408, -0.008457437727693], [-193.79799183570518, 14.142103107624852, -2.664422302433026, 0.5749555213575366, -0.13337383271704284, 0.034569849242575085, -0.00845743772774468], [-194.0379602705915, 14.142103107644214, -2.6644223024361082, 0.5749555213580809, -0.13337383271711056, 0.03456984924260254, -0.00845743772774505], [-194.22364327110682, 14.142103107649833, -2.6644223024369738, 0.5749555213582457, -0.13337383271712694, 0.03456984924260908, -0.00845743772776161], [-194.36732123732284, 14.142103107651488, -2.6644223024372917, 0.5749555213582809, -0.13337383271710512, 0.034569849242634655, -0.0084574377277612], [-194.47849650871945, 14.142103107651975, -2.6644223024373743, 0.574955521358291, -0.13337383271714962, 0.034569849242627015, -0.008457437727753293]])
+## ([-194.85536958622183, 14.142104524187651, -2.664424683176605, 0.5749549884000286, -0.1333725115671519, 0.03457002344598274, -0.008458351978988204], [-182.9478828542588, -183.26236062704822, -183.89615953570603, -184.85865884335664, -186.1638852575174, -187.83024816516803, -189.87710126487326, -192.31615989435315, -195.13870272444962, -198.2999931535903, -201.69819337761513, -205.14355420741794, -208.32841615695403, -210.83615415431385, -212.233073576706], Vector[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [-111.84446088811816, 14.101018923457382, -2.6579296540031114, 0.5738072224183246, -0.13323996387170098, 0.03452677955052085, -0.008431681338534515], [-171.83327647230453, 14.142022326296566, -2.664411611854907, 0.574952651575576, -0.13337223722756203, 0.03456993567525585, -0.008458298282616294], [-188.4717369787631, 14.142104360071517, -2.66442465707678, 0.5749549837338038, -0.13337251101925873, 0.034570023270718855, -0.008458351871781953], [-193.08706876568482, 14.14210452386, -2.6644246831245004, 0.5749549883907289, -0.13337251156606242, 0.03457002344563234, -0.008458351978754048], [-194.36731367254603, 14.142104524186939, -2.664424683176515, 0.574954988400002, -0.13337251156715654, 0.03457002344598024, -0.008458351978990098], [-194.72244026073702, 14.142104524187669, -2.6644246831765925, 0.5749549883999996, -0.13337251156716917, 0.03457002344598161, -0.008458351978986358], [-194.82094867343935, 14.14210452418768, -2.664424683176591, 0.5749549883999837, -0.13337251156715232, 0.034570023445998875, -0.008458351978979827], [-194.8482738799878, 14.14210452418769, -2.664424683176578, 0.5749549884000195, -0.1333725115671582, 0.03457002344596549, -0.00845835197898225]])
 ```
 
 
@@ -332,7 +346,7 @@ Go back to our original VFI example and convert it to a regression approach
          
          function bellman(consumption)
              capital_next = capital^params.alpha - consumption
-             cont_value = eval_value_function(solution_coeffs, capital_next, params)
+             cont_value = eval_value_function(solution_coeffs, capital_next, params)[1]
              value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
              return -value_out
          end;
@@ -350,7 +364,7 @@ Go back to our original VFI example and convert it to a regression approach
 
 # Chebyshev regression: practice
 
-&lt;img src="09-advanced-dp-methods_files/figure-html/unnamed-chunk-9-J1.png" width="748px" style="display: block; margin: auto;" /&gt;
+&lt;img src="09-advanced-dp-methods_files/figure-html/unnamed-chunk-13-J1.png" width="748px" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -522,12 +536,12 @@ Let's solve our previous basic growth model using EGM
      for (iteration, capital_next) in enumerate(capital_grid)
  
          function bellman(consumption)
-             cont_value = eval_value_function(coefficients, capital_next, params)
+             cont_value = eval_value_function(coefficients, capital_next, params)[1]
              value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
              return value_out
          end;
-         value_deriv = (eval_value_function(coefficients, capital_next + params.fin_diff, params) -
-             eval_value_function(coefficients, capital_next - params.fin_diff, params))/(2params.fin_diff)
+         value_deriv = (eval_value_function(coefficients, capital_next + params.fin_diff, params)[1] -
+             eval_value_function(coefficients, capital_next - params.fin_diff, params)[1])/(2params.fin_diff)
          consumption = (params.beta*value_deriv)^(-1/params.eta)
          max_value[iteration] = bellman(consumption)
          capital_store[iteration] = (capital_next + consumption)^(1/params.alpha)
@@ -565,7 +579,7 @@ Let's solve our previous basic growth model using EGM
          coefficients = current_poly\max_value
          error = maximum(abs.((max_value - value_prev)./(value_prev)))
          value_prev = deepcopy(max_value)
-         if mod(iteration, 5) == 0
+         if mod(iteration, 25) == 0
              println("Maximum Error of $(error) on iteration $(iteration).")
              append!(coefficients_store, [coefficients])
          end
@@ -586,43 +600,28 @@ No need to pass basis function matrices or `\([-1,1]\)` grid since we will be co
 # Endogenous grid method: practice
 
 
+
+
 ```julia
  @time solution_coeffs, max_value, intermediate_coefficients = solve_egm(params, capital_grid, coefficients)
 ```
 
 ```
-## Maximum Error of 0.33984199435214524 on iteration 5.
-## Maximum Error of 10.282284261431627 on iteration 10.
-## Maximum Error of 0.20342072897811764 on iteration 15.
-## Maximum Error of 0.08237320857778223 on iteration 20.
-## Maximum Error of 0.04652351103135058 on iteration 25.
-## Maximum Error of 0.02976136784252069 on iteration 30.
-## Maximum Error of 0.020301746220850122 on iteration 35.
-## Maximum Error of 0.014389171942098105 on iteration 40.
-## Maximum Error of 0.01045397324506247 on iteration 45.
-## Maximum Error of 0.007723897635043133 on iteration 50.
-## Maximum Error of 0.005774836832471519 on iteration 55.
-## Maximum Error of 0.004354692326419023 on iteration 60.
-## Maximum Error of 0.0033044754037397984 on iteration 65.
-## Maximum Error of 0.0025192760997872405 on iteration 70.
-## Maximum Error of 0.0019273992794483531 on iteration 75.
-## Maximum Error of 0.001478492015114454 on iteration 80.
-## Maximum Error of 0.0011364270991021624 on iteration 85.
-## Maximum Error of 0.0008748474931101615 on iteration 90.
-## Maximum Error of 0.0006742714486808205 on iteration 95.
-## Maximum Error of 0.0005201515977709989 on iteration 100.
-## Maximum Error of 0.0004015384211377455 on iteration 105.
-## Maximum Error of 0.0003101393316254881 on iteration 110.
-## Maximum Error of 0.0002396436506880333 on iteration 115.
-## Maximum Error of 0.00018523085528019155 on iteration 120.
-## Maximum Error of 0.0001432080898119225 on iteration 125.
-## Maximum Error of 0.00011073993961169108 on iteration 130.
-##   0.295677 seconds (2.93 M allocations: 111.441 MiB, 2.98% gc time, 73.80% compilation time: 5% of which was recompilation)
+## Maximum Error of 0.04656312802519048 on iteration 25.
+## Maximum Error of 0.0077279558439712175 on iteration 50.
+## Maximum Error of 0.0019283105651684272 on iteration 75.
+## Maximum Error of 0.0005203908554999235 on iteration 100.
+## Maximum Error of 0.00014327347852089944 on iteration 125.
+## Maximum Error of 3.966043939472439e-5 on iteration 150.
+## Maximum Error of 1.0995091700787616e-5 on iteration 175.
+## Maximum Error of 3.0494442960141223e-6 on iteration 200.
+##   0.229561 seconds (5.69 M allocations: 144.159 MiB, 9.64% gc time, 0.76% compilation time)
 ```
 
 ```
-## ([-194.52555937604515, 14.166836739172375, -2.6599927533337593, 0.5620085823803014, -0.1362390390002211, 0.04258691877293904, -0.008536910651997956], [-180.80823807037967, -181.83458341164112, -183.95232673515272, -187.3279556298509, -192.0503518916305, -198.03098517457863, -205.00341570428833, -211.9377570960503, -216.53192927839737], Vector[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [36.86590610646693, 8.558371652044116, -1.4244049058853627, 0.2872774922409924, -0.05894579838304355, 0.010642877317048874, -0.0010843988491282916], [-15.45226318447712, 12.421487352604755, -2.3655568384670134, 0.5201475082036802, -0.12858494440280216, 0.03366833372382972, -0.005241936153671935], [-56.125099567065455, 13.63930604723264, -2.574369607539361, 0.5540556560753682, -0.13782235650704322, 0.04108471079605164, -0.0075908313300008115], [-87.55047268648673, 14.00562632458952, -2.6316545095677233, 0.5589799444689235, -0.13691130847867652, 0.04226173793778032, -0.00826423802527813], [-111.84260740912588, 14.118159833457714, -2.6509270655839816, 0.5609126272967021, -0.13641913219851454, 0.042489868487348856, -0.00845461036933398], [-130.6295939221367, 14.15227475163716, -2.657205713608879, 0.5616557231064078, -0.13628726214354767, 0.0425564465944883, -0.008512038105897986], [-145.16324319741145, 14.162496989849892, -2.659153008998984, 0.5619007424763389, -0.13625265180979115, 0.042577581763968156, -0.0085294571139494], [-156.40804470601495, 14.16554501544419, -2.659741797178174, 0.5619762220420111, -0.13624300537153802, 0.04258410812469484, -0.008534687528044356], [-165.10873589440135, 14.166452402129352, -2.659917980624227, 0.5619989291450102, -0.13624021020276833, 0.042586079103637674, -0.008536248734609736]  …  [-191.044272381411, 14.166836715579404, -2.6599927487529915, 0.5620085817862084, -0.1362390390783928, 0.04258691872216869, -0.008536910608610365], [-191.90945119063394, 14.166836732150188, -2.659992751973811, 0.5620085822011863, -0.13623903902263218, 0.04258691875880898, -0.008536910639550711], [-192.57891005898114, 14.166836737078597, -2.6599927529361156, 0.5620085823266284, -0.13623903900854897, 0.04258691876886934, -0.008536910647614356], [-193.09692456921744, 14.166836738544445, -2.6599927532177343, 0.5620085823644517, -0.13623903900760084, 0.042586918771498394, -0.008536910649957681], [-193.49775432243254, 14.1668367389812, -2.659992753298081, 0.5620085823718339, -0.13623903900944107, 0.042586918773730845, -0.008536910649342531], [-193.80790874461215, 14.16683673910823, -2.659992753327176, 0.562008582376642, -0.1362390390041224, 0.04258691877429751, -0.008536910650662439], [-194.04790032415798, 14.166836739149923, -2.659992753337864, 0.5620085823822559, -0.13623903899680903, 0.042586918771530875, -0.008536910653705704], [-194.23360123355994, 14.166836739161727, -2.6599927533402217, 0.5620085823788236, -0.13623903900183165, 0.04258691877270481, -0.008536910652291833], [-194.3772930573344, 14.16683673916429, -2.6599927533442265, 0.5620085823771048, -0.13623903900304335, 0.0425869187742848, -0.00853691065167052], [-194.4884790514389, 14.166836739173217, -2.659992753336622, 0.5620085823758, -0.13623903900768716, 0.04258691877357059, -0.008536910650599987]])
+## ([-194.86588167567055, 14.166854450284145, -2.659830643535021, 0.5619970720353987, -0.1363231862642804, 0.042584891304797305, -0.008520257414629136], [-181.06657322568805, -181.43461128908683, -182.1747231895469, -183.304987257002, -184.86176848996226, -186.88566388459972, -189.39801023315908, -192.3909157214092, -195.8381047584532, -199.70210567344222, -203.90039227218548, -208.22572768575577, -212.27795990787445, -215.49012260822093, -217.28206934422852], Vector[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [-111.84269630136266, 14.118165997839721, -2.650785400463155, 0.5609056021882664, -0.1364992921461478, 0.04248754631691099, -0.008438668682153542], [-171.8414355773418, 14.166739903739217, -2.659808413026581, 0.5619942072650489, -0.13632352557703392, 0.04258464026804016, -0.008520061862729576], [-188.48159997738063, 14.16685418293722, -2.659830591621627, 0.5619970653438966, -0.13632318706504137, 0.042584890719581464, -0.008520256956436444], [-193.0974010625483, 14.166854449659024, -2.6598306434084686, 0.5619970720132431, -0.13632318627523834, 0.04258489130363603, -0.008520257410556667], [-194.3777761387717, 14.166854450281805, -2.6598306435297983, 0.56199707203115, -0.13632318627409784, 0.0425848913055752, -0.008520257413112204], [-194.73293883456404, 14.16685445029134, -2.659830643529197, 0.5619970720300576, -0.13632318627469658, 0.042584891306481895, -0.008520257412638278], [-194.83145726313631, 14.166854450277802, -2.6598306435420427, 0.5619970720345356, -0.1363231862644243, 0.042584891304662566, -0.008520257414191656], [-194.85878524798287, 14.166854450290375, -2.659830643529872, 0.5619970720300339, -0.1363231862764906, 0.042584891305316105, -0.00852025741245583]])
 ```
+
 
 
 ---
@@ -630,12 +629,36 @@ No need to pass basis function matrices or `\([-1,1]\)` grid since we will be co
 # Endogenous grid method: practice
 
 
+```julia
+ function simulate_model(params, solution_coeffs, time_horizon = 100)
+     capital_store = zeros(time_horizon + 1)
+     consumption_store = zeros(time_horizon)
+     capital_store[1] = params.k_0
+ 
+     for t = 1:time_horizon
+         capital = capital_store[t]
+ 
+         function bellman(consumption)
+             capital_next = capital^params.alpha - consumption
+             cont_value = eval_value_function(solution_coeffs, capital_next, params)[1]
+             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
+             return -value_out
+         end;
+ 
+         results = optimize(bellman, 0.0, capital^params.alpha)
+         consumption_store[t] = Optim.minimizer(results)
+         capital_store[t+1] = capital^params.alpha - consumption_store[t]
+     end
+ 
+     return consumption_store, capital_store
+ end;
+```
 
 ---
 
 # Endogenous grid method: practice
 
-&lt;img src="09-advanced-dp-methods_files/figure-html/unnamed-chunk-15-J1.png" width="748px" style="display: block; margin: auto;" /&gt;
+&lt;img src="09-advanced-dp-methods_files/figure-html/unnamed-chunk-21-J1.png" width="748px" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -709,7 +732,7 @@ Thus at no point in time during the value function approximation algorithm do we
 
 
 ```julia
- function loop_grid_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+ function loop_grid_ecm(params, capital_grid, coefficients)
  
      max_value = similar(capital_grid);
  
@@ -717,13 +740,13 @@ Thus at no point in time during the value function approximation algorithm do we
  
          function bellman(consumption)
              capital_next = capital^params.alpha - consumption
-             cont_value = eval_value_function(coefficients, capital_next, params)
+             cont_value = eval_value_function(coefficients, capital_next, params)[1]
              value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
              return value_out
          end;
  
-         value_deriv = (eval_value_function(coefficients, capital + params.fin_diff, params) -
-             eval_value_function(coefficients, capital - params.fin_diff, params))/(2params.fin_diff)
+         value_deriv = (eval_value_function(coefficients, capital + params.fin_diff, params)[1] -
+             eval_value_function(coefficients, capital - params.fin_diff, params)[1])/(2params.fin_diff)
          consumption = (value_deriv/(params.alpha*capital^(params.alpha-1)))^(-1/params.eta)
          consumption = min(consumption, capital^params.alpha)
          max_value[iteration] = bellman(consumption)
@@ -745,7 +768,7 @@ Thus at no point in time during the value function approximation algorithm do we
 
 
 ```julia
- function solve_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+ function solve_ecm(params, basis_inverse, capital_grid, coefficients)
      iteration = 1
      error = 1e10;
      max_value = similar(capital_grid);
@@ -754,11 +777,11 @@ Thus at no point in time during the value function approximation algorithm do we
      coefficients_store[1] = coefficients
      while error &gt; params.tolerance
          coefficients_prev = deepcopy(coefficients)
-         max_value = loop_grid_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+         max_value = loop_grid_ecm(params, capital_grid, coefficients)
          coefficients = basis_inverse*max_value
          error = maximum(abs.((max_value - value_prev)./(value_prev)))
          value_prev = deepcopy(max_value)
-         if mod(iteration, 5) == 0
+         if mod(iteration, 25) == 0
              println("Maximum Error of $(error) on iteration $(iteration).")
              append!(coefficients_store, [coefficients])
          end
@@ -779,42 +802,25 @@ Thus at no point in time during the value function approximation algorithm do we
 
 ```julia
  @time solution_coeffs, max_value, intermediate_coefficients =
-     solve_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+     solve_ecm(params, basis_inverse, capital_grid, coefficients)
 ```
 
 ```
-## Maximum Error of 0.3527064027921682 on iteration 5.
-## Maximum Error of 8.805965928110838 on iteration 10.
-## Maximum Error of 0.1896588876725065 on iteration 15.
-## Maximum Error of 0.07943447581969357 on iteration 20.
-## Maximum Error of 0.04532030555708693 on iteration 25.
-## Maximum Error of 0.029127245675426107 on iteration 30.
-## Maximum Error of 0.019920679715424265 on iteration 35.
-## Maximum Error of 0.014141682933457352 on iteration 40.
-## Maximum Error of 0.010285041765030388 on iteration 45.
-## Maximum Error of 0.007604645927792631 on iteration 50.
-## Maximum Error of 0.005688645480363027 on iteration 55.
-## Maximum Error of 0.004291328352579298 on iteration 60.
-## Maximum Error of 0.0032573086762268783 on iteration 65.
-## Maximum Error of 0.0024838391761297296 on iteration 70.
-## Maximum Error of 0.0019005891584989655 on iteration 75.
-## Maximum Error of 0.0014581015348507924 on iteration 80.
-## Maximum Error of 0.0011208568927137876 on iteration 85.
-## Maximum Error of 0.0008629216690145762 on iteration 90.
-## Maximum Error of 0.0006651156043542608 on iteration 95.
-## Maximum Error of 0.0005131097077489833 on iteration 100.
-## Maximum Error of 0.000396114928664237 on iteration 105.
-## Maximum Error of 0.00030595785081823356 on iteration 110.
-## Maximum Error of 0.0002364170875813676 on iteration 115.
-## Maximum Error of 0.00018273957003392212 on iteration 120.
-## Maximum Error of 0.0001412835848518871 on iteration 125.
-## Maximum Error of 0.00010925270804567991 on iteration 130.
-##   0.132908 seconds (1.82 M allocations: 45.708 MiB, 46.14% compilation time)
+## Maximum Error of 0.0453525403650495 on iteration 25.
+## Maximum Error of 0.0076079815408730215 on iteration 50.
+## Maximum Error of 0.0019013403845842475 on iteration 75.
+## Maximum Error of 0.0005133070957501089 on iteration 100.
+## Maximum Error of 0.00014133753500579239 on iteration 125.
+## Maximum Error of 3.912563883912878e-5 on iteration 150.
+## Maximum Error of 1.0846910981672597e-5 on iteration 175.
+## Maximum Error of 3.0083484348532563e-6 on iteration 200.
+##   0.174326 seconds (4.53 M allocations: 106.518 MiB, 5.97% gc time, 0.99% compilation time)
 ```
 
 ```
-## ([-194.51663856763165, 14.142059626813142, -2.6644635315374168, 0.5749537630104119, -0.13338482787537187, 0.03455261978857737, -0.008477622131293267], [-182.67900799006236, -183.5574385688729, -185.35095723871515, -188.13068494984853, -191.97738752647896, -196.8746251602211, -202.51522529150313, -207.98965674114925, -211.5747636418337], Vector[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [36.20763531135077, 9.377904708462724, -1.7305255969413151, 0.38019575458490523, -0.08826706541100833, 0.02004965987792946, -0.004993109150506323], [-16.074849210667615, 12.738304053681047, -2.4370364696648625, 0.5336634991144337, -0.12658653297129974, 0.03183839495101113, -0.007955781173414682], [-56.59396757454929, 13.734806168324365, -2.601280701707779, 0.5639243480763936, -0.13190557442548806, 0.0340054581273935, -0.008348190714936718], [-87.89998949688368, 14.024019597646578, -2.646179362667905, 0.5717217855303979, -0.1329713604224939, 0.034409825415862176, -0.008441569068001902], [-112.10482475655353, 14.107923488107, -2.659158174030975, 0.5740061556397605, -0.13326337881111602, 0.03451184869341107, -0.008467173939473428], [-130.82793105204414, 14.132200484409287, -2.662928037029743, 0.5746782905866097, -0.1333493639469811, 0.034540821362312055, -0.008474586620894047], [-145.3136800883302, 14.139213604456307, -2.6640198549020906, 0.5748740412158981, -0.1333745423334995, 0.03454920749456566, -0.008476743123070564], [-156.52194095809512, 14.1412382225251, -2.6643354279027562, 0.5749307325502817, -0.13338185399293698, 0.03455163407919409, -0.008477368108052876], [-165.1945243585121, 14.14182257257333, -2.6644265552234256, 0.5749471142144446, -0.13338396904984245, 0.034552335215284, -0.008477548783645775]  …  [-191.04655408647238, 14.1420596154123, -2.6644635297575623, 0.5749537626928148, -0.1333848278317611, 0.03455261977687204, -0.008477622126132322], [-191.9089488153579, 14.142059623521973, -2.6644635310241096, 0.574953762917273, -0.13338482786328063, 0.034552619785651204, -0.008477622128913218], [-192.5762534165474, 14.1420596258628, -2.664463531390448, 0.5749537629802471, -0.13338482787353742, 0.03455261978705128, -0.008477622131162807], [-193.09260099627244, 14.14205962654355, -2.6644635314906195, 0.5749537630042436, -0.133384827873161, 0.03455261978933026, -0.008477622130122597], [-193.4921409105398, 14.142059626734257, -2.664463531524445, 0.5749537630084437, -0.13338482787480127, 0.03455261979055476, -0.008477622128856211], [-193.8012972799529, 14.14205962679041, -2.664463531532302, 0.5749537630092969, -0.1333848278749688, 0.03455261978796446, -0.008477622130838199], [-194.04051658530855, 14.142059626804784, -2.6644635315366707, 0.5749537630094492, -0.13338482787615535, 0.034552619788404404, -0.00847762213088949], [-194.22561992367258, 14.142059626809495, -2.664463531537617, 0.5749537630090134, -0.13338482787639314, 0.03455261978920371, -0.008477622130870919], [-194.3688493583646, 14.14205962681417, -2.6644635315368532, 0.5749537630093615, -0.13338482787672293, 0.034552619788560536, -0.008477622130705504], [-194.4796775646187, 14.142059626814454, -2.664463531535621, 0.5749537630096757, -0.13338482787491335, 0.03455261978759963, -0.008477622131195768]])
+## ([-194.85531932176127, 14.142062593106905, -2.6644837015279976, 0.5749531960546624, -0.13337430101896322, 0.034551695371124104, -0.008484748971169142], [-182.94799968004708, -183.26235258561604, -183.89612956524388, -184.85864174862832, -186.16385889769955, -187.83020022777666, -189.87700857244968, -192.3160354679106, -195.1385722506377, -198.29988788664537, -201.69811571031212, -205.1434915535787, -208.3283534443464, -210.8360937491323, -212.2330484863955], Vector[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [-112.10480287950833, 14.107931378395325, -2.6591791476193576, 0.57400531884664, -0.13325275180176394, 0.03451091903707708, -0.00847435508444089], [-171.90510776971806, 14.14199420909911, -2.6644730344230134, 0.5749512770627394, -0.13337405299096824, 0.03455161324815789, -0.008484727914318257], [-188.4916175567322, 14.142062456260323, -2.664483680184769, 0.5749531922147479, -0.1333743005216747, 0.0345516952063283, -0.00848474892937651], [-193.09253945121353, 14.142062592834266, -2.664483701486141, 0.5749531960469292, -0.13337430101847123, 0.034551695370051864, -0.008484748972061315], [-194.36878720553952, 14.142062593105248, -2.664483701529717, 0.5749531960525941, -0.13337430102116343, 0.03455169536876924, -0.008484748973553577], [-194.72280502529446, 14.142062593107418, -2.6644837015275153, 0.5749531960567261, -0.13337430101720807, 0.03455169537105062, -0.008484748971776859], [-194.821005877197, 14.142062593107045, -2.6644837015291127, 0.5749531960527132, -0.13337430102148554, 0.03455169537076611, -0.008484748971882054], [-194.84824576958684, 14.142062593105138, -2.6644837015309104, 0.574953196053043, -0.1333743010207937, 0.03455169536880788, -0.008484748973840613]])
 ```
+
 
 ---
 
@@ -832,7 +838,7 @@ Thus at no point in time during the value function approximation algorithm do we
  
          function bellman(consumption)
              capital_next = capital^params.alpha - consumption
-             cont_value = eval_value_function(solution_coeffs, capital_next, params)
+             cont_value = eval_value_function(solution_coeffs, capital_next, params)[1]
              value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
              return -value_out
          end;
@@ -858,7 +864,7 @@ Thus at no point in time during the value function approximation algorithm do we
  plot!(1:time_horizon, params.steady_state*ones(time_horizon), color = :purple, linewidth = 2.0, linestyle = :dot, label = "Analytic Steady State")
 ```
 
-&lt;img src="09-advanced-dp-methods_files/figure-html/unnamed-chunk-20-J1.png" width="748px" style="display: block; margin: auto;" /&gt;
+&lt;img src="09-advanced-dp-methods_files/figure-html/unnamed-chunk-28-J1.png" width="748px" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -890,16 +896,17 @@ This is called **modified policy iteration**
 
 # Modified policy iteration
 
-It only change step 5 of VFI:
-5. While convergence criterion `\(&gt;\)` tolerance
+It only changes step 5 of VFI:
+
+While convergence criterion `\(&gt;\)` tolerance
   + Start iteration `\(p\)`
   + Solve the right hand side of the Bellman equation
   + Recover the maximized values, conditional on `\(\Gamma(k_{t+1};b^{(p)})\)`
-  + Fit the polynomial to the values and recover a new vector of coefficients `\(\hat{b}^{(p+1)}\)`.
-  + Compute `\(b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}\)` where `\(\gamma \in (0,1).\)`
+  + Fit the polynomial to the values and recover new coefficients `\(\hat{b}^{(p+1)}\)`
+  + Compute `\(b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}\)` where `\(\gamma \in (0,1)\)`
   + While MPI stop criterion `\(&gt;\)` tolerance
       - Use policies from last VFI iteration to re-fit the polynomial (no maximizing!)
-      - Compute `\(b^{(p+1)}\)` for iteration `\(p+1\)` by `\(b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}\)` where `\(\gamma \in (0,1).\)`
+      - Compute `\(b^{(p+1)}\)` for iteration `\(p+1\)` by `\(b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}\)` where `\(\gamma \in (0,1)\)`
 
 ---
 
@@ -913,11 +920,7 @@ where the max and min are over the values on the grid
 
 --
 
-Also note: you should probably start MPI after a few VFI iterations unless you have a good initial guess
-
---
-
-If your early policy functions are bad then starting MPI too early will blow up your problem
+Only MPI after a few VFI iterations unless you have a good initial guess, if your early policy functions are bad then starting MPI too early will blow up your problem
 
 ---
 
@@ -935,7 +938,7 @@ If your early policy functions are bad then starting MPI too early will blow up 
      iteration = 1
      while error &gt; params.tolerance
          max_value, consumption_store =
-             loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+             loop_grid_regress(params, capital_grid, coefficients)
          coefficients = basis_inverse*max_value
          if iteration &gt; params.mpi_start # modified policy iteration loop
              mpi_iteration = 1
@@ -953,7 +956,7 @@ If your early policy functions are bad then starting MPI too early will blow up 
 ```julia
                function bellman(consumption, capital)
                      capital_next = capital^params.alpha - consumption
-                     cont_value = eval_value_function(coefficients, capital_next, params)
+                     cont_value = eval_value_function(coefficients, capital_next, params)[1]
                      value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
                      return value_out
                  end
@@ -996,57 +999,60 @@ If your early policy functions are bad then starting MPI too early will blow up 
 ```
 
 ```
-## Maximum Error of 0.33656462321563546 on iteration 5.
-## MPI iteration 5 on VFI iteration 6.
-## MPI iteration 10 on VFI iteration 6.
-## MPI iteration 15 on VFI iteration 6.
-## MPI iteration 20 on VFI iteration 6.
+## Maximum Error of 0.33871304913135464 on iteration 5.
 ## MPI iteration 25 on VFI iteration 6.
-## MPI iteration 30 on VFI iteration 6.
-## MPI iteration 35 on VFI iteration 6.
-## MPI iteration 40 on VFI iteration 6.
-## MPI iteration 45 on VFI iteration 6.
 ## MPI iteration 50 on VFI iteration 6.
-## MPI iteration 55 on VFI iteration 6.
-## MPI iteration 60 on VFI iteration 6.
-## MPI iteration 65 on VFI iteration 6.
-## MPI iteration 70 on VFI iteration 6.
-## MPI iteration 5 on VFI iteration 7.
-## MPI iteration 10 on VFI iteration 7.
-## MPI iteration 15 on VFI iteration 7.
-## MPI iteration 20 on VFI iteration 7.
+## MPI iteration 75 on VFI iteration 6.
 ## MPI iteration 25 on VFI iteration 7.
-## MPI iteration 30 on VFI iteration 7.
-## MPI iteration 35 on VFI iteration 7.
-## MPI iteration 40 on VFI iteration 7.
-## MPI iteration 45 on VFI iteration 7.
-## MPI iteration 5 on VFI iteration 8.
-## MPI iteration 10 on VFI iteration 8.
-## MPI iteration 15 on VFI iteration 8.
-## MPI iteration 20 on VFI iteration 8.
+## MPI iteration 50 on VFI iteration 7.
 ## MPI iteration 25 on VFI iteration 8.
-## MPI iteration 5 on VFI iteration 9.
-## Maximum Error of 7.736999952594901e-5 on iteration 10.
-##   0.503292 seconds (2.28 M allocations: 91.774 MiB, 17.37% gc time, 72.80% compilation time)
+## Maximum Error of 1.141822859504868e-5 on iteration 10.
+## Maximum Error of 4.0892905314530945e-6 on iteration 15.
+## Maximum Error of 3.0060755201005212e-6 on iteration 20.
+## Maximum Error of 2.3260768798925272e-6 on iteration 25.
+## Maximum Error of 1.7998932693973723e-6 on iteration 30.
+## Maximum Error of 1.3927345521584257e-6 on iteration 35.
+## Maximum Error of 1.0776782693136323e-6 on iteration 40.
+##   0.223322 seconds (5.89 M allocations: 136.588 MiB, 4.52% gc time, 0.88% compilation time)
 ```
 
 ```
-## ([-194.98995838541236, 14.14210619572545, -2.664423037631185, 0.5749556856556037, -0.13337386733926979, 0.03456986150617147, -0.00845744223955711], [-183.15220994435174, -184.03074558458732, -185.8242527588519, -188.60400076032522, -192.45075199802352, -197.3479965478694, -202.9885761378912, -208.4630052469076, -212.0480864899035], Vector[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [36.80824360742958, 8.655023913144976, -1.483288308822478, 0.31548230941626676, -0.0704179524965467, 0.015491954698058905, -0.0031249287075875818], [-194.98995838541236, 14.14210619572545, -2.664423037631185, 0.5749556856556037, -0.13337386733926979, 0.03456986150617147, -0.00845744223955711]])
+## ([-194.8621441678187, 14.1421045241982, -2.6644246831782934, 0.5749549884003013, -0.1333725115671613, 0.03457002344599215, -0.008458351978991155], [-182.95465743584654, -183.26913520863621, -183.9029341172946, -184.86543342494596, -186.17065983910774, -187.8370227467597, -189.88387584646654, -192.32293447594827, -195.14547730604696, -198.30676773519, -201.70496795921736, -205.15032878902258, -208.3351907385608, -210.84292873592221, -212.23984815831525], Vector[[100.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0], [36.80824126072954, 8.655027968115757, -1.4832910460371644, 0.3154836954815494, -0.07041869937297221, 0.015492390858873, -0.003125302805521049], [-194.87810217521672, 14.142104573873516, -2.664424691399574, 0.5749549899065862, -0.13337251176021203, 0.034570023507038646, -0.008458352013435776], [-194.87297913249904, 14.142104535322538, -2.6644246849689233, 0.5749549887223999, -0.13337251160585856, 0.03457002345832334, -0.008458351986372807], [-194.86921322872692, 14.142104526689847, -2.6644246835760215, 0.5749549884715544, -0.13337251157560837, 0.034570023448690965, -0.008458351980620617], [-194.86684924389925, 14.142104524909199, -2.6644246832915175, 0.5749549884205752, -0.13337251156957403, 0.03457002344675323, -0.008458351979455069], [-194.8650200376443, 14.14210452439574, -2.664424683209724, 0.5749549884059388, -0.13337251156784122, 0.03457002344620518, -0.008458351979124092], [-194.86360463275415, 14.142104524247642, -2.6644246831861524, 0.5749549884017184, -0.13337251156734098, 0.034570023446056024, -0.008458351979021731], [-194.86250941944303, 14.142104524204983, -2.6644246831793468, 0.5749549884005244, -0.13337251156720537, 0.034570023446011434, -0.00845835197899945]])
 ```
+
 
 ---
 
 # Modified policy iteration
 
-&lt;img src="09-advanced-dp-methods_files/figure-html/unnamed-chunk-25-J1.png" width="748px" style="display: block; margin: auto;" /&gt;
+&lt;img src="09-advanced-dp-methods_files/figure-html/unnamed-chunk-35-J1.png" width="748px" style="display: block; margin: auto;" /&gt;
 
 ---
 
-# Modified policy iteration
+# Solve times
 
-What was your speed up?
 
-I got **6 times**: 0.6s `\(\rightarrow\)` 0.1s
+```
+## The solve times are:
+```
+
+```
+## Regression: 0.867 seconds
+```
+
+```
+## Endogenous Grid + Regression: 0.216 seconds
+```
+
+```
+## Envelope Condition + Regression: 0.172 seconds
+```
+
+```
+## Modified Policy Iteration + Regression: 0.257 seconds
+```
+
+Individually they give 3-6 times speed up
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

@@ -8,852 +8,736 @@ output:
     css: ['default', 'metropolis', 'metropolis-fonts', 'my-css.css']
     # self_contained: true
     nature:
-      highlightStyle: GitHub
+      highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
       ratio: '16:9'
 
+
 ---
 exclude: true
 ```{r setup}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  xaringanExtra, JuliaCall
+)
 options(htmltools.dir.version = FALSE)
-knitr::opts_hooks$set(fig.callout = function(options) {
-  if (options$fig.callout) {
-    options$echo <- FALSE
-  }
-knitr::opts_chunk$set(echo = TRUE, fig.align="", message = FALSE, warning = FALSE)
-  options
+library(knitr)
+opts_chunk$set(
+  prompt = T, ## See hook below. I basically want a "$" prompt for every bash command in this lecture.
+  fig.align = "center", fig.width=10, fig.height=6, 
+  out.width="748px", out.length="520.75px",
+  dpi = 300, #fig.path='Figs/',
+  cache = F#, echo=F, warning=F, message=F
+  )
+## Next hook based on this SO answer: https://stackoverflow.com/a/39025054
+knit_hooks$set(
+  prompt = function(before, options, envir) {
+    options(
+      prompt = if (options$engine %in% c('sh','bash')) '$ ' else ' ',
+      continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
+      )
 })
-```
-```{r xaringanExtra, echo = FALSE}
-xaringanExtra::use_xaringan_extra(c("tile_view", "panelset", "webcam"))
-
-```
-```{r echo=FALSE}
-xaringanExtra::style_panelset(panel_tab_color_active = "red")
+julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
 ```
 
 ---
 
 # Roadmap
 
-1. Spatial model simple set up
-2. Function iteration solutions
+1. The Armington model
+2. Model inversion
 3. Exact hat algebra
 
 ---
 
 # Spatial models
 
-With spatial models we are now going to allow for:
-
-- heterogeneity across space
-- migration
-- trade
-- etc
-
-Basically, more consideration of general equilibrium effects
-
----
-
-# Spatial models
-
-These features better allow us to understand the impacts of things like:
-
-- the costs of sea level rise (Desmet et al. 2021)
-- the food problem with productivity shocks (Nath 2020)
-- climate and agricultural adaptation (Costinot, Donaldson, Smith 2016)
-- the value of transportation infrastructure (Donaldson, 2018)
-- the welfare impact of environmental regulation (Hollingsworth, Jaworski, Kitchens and Rudik, 2021)
-
----
-
-# Simple set up: a model of market access
-
-We're going to start off with a simple .hi[market access] model
-
---
-
-This model is similar to Donaldson and Hornbeck (2016) and Jaworski and Kitchens (2019)
-
---
-
-It is a simplified version of the canonical Eaton and Kortum (2002) Ricardian trade model
-
----
-
-# Simple set up: a model of market access
-
-Here's what we are going to do:
-
-1. Develop the model
-2. Show how to solve for model unknowns using data and calibration of parameters
-3. Simulate counterfactual outcomes where exogenous model terms (e.g. productivity, trade costs) are different
-
---
-
-.hi[New computational piece here:] we will be solving for things up to a .hi-blue[normalization], we won't necessarily be able to get the levels of variables, only relative differences
-
----
-
-# Households
-
-$L_i$ households are in location $i = 1,\dots,N$
-
---
-
-Households supply labor inelastically, and are perfectly mobile across locations
-
---
-
-This means that in equilibrium it must be true that 
---
-utility is equalized across locations
-
----
-
-# Households: utility and prices
-
-Household utility is
-$$U(C_i) = C_i$$
-
---
-
-Each industry produces a continuum of varieties (more later) such that $C_i$ is a .hi[constant elasticity of substitution] aggregate of the varieties with elasticity $\sigma$
-
---
-
-With the CES assumption, we have the .hi[price index] in location $i$ for the final good $C_i$:
-$$P_i = \left(\int_0^N P(\omega)^{1-\sigma}d\omega \right)^{\frac{1}{1-\sigma}}$$
-
----
-
-# Households: equilibrium utility and wages
-
-With Cobb-Douglas preferences, a consumer's indirect utility is given by their .hi[real wage:]
-$$V_{i} = \frac{w_{i}}{P_{i}}$$
-
---
-
-With perfectly mobile labor, utility is equalized in equilibrium and wages $w_i$ satisfy:
-$$w_i = \bar{U} P_i$$
-where $\bar{U}$ is the level of utility achieved in all counties
-
----
-
-# Firms
-
-Firms maximize profits and take prices as given
-
---
-
-For each location, $z_{i}(\omega)$ is .hi[efficiency]
-
---
-
-This is the quantity of variety $\omega$ that can be produced using one unit of labor in location $i$
-
----
-
-# Firms: EK assumption
-
-We assume that $z_{i}(\omega)$ is a random variable distributed according to the Frechet distribution (Eaton and Kortum, 2002):
-$$F_{i}\left(z\right) = \exp\left[-T_{i} \left(z\right)^{-\theta}\right]$$
-
-
---
-
-This distributional assumption is what will buy us tractability in our model later
-
----
-
-# Firms: EK assumption
-
-$$F_{i}\left(z\right) = \exp\left[-T_{i} \left(z\right)^{-\theta}\right]$$
-
---
-
-$\theta > 1$ is the trade elasticity parameter common across all states and counties and measures the level of intra-industry heterogeneity
-
---
-
-Bigger $\theta$ $\rightarrow$ more heterogeneity $\rightarrow$ stronger comparative advantage effects
-
---
-
-$T_{i}$ measures fundamental productivity
-
---
-
-Larger values of $T_{i}$ increase the probability of larger efficiency draws $z_{i}(\omega)$ and indicate larger absolute advantage
-
----
-
-# Firms: Production technology
-
-Perfectly competitive firms use labor, capital, and .hi[Cobb-Douglas] technologies to produce different varieties of goods
-
---
-
-The marginal cost of producing variety $\omega$ in location $i$ is:
-$$MC_i(\omega) = \frac{1}{z_i(\omega)}{(w_i)}^\gamma {(r_i)}^{1-\gamma}$$
-
---
-
-Total output in location $i$ is given by $Y_i = z_i(\omega) L_i^\gamma K_i^{1-\gamma}$
-
---
-
-
-$\gamma_i$ is the share of value added and $r_i$ is the rental rate of capital
-
---
-
-Capital is perfectly mobile so $r_i = r$ for all $i$
-
----
-
-# Firms: Trade
-
-Trade costs are .hi[iceberg]
-
---
-
-Delivering 1 unit of the good from $j$ to $i$ requires shipping $\tau_{ij} \geq 1$ units, this represents the costs of shipping/trade
-
---
-
-With a bit of math we can solve for the .hi[ideal price index:]
-$$P_{i} = \kappa \left(\sum_{n=1}^N T_{n} \left[{(w_n)}^\gamma \tau_{in} \right]^{-\theta} \right)^{-1/\theta}$$
-
-which is the price of a bundle of goods in location $i$, $\kappa$ is a constant
-
----
-
-# Firms: Trade
-
-$$P_{i} = \kappa \left(\sum_{n=1}^N T_{n} \left[{(w_n)}^\gamma \tau_{in} \right]^{-\theta} \right)^{-1/\theta}$$
-
-Notice $P_i$ is increasing in sellers' trade costs $\tau_{in}$ and input costs $w_n$, and decreasing in productivity $T_n$
-
---
-
-${(P_{i})}^{-\theta}$ is often called consumer market access $(CMA_i)$ and captures location $i$'s access to cheaper products
-
----
-
-# Firms: Trade
-
-.hi[Bilateral trade expenditures] of location $i$ on goods from location $j$ are given by:
-$$X_{ij} = \kappa T_{j} Y_i\left(\frac{ {(w_j)}^\gamma \tau_{ij}}{{P_{i}}}\right)^{-\theta}$$
-
---
-
-$i$ purchases more products from $j$ if:
-
-- the costs of products from $j$ are lower: smaller $w_j, \tau_{ij}$, larger $T_j$
-- $i$ is richer $Y_i$
-- Consumer market access ${(P_{i})}^{-\theta}$ is lower
-
-
----
-
-# Firms: Market access
-
-Firms also have a .hi[market access] term $FMA_j$ that we can derive from combining the equilibrium real wage, price index, and trade expenditures expressions:
-$$FMA_j = \sum_{i=1}^N \frac{\tau_{ij}^{-\theta}Y_i}{CMA_i}$$
-
---
-
-Firm market access captures the firm side: their access to higher price markets
-
----
-
-# Firms: Market access
-
-$$FMA_j = \sum_{i=1}^N \frac{\tau_{ij}^{-\theta}Y_i}{CMA_i}$$
-
-FMA is higher if:
-
-- Trade costs are lower $(\tau_{ij})$
-- Other locations are richer $(Y_i)$
-
-
----
-
-# We did it
-
-So that is the model
-
---
-
-Now we need to solve it
-
---
-
-One of the key pieces in our model are the .hi[market access terms]
-
---
-
-It turns out, FMA and CMA are .hi-blue[equivalent up to a normalization by a constant:]
-$$MA_i \equiv FMA_i = \rho CMA_i$$
-
-
----
-
-# Solving the model
-
-What we need in order to fully solve the model is pretty simple: 
-
---
-
-.hi[the N unobserved exogenous] $T_i$ .hi[terms]
---
-, all other exogenous terms are just parameters we calibrate/estimate (e.g. trade costs) or data (labor)
-
---
-
-To recover the $T_i$s, we first need to solve for the factual equilibrium of the model
-
---
-
-This means we need to recover the market access terms MA
-
---
-
-Now lets see how we solve for MA and T
-
----
-
-# Solving the model: market access
-
-$$FMA_j = \sum_{i=1}^N \frac{\tau_{ij}^{-\theta}Y_i}{CMA_i}$$
-
---
-
-using the equivalency between FMA and CMA, and that $Y_i = \frac{w_i L_i}{\gamma}$ from labor market clearing we have our condition allowing us to solve for market access:
-$$MA_j = \rho \sum_{i=1}^N \tau_{ij}^{-\theta} MA_i^{\frac{-(1+\theta)}{\theta}} L_i$$
-
-For $j=1,\dots,N$ this is a system of N equations
-
----
-
-# Solving the model: market access
-
-$$MA_j = \rho \sum_{i=1}^N \tau_{ij}^{-\theta} MA_i^{\frac{-(1+\theta)}{\theta}} L_i$$
-
-$N$ unknown MA terms, everything else is a parameter $(\tau_{ij}, \theta)$ or data $L_i$
-
---
-
-$\rho$ is the remaining unknown, but is just a scalar
-
---
-
-.hi[Fujimoto-Krause] shows that we can solve for the vector $MA$ up to this normalization using function iteration, but where our update is:
-$$MA_{new} = \frac{RHS(MA_{old})}{||RHS(MA_{old})||}$$
-
-
----
-
-# Solving the model: market access
-
-```
-function solve_price(data, params, labor)
-
-    # set up intial guesses
-    ma_temp = collect(1:size(data.L)[1])
-    ma_new = data.tau_theta * (ma_temp .^ (-(1 + params.theta) / params.theta) .* labor)
-    ma_temp = ma_new / sqrt(sum(ma_new .^ 2))
-    error = Inf
-
-    # use Fujimoto-Krause to solve for MA up to a normalization
-    while error > params.tol * params.damping
-        ma_new = data.tau_theta * (ma_temp .^ (-(1 + params.theta) / params.theta) .* labor) # RHS of MA equation
-        ma_new = ma_new / sqrt(sum(ma_new .^ 2)) # normalize
-        error = sqrt.(sum((ma_new .- ma_temp) .^ 2))
-        ma_temp = params.damping * ma_new + (1 - params.damping) * ma_temp # damp the update
-    end
-    
-    # Convert to price index
-    price = ma_new .^ (-1 / params.theta)
-    return price
-    
-end
-```
-
----
-
-# Solving the model: productivity
-
-Now we need to solve for productivity $T_j$
-
---
-
-How do we do this?
-
---
-
-Recall:
-$$X_{ij} = \kappa T_{j} Y_i\left(\frac{ {(w_j)}^\gamma \tau_{ij}}{{P_{i}}}\right)^{-\theta}$$
-
-and
-
-$$P_{i} = \kappa \left(\sum_{n=1}^N T_{n} \left[{(w_n)}^\gamma \tau_{in} \right]^{-\theta} \right)^{-1/\theta}$$
+So far we have been focusing on .hi[dynamics]
  
----
+--
 
-# Solving the model: productivity
-
-$$X_{ij} = \kappa T_{j} Y_i\left(\frac{ {(w_j)}^\gamma \tau_{ij}}{{P_{i}}}\right)^{-\theta}$$
-
-
-Plug in $P_i$, and use $\bar{U} = \frac{w_i}{P_i}$ to get an expression for equilibrium labor allocations as a function of productivity and market access:
-$$L_j = \underbrace{\kappa \gamma T_j \bar{U}^{-(1+\gamma \theta)}}_{\eta_j} MA_j^{\frac{\theta(1+\gamma)+1}{\theta}}$$
-where $\kappa$ is some constant, and $\eta_j$ is $T_j$ up to a normalization by a constant
-
-
----
-
-# Solving the model: productivity
-
-
-$$L_j = \eta_j MA_j^{\frac{\theta(1+\gamma)+1}{\theta}}$$
+Now we are going to look at the other dimension: .hi[space]
 
 --
 
-We can solve for $\eta_j$ which is just $T_j$ up to a normalization by a constant $\kappa \gamma \bar{U}^{-(1+\gamma \theta)}$
-$$\eta_j = L_j MA_j^{-\frac{\theta(1+\gamma)+1}{\theta}}$$
+To start, we will work with static models
 
 --
 
-Labor is higher areas with greater market access (cheaper goods), or higher productivity (higher wage)
-
----
-
-# Solving the model: productivity
-
-```
-function solve_productivity(data, params)
-
-    # Iterate on equation to solve for market access
-    # Then invert to recover P
-    price = solve_price(data, params, data.L)
-
-    # recover T up to a normalization
-    T =
-        exp.(
-            log.(data.L) .-
-            ((1 + params.theta * (1 + params.gamma)) / params.theta) .*
-            log.(price .^ (-params.theta)),
-        )
-
-    return T
-
-end
-```
-
---
-
-Now we have all the unknown exogenous pieces of the model and can simulate it given changes in model parameters
-
----
-
-# Simulating the model
-
-Suppose we want to measure the effect of a change in productivity to $T^c_j$ where superscript $c$ denotes counterfactual quantities
-
---
-
-We have 2N+1 unknowns: $MA^c_j, L^c_j, \bar{U}^c$ for $j=1,\dots,N$
-
----
-
-# Simulating the model
-
-First rearrange the labor expression to solve for market access:
-$$MA^c_j = \left[\frac{L^c_j}{\eta^c_j}\right]^{\frac{\theta}{\theta(1 + \gamma) + 1}}$$
-
-where $\eta^c_j$ is a function of $T^c_j$
-
---
-
-This is a set of $N$ equations that pins down MA conditional on L
-
----
-
-# Simulating the model
-
-$$MA^c_j = \left[\frac{L^c_j}{\eta^c_j}\right]^{\frac{\theta}{\theta(1 + \gamma) + 1}}$$
-
---
-
-Next we can insert the $MA^c_j$ terms into the MA fixed point equation:
-$$MA^c_j = \rho \sum_{i=1}^N \tau_{ij}^{-\theta} {MA^c_i}^{\frac{-(1+\theta)}{\theta}} L^c_i$$
-
---
-
-This is another $N$ equations that now pins down L
-
---
-
-We still need to pin down $\bar{U}^c$
+But we will introduce multiple regions across space, and frictions inhibiting mobility of goods and factors of production
 
 
 ---
 
-# Simulating the model
+class: inverse, center, middle
+name: armington
 
-Pinning down $\bar{U}^c$ is where the *up to a normalization* part comes in
+# The Armington model
 
---
-
-The pinned down $L^c_j$s above won't necessarily sum up to $\sum_{i=1}^N L_i$
-
---
-
-We pin down $\bar{U}^c$ by inflating all the $L^c_j$ terms by some constant factor $\zeta$ so they sum up to the factual level of labor $\sum_{i=1}^N L_i$
-
---
-
-We are just imposing the last remaining equation, the labor resource constraint:
-$$\sum_{i=1}^N L^c_i = \sum_{i=1}^N L_i$$
-
----
-
-# Simulating the model
-
-$$MA^c_j = \left[\frac{L^c_j}{\eta^c_j}\right]^{\frac{\theta}{\theta(1 + \gamma) + 1}}$$
-
-$$MA^c_j = \rho \sum_{i=1}^N \tau_{ij}^{-\theta} {MA^c_i}^{\frac{-(1+\theta)}{\theta}} L^c_i$$
-
-$$\sum_{i=1}^N L^c_i = \sum_{i=1}^N L_i$$
-
-2N+1 equations and 2N+1 unknowns, we can solve this system of equations to get our new equilibrium under $\bar{T}^c_j$
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 
 ---
 
-# Simulating the model
+# Armington and gravity
 
-We can then compute the change in welfare from this new equilibrium:
-$$\frac{\bar{U}^c}{\bar{U}} = \left({\eta^c / \eta}\right)^{-1/(1+\gamma \theta)}$$
-
+Classic trade theory (e.g. Ricardo) highlights economic forces driving trade of goods
+  - Comparative advantage
+  
 --
 
-All the constant terms that we never explicitly solved for in $\eta$ cancel out so we can still identify the .hi[change] in welfare and employment
-
---
-
-Now lets look at the code
+Empirical work has long used the .hi[gravity model:]
+$$X_{ij} = \alpha \frac{Y_i Y_j}{D_{ij}}$$
 
 
 ---
 
-# Simulating the model: solving for a change in welfare
+# Armington and gravity
 
-Suppose we change eta from `eta_bar` to `eta_counter`
+$$X_{ij} = \alpha \frac{Y_i Y_j}{D_{ij}}$$
+
+$X_{ij}$ trade flow from i to j
+
+$Y_i$ GDP of origin
+
+$Y_j$ GDP of destination
+
+$D_{ij}$ distance and other frictions affecting trade flows
+
+
+---
+
+# Armington and gravity
+
+$$X_{ij} = \alpha \frac{Y_i Y_j}{D_{ij}}$$
+
+The gravity model is widely used and empirically matches the data
+
+.hi[But:] no real theoretical foundation, can't do counterfactuals
 
 --
 
-Our code might look like:
+The .hi[Armington] model provides a simple theoretical foundation for gravity with two key ingredients:
 
-```{julia, eval = F}
-function solve_counterfactual_base(eta_bar, data, params, regulation_counter)
-
-    eta_counter = eta_bar .* regulation_counter
-
-    # solve for labor allocation
-    labor_counter = solve_labor(data, params, eta_counter)
-    .
-    .
-```
-
-What does `solve_labor` do?
+1. Spatially differentiated products
+2. Love-of-variety preferences
 
 ---
 
-# Simulating the model: solving for labor
+# Armington
 
-```{julia, eval = F}
-function solve_labor(data, params, eta_counter)
+The set up:
 
-    # insert L into market access
-    g = 1 + params.theta * (1 + params.gamma)
-    L_temp = data.L
-    L_new =
-        eta_counter .*
-        (data.tau_theta * ((L_temp ./ eta_counter) .^ (-(1 + params.theta) / g) .* L_temp)) .^
-        (g / params.theta)
-    L_temp = L_new / sqrt(sum(L_new .^ 2))
-    error = Inf
-    .
-    .
-    # next do function iteration
-```
+$N$ regions
+
+--
+
+Each region produces a differentiated product
+
+--
+
+Representative household in each region can purchase goods from all locations
+
+--
+
+Trade frictions (e.g. distance) result in different prices offered by different producers
 
 ---
 
-# Simulating the model: solving for labor
+# Armington: preferences
 
-```{julia, eval = F}
-    .
-    .
-    # use Fujimoto-Krause to solve for L up to a normalization
-    while error > params.tol
-        L_new =
-            eta_counter .*
-            (data.tau_theta * ((L_temp ./ eta_counter) .^ (-(1 + params.theta) / g) .* L_temp)) .^
-            (g / params.theta)
-        L_new = L_new / sqrt(sum(L_new .^ 2))
-        error = sqrt.(sum((L_new .- L_temp) .^ 2))
-        L_temp = L_new
+The representative household in region $j$ has CES preferences:
+
+$$U_j = \left(\sum_{i \in N} a_{ij}^{1 \over \sigma} q_{ij}^{\sigma-1 \over \sigma}\right)^{\sigma \over \sigma-1}$$
+
+$\sigma$ is the elasticity of substitution with $\sigma > 1$
+
+$a_{ij}$ is an exogenous taste parameter
+
+$q_{ij}$ is the quantity of goods imported from $i$ to $j$
+
+---
+
+# Armington: demand
+
+The consumer maximizes utility subject to a budget:
+
+$$\max_{\{q_{ij}\}_{i \in N}} \left(\sum_{i \in N} a_{ij}^{1 \over \sigma} q_{ij}^{\sigma-1 \over \sigma}\right)^{\sigma \over \sigma-1} \quad \text{subject to:} \quad \sum_{i \in N} q_{ij} p_{ij} \leq Y_j$$
+
+--
+
+Standard result gives demand for goods from $i$ by $j$:
+$$q_{ij} = a_{ij} p_{ij}^{-\sigma} Y_j P_j^{\sigma-1} \quad \text{where} \quad P_j = \left(\sum_{k \in N} a_{kj} p_{kj}^{1-\sigma}\right)^{1 \over 1-\sigma}$$
+
+$P_j$ is the usual Dixit-Stiglitz price index
+
+---
+
+# Armington: demand
+
+$$q_{ij} = a_{ij} p_{ij}^{-\sigma} Y_j P_j^{\sigma-1} \quad \text{where} \quad P_j = \left(\sum_{k \in N} a_{kj} p_{kj}^{1-\sigma}\right)^{1 \over 1-\sigma}$$
+
+Multiply by prices to get trade flows in dollar terms:
+
+$$X_{ij} = q_{ij} p_{ij} = a_{ij} p_{ij}^{1-\sigma} Y_j P_j^{\sigma-1}$$
+
+Trade flows .hi-red[decrease] in bilateral prices, .hi-blue[increase] in the local price index, and .hi-blue[increase] in local size/GDP
+
+---
+
+# Armington: supply
+
+.hi[Armington assumption:] each region produces a distinct variety of a good
+
+--
+
+There are .hi[iceberg trade costs] $\tau_{ij} \geq 1$: for 1 unit of $q_{ij}$ to arrive at $j$ from $i$ you need to ship $\tau_{ij}$ units
+
+--
+
+Market structure:
+- Producers compete in perfect competition
+- Regions are endowed with $L_i$ workers supplying 1 unit of labor
+- Each unit of labor can produce $A_i$ units so total output is $A_i L_i$
+- Workers are paid a wage $w_i$ so that $Y_i = w_i L_i$
+
+---
+
+# Armington: supply
+
+Given a labor endowment $L_i$ and productivity $A_i$ the marginal cost of production is $w_i \over A_i$
+
+--
+
+Perfect competition means the factory-door price is marginal cost: $w_i \over A_i$
+
+--
+
+The price in $j$ to buy a unit of the good from $i$ is then:
+$$p_{ij} = \tau_{ij} {w_i \over A_i}$$
+
+Plug back into demand to get:
+$$X_{ij} = a_{ij} \tau_{ij}^{1-\sigma} \left(w_i \over A_i\right)^{1-\sigma} Y_j P_j^{\sigma-1}$$
+
+---
+
+# Armington: market clearing
+
+$$X_{ij} = a_{ij} \tau_{ij}^{1-\sigma} \left(w_i \over A_i\right)^{1-\sigma} Y_j P_j^{\sigma-1}$$
+
+Define .hi[expenditure shares] as the expenditures on $i$ by $j$ relative to $j$s total expenditures:
+\begin{align}
+  \lambda_{ij} &= {X_{ij} \over \sum_{k \in N} X_{kj}}
+\end{align}
+
+---
+
+# Armington: market clearing
+
+\begin{align}
+  \lambda_{ij} &= {X_{ij} \over \sum_{k \in N} X_{kj}} \\
+  & = \frac{a_{ij} \tau_{ij}^{1-\sigma} \left(w_i \over A_i\right)^{1-\sigma} Y_j P_j^{\sigma-1}}{\sum_{k \in N} a_{kj} \tau_{kj}^{1-\sigma} \left(w_k \over A_k\right)^{1-\sigma} Y_j P_j^{\sigma-1}} \\
+  & = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma} }
+\end{align}
+
+
+---
+
+# Armington: market clearing
+
+$$\lambda_{ij} = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}}$$
+
+$j$ spends more on $i$ relative to other places if $i$ has lower wages, higher productivity, or lower trade costs relative to other locations
+
+
+---
+
+# Armington: market clearing
+
+In perfect competition the expenditures on inputs in $j$ need to match the spending by other locations $i$ on $j$s goods:
+
+$$w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i$$
+
+Perfect competition $\rightarrow$ labor costs = revenues
+
+
+---
+
+# Armington: equilibrium
+
+Our equilibrium is then defined by two sets of equations:
+
+$$\lambda_{ij} = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}} \qquad w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i$$
+
+where the endogenous variables are the $N^2$ $\lambda_{ij}$ terms and the $N$ $w_j$ terms
+
+---
+
+# Armington: equilibrium
+
+$$\lambda_{ij} = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}} \qquad w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i$$
+
+Given the exogenous parameters $a_{ij}, \tau_{ij}, A_i, L_i, \sigma$, how do we solve for the equilibrium?
+
+--
+
+We can use function iteration after substituting in for $\lambda{ij}$ in market clearing:
+
+$$w_j L_j = \sum_{i \in N} \frac{a_{ji} \left(\tau_{ji} w_j \over A_j\right)^{1-\sigma} }{\sum_{k \in N} a_{ki} \left(\tau_{ki} w_k \over A_k\right)^{1-\sigma}} w_i L_i$$
+
+
+---
+
+# Armington: equilibrium
+
+$$w_j L_j = \sum_{i \in N} \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}} w_i L_i$$
+
+We have $N$ market clearing conditions and $N$ unknown $w_i$ terms
+
+--
+
+Write up a function `solve_armington_eq(sigma, tau, A, L, a, tol, damp)` that solves for the equilibrium wages and expenditure shares
+
+
+
+---
+
+# Armington: equilibrium
+
+```{julia}
+function solve_armington_eq(σ, τ, A, L, a, tol = 1e-5, damp = .1)
+    w, λ, N  = ones(size(A)), zeros(size(a)), length(A)
+    wage_error = 1e5
+    while wage_error > tol
+        denominator, wL = zeros(size(A)), zeros(size(A))
+        for k in 1:N
+            denominator .+= a[k,:] .* (τ[k,:] * w[k] / A[k]).^(1 .- σ)
+        end
+        for i in 1:N
+            wL .+= a[:,i] .* (τ[:,i] .* w ./ A).^(1 .- σ) .* w[i] .* L[i] ./ denominator[i]
+        end
+        wnew = wL ./ L 
+        wage_error = maximum(abs.(wnew .- w)./w)
+        w = damp .* wnew .+ (1 - damp) .* w
     end
-    return L_new
+    for o in 1:N, d in 1:N
+        λ[o,d] = a[o,d] * (τ[o,d] * w[o] / A[o])^(1 - σ) / sum(a[:,d] .* (τ[:,d] .* w[:] ./ A[:]).^(1 .- σ))
+    end
+    return w, λ
+end
+```
+
+---
+
+# Symmetric + cross-region trade costs of 5
+
+```{julia}
+τ = [1. 5; 5. 1.]; 
+a = [1. 1.; 1. 1.];
+A = [1., 1.];
+L = [1., 1.];
+σ = 2.;
+w, λ = solve_armington_eq(σ, τ, A, L, a);
+display(w)
+display(λ)
+```
+
+---
+
+# Productivity shock to region 1
+
+```{julia}
+τ = [1. 5; 5. 1.]; 
+a = [1. 1.; 1. 1.];
+A = [10., 1.];
+L = [1., 1.];
+σ = 2.;
+w, λ = solve_armington_eq(σ, τ, A, L, a);
+display(w)
+display(λ)
+```
+
+
+---
+
+# Increased labor supply in region 1
+
+```{julia}
+τ = [1. 5; 5. 1.]; 
+a = [1. 1.; 1. 1.];
+A = [1., 1.];
+L = [5., 1.];
+σ = 2.;
+w, λ = solve_armington_eq(σ, τ, A, L, a);
+display(w)
+display(λ)
+```
+
+---
+
+# Return to autarky
+
+```{julia}
+τ = [1. 1e9; 1e9 1.]; 
+a = [1. 1.; 1. 1.];
+A = [1., 1.];
+L = [1., 1.];
+σ = 2.;
+w, λ = solve_armington_eq(σ, τ, A, L, a);
+display(w)
+display(λ)
+```
+
+---
+
+# Free trade
+
+```{julia}
+τ = [1. 1.0001; 1.0001 1.]; 
+a = [1. 1.; 1. 1.];
+A = [1., 1.];
+L = [1., 1.];
+σ = 2.;
+w, λ = solve_armington_eq(σ, τ, A, L, a);
+display(w)
+display(λ)
+```
+
+---
+
+# New trading partner
+
+```{julia}
+τ = [1. 2. 3.; 3. 1. 2.; 1e9 5. 1.]; 
+a = [1. 1. 1.; 1. 1. 1.; 1. 1. 1.];
+A = [1., 1., 1.];
+L = [1., 1., 1.];
+σ = 2.;
+w, λ = solve_armington_eq(σ, τ, A, L, a);
+display(w)
+display(λ)
+```
+
+
+---
+
+# Solving Armington
+
+We solved for the Armington equilibrium
+
+--
+
+If we have values for all the exogenous parameters, we can then perform counterfactuals where we explore the equilibrium effects of changes in trade costs, productivity, etc
+
+--
+
+This is a bit unsatisfying: we'd like to not have to take a stand on numerous region-specific and bilateral parameters
+
+---
+
+class: inverse, center, middle
+name: exacthat
+
+# Exact hat algebra
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# Exact hat algebra
+
+A workhorse method for solving for counterfactual is .hi[exact hat algebra]
+
+--
+
+There are two key pieces to it:
+
+1. Real world data (wages, trade flows) are essentially sufficient statistics for unobservable parameters (productivity, trade costs)
+2. Spatial models are built in a way where we can express a counterfactual equilibrium in terms of changes relative to the factual
+
+--
+
+Going forward, primes will indicate counterfactual quantities $(w'_i)$, hats will indicate relative quantities $(\hat{w}_i = {w'_i \over w_i})$
+
+---
+
+# Exact hat algebra
+
+In our working example, our factual equilibrium will be the real world
+
+--
+
+We observe the data for this equilibrium (wages, trade flows, etc)
+
+--
+
+We want to understand the equilibrium effects of some arbitrary changes in the distribution of productivity: $\{\hat{A}_1, \hat{A}_2, \dots \}$
+
+--
+
+Assume no other exogenous variables are changing: $\hat{\tau}_{ij} = 1, \hat{a}_{ij} = 1, \hat{\sigma} = 1, \hat{L} = 1$
+
+
+---
+
+# Exact hat algebra
+
+Recall our equilibrium conditions were:
+
+$$\lambda_{ij} = \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}} \qquad w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i$$
+
+Let's start by manipulating the market clearing condition which holds in the factual and counterfactual equilibria:
+
+--
+
+$$w_j L_j = \sum_{i \in N} \lambda_{ji} w_i L_i \qquad w'_j L'_j = \sum_{i \in N} \lambda'_{ji} w'_i L_i'$$
+
+---
+
+# Exact hat algebra
+
+First by definition: $\lambda_{ji} w_i L_i = X_{ji}$ so that
+
+$$w_j' L_j' = \sum_{i \in N} \lambda_{ji}' w_i' L_i' = \sum_{i \in N} X'_{ji}$$
+
+--
+
+Next, put the left hand side into hat form by dividing both sides by $w_j L_j$:
+
+$$\hat{w}_j \underbrace{\hat{L}_j}_{=1} = \sum_{i \in N} \frac{X'_{ji}}{w_j L_j}$$
+
+
+---
+
+# Exact hat algebra
+
+$$\hat{w}_j  = \sum_{i \in N} \frac{X'_{ji}}{w_j L_j}$$
+
+Multiply and divide the right and side by $X_{ji}$ to put it into hat form:
+
+$$\hat{w}_j  = \sum_{i \in N} \frac{X_{ji}}{w_j L_j}\hat{X}_{ji}$$
+
+---
+
+# Exact hat algebra
+
+Finally, we know that $X_{ji} = \lambda_{ji} w_i L_i$ so that $\hat{X}_{ji} = \hat{\lambda}_{ji} \hat{w}_i \hat{L}_i$ and 
+
+$$\hat{w}_j = \sum_{i \in N} \frac{X_{ji}}{w_j L_j}\hat{\lambda}_{ji} \hat{w}_i$$
+
+The change in wages depends on the change in endogenous wages and expenditure shares, and the observed factual bilateral expenditures, wages, and labor
+
+---
+
+# Exact hat algebra
+
+Now let's go to the gravity equation:
+
+$$\lambda'_{ij} = \frac{a_{ij} \left(\tau_{ij} w'_i \over A'_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}$$
+
+--
+
+Put this into hat form:
+
+$$\lambda'_{ij} / \lambda_{ij} = \left[\frac{a_{ij} \left(\tau_{ij} w'_i \over A'_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}\right] \Bigg/ \left[\frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{l \in N} a_{lj} \left(\tau_{lj} w_l \over A_l\right)^{1-\sigma}}\right]$$
+
+
+---
+
+# Exact hat algebra
+
+The numerator goes into hats easily, the denominator is trickier:
+
+$$\hat{\lambda}_{ij} = \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{ \left[\frac{\sum_{k \in N} a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} w_l \over A_l\right)^{1-\sigma}}\right]}$$
+
+
+Next, bring the bottom sum inside the top sum since it is a function of $j$ and does not depend on k
+
+---
+
+# Exact hat algebra
+
+$$\hat{\lambda}_{ij} = \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{\sum_{k \in N} \left[\frac{ a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} w_l \over A_l\right)^{1-\sigma}}\right]}$$
+
+
+--
+
+Inside the square brackets, multiply and divide by $a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}$
+
+---
+
+# Exact hat algebra
+
+$$\hat{\lambda}_{ij} = \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{\sum_{k \in N} \left[ \underbrace{\frac{ a_{kj} \left(\tau_{kj} w'_k \over A'_k\right)^{1-\sigma}}{a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}}}_{\left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}} \underbrace{\frac{a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} w_l \over A_l\right)^{1-\sigma}}}_{\lambda_{kj}}\right]}$$
+
+---
+
+# Exact hat algebra
+
+This finally gives us that:
+
+$$\hat{\lambda}_{ij} =  \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{\sum_{k \in N}\lambda_{kj} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$
+
+The change in expenditure shares depends on the change in exogenous productivity, endogenous wages, and the observed factual expenditure shares
+
+---
+
+# Exact hat algebra
+
+We now have our two equilibrium conditions in changes:
+
+$$\hat{\lambda}_{ij} =  \frac{\left(\hat{w}_i \over \hat{A}_i\right)^{1-\sigma} }{\sum_{k \in N}\lambda_{kj} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}} \qquad \hat{w}_j = \sum_{i \in N} \frac{X_{ji}}{w_j L_j}\hat{\lambda}_{ji} \hat{w}_i$$
+
+and can combine them into a single equilibrium condition in changes:
+
+$$\hat{w}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$
+
+---
+
+# Exact hat algebra
+
+$$\hat{w}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$
+
+Notice that it does not depend on any structural parameters except for $\sigma$
+
+---
+
+# Exact hat algebra
+
+$$\hat{w}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$
+
+$\lambda_{ij}, X_{ij}, w_i, L_i$ are all observable data:
+
+--
+
+$\hat{A}_i$ is a chosen counterfactual
+
+--
+
+$\hat{w}_i$ are unknown but can be solved through function iteration
+
+--
+
+We also will want to solve for $\hat{P}_i$ to understand how the price index is changing
+
+---
+
+# Exact hat algebra
+
+Recall: 
+
+$$P_j = \left(\sum_{k \in N} a_{kj} p_{kj}^{1-\sigma}\right)^{1 \over 1-\sigma} = \left(\sum_{k \in N} a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}\right)^{1 \over 1-\sigma}$$
+
+$$\hat{P}_j^{1-\sigma} = \frac{\sum_{k \in N} a_{kj} \left(\tau_{kj} {w'_k \over A'_k}\right)^{1-\sigma} }{\sum_{l \in N} a_{lj} \left(\tau_{lj} {w_l \over A_l}\right)^{1-\sigma}}$$
+
+Like before, bring the denominator inside the numerator sum
+
+---
+
+# Exact hat algebra
+
+$$\hat{P}_j^{1-\sigma} = \sum_{k \in N}\frac{ a_{kj} \left(\tau_{kj} {w'_k \over A'_k}\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} {w_l \over A_l}\right)^{1-\sigma}}$$
+
+multiply and divide by $a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}$ to get:
+
+$$\hat{P}_j^{1-\sigma} = \sum_{k \in N}\frac{ a_{kj} \left(\tau_{kj} {w'_k \over A'_k}\right)^{1-\sigma}}{a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}} \frac{a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} {w_l \over A_l}\right)^{1-\sigma}}$$
+
+---
+
+# Exact hat algebra
+
+$$\hat{P}_j^{1-\sigma} = \sum_{k \in N}  \left( {\hat{w}_k \over \hat{A}_k}\right)^{1-\sigma} \underbrace{\frac{a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}}{\sum_{l \in N} a_{lj} \left(\tau_{lj} {w_l \over A_l}\right)^{1-\sigma}}}_{\lambda_{kj}}$$
+
+$$\hat{P}_j = \left(\sum_{k \in N}  \left( {\hat{w}_k \over \hat{A}_k}\right)^{1-\sigma} \lambda_{kj}\right)^{1 \over 1-\sigma}$$
+
+---
+
+# Exact hat algebra
+
+$$\hat{w}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$
+
+We have $N$ market clearing conditions and $N$ unknown $\hat{w}_i$ terms
+
+--
+
+Write up a function `solve_armington_exact_hat(X, lambda, w, L, Ahat, sigma, tol, damp)` that solves for the new equilibrium in changes
+
+--
+
+.hi[Key thing to keep in mind:] we haven't defined a numeraire yet, use the consumption price index
+
+---
+
+# Exact hat algebra
+
+Here are the data to use:
+
+```{julia}
+w = [1., 1.];
+L = [1., 1.];
+λ = [.8 .2; .2 .8];
+X = (w .* L)' .* λ;
+Ahat = [10., 1.];
+σ = 2.;
+```
+
+Columns of $\lambda$ should sum to 1, $X$ is generated to be consistent with $w, L, \lambda$
+
+---
+
+# Exact hat algebra
+
+```{julia}
+function solve_armington_exact_hat(X, λ, w, L, Ahat, σ, tol = 1e-5, damp = .1)
+    what, N = ones(size(Ahat)), length(Ahat)
+    wage_error = 1e5
+    while wage_error > tol
+        denominator, what_new = zeros(size(Ahat)), zeros(size(Ahat))
+        for k in 1:N
+            denominator .+= λ[k,:] .* (what[k] / Ahat[k]).^(1 .- σ)
+        end
+        for i in 1:N
+            what_new .+= (X[:,i] ./ (w .* L) ) .* (what ./ Ahat).^(1 .- σ) .* what[i] ./ denominator[i]
+        end
+        wage_error = maximum(abs.(what_new .- what)./what)
+        what = damp .* what_new .+ (1 - damp) .* what
+    end
+    λhat = (what ./ Ahat).^(1 .- σ) ./ sum(λ .* (what ./ Ahat).^(1 .- σ), dims = 1)
+    Phat = vec((sum(λ .* (what ./ Ahat).^(1 .- σ), dims = 1)).^(1 ./ (1 .- σ)))
+    return what, λhat, Phat
 end
 ```
 
 
 ---
 
-# Simulating the model: solving for a change in welfare
+# Exact hat algebra
 
-```{julia, eval = F}
-    .
-    labor_counter = solve_labor(data, params, T_counter)
-    labor_counter = labor_counter ./ sum(labor_counter) .* sum(data.L) # normalize
-    price_counter = solve_price(data, params, labor_counter) # get price index
-
-    eta_counter = # with P^c, L^c we can solve for eta^c
-        exp.(log.(labor_counter) .-
-            ((1 + params.theta * (1 + params.gamma)) / params.theta) .*
-            log.(price_counter .^ (-params.theta)),
-        ) ./ regulation_counter
-    delta_U = (eta_counter ./ eta_bar) .^ (-1 / (1 + params.gamma * params.theta))
-
-    results = DataFrame(
-        eta_bar = vec(eta_bar), T_bar_counter = vec(eta_bar_counter),
-        cf_reg = vec(regulation_counter),
-        labor_before = vec(data.L), labor_after = vec(labor_counter),
-        labor_change = vec(labor_counter ./ data.L), welfare_change = vec(delta_U))
-
-    return results
- 
-end
+```{julia}
+Ahat = [10., 1.];
+what, λhat, Phat = solve_armington_exact_hat(X, λ, w, L, Ahat, σ);
+what ./ Phat
 ```
 
+When region 1 becomes more productive: their real wages increase > 800%, region 2's real wages increase 30%
 
 ---
 
-# Simulating the model
+# Exact hat algebra
 
-What was the effect of the Clean Air Act on manufacturing employment?
-.center[
-```{r, out.width = "60%", fig.pos="c", echo = FALSE}
-knitr::include_graphics("figures/employment_map.png")
+```{julia}
+λhat
 ```
-]
 
+Both region's expenditures tilt toward region 1
 
 ---
 
 # Exact hat algebra
 
-We can reframe how we solve this in a different way
-
-Suppose we want to know the effect of a change in productivity $\hat{T_j} = \frac{T^c_j}{T_j}$
+There was nothing special about productivity here
 
 --
 
-Hats denote changes in a variable from factual to counterfactual
-
---
-
-It turns out it's relatively easy to solve these models in terms of *changes*
-
----
-
-# Exact hat algebra
-
-First we need to define a new variable, .hi[expenditure shares:]
-$$\lambda_{ij} = \frac{X_{ij}}{\sum_{h=1}^N X_{ih}}$$
-
---
-
-This is just the share of total expenditures on products from location $j$
-
---
-
-Substitute in for the $X_{ih}$ terms to get:
-$$\lambda_{ij} = \frac{T_{j} \left( {(w_j)}^\gamma \tau_{ij}\right)^{-\theta}}{\sum_{h=1}^N T_{h} \left( {(w_h)}^\gamma \tau_{ih}\right)^{-\theta}}$$
-
----
-
-# Exact hat algebra
-
-Also notice that labor's share of total income $w_i L_i = \gamma Y_i$ can be written as a function of the sum of expenditures by $j$ on products from $i$
-$$w_i L_i = \gamma \sum_{j=1}^N \lambda_{ji} w_j L_j$$
----
-
-# Exact hat algebra
-
-$$\lambda_{ij} = \frac{T_{j} \left( {(w_j)}^\gamma \tau_{ij}\right)^{-\theta}}{\sum_{h=1}^N T_{h} \left( {(w_h)}^\gamma \tau_{ih}\right)^{-\theta}}$$
-
-$$w_i L_i = \gamma \sum_{j=1}^N \lambda_{ji} w_j L_j$$
-
-Suppose we have a productivity shock $\hat{T}_j$, and that $\hat{\tau}_{ij} = \hat{L} = 1$
-
---
-
-What we are going to do is manipulate these two expressions into *hat form*
-
----
-
-# Exact hat algebra
-
-Let's start with the counterfactual labor market clearing condition:
-$$w^c_i L^c_i = \gamma \sum_{j=1}^N \lambda^c_{ji} w^c_j L^c_j$$
-
-Notice that $\lambda^c_{ji} w^c_j L^c_j$ is just how much $j$ spends on products from $i$ so that:
-$$w^c_i L^c_i = \gamma \sum_{j=1}^N X^c_{ji}$$
-
----
-
-# Exact hat algebra
-
-Next let's put it into hat form:
-$$\hat{w}_i \hat{L}_i = \frac{w^c_i L^c_i}{w_i L_i} = \gamma \sum_{j=1}^N \frac{X^c_{ji}}{w_i L_i} = \gamma \sum_{j=1}^N \frac{X^c_{ji}}{\gamma Y_i}\frac{X_{ji}}{X_{ji}} = \frac{1}{\gamma} \sum_{j=1}^N \frac{X_{ji}}{w_i L_i} \hat{X}_{ji}$$
-
-The change in income due to $\hat{T}_j$ is given by the change in bilateral expenditures, as well as the .hi[factual/observed] income and bilateral expenditures
-
-
----
-
-# Exact hat algebra
-
-Now let's look at the counterfactual expenditure shares:
-$$\lambda^c_{ij} = \frac{T^c_{j} \left( {(w^c_j)}^\gamma \tau_{ij}\right)^{-\theta}}{\sum_{h=1}^N T^c_{h} \left( {(w^c_h)}^\gamma \tau_{ih}\right)^{-\theta}}$$
-
-And remember that trade costs .hi[do not] change in this example
-
---
-
-Next, put it in hat form
-
----
-
-# Exact hat algebra
-
-$$\hat{\lambda}_{ij} = \frac{\lambda^c_{ij}}{\lambda_{ij}} = \frac{\hat{T}_{j} \left( {(\hat{w}_j)}^\gamma\right)^{-\theta}}{\frac{\sum_{h=1}^N T^c_{h} \left( {(w^c_h)}^\gamma \tau_{ih}\right)^{-\theta}}{\sum_{h=1}^N T_{h} \left( {(w_h)}^\gamma \tau_{ih}\right)^{-\theta}}} = \frac{\hat{T}_{j} \left( {(\hat{w}_j)}^\gamma\right)^{-\theta}}{\hat{P_i}^{-\theta}}$$
-The change in expenditure shares is given by the changes in productivity, wages, and market access
-
---
-
-We still need to solve for $\hat{P}^{-\theta}_i$
-
-
----
-
-# Exact hat algebra
-
-We can do so with the price index expression:
-$$P_{i} = \kappa \left(\sum_{j=1}^N T_{j} \left[{(w_j)}^\gamma \tau_{ij} \right]^{-\theta} \right)^{-1/\theta}$$
-
-Which gives us:
-$$\hat{P}_{i}^{-\theta} = \frac{\left(\sum_{j=1}^N T^c_{j} \left[{(w^c_j)}^\gamma \tau_{ij} \right]^{-\theta} \right)}{\left(\sum_{h=1}^N T_{h} \left[{(w_h)}^\gamma \tau_{ih} \right]^{-\theta} \right)}$$
----
-
-# Exact hat algebra
-
-Next we make a few (seemingly odd) substitutions
-
---
-
-Since $n$ is not in the denominator, we can treat the denominator as a constant and move it inside the sum over $n$:
-$$\hat{P}_{i}^{-\theta} = \sum_{j=1}^N \frac{\left(T^c_{j} \left[{(w^c_j)}^\gamma \tau_{ij} \right]^{-\theta} \right)}{\left(\sum_{h=1}^N T_{h} \left[{(w_h)}^\gamma \tau_{ih} \right]^{-\theta} \right)}$$
-
-
----
-
-# Exact hat algebra
-
-Next., multiply and divide each term in the sum by the .hi[factual] productivity and wage terms
-$$\hat{P}_{i}^{-\theta} = \sum_{j=1}^N \left[\frac{\left(T^c_{j} \left[{(w^c_j)}^\gamma \tau_{ij} \right]^{-\theta} \right)}{\left(\sum_{h=1}^N T_{h} \left[{(w_h)}^\gamma \tau_{ih} \right]^{-\theta} \right)} \frac{T_j \left[w_j^\gamma\right]^{-\theta}}{T_j \left[w^\gamma_j\right]^{-\theta}} \right]$$
-
-We can then switch out the factual and counterfactual terms up top:
-
-$$\hat{P}_{i}^{-\theta} = \sum_{j=1}^N \left[\frac{\left(T_{j} \left[{(w_j)}^\gamma \tau_{ij} \right]^{-\theta} \right)}{\left(\sum_{h=1}^N T_{h} \left[{(w_h)}^\gamma \tau_{ih} \right]^{-\theta} \right)} \frac{T^c_j \left[{(w^c_j})^\gamma\right]^{-\theta}}{T_j \left[w^\gamma_j\right]^{-\theta}} \right]$$
-
----
-
-# Exact hat algebra
-
-$$\hat{P}_{i}^{-\theta} = \sum_{j=1}^N \left[\frac{\left(T_{j} \left[{(w_j)}^\gamma \tau_{ij} \right]^{-\theta} \right)}{\left(\sum_{h=1}^N T_{h} \left[{(w_h)}^\gamma \tau_{ih} \right]^{-\theta} \right)} \frac{T^c_j \left[{(w^c_j})^\gamma\right]^{-\theta}}{T_j \left[w^\gamma_j\right]^{-\theta}} \right]$$
-
-This gives us:
-
-$$\hat{P}_{i}^{-\theta} = \sum_{j=1}^N \left[\lambda_{ij} \hat{T}_j \left(\hat{w}_j^\gamma\right)^{-\theta} \right]$$
-
----
-
-# Exact hat algebra
-
-Here's the three sets of equations again, they are all in terms of changes or data, so we do not need to solve for .hi[many] model fundamentals:
-
-$$\hat{w}_i \hat{L}_i = \frac{1}{\gamma} \sum_{j=1}^N \frac{X_{ji}}{w_i L_i} \hat{X}_{ji}$$
-$$\hat{\lambda}_{ij} = \frac{\hat{T}_{j} \left( {(\hat{w}_j)}^\gamma\right)^{-\theta}}{\hat{P_i}^{-\theta}}$$
-$$\hat{P}_{i}^{-\theta} = \sum_{j=1}^N \left[\lambda_{ij} \hat{T}_j \left(\hat{w}_j^\gamma\right)^{-\theta} \right]$$
-
----
-
-# Exact hat algebra
-
-$$\hat{P}_{i}^{-\theta} = \sum_{j=1}^N \left[\lambda_{ij} \hat{T}_j \left(\hat{w}_j^\gamma\right)^{-\theta} \right]$$
-
-along with the change in equilibrium requirement that:
-$$\frac{\hat{w_i}}{\hat{P}_i} = \widehat{\bar{U}} \,\,\, \forall i$$
-
-allows us to iterate and solve for $\hat{P}_i$ up to a normalization since $\hat{L} = \frac{\sum_{i=1}^N L^c_i}{\sum_{i=1}^N L_i} = 1$ will later pin down $\widehat{\bar{U}}$
-
----
-
-# Exact hat algebra
-
-$$\hat{\lambda}_{ij} = \frac{\hat{T}_{j} \left( {(\hat{w}_j)}^\gamma\right)^{-\theta}}{\hat{P_i}^{-\theta}}$$
-
-then lets us solve for $\hat{\lambda}_{ij}$ given $\hat{P}_i$ and $\hat{w}_j$
-
---
-
-Last we need expenditures and labor using the first condition:
-$$\hat{w}_i \hat{L}_i = \frac{1}{\gamma} \sum_{j=1}^N \frac{X_{ji}}{w_i L_i} \hat{X}_{ji}$$
-
----
-
-# Exact hat algebra
-
-$$\hat{w}_i \hat{L}_i = \frac{1}{\gamma} \sum_{j=1}^N \frac{X_{ji}}{w_i L_i} \hat{X}_{ji}$$
-
-Expenditures by $i$ $X_i$ will be equal to labor income so we have that:
-$$\hat{X}_i = \frac{1}{\gamma} \sum_{j=1}^N \frac{X_{ji}}{w_i L_i} \hat{X}_{ji}$$
-
---
-
-The definition of expenditure shares gives us:
-$$\hat{\lambda}_{ij} = \frac{\hat{X}_{ij}}{\hat{X}_i}$$
----
-
-# Exact hat algebra
-
-Combine these two to get:
-
-$$\frac{\hat{X}_{ih}}{\hat{\lambda}_{ih}} = \frac{1}{\gamma} \sum_{j=1}^N \frac{X_{ji}}{w_i L_i} \hat{X}_{ji}$$
-which is a set of $n$ equations and $n$ unknown $\hat{X}_{ji}$ for any $h$ we choose
-
---
-
-We have solved for all the unobserved hat terms!
-
---
-
-With these we can simulate any change in productivity, and the only two model parameters we needed to take a stand on were $\gamma$ and $\theta$
+We could have looked at changes in trade costs, preference parameters, labor endowments, or any combination of them

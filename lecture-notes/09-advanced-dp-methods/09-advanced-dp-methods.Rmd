@@ -70,9 +70,7 @@ We then build our basis function matrix $\Psi$, but instead of being $n \times n
 Finally we use the standard least-squares equation
 $$c = (\Psi'\Psi)^{-1}\Psi'y$$
 
---
-
-Fun fact: $(\Psi'\Psi)^{-1}\Psi'$ is a pseudoinverse called the Moore-Penrose matrix inverse
+Where $(\Psi'\Psi)^{-1}\Psi'$ is the Moore-Penrose matrix inverse
 
 --
 
@@ -91,7 +89,7 @@ using Plots
 params = (alpha = 0.75, beta = 0.95, eta = 2,
                 steady_state = (0.75*0.95)^(1/(1 - 0.75)), k_0 = (0.75*0.95)^(1/(1 - 0.75))*.75,
                 capital_upper = (0.75*0.95)^(1/(1 - 0.75))*1.5, capital_lower = (0.75*0.95)^(1/(1 - 0.75))/2,
-                num_basis = 7, num_points = 9, tolerance = 0.0001, fin_diff = 1e-6, mpi_start = 5);
+                num_basis = 7, num_points = 15, tolerance = 1e-6, fin_diff = 1e-6, mpi_start = 5);
 
 coefficients = zeros(params.num_basis);
 coefficients[1:2] = [100 5];
@@ -112,6 +110,21 @@ capital_grid = expand_grid(grid, params)
 
 # Chebyshev regression: practice
 
+Make the inverse function to shrink from capital to Chebyshev space `shrink_grid(capital)`
+
+--
+
+```{julia}
+shrink_grid(capital) = 
+  2*(capital - params.capital_lower)/(params.capital_upper - params.capital_lower) - 1;
+```
+
+`shrink_grid` will inherit `params` from wrapper functions
+
+---
+
+# Chebyshev regression: practice
+
 ```{julia}
 # Chebyshev polynomial function
 function cheb_polys(x, n)
@@ -125,10 +138,17 @@ function cheb_polys(x, n)
         return cheb_recursion(x, n) # T_n(x) = 2xT_{n-1}(x) - T_{n-2}(x)
     end
 end;
+```
 
-basis_matrix = [cheb_polys.(grid, n) for n = 0:params.num_basis - 1];
-basis_matrix = hcat(basis_matrix...);
-basis_inverse = inv(basis_matrix'*basis_matrix)*(basis_matrix'); # pre-compute pseudoinverse for regressions
+
+---
+
+# Chebyshev regression: practice
+
+```{julia}
+construct_basis_matrix(grid, params) = hcat([cheb_polys.(shrink_grid.(grid), n) for n = 0:params.num_basis - 1]...);
+basis_matrix = construct_basis_matrix(capital_grid, params);
+basis_inverse = inv(basis_matrix'*basis_matrix)*(basis_matrix') # pre-compute pseudoinverse for regressions
 
 ```
 
@@ -137,9 +157,7 @@ basis_inverse = inv(basis_matrix'*basis_matrix)*(basis_matrix'); # pre-compute p
 # Chebyshev regression: practice
 
 ```{julia}
-shrink_grid(capital) = 2*(capital - params.capital_lower)/(params.capital_upper - params.capital_lower) - 1;
-eval_value_function(coefficients, capital, params) = 
-    coefficients' * [cheb_polys.(shrink_grid(capital), n) for n = 0:params.num_basis - 1];
+eval_value_function(coefficients, grid, params) = construct_basis_matrix(grid, params) * coefficients;
 ```
 
 ---
@@ -147,14 +165,14 @@ eval_value_function(coefficients, capital, params) =
 # Chebyshev regression: practice
 
 ```{julia}
-function loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+function loop_grid_regress(params, capital_grid, coefficients)
     max_value = -.0*ones(params.num_points);
     consumption_store = -.0*ones(params.num_points);
 
     for (iteration, capital) in enumerate(capital_grid)
         function bellman(consumption)
             capital_next = capital^params.alpha - consumption
-            cont_value = eval_value_function(coefficients, capital_next, params)
+            cont_value = eval_value_function(coefficients, capital_next, params)[1]
             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
             return -value_out
         end;
@@ -173,7 +191,7 @@ end;
 # Chebyshev regression: practice
 
 ```{julia}
-function solve_vfi_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+function solve_vfi_regress(params, basis_inverse, capital_grid, coefficients)
 
     max_value = -.0*ones(params.num_points);
     error = 1e10;
@@ -183,11 +201,11 @@ function solve_vfi_regress(params, basis_inverse, basis_matrix, grid, capital_gr
     iteration = 1
 
     while error > params.tolerance
-        max_value, consumption_store = loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+        max_value, consumption_store = loop_grid_regress(params, capital_grid, coefficients)
         coefficients = basis_inverse*max_value
         error = maximum(abs.((max_value - value_prev)./(value_prev)))
         value_prev = deepcopy(max_value)
-        if mod(iteration, 5) == 0
+        if mod(iteration, 25) == 0
             println("Maximum Error of $(error) on iteration $(iteration).")
             append!(coefficients_store, [coefficients])
         end
@@ -200,12 +218,17 @@ end;
 ---
 
 # Chebyshev regression: practice
-
+```{julia, results = 'hide', echo = FALSE}
+@time solution_coeffs, max_value, intermediate_coefficients =
+    solve_vfi_regress(params, basis_inverse, capital_grid, coefficients)
+```
 ```{julia}
 @time solution_coeffs, max_value, intermediate_coefficients =
-    solve_vfi_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+    solve_vfi_regress(params, basis_inverse, capital_grid, coefficients)
 ```
-
+```{julia, results = 'hide', echo = FALSE}
+standard_time = @elapsed solve_vfi_regress(params, basis_inverse, capital_grid, coefficients)
+```
 
 ---
 
@@ -222,7 +245,7 @@ function simulate_model(params, solution_coeffs, time_horizon = 100)
         
         function bellman(consumption)
             capital_next = capital^params.alpha - consumption
-            cont_value = eval_value_function(solution_coeffs, capital_next, params)
+            cont_value = eval_value_function(solution_coeffs, capital_next, params)[1]
             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
             return -value_out
         end;
@@ -416,12 +439,12 @@ function loop_grid_egm(params, capital_grid, coefficients)
     for (iteration, capital_next) in enumerate(capital_grid)
 
         function bellman(consumption)
-            cont_value = eval_value_function(coefficients, capital_next, params)
+            cont_value = eval_value_function(coefficients, capital_next, params)[1]
             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
             return value_out
         end;
-        value_deriv = (eval_value_function(coefficients, capital_next + params.fin_diff, params) -
-            eval_value_function(coefficients, capital_next - params.fin_diff, params))/(2params.fin_diff)
+        value_deriv = (eval_value_function(coefficients, capital_next + params.fin_diff, params)[1] -
+            eval_value_function(coefficients, capital_next - params.fin_diff, params)[1])/(2params.fin_diff)
         consumption = (params.beta*value_deriv)^(-1/params.eta)
         max_value[iteration] = bellman(consumption)
         capital_store[iteration] = (capital_next + consumption)^(1/params.alpha)
@@ -454,7 +477,7 @@ function solve_egm(params, capital_grid, coefficients)
         coefficients = current_poly\max_value
         error = maximum(abs.((max_value - value_prev)./(value_prev)))
         value_prev = deepcopy(max_value)
-        if mod(iteration, 5) == 0
+        if mod(iteration, 25) == 0
             println("Maximum Error of $(error) on iteration $(iteration).")
             append!(coefficients_store, [coefficients])
         end
@@ -470,16 +493,23 @@ No need to pass basis function matrices or $[-1,1]$ grid since we will be constr
 
 # Endogenous grid method: practice
 
+```{julia, results = 'hide', echo = FALSE}
+@time solution_coeffs, max_value, intermediate_coefficients = solve_egm(params, capital_grid, coefficients)
+```
+
 ```{julia}
 @time solution_coeffs, max_value, intermediate_coefficients = solve_egm(params, capital_grid, coefficients)
 ```
 
+```{julia, results = 'hide', echo = FALSE}
+egm_time = @elapsed solve_egm(params, capital_grid, coefficients)
+```
 
 ---
 
 # Endogenous grid method: practice
 
-```{julia, echo=FALSE}
+```{julia}
 function simulate_model(params, solution_coeffs, time_horizon = 100)
     capital_store = zeros(time_horizon + 1)
     consumption_store = zeros(time_horizon)
@@ -490,7 +520,7 @@ function simulate_model(params, solution_coeffs, time_horizon = 100)
 
         function bellman(consumption)
             capital_next = capital^params.alpha - consumption
-            cont_value = eval_value_function(solution_coeffs, capital_next, params)
+            cont_value = eval_value_function(solution_coeffs, capital_next, params)[1]
             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
             return -value_out
         end;
@@ -587,7 +617,7 @@ Thus at no point in time during the value function approximation algorithm do we
 # Envelope condition method: practice
 
 ```{julia}
-function loop_grid_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+function loop_grid_ecm(params, capital_grid, coefficients)
 
     max_value = similar(capital_grid);
 
@@ -595,13 +625,13 @@ function loop_grid_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, 
 
         function bellman(consumption)
             capital_next = capital^params.alpha - consumption
-            cont_value = eval_value_function(coefficients, capital_next, params)
+            cont_value = eval_value_function(coefficients, capital_next, params)[1]
             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
             return value_out
         end;
 
-        value_deriv = (eval_value_function(coefficients, capital + params.fin_diff, params) -
-            eval_value_function(coefficients, capital - params.fin_diff, params))/(2params.fin_diff)
+        value_deriv = (eval_value_function(coefficients, capital + params.fin_diff, params)[1] -
+            eval_value_function(coefficients, capital - params.fin_diff, params)[1])/(2params.fin_diff)
         consumption = (value_deriv/(params.alpha*capital^(params.alpha-1)))^(-1/params.eta)
         consumption = min(consumption, capital^params.alpha)
         max_value[iteration] = bellman(consumption)
@@ -618,7 +648,7 @@ end
 # Envelope condition method: practice
 
 ```{julia}
-function solve_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+function solve_ecm(params, basis_inverse, capital_grid, coefficients)
     iteration = 1
     error = 1e10;
     max_value = similar(capital_grid);
@@ -627,11 +657,11 @@ function solve_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coef
     coefficients_store[1] = coefficients
     while error > params.tolerance
         coefficients_prev = deepcopy(coefficients)
-        max_value = loop_grid_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+        max_value = loop_grid_ecm(params, capital_grid, coefficients)
         coefficients = basis_inverse*max_value
         error = maximum(abs.((max_value - value_prev)./(value_prev)))
         value_prev = deepcopy(max_value)
-        if mod(iteration, 5) == 0
+        if mod(iteration, 25) == 0
             println("Maximum Error of $(error) on iteration $(iteration).")
             append!(coefficients_store, [coefficients])
         end
@@ -644,10 +674,16 @@ end
 ---
 
 # Envelope condition method: practice
-
+```{julia, results = 'hide', echo = FALSE}
+@time solution_coeffs, max_value, intermediate_coefficients =
+    solve_ecm(params, basis_inverse, capital_grid, coefficients)
+```
 ```{julia}
 @time solution_coeffs, max_value, intermediate_coefficients =
-    solve_ecm(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+    solve_ecm(params, basis_inverse, capital_grid, coefficients)
+```
+```{julia, results = 'hide', echo = FALSE}
+ecm_time = @elapsed solve_ecm(params, basis_inverse, capital_grid, coefficients)
 ```
 
 ---
@@ -665,7 +701,7 @@ function simulate_model(params, solution_coeffs, time_horizon = 100)
 
         function bellman(consumption)
             capital_next = capital^params.alpha - consumption
-            cont_value = eval_value_function(solution_coeffs, capital_next, params)
+            cont_value = eval_value_function(solution_coeffs, capital_next, params)[1]
             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
             return -value_out
         end;
@@ -720,16 +756,17 @@ This is called **modified policy iteration**
 
 # Modified policy iteration
 
-It only change step 5 of VFI:
-5. While convergence criterion $>$ tolerance
+It only changes step 5 of VFI:
+
+While convergence criterion $>$ tolerance
   + Start iteration $p$
   + Solve the right hand side of the Bellman equation
   + Recover the maximized values, conditional on $\Gamma(k_{t+1};b^{(p)})$
-  + Fit the polynomial to the values and recover a new vector of coefficients $\hat{b}^{(p+1)}$.
-  + Compute $b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}$ where $\gamma \in (0,1).$
+  + Fit the polynomial to the values and recover new coefficients $\hat{b}^{(p+1)}$
+  + Compute $b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}$ where $\gamma \in (0,1)$
   + While MPI stop criterion $>$ tolerance
       - Use policies from last VFI iteration to re-fit the polynomial (no maximizing!)
-      - Compute $b^{(p+1)}$ for iteration $p+1$ by $b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}$ where $\gamma \in (0,1).$
+      - Compute $b^{(p+1)}$ for iteration $p+1$ by $b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}$ where $\gamma \in (0,1)$
 
 ---
 
@@ -743,11 +780,7 @@ where the max and min are over the values on the grid
 
 --
 
-Also note: you should probably start MPI after a few VFI iterations unless you have a good initial guess
-
---
-
-If your early policy functions are bad then starting MPI too early will blow up your problem
+Only MPI after a few VFI iterations unless you have a good initial guess, if your early policy functions are bad then starting MPI too early will blow up your problem
 
 ---
 
@@ -764,7 +797,7 @@ function solve_vfi_regress_mpi(params, basis_inverse, basis_matrix, grid, capita
     iteration = 1
     while error > params.tolerance
         max_value, consumption_store =
-            loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+            loop_grid_regress(params, capital_grid, coefficients)
         coefficients = basis_inverse*max_value
         if iteration > params.mpi_start # modified policy iteration loop
             mpi_iteration = 1
@@ -781,7 +814,7 @@ function solve_vfi_regress_mpi(params, basis_inverse, basis_matrix, grid, capita
 ```{julia, eval = FALSE}
               function bellman(consumption, capital)
                     capital_next = capital^params.alpha - consumption
-                    cont_value = eval_value_function(coefficients, capital_next, params)
+                    cont_value = eval_value_function(coefficients, capital_next, params)[1]
                     value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
                     return value_out
                 end
@@ -825,7 +858,7 @@ function solve_vfi_regress_mpi(params, basis_inverse, basis_matrix, grid, capita
     while error > params.tolerance
 
         max_value, consumption_store =
-            loop_grid_regress(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+            loop_grid_regress(params, capital_grid, coefficients)
         coefficients = basis_inverse*max_value
 
         if iteration > params.mpi_start # modified policy iteration loop
@@ -836,13 +869,13 @@ function solve_vfi_regress_mpi(params, basis_inverse, basis_matrix, grid, capita
                 value_prev = deepcopy(max_value)
                 function bellman(consumption, capital)
                     capital_next = capital^params.alpha - consumption
-                    cont_value = eval_value_function(coefficients, capital_next, params)
+                    cont_value = eval_value_function(coefficients, capital_next, params)[1]
                     value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
                     return value_out
                 end
                 max_value = bellman.(consumption_store, capital_grid) # greedy policy
                 coefficients = basis_inverse*max_value
-                if mod(mpi_iteration, 5) == 0
+                if mod(mpi_iteration, 25) == 0
                     println("MPI iteration $mpi_iteration on VFI iteration $iteration.")
                 end
                 mpi_iteration += 1
@@ -866,10 +899,16 @@ end;
 ---
 
 # Modified policy iteration
-
+```{julia, results = 'hide', echo = FALSE}
+@time solution_coeffs, max_value, intermediate_coefficients =
+    solve_vfi_regress_mpi(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+```
 ```{julia}
 @time solution_coeffs, max_value, intermediate_coefficients =
     solve_vfi_regress_mpi(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
+```
+```{julia, results = 'hide', echo = FALSE}
+mpi_time = @elapsed solve_vfi_regress_mpi(params, basis_inverse, basis_matrix, grid, capital_grid, coefficients)
 ```
 
 ---
@@ -888,7 +927,7 @@ function simulate_model(params, solution_coeffs, time_horizon = 100)
 
         function bellman(consumption)
             capital_next = capital^params.alpha - consumption
-            cont_value = eval_value_function(solution_coeffs, capital_next, params)
+            cont_value = eval_value_function(solution_coeffs, capital_next, params)[1]
             value_out = (consumption)^(1-params.eta)/(1-params.eta) + params.beta*cont_value
             return -value_out
         end;
@@ -911,8 +950,14 @@ plot!(1:time_horizon, params.steady_state*ones(time_horizon), color = :purple, l
 
 ---
 
-# Modified policy iteration
+# Solve times
 
-What was your speed up?
+```{julia, echo = FALSE}
+println("The solve times are: ")
+println("Regression: $(round(standard_time, digits = 3)) seconds")
+println("Endogenous Grid + Regression: $(round(egm_time, digits = 3)) seconds")
+println("Envelope Condition + Regression: $(round(ecm_time, digits = 3)) seconds")
+println("Modified Policy Iteration + Regression: $(round(mpi_time, digits = 3)) seconds")
+```
 
-I got **6 times**: 0.6s $\rightarrow$ 0.1s
+Individually they give 3-6 times speed up

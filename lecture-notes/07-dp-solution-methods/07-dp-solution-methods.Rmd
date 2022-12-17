@@ -270,6 +270,19 @@ $b^{(p+1)} = (1-\gamma) b^{(p)} + \gamma \hat{b}^{(p+1)}$ where $\gamma \in (0,1
 
 ---
 
+# Functions we will code up
+
+We will need to code up six key functions for all of the algorithms
+
+- `cheb_nodes(n)`: construct degree $n$ collocation grid 
+- `cheb_polys(x, n)`: evaluate degree $n$ Chebyshev polynomials
+- `construct_basis_matrix(grid, params)`: construct full $n\times n$ Chebyshev basis matrix
+- `eval_approx_function(coefficients, grid, params)`: evaluate approximating function at grid points `grid`
+- `loop_grid(params, capital_grid, coefficients)`: loop over the collocation grid
+- `solve_algorithm(params, basis_inverse, capital_grid, coefficients)`: iterate on the fixed point
+
+---
+
 # Functional forms and parameters
 
 Functional forms
