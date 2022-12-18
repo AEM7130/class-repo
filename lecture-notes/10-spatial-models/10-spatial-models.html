@@ -60,9 +60,10 @@ julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/b
 
 # Roadmap
 
-1. The Armington model
-2. Model inversion
-3. Exact hat algebra
+1. Spatial models: Armington
+2. Exact hat algebra
+3. Dynamic spatial models: Armington + migration
+4. Dynamic hat algebra
 
 ---
 
@@ -127,9 +128,7 @@ Empirical work has long used the .hi[gravity model:]
 
 `$$X_{ij} = \alpha \frac{Y_i Y_j}{D_{ij}}$$`
 
-The gravity model is widely used and empirically matches the data
-
-.hi[But:] no real theoretical foundation, can't do counterfactuals
+The gravity model is widely used and empirically matches the data, but no real theoretical foundation, can't do counterfactuals
 
 --
 
@@ -323,21 +322,21 @@ Write up a function `solve_armington_eq(sigma, tau, A, L, a, tol, damp)` that so
 
 ```julia
  function solve_armington_eq(σ, τ, A, L, a, tol = 1e-5, damp = .1)
-     w, λ, N  = ones(size(A)), zeros(size(a)), length(A)
+     w, λ  = ones(size(A)), zeros(size(a))
      wage_error = 1e5
      while wage_error &gt; tol
          denominator, wL = zeros(size(A)), zeros(size(A))
-         for k in 1:N
+         for k in eachindex(A)
              denominator .+= a[k,:] .* (τ[k,:] * w[k] / A[k]).^(1 .- σ)
          end
-         for i in 1:N
+         for i in eachindex(A)
              wL .+= a[:,i] .* (τ[:,i] .* w ./ A).^(1 .- σ) .* w[i] .* L[i] ./ denominator[i]
          end
          wnew = wL ./ L 
          wage_error = maximum(abs.(wnew .- w)./w)
          w = damp .* wnew .+ (1 - damp) .* w
      end
-     for o in 1:N, d in 1:N
+     for o in eachindex(A), d in eachindex(A)
          λ[o,d] = a[o,d] * (τ[o,d] * w[o] / A[o])^(1 - σ) / sum(a[:,d] .* (τ[:,d] .* w[:] ./ A[:]).^(1 .- σ))
      end
      return w, λ
@@ -810,14 +809,14 @@ Columns of `\(\lambda\)` should sum to 1, `\(X\)` is generated to be consistent 
 
 ```julia
  function solve_armington_exact_hat(X, λ, w, L, Ahat, σ, tol = 1e-5, damp = .1)
-     what, N = ones(size(Ahat)), length(Ahat)
+     what = ones(size(Ahat))
      wage_error = 1e5
      while wage_error &gt; tol
          denominator, what_new = zeros(size(Ahat)), zeros(size(Ahat))
-         for k in 1:N
+         for k in eachindex(Ahat)
              denominator .+= λ[k,:] .* (what[k] / Ahat[k]).^(1 .- σ)
          end
-         for i in 1:N
+         for i in eachindex(Ahat)
              what_new .+= (X[:,i] ./ (w .* L) ) .* (what ./ Ahat).^(1 .- σ) .* what[i] ./ denominator[i]
          end
          wage_error = maximum(abs.(what_new .- what)./what)
@@ -879,6 +878,298 @@ There was nothing special about productivity here
 --
 
 We could have looked at changes in trade costs, preference parameters, labor endowments, or any combination of them
+
+---
+
+class: inverse, center, middle
+name: migration
+
+# Armington with dynamic migration
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+---
+
+# Dynamics in spatial models
+
+Introducing meaningful dynamics in spatial models is difficult
+
+--
+
+The intuition is that when we introduce additional regions, the state space grows dramatically
+
+--
+
+This is then exacerbated by introducing meaningful notions of time
+
+--
+
+How can we begin to introduce some dynamics into spatial models?
+
+--
+
+One way is to essentially layer a separate, tractable dynamic model onto our static Armington model
+
+---
+
+# Dynamics in spatial models
+
+How we will do this is by introducing dynamic migration decisions of households
+
+--
+
+First we will introduce static migration to get a sense of how it works
+
+---
+
+# Armington + migration
+
+The set up:
+
+`\(N\)` regions with a measure `\(L = 1\)` total households across all regions
+
+--
+
+Each region produces a differentiated product
+
+--
+
+Representative household in each region can purchase goods from all locations
+
+--
+
+Trade frictions result in different prices offered by different producers
+
+--
+
+Households frictionlessly choose where to live to maximize their utility
+
+
+---
+
+# Armington + migration: indirect utility
+
+The household makes two choices:
+
+1. Which region `\(j\)` to live in subject
+2. How to allocate their budget across the menu of possible `\(N\)` goods
+
+--
+
+We make one additional tweak to the model, adding a .hi[Frechet/T2EV] idiosyncratic shock `\(\varepsilon_j\)` observed by the households
+
+The consumer maximizes utility subject to their wage `\(w_j\)`:
+
+`$$\max_{\{q_{ij}\}_{i \in N}} \left(\sum_{i \in N} a_{ij}^{1 \over \sigma} q_{ij}^{\sigma-1 \over \sigma}\right)^{\sigma \over \sigma-1}\varepsilon_j \quad \text{subject to:} \quad \sum_{i \in N} q_{ij} p_{ij} \leq w_j$$`
+
+---
+
+# Armington + migration: indirect utility
+
+We get the standard result for their real wage `\(C_j\)` under CES preferences:
+`$$C_j = w_j / P_j \quad \text{where} \quad P_j = \left(\sum_{k \in N} a_{kj} p_{kj}^{1-\sigma}\right)^{1 \over 1-\sigma}$$`
+`\(P_j\)` is the usual Dixit-Stiglitz price index
+
+--
+
+We now have the households' real wage conditional on choosing `\(j\)`, we can now solve for the households' optimal choice of `\(j\)`:
+
+`$$\max_{j \in N} C_j + \varepsilon_j$$`
+
+---
+
+# Armington + migration: labor supply
+
+`$$\max_{j \in N} C_j + \varepsilon_j$$`
+
+The household just chooses the location with the highest combination of real wages `\(C_j\)`
+
+--
+
+How many households choose each location? The Frechet assumption on `\(\varepsilon_j\)` buys us a closed form solution (see any treatment on discrete choice models)
+
+---
+
+# Armington + migration: labor supply
+
+If `\(\varepsilon_j \sim Frechet\)`, with mean 1 variance 1, the share of the `\(L=1\)` households choosing to live in region `\(j\)` is:
+
+`$$L_j = \frac{C_j}{\sum_{k \in N} \exp C_k} = \frac{{w_j \over P_j}}{\sum_{k \in N} {w_k \over P_k}}$$`
+
+where `\(\sum_{j \in N} L_j = 1\)`
+
+--
+
+This is essentially our extensive margin of labor supply
+
+--
+
+Higher wages or lower prices in `\(j\)` relative to other locations attracts more workers
+
+---
+
+# Armington + migration: equilibrium
+
+We now have two equilibrium conditions, labor supply and joint market clearing:
+
+`$$L_j = \frac{\exp {w_j \over P_j}}{\sum_{k \in N} \exp {w_k \over P_k}} \qquad w_j L_j = \sum_{i \in N} \frac{a_{ij} \left(\tau_{ij} w_i \over A_i\right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_k \over A_k\right)^{1-\sigma}} w_i L_i$$`
+
+where:
+- `\(P_j = \left(\sum_{k \in N} a_{kj} \left(\tau_{kj} {w_k \over A_k}\right)^{1-\sigma}\right)^{1 \over 1-\sigma}\)`
+- `\(\sum_{j \in N} L_j = 1\)`
+
+---
+
+# Armington + migration: exact hat algebra
+
+Now let's solve the model using exact hat algebra
+
+--
+
+Since labor is endogenous, we now need to account for it in the market clearing condition:
+
+`$$\hat{w}_j \hat{L}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i \hat{L}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}}$$`
+
+You can prove to yourself that this is the correct expression
+
+---
+
+# Armington + migration: exact hat algebra
+
+Next we need to put labor supply in hat terms:
+
+`$$L_j = \frac{{w_j \over P_j}}{\sum_{k \in N} {w_k \over P_k}}$$`
+
+`$$\hat{L}_j = \frac{ {\hat{w}_j \over \hat{P}_j}}{ \frac{\sum_{k \in N} {w'_k \over P'_k} }{\sum_{l \in N} {w_l \over P_l}} }$$`
+
+Next, use a similar multiply and divide by `\({w_j \over P_j}\)` trick as for `\(\lambda\)`
+
+---
+
+# Armington + migration: exact hat algebra
+
+`\begin{align}
+  \hat{L}_j &amp;= \frac{ {\hat{w}_j \over \hat{P}_j}}{ \left[\frac{\sum_{k \in N} {w'_k \over P'_k} \frac{{w_k \over P_k}}{{w_k \over P_k}} }{\sum_{l \in N} {w_l \over P_l}} \right] } 
+            = \frac{ {\hat{w}_j \over \hat{P}_j}}{ \left[\frac{\sum_{k \in N} {\hat{w}_k \over \hat{P}_k} {w_k \over P_k} }{\sum_{l \in N} {w_l \over P_l}} \right] }
+            = \frac{ {\hat{w}_j \over \hat{P}_j}}{\sum_{k \in N}{\hat{w}_k \over \hat{P}_k} \underbrace{\left[\frac{  {w_k \over P_k} }{\sum_{l \in N} {w_l \over P_l}} \right]}_{L_k} } \\
+  \hat{L}_j &amp;= \frac{ {\hat{w}_j \over \hat{P}_j}}{\sum_{k \in N} L_k{\hat{w}_k \over \hat{P}_k}  }
+\end{align}`
+
+The change in labor depends on the change in real wages but also the initial labor allocation
+
+---
+
+# Armington + migration: exact hat algebra
+
+`$$\hat{w}_j \hat{L}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i \hat{L}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}} \qquad \hat{L}_j = \frac{ {\hat{w}_j \over \hat{P}_j}}{\sum_{k \in N} L_k{\hat{w}_k \over \hat{P}_k}  }$$`
+
+We now have our two equilibrium conditions in changes that we can 
+
+Write up a function `solve_armington_mig_exact_hat(X, lambda, w, L, Ahat, sigma, tol, damp)` that solves for the new equilibrium in changes
+
+
+---
+
+# Armington + migration: exact hat algebra
+
+Here are the data to use:
+
+
+```julia
+ w = [6., 3.];
+ L = [.3, .7];
+ λ = [.8 .2; .2 .8];
+ X = (w .* L)' .* λ
+```
+
+```
+## 2×2 Matrix{Float64}:
+##  1.44  0.42
+##  0.36  1.68
+```
+
+```julia
+ Ahat = [.5, 1.];
+ σ = 2.;
+```
+
+Columns of `\(\lambda\)` should sum to 1, L should sum to 1, `\(X\)` is generated to be consistent with `\(w, L, \lambda\)`
+
+---
+
+# Exact hat algebra
+
+
+```julia
+ function solve_armington_mig_exact_hat(X, λ, w, L, Ahat, σ, tol = 1e-5, damp = .1)
+     what, Lhat, labor_error, wage_error = ones(size(Ahat)), ones(size(Ahat)), 1e5, 1e5
+     while max(labor_error, wage_error) &gt; tol
+         denominator, what_new, Lhat_new = zeros(size(Ahat)), zeros(size(Ahat)), zeros(size(Ahat))
+         for k in eachindex(Ahat)
+             denominator .+= λ[k,:] .* (what[k] / Ahat[k]).^(1 .- σ)
+         end
+         for i in eachindex(Ahat)
+             what_new .+= (X[:,i] ./ (w .* L) ) .* (what ./ Ahat).^(1 .- σ) .* what[i] .* Lhat[i] ./ denominator[i] ./ Lhat
+         end
+         Phat = vec((sum(λ .* (what_new ./ Ahat).^(1 .- σ), dims = 1)).^(1 ./ (1 .- σ)))
+         Lhat_new = what ./ Phat ./ sum(L .* what ./ Phat)
+         wage_error, labor_error = maximum(abs.(what_new .- what)./what), maximum(abs.(Lhat_new .- Lhat)./Lhat)
+         what = damp .* what_new .+ (1 - damp) .* what
+         Lhat = damp .* Lhat_new .+ (1 - damp) .* Lhat
+     end
+     λhat = (what ./ Ahat).^(1 .- σ) ./ sum(λ .* (what ./ Ahat).^(1 .- σ), dims = 1)
+     Phat = vec((sum(λ .* (what ./ Ahat).^(1 .- σ), dims = 1)).^(1 ./ (1 .- σ)))
+     return what, λhat, Phat, Lhat
+ end
+```
+
+```
+## solve_armington_mig_exact_hat (generic function with 3 methods)
+```
+
+
+---
+
+# Exact hat algebra
+
+
+```julia
+ Ahat = [.5, 1.];
+ what, λhat, Phat, Lhat = solve_armington_mig_exact_hat(X, λ, w, L, Ahat, σ)
+```
+
+```
+## ([0.9051035127985965, 1.0832507504862192], [0.8816650787044907 0.6506730472117545; 1.4733396851820366 1.0873317381970613], [1.595996319694571, 1.177852921429452], [0.6967741048725734, 1.1299539550546118])
+```
+
+```julia
+ what ./ Phat
+```
+
+```
+## 2-element Vector{Float64}:
+##  0.5671087718872735
+##  0.9196825263816277
+```
+
+When region 1 becomes less productive by 50%: their real wages fall by about the same amount, region 2s real wages fall as well
+
+---
+
+# Exact hat algebra
+
+
+```julia
+ Lhat
+```
+
+```
+## 2-element Vector{Float64}:
+##  0.6967741048725734
+##  1.1299539550546118
+```
+
+Decreasing productivity in region 1 leads to reallocation of workers to region 2 as workers search for higher real wages
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
