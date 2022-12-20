@@ -44,7 +44,12 @@ Hint: think about the first-order conditions and best response functions.
 
 2. Solve for the equilibrium outcome using Newton's method for $\eta = 1.6, c_1 = .15, c_2 = 0.2$.
 
-## Problem 4: Optimization packages
+
+## Problem 4: Newton + MLE
+
+Write a function `mle_newton(x, y, theta, tol)` that estimates the parameters $\theta$ of a linear model using maximum likelihood. $x$ is an $N \times K$ matrix of $K$ explanatory variables, $y$ is an $N \times 1$ vector of the outcome variable. $Y = X \theta + \varepsilon$ where $\varepsilon$ is an iid normally distributed noise term. The function should return the central estimate of $\theta$ as well as bootstrapped standard errors.
+
+## Problem 5: Optimization packages
 
 Suppose a consumer has the following CES utility:
 $$u(C_1, C_2) = (\kappa C_1^{(\eta - 1)/\eta} + (1-\kappa) C_2^{(\eta - 1)/\eta} ) ^{\eta/(\eta-1)}$$

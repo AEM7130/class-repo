@@ -161,7 +161,7 @@ Trade frictions (e.g. distance) result in different prices offered by different 
 
 # Armington: preferences
 
-The representative household in region `\(j\)` has CES preferences:
+The representative household in region `\(j\)` has CES preferences across goods:
 
 `$$U_j = \left(\sum_{i \in N} a_{ij}^{1 \over \sigma} q_{ij}^{\sigma-1 \over \sigma}\right)^{\sigma \over \sigma-1}$$`
 
@@ -564,7 +564,7 @@ name: exacthat
 
 # Exact hat algebra
 
-A workhorse method for solving for counterfactual is .hi[exact hat algebra]
+A workhorse method for solving for counterfactual is .hi[exact hat algebra], you can think of it as a structural differences estimator
 
 --
 
@@ -956,11 +956,18 @@ The household makes two choices:
 
 --
 
-We make one additional tweak to the model, adding a .hi[Frechet/T2EV] idiosyncratic shock `\(\varepsilon_j\)` observed by the households
+We make two additional tweaks to the model:
+
+1. Adding a .hi[type 1 extreme value], destination-specific idiosyncratic shock `\(\varepsilon_j\)` observed by the households
+2. Adding log utility over the CES aggregator
+
+---
+
+# Armington + migration: indirect utility
 
 The consumer maximizes utility subject to their wage `\(w_j\)`:
 
-`$$\max_{\{q_{ij}\}_{i \in N}} \left(\sum_{i \in N} a_{ij}^{1 \over \sigma} q_{ij}^{\sigma-1 \over \sigma}\right)^{\sigma \over \sigma-1}\varepsilon_j \quad \text{subject to:} \quad \sum_{i \in N} q_{ij} p_{ij} \leq w_j$$`
+`$$\max_{\{q_{ij}\}_{i \in N}} \log \left[\left(\sum_{i \in N} a_{ij}^{1 \over \sigma} q_{ij}^{\sigma-1 \over \sigma}\right)^{\sigma \over \sigma-1}\right] + \varepsilon_j \quad \text{subject to:} \quad \sum_{i \in N} q_{ij} p_{ij} \leq w_j$$`
 
 ---
 
@@ -974,13 +981,13 @@ We get the standard result for their real wage `\(C_j\)` under CES preferences:
 
 We now have the households' real wage conditional on choosing `\(j\)`, we can now solve for the households' optimal choice of `\(j\)`:
 
-`$$\max_{j \in N} C_j + \varepsilon_j$$`
+`$$\max_{j \in N} \log C_j + \varepsilon_j$$`
 
 ---
 
 # Armington + migration: labor supply
 
-`$$\max_{j \in N} C_j + \varepsilon_j$$`
+`$$\max_{j \in N} \log C_j + \varepsilon_j$$`
 
 The household just chooses the location with the highest combination of real wages `\(C_j\)`
 
@@ -992,9 +999,9 @@ How many households choose each location? The Frechet assumption on `\(\varepsil
 
 # Armington + migration: labor supply
 
-If `\(\varepsilon_j \sim Frechet\)`, with mean 1 variance 1, the share of the `\(L=1\)` households choosing to live in region `\(j\)` is:
+If `\(\varepsilon_j \sim T1EV\)`, with mean 0 variance 1, the share of the `\(L=1\)` households choosing to live in region `\(j\)` is:
 
-`$$L_j = \frac{C_j}{\sum_{k \in N} \exp C_k} = \frac{{w_j \over P_j}}{\sum_{k \in N} {w_k \over P_k}}$$`
+`$$L_j = \frac{\exp \log C_j}{\sum_{k \in N} \exp \log C_k} = \frac{{w_j \over P_j}}{\sum_{k \in N} {w_k \over P_k}}$$`
 
 where `\(\sum_{j \in N} L_j = 1\)`
 
@@ -1063,7 +1070,7 @@ The change in labor depends on the change in real wages but also the initial lab
 
 `$$\hat{w}_j \hat{L}_j = \sum_{i \in N} \frac{\frac{X_{ji}}{w_j L_j} \left(\hat{w}_j \over \hat{A}_j\right)^{1-\sigma} \hat{w}_i \hat{L}_i}{\sum_{k \in N}\lambda_{ki} \left(\hat{w}_k \over \hat{A}_k\right)^{1-\sigma}} \qquad \hat{L}_j = \frac{ {\hat{w}_j \over \hat{P}_j}}{\sum_{k \in N} L_k{\hat{w}_k \over \hat{P}_k}  }$$`
 
-We now have our two equilibrium conditions in changes that we can 
+We now have our two equilibrium conditions in changes that we can iterate on to recover `\(\hat{w}_j, \hat{L}_j\)`
 
 Write up a function `solve_armington_mig_exact_hat(X, lambda, w, L, Ahat, sigma, tol, damp)` that solves for the new equilibrium in changes
 
@@ -1170,6 +1177,194 @@ When region 1 becomes less productive by 50%: their real wages fall by about the
 ```
 
 Decreasing productivity in region 1 leads to reallocation of workers to region 2 as workers search for higher real wages
+
+---
+
+# Armington with dynamic migration
+
+Now let's introduce dynamics in the migration decision:
+
+- Time `\(t = 0, \dots, T\)`
+- Same static goods market in each period `\(t\)`
+- Each region `\(j\)` is populated with `\(L_{jt}\)` households where `\(\sum_{j \in N} L_{jt} = 1\)`
+- Productivity in each time is `\(A_{jt}\)`
+- Households are forward-looking and have perfect information
+- Households discount the future at `\(\beta \in (0,1)\)`
+- Moving from `\(i\)` to `\(j\)` has a multiplicative utility cost `\(\mu_{ij} \in (0,1]\)`
+- Households work and consume at the beginning of the period, migrate at the end of the period
+
+
+---
+
+# Armington with dynamic migration
+
+We can write the household's objective as:
+
+`$$v_{jt} = \max_{i \in N} \log {w_{jt} \over P_{jt}} + \beta \mathbb{E}[v_{it+1}] - \mu_{ji} + \varepsilon_{it}$$`
+
+where the idiosyncratic shock is destination-specific
+
+--
+
+The share of households migrating from `\(j\)` to `\(i\)` at time `\(t\)` is:
+
+`$$\pi_{jit} = \frac{\exp\left(\beta\mathbb{E}[v_{it+1}]- \mu_{ji}\right)}{\sum_{k \in N} \exp\left(\beta\mathbb{E}[v_{kt+1}]- \mu_{jk}\right)}$$`
+
+The share of households in `\(j\)` at time `\(t\)` is still `\(L_j\)`
+
+---
+
+# Armington with dynamic migration: labor supply
+
+`$$\pi_{jit} = \frac{\exp\left(\beta\mathbb{E}[v_{it+1}]- \mu_{ji}\right)}{\sum_{k \in N} \exp\left(\beta\mathbb{E}[v_{kt+1}]- \mu_{jk}\right)}$$`
+
+We now have our .hi[dynamic] labor supply equation which depends on expected future payoffs and migration costs
+
+---
+
+class: inverse, center, middle
+name: dynamichat
+
+# Dynamic hat algebra
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+---
+
+# Armington: dynamic hat algebra
+
+Now that our problem is dynamic we need to make one additional notational tweak: .hi[dots/time changes]
+
+`$$\dot{Z}_{jt+1} \equiv Z_{jt+1} / Z_{jt}$$`
+
+The dot version of a variable is the relative time change between two periods
+
+--
+
+Then, the .hi[dynamic hat] variable is the counterfactual relative to the factual in time changes:
+
+`$$\hat{Z}_{jt+1} \equiv \dot{Z}'_{jt+1} / \dot{Z}_{jt+1} = {Z'_{jt+1}/Z'_{jt} \over Z_{jt+1}/Z_{jt}}$$`
+
+
+---
+
+# Armington: dynamic hat algebra
+
+`$$\hat{Z}_{jt+1} \equiv \dot{Z}'_{jt+1} / \dot{Z}_{jt+1} = {Z'_{jt+1}/Z'_{jt} \over Z_{jt+1}/Z_{jt}}$$`
+
+In the static model using hat variables let us get around knowing the levels of most exogenous variables
+
+--
+
+In the dynamic model using dynamic hat variables will let us get around knowing the levels of time-varying exogenous (common) variables: this is like a structural difference-in-differences
+
+--
+
+Lets put our equilibrium conditions in dynamic hat notation starting with the labor supply equation
+
+
+---
+
+# Armington: dynamic hat algebra
+
+`$$\pi_{jit} = \frac{\exp\left(\beta\mathbb{E}[v_{it+1}]- \mu_{ji}\right)}{\sum_{k \in N} \exp\left(\beta\mathbb{E}[v_{kt+1}]- \mu_{jk}\right)}$$`
+
+
+`$$\dot{\pi}_{jit+1} = \frac{ \frac{\exp\left(\beta\mathbb{E}[v_{it+2}]- \mu_{ji}\right)}{\exp\left(\beta\mathbb{E}[v_{it+1}]- \mu_{ji}\right)} }{\frac{\sum_{k \in N} \exp\left(\beta\mathbb{E}[v_{kt+2}]- \mu_{jk}\right)}{\sum_{l \in N} \exp\left(\beta\mathbb{E}[v_{lt+1}]- \mu_{jl}\right)} }$$`
+
+Next, let `\(u_{it} \equiv \exp\left(\mathbb{E}\left[v_{it}\right]\right)\)` to keep notation simple later, and use the multiply and divide trick to put into dot terms
+
+---
+
+# Armington: dynamic hat algebra
+
+`$$\dot{\pi}_{jit+1} = \frac{ \frac{\exp\left(\beta\mathbb{E}[v_{it+2}]- \mu_{ji}\right)}{\exp\left(\beta\mathbb{E}[v_{it+1}]- \mu_{ji}\right)} }{\frac{\sum_{k \in N} \exp\left(\beta\mathbb{E}[v_{kt+2}]- \mu_{jk}\right)}{\sum_{l \in N} \exp\left(\beta\mathbb{E}[v_{lt+1}]- \mu_{jl}\right)} }$$`
+
+`\begin{align}
+  \dot{\pi}_{jit+1} &amp;= \frac{ \dot{u}_{it+2}^\beta }{\frac{\sum_{k \in N} \exp\left(\beta\mathbb{E}[v_{kt+2}]- \mu_{jk}\right)}{\sum_{l \in N} \exp\left(\beta\mathbb{E}[v_{lt+1}]- \mu_{jl}\right)} }
+            = \frac{  \dot{u}_{it+2}^\beta}{ \frac{\sum_{k \in N} \exp\left(\beta\mathbb{E}[v_{kt+2}]- \mu_{jk}\right) \frac{\exp\left(\beta\mathbb{E}[v_{kt+1}]- \mu_{jk}\right)}{ \exp\left(\beta\mathbb{E}[v_{kt+1}]- \mu_{jk}\right) } }{\sum_{l \in N} \exp\left(\beta\mathbb{E}[v_{lt+1}]- \mu_{jl}\right)}} \\
+  \dot{\pi}_{jit+1} &amp;= \frac{  \dot{u}_{it+2}^\beta}{\sum_{k \in N} \dot{u}_{kt+2}^\beta\frac{ \exp\left(\beta\mathbb{E}[v_{kt+2}]- \mu_{jk}\right)}{\sum_{l \in N} \exp\left(\beta\mathbb{E}[v_{lt+1}]- \mu_{jl}\right)} } 
+            = \frac{  \dot{u}_{it+2}^\beta }{\sum_{k \in N} \pi_{jkt} \dot{u}_{kt+2}^\beta  }
+\end{align}`
+
+
+---
+
+# Armington: dynamic hat algebra
+
+`$$\dot{\pi}_{jit+1}  = \frac{  \dot{u}_{it+2}^\beta }{\sum_{k \in N} \pi_{jkt} \dot{u}_{kt+2}^\beta  }$$`
+
+
+By putting migration into time changes, we differenced out time-invariant migration costs
+
+--
+
+But now we have time changes in another endogenous variable `\({u_{it+2} = \exp(\mathbb{E}[v_{it+2}])}\)` so we need another equilibrium condition (in time changes)
+
+---
+
+# Armington: dynamic hat algebra
+
+We will use the T1EV version of the Bellman:
+
+`$$\mathbb{E}[v_{jt}] = \log u_{jt} =  \log {w_{jt} \over P_{jt}} + \log\left(\sum_{i \in N} \exp \left(\beta v_{it+1} - \mu_{ji} \right) \right)$$`
+
+--
+
+Exponentiate both sides and then take time differences:
+
+`$$\dot{u}_{jt+1} = \frac{\dot{w}_{jt+1}}{\dot{P}_{jt+1}} \frac{\sum_{i \in N} \exp \left(\beta v_{it+2} - \mu_{ji} \right)}{\sum_{l \in N} \exp \left(\beta v_{lt+1} - \mu_{jl} \right)}$$`
+
+Next use the multiply and divide trick
+
+---
+
+# Armington: dynamic hat algebra
+
+`\begin{align}
+  \dot{u}_{jt+1} &amp;= \frac{\dot{w}_{jt+1}}{\dot{P}_{jt+1}} \frac{\sum_{i \in N} \exp \left(\beta v_{it+2} - \mu_{ji} \right) \frac{\exp \left(\beta v_{it+1} - \mu_{ji} \right)}{\exp \left(\beta v_{it+1} - \mu_{ji} \right)}}{\sum_{l \in N} \exp \left(\beta v_{lt+1} - \mu_{jl} \right)} \\
+                 &amp;= \frac{\dot{w}_{jt+1}}{\dot{P}_{jt+1}} \sum_{i \in N}  \frac{\exp \left(\beta v_{it+2} - \mu_{ji} \right)}{\exp \left(\beta v_{it+1} - \mu_{ji} \right)} \frac{ \exp \left(\beta v_{it+1} - \mu_{ji} \right)}{\sum_{l \in N} \exp \left(\beta v_{lt+1} - \mu_{jl} \right)} \\
+ \dot{u}_{jt+1} &amp;= \frac{\dot{w}_{jt+1}}{\dot{P}_{jt+1}} \sum_{i \in N}  \dot{u}_{it+2}^\beta \pi_{jit}
+\end{align}`
+
+Now we have `\(\dot{u}\)` as a function of itself and other dot variables
+
+
+---
+
+# Armington: dynamic hat algebra
+
+Next, do the same for the market clearing condition
+
+`$$w_{jt} L_{jt} = \sum_{i \in N} \frac{a_{ij} \left(\tau_{ij} w_{it} \over A_{it} \right)^{1-\sigma} }{\sum_{k \in N} a_{kj} \left(\tau_{kj} w_{kt} \over A_{kt}\right)^{1-\sigma}} w_{it} L_{it}$$`
+--
+
+You can prove to yourself that it is:
+
+`$$\dot{w}_{jt+1} \dot{L}_{jt+1} = \sum_{i \in N} \frac{\frac{X_{jit}}{w_{jt} L_{jt}} \left(\dot{w}_{jt+1} \over \dot{A}_{jt+1}\right)^{1-\sigma} \dot{w}_{it+1} \dot{L}_{it+1}}{\sum_{k \in N}\lambda_{kit} \left(\dot{w}_{kt+1} \over \dot{A}_{kt+1}\right)^{1-\sigma}}$$`
+
+---
+
+# Armington: dynamic hat algebra
+
+We have our three equilibrium conditions in changes
+
+Along with the labor transition `\(L_{jt+1} = \sum_{i \in N} \pi_{ijt} L_{it}\)`, we can then solve for the dynamic equilibrium of the economy given some sequence of .hi[changes] in productivity `\(\dot{A}_{jt+1}\)`
+
+
+---
+
+# Armington: dynamic hat algebra
+
+`\begin{gather}
+  \dot{w}_{jt+1} \dot{L}_{jt+1} = \sum_{i \in N} \frac{\frac{X_{jit}}{w_{jt} L_{jt}} \left(\dot{w}_{jt+1} \over \dot{A}_{jt+1}\right)^{1-\sigma} \dot{w}_{it+1} \dot{L}_{it+1}}{\sum_{k \in N}\lambda_{kit} \left(\dot{w}_{kt+1} \over \dot{A}_{kt+1}\right)^{1-\sigma}} \\
+  \dot{\pi}_{jit+1} = \frac{  \dot{u}_{it+2}^\beta }{\sum_{k \in N} \pi_{jkt} \dot{u}_{kt+2}^\beta  } \qquad
+  \dot{u}_{jt+1} = \frac{\dot{w}_{jt+1}}{\dot{P}_{jt+1}} \sum_{i \in N}  \dot{u}_{it+2}^\beta \pi_{jit}
+\end{gather}`
+
+`$$L_{jt+1} = \sum_{i \in N} \pi_{ijt} L_{it}$$`
+
+`solve_arm_dyn_mig(X, lambda, w, L, pi, Ahat, sigma, beta, tol, damp)`
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
