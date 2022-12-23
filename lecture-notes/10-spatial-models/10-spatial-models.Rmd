@@ -1173,9 +1173,9 @@ $$\dot{w}_{jt+1} \dot{L}_{jt+1} = \sum_{i \in N} \frac{\frac{X_{jit}}{w_{jt} L_{
 
 # Armington: dynamic hat algebra
 
-We have our three equilibrium conditions in changes
+We have our three equilibrium conditions in time changes
 
-Along with the labor transition $L_{jt+1} = \sum_{i \in N} \pi_{ijt} L_{it}$, we can then solve for the dynamic equilibrium of the economy given some sequence of .hi[changes] in productivity $\dot{A}_{jt+1}$
+Along with the labor transition $L_{jt+1} = \sum_{i \in N} \pi_{ijt} L_{it}$, and changes in prices that are easy to solve for $\dot{P}_{jt+1}$, we can then solve for the dynamic equilibrium of the economy given some sequence of .hi[changes] in productivity $\dot{A}_{jt+1}$
 
 
 ---
@@ -1185,9 +1185,44 @@ Along with the labor transition $L_{jt+1} = \sum_{i \in N} \pi_{ijt} L_{it}$, we
 \begin{gather}
   \dot{w}_{jt+1} \dot{L}_{jt+1} = \sum_{i \in N} \frac{\frac{X_{jit}}{w_{jt} L_{jt}} \left(\dot{w}_{jt+1} \over \dot{A}_{jt+1}\right)^{1-\sigma} \dot{w}_{it+1} \dot{L}_{it+1}}{\sum_{k \in N}\lambda_{kit} \left(\dot{w}_{kt+1} \over \dot{A}_{kt+1}\right)^{1-\sigma}} \\
   \dot{\pi}_{jit+1} = \frac{  \dot{u}_{it+2}^\beta }{\sum_{k \in N} \pi_{jkt} \dot{u}_{kt+2}^\beta  } \qquad
-  \dot{u}_{jt+1} = \frac{\dot{w}_{jt+1}}{\dot{P}_{jt+1}} \sum_{i \in N}  \dot{u}_{it+2}^\beta \pi_{jit}
+  \dot{u}_{jt+1} = \frac{\dot{w}_{jt+1}}{\dot{P}_{jt+1}} \sum_{i \in N}  \dot{u}_{it+2}^\beta \pi_{jit} \\
+  L_{jt+1} = \sum_{i \in N} \pi_{ijt} L_{it} \qquad \dot{P}_{jt+1} = \left(\sum_{k \in N}  \left( {\dot{w}_{kt+1} \over \dot{A}_{kt+1}}\right)^{1-\sigma} \lambda_{kjt}\right)^{1 \over 1-\sigma}
 \end{gather}
 
-$$L_{jt+1} = \sum_{i \in N} \pi_{ijt} L_{it}$$
+We also impose $\dot{u}_{it}$ converges to 1 (else can't solve the problem)
+
+
+---
+
+# Armington: dynamic hat algebra
+
+How do we solve it?
+
+--
+
+We essentially have two nested problems:
+
+1. A static market-clearing problem at each time $t$ (conditional on the labor allocation)
+2. A dynamic migration problem (conditional on the sequence of wages and prices)
+
+
+---
+
+# Armington: dynamic hat algebra
+
+Pseudocode might look like this:
+
+```
+while error > tolerance (outer loop)
+  compute sequence of migration shares given initial conditions and expected values
+  compute sequence of labor given initial conditions and migration shares
+  for each time t (inner loop)
+      solve for wages and prices that clear the goods market
+  end
+  compute the sequence of expected values
+  compute error in expected values since last iteration
+end
+```
+    
 
 `solve_arm_dyn_mig(X, lambda, w, L, pi, Ahat, sigma, beta, tol, damp)`
