@@ -48,19 +48,19 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 
 ## Important dates
 
-- [Final project proposals due: XYZ](XXXXX)
+- [Final project proposals due: March 17](XXXXX)
 - Final project presentations: Last week of class
-- Final project due: XYZ
+- Final project due: May 19
 
 ## Assignments
 
 ### Problem sets
 There will be four problem sets. You must submit your code on Canvas. You may work in a group of **two.** Each group should turn in one assignment with all members' names at the top of the file. Your grade will be a function of how well your answer the questions, and the clarity of your code (i.e. I should be able to tell what you're doing). I will help with conceptual issues on your problem sets but not minor coding issues. Part of the learning experience with problem sets is grappling with debugging code and learning how to use available resources (e.g. StackOverflow, ChatGPT).
 
-- Problem set 1: Due XYZ ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/1_ps/01-ps.html)) 
-- Problem set 2: Due XYZ ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/2_ps/02-ps.html)) 
-- Problem set 3: Due XYZ ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/3_ps/03-ps.html)) 
-- Problem set 4: Due XYZ ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/4_ps/04-ps.html))
+- Problem set 1: Due TBD ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/1_ps/01-ps.html)) 
+- Problem set 2: Due TBD ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/2_ps/02-ps.html)) 
+- Problem set 3: Due TBD ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/3_ps/03-ps.html)) 
+- Problem set 4: Due TBD ([html](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/4_ps/04-ps.html))
 
 ### Final project ([proposal instructions here](https://raw.githack.com/AEM7130/class-repo/master/final-project/project_proposal.html))
 
