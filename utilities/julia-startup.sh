@@ -1,4 +1,5 @@
 #!/bin/bash
+curl -fsSL https://install.julialang.org | sh
 mkdir -p ~/.julia-environments/tools
 cd ~/.julia-environments/tools
 julia -e 'using Pkg; Pkg.activate("."); Pkg.add("Revise"); Pkg.add("OhMyREPL"); Pkg.add("BenchmarkTools")'
