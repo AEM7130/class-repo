@@ -1,5 +1,15 @@
 #!/bin/bash
-curl -fsSL https://install.julialang.org | sh
+
+#!/bin/bash
+echo "Detected operating system: $(uname)"
+if [ "$(uname)" == "Darwin" ] || [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  curl -fsSL https://install.julialang.org | sh
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ] || [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+  winget install julia -s msstore
+else
+  echo "Operating system not supported"
+fi
+
 mkdir -p ~/.julia-environments/tools
 cd ~/.julia-environments/tools
 julia -e 'using Pkg; Pkg.activate("."); Pkg.add("Revise"); Pkg.add("OhMyREPL"); Pkg.add("BenchmarkTools")'
