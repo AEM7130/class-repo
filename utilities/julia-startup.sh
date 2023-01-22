@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
 echo "Detected operating system: $(uname)"
 if [ "$(uname)" == "Darwin" ] || [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
   curl -fsSL https://install.julialang.org | sh

@@ -12,7 +12,7 @@
 **Programs**: You will need to install the following programs on your computer
 
 - [Git](https://git-scm.com/downloads)
-- [Julia](https://julialang.org/downloads/)
+- [Julia](https://julialang.org/downloads/) (shell script in the `utilities` folder will install [juliaup](https://github.com/JuliaLang/juliaup) and initialize some packages for you as a simple alternative)
 - [VSCode](https://code.visualstudio.com)
 
 
@@ -84,7 +84,7 @@ Starting near the middle of the course, one student a class will present either 
 
 ## Course Schedule
 
-### Session 1: Intro to computing ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_1/1_intro_to_computing.pdf))
+### Session 1: Intro to computing ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/01-intro/01-intro.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/01-intro/01-intro.pdf))
 
 **Theory**: numbers, memory, linear algebra, calculus
 
@@ -95,7 +95,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 
 
-### Session 2: Coding, reproducibility, and the shell ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_2/2a_coding.pdf))
+### Session 2: Coding, reproducibility, and the shell ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/02-coding/02-coding.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/02-coding/02-coding.pdf))
 
 **Applications**: shell scripts, julia speed, reproducibility, workflow
 
@@ -110,7 +110,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 
 
-### Session 3: Version control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_3/3_git.pdf))
+### Session 3: Version control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/03-git/03-git.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/03-git/03-git.pdf))
 
 **Applications**: git, github
 
@@ -121,7 +121,7 @@ Miranda and Fackler (2002, Chapters 1, 2, and 5)
 
 
 
-### Session 4: Rootfinding and optimization ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_4/4_optimization.pdf))
+### Session 4: Rootfinding and optimization ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/04-optimization/04-optimization.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/04-optimization/04-optimization.pdf))
 
 **Theory**: iterative methods, newton methods, gaussian methods, global solvers
 
@@ -137,7 +137,7 @@ Donaldson, Dave, and Richard Hornbeck. "Railroads and American economic growth: 
 
 
 
-### Session 5: Discrete time dynamic programming ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_5/5_dynamics.pdf))
+### Session 5: Discrete time dynamic programming ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/05-dynamic-programming/05-dynamic-programming.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/05-dynamic-programming/05-dynamic-programming.pdf))
 
 **Theory**: markov chains, principle of optimality
 
@@ -148,7 +148,7 @@ Ljungqvist, Lars, and Thomas J. Sargent. Recursive macroeconomic theory. MIT pre
 
 
 
-### Session 6: Function approximation ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_6/6_projection.pdf))
+### Session 6: Function approximation ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/06-function-approximation/06-function-approximation.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/06-function-approximation/06-function-approximation.pdf))
 
 **Theory**: discretization, pseudospectral methods, finite element methods
 
@@ -161,7 +161,7 @@ Ortiz-Bobea, Ariel, Erwin Knippenberg, and Robert G. Chambers. "Growing climatic
 
 
 
-### Session 7: Approximating value and policy functions for discrete time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_7/7_solution_methods.pdf))
+### Session 7: Approximating value and policy functions for discrete time models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/07-dp-solution-methods/07-dp-solution-methods.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/07-dp-solution-methods/07-dp-solution-methods.pdf))
 
 **Theory**: value function iteration, policy iteration, time iteration
 
@@ -176,7 +176,7 @@ Fernández-Villaverde, Jesús, Juan Francisco Rubio-Ramírez, and Frank Schorfhe
 Cai, Yongyang, and Thomas S. Lontzek. "The social cost of carbon with economic and climate risks." Journal of Political Economy 127, no. 6 (2019): 2684-2734.
 
 
-### Session 8: Continuous time optimal control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
+### Session 8: Continuous time optimal control ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/08-optimal-control/08-optimal-control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/08-optimal-control/08-optimal-control.pdf))
 
 **Theory**: maximum principle, hamiltonians, shooting, backwards shooting
 
@@ -191,7 +191,7 @@ Anderson, Soren T., Ryan Kellogg, and Stephen W. Salant. "Hotelling under pressu
 Lemoine, Derek, and Ivan Rudik. "Steering the climate system: using inertia to lower the cost of policy." American Economic Review 107, no. 10 (2017): 2947-57.
 
 
-### Session 9: Advanced dynamic programming methods ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_8/8_optimal_control.pdf))
+### Session 9: Advanced dynamic programming methods ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/09-advanced-dp-methods/09-advanced-dp-methods.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/09-advanced-dp-methods/09-advanced-dp-methods.pdf))
 
 **Theory**: endogenous grid method, envelope conditions, modified policy iteration
 
@@ -199,7 +199,7 @@ Carroll, Christopher D. "The method of endogenous gridpoints for solving dynamic
 
 Maliar, Lilia, and Serguei Maliar. "Envelope condition method versus endogenous grid method for solving dynamic programming problems." Economics Letters 120, no. 2 (2013): 262-266.
 
-### Session 10: Solving spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
+### Session 10: Solving spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/10-spatial-models/10-spatial-models.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/10-spatial-models/10-spatial-models.pdf))
 
 **Theory**: armington, eaton-kortum, exact hat algebra
 
@@ -212,7 +212,7 @@ Costinot, Arnaud, and Andrés Rodríguez-Clare. "Trade theory with numbers: Quan
 Shapiro, Joseph S., and Reed Walker. "Why is pollution from US manufacturing declining? The roles of environmental regulation, productivity, and trade." American Economic Review 108, no. 12 (2018): 3814-54.
 
 
-### Session 11: Solving dynamic spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/lecture_11/11_spatial_models.html))
+### Session 11: Solving dynamic spatial equilibrium models ([html](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/10-spatial-models/10-spatial-models.html)) ([pdf](https://raw.githack.com/AEM7130/class-repo/master/lecture-notes/10-spatial-models/10-spatial-models.pdf))
 
 **Theory**: dynamic hat algebra
 
