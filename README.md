@@ -12,7 +12,7 @@
 **Programs**: You will need to install the following programs on your computer
 
 - [Git](https://git-scm.com/downloads)
-- [Julia](https://julialang.org/downloads/)
+- [Julia](https://julialang.org/downloads/) (shell script in the `utilities` folder will install [juliaup](https://github.com/JuliaLang/juliaup) and initialize some packages for you as a simple alternative)
 - [VSCode](https://code.visualstudio.com)
 
 
