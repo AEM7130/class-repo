@@ -56,10 +56,7 @@ Necessary things to download to follow along today and in the future:
 - [Git](https://git-scm.com/downloads)
 - [Julia or JuliaPro](https://julialang.org/downloads/)
 - [VSCode](http://code.visualstudio.com)
-
---
-
-- Also make a [GitHub](https://github.com) account
+- A [GitHub](https://github.com) account
 
 --
 
@@ -89,7 +86,7 @@ using ForwardDiff, Distributions, BenchmarkTools
 
 # Course materials
 
-1. Everything we use in the course will be .hi[freely available] and posted to the course GitHub (details next class on how to use Git)
+1. Everything we use in the course will be .hi[freely available] and posted to the course GitHub (details next week on how to use Git)
 2. Books (free from the library or authors' websites):
   1. Judd (1998)
   2. Miranda and Fackler (2002)
@@ -127,9 +124,9 @@ using ForwardDiff, Distributions, BenchmarkTools
 
 # Important days / times
 
-- Office hours: Tuesday 1:00-2:00
-- Final project proposal: XYZ
-- Final project paper: XYZ
+- Office hours: Tuesday 3:00-4:00
+- Final project proposal: March 17
+- Final project paper: May 19
 
 ---
 
@@ -197,38 +194,13 @@ Proposals will be due about half way through the class
 # Final project (25% paper, 15% proposal)
 
 The only requirement is that the project .hi[cannot be computationally trivial]  
-(i.e. no reduced form applied micro papers)
+(i.e. no applied micro papers)
 
 It can be numerical, empirical, whatever
 
 Everyone will present their final projects in the last week of class
 
 More details on the syllabus and to come later
-
----
-
-# Slides
-
-All slides will be available on the [course GitHub page](https://github.com/AEM7130/class-repo)
-
---
-
-The slides are made with R Markdown and can run Julia via the JuliaCall package, e.g.
-
-```{julia}
-# true coefficient
-bbeta = π;
-# random x data
-x = randn(100,1)*5 .+ 3;
-# OLS data generating process
-y = bbeta.*x .+ randn(100,1)*10;
-
-# OLS estimation
-bbeta_hat = inv(x'x)x'y;
-
-println("β-hat is $(round(bbeta_hat[1],digits=3)) and the true β is $(round(bbeta,digits=3)).")
-```
-
 
 ---
 
@@ -240,12 +212,11 @@ name: why
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 
-
 ---
 
 # Why do we need computational methods?
 
-Everything you've done so far has likely been solvable analytically
+1st year PhD core: everything is typically analytically tractable
 
 --
 
@@ -280,7 +251,7 @@ Theory often relies on strong assumptions like:
 --
 
 - log utility (lose income vs substitution)
-- no transactions costs (important friction)
+- zero frictions
 - strictly linear transitions (natural phenomena don't follow this)
 - static decisionmaking
 
@@ -541,7 +512,7 @@ end
 # Function iteration
 
 ```{julia}
-acreage, expected_price = find_root_fi(1, 0.1)
+acreage, expected_price = find_root_fi(1, 0.1);
 println("The optimal number of acres to plant is $(round(acreage, digits = 3)).\nThe expected price is $(round(expected_price, digits = 3)).")
 ```
 
@@ -562,11 +533,9 @@ name: why
 
 How do we quantify speed and accuracy of computational algorithms?
 
-i.e. what is the .hi[computational complexity] of the problem?
-
 --
 
-.hi[General mathematical definition:] Big O notation describes the limiting behavior of a function when the argument tends towards a particular value or infinity
+.hi[Big O notation] describes the limiting behavior of a function when the argument tends towards a particular value or infinity
 
 --
 
@@ -742,10 +711,14 @@ Example:
 
 .hi[bubble sort], step through a list, compare adjacent elements, swap if in the wrong order
 
+--
+
+.hi[matrix inversion], most algorithms (e.g. LU decomposition) solve in polynomial time
+
 ---
 
 class: inverse, center, middle
-name: why
+name: arithmetic
 
 # Computer arithmetic
 
@@ -889,8 +862,7 @@ println("Is 1 - ϵ/2 < 1? $(Float32(1) - eps(Float32)/2 < 1)")
 
 --
 
-Theres a tradeoff between precision and storage requirements,  
-this matters for low-memory systems like GPUs
+Theres a tradeoff between precision and storage requirements
 
 ---
 
@@ -918,7 +890,7 @@ println("16 bit largest float is $(floatmax(Float16))")
 
 ---
 
-# The limits of computers: time is a flat circle
+# The limits of computers
 
 ```{julia}
 println("The largest 64 bit integer is $(typemax(Int64))")
