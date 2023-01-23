@@ -307,8 +307,8 @@ td.mid-table-header {
 .inverse {
   background-color: #192439;
   border-top: 70px solid #192439;
-  text-shadow: 0 0 20px #333;
-  /* text-shadow: none; */
+  /* text-shadow: 0 0 20px #333; */
+  text-shadow: none;
 }
 
 .title-slide {
