@@ -8,7 +8,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-For problems 1 and 2 write a Julia script. For problem 3 write a shell script. Make sure your code is well-commented and reproducible. Unless stated in the problem, you can (and may need to) use some Google searching to find how to efficiently code parts of your answers.
+For problems 1 and 2 write Julia functions. For problem 3 write a shell script. All three should be executed by a Julia script called `01-ps-your-last-names.jl`. Make sure your code is well-commented and reproducible. Unless stated in the problem, you can (and may need to) use some Google searching or ChatGPTing to find how to efficiently code parts of your answers. 
+
 
 ## Problem 1: Integration and functional programming
 A profit-maximizing firm faces a demand curve given by: $P(q) = a-bq$ where $b\sim logN(\mu,\sigma)$ and has a cost function given by $C(q) = cq$. 
