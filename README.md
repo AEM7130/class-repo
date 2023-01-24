@@ -57,7 +57,7 @@ Nocedal, J. and S. J. Wright (2006) Numerical Optimization, New York: Springer, 
 ### Problem sets
 There will be four problem sets. You must submit your code on Canvas. You may work in a group of **two.** Each group should turn in one assignment with all members' names at the top of the file. Your grade will be a function of how well your answer the questions, and the clarity of your code (i.e. I should be able to tell what you're doing). I will help with conceptual issues on your problem sets but not minor coding issues. Part of the learning experience with problem sets is grappling with debugging code and learning how to use available resources (e.g. StackOverflow, ChatGPT).
 
-- Problem set 1: Due TBD 
+- [Problem set 1:](https://raw.githack.com/AEM7130/class-repo/master/problem-sets/01-ps/01-ps.html) Due Feb 14 
 - Problem set 2: Due TBD 
 - Problem set 3: Due TBD 
 - Problem set 4: Due TBD 
