@@ -33,13 +33,6 @@ exclude: true
 
 ```r
 if (!require("pacman")) install.packages("pacman")
-```
-
-```
-## Loading required package: pacman
-```
-
-```r
 pacman::p_load(
   xaringanExtra, JuliaCall
 )
@@ -61,18 +54,6 @@ knit_hooks$set(
       )
 })
 julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
-```
-
-```
-## Julia version 1.8.0 at location /Applications/Julia-1.8.app/Contents/Resources/julia/bin will be used.
-```
-
-```
-## Loading setup script for JuliaCall...
-```
-
-```
-## Finish loading setup script for JuliaCall.
 ```
 
 
@@ -561,8 +542,8 @@ We can solve this using another technique called .hi[function iteration]
 ```
 
 ```
-## The optimal number of acres to plant is 1.089.
-## The expected price is 1.178.
+## The optimal number of acres to plant is 1.09.
+## The expected price is 1.179.
 ```
 
 ---
@@ -1882,7 +1863,7 @@ Suppose we want to integrate `\(x^2\)` from 0 to 10, we know this is `\(10^3/3 =
 ```
 
 ```
-## 345.1866348357317
+## 331.47113913116505
 ```
 
 Pretty close!
@@ -2238,9 +2219,9 @@ Let's see the full results of the competition for a 10x10:
 ```
 
 ```
-## Cramer's rule solved in 0.281305291 seconds and used 16187200 kilobytes of memory.
-## LU solved in 0.223268959 seconds and used 81840 kilobytes of memory.
-## LU is 1.0 times faster and uses 198.0 times less memory.
+## Cramer's rule solved in 0.108000167 seconds and used 16187200 kilobytes of memory.
+## LU solved in 0.000105084 seconds and used 81840 kilobytes of memory.
+## LU is 1028.0 times faster and uses 198.0 times less memory.
 ```
 
 ---

@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ## Requirements:
 
-- Due date: March 23
+- Due date: March 17
 - Length: 1-2 pages
 
 ## Proposal Content:
