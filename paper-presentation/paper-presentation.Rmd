@@ -21,8 +21,8 @@ knitr::opts_chunk$set(
     - A computationally-driven empirical paper (e.g. big data, machine learning, satellite data)
     - A methodology paper (e.g. LASSO for instrument selection)
     - A package
-- Up to 15 minutes in length
-- Send me the slides by 12:00pm the day you present
+- 15-25 minutes in length
+- Send me the slides the day before you present
 - You must consult with me about what you are presenting at least a week before your scheduled time
 - **Do not cover your slides with tons of math**
 - **Do not cover your slides with tons of math**
@@ -33,18 +33,18 @@ knitr::opts_chunk$set(
 
 Act as if this is your own paper/package you are presenting
 
-### Numerical/empirical papers
+### Application papers
 - Motivate why what you are doing is interesting
-- Since this is a methodology course spend a *little* more time than usual on this for applied papers
-- Explain your results
+- Since this is a methodology course spend some time on how you solve the problem.
+- Explain your results.
 - What should we takeaway? What did the methods let you do?
 
 ### Methodology papers
-- Motivate why this method is interesting and useful
-- Find an intuitive way to convey the method (e.g. a nice figure or gif like [this](https://twitter.com/nickchk/status/1068215492458905600))
-- Explain in what situations we want to use this method
+- Motivate why this method is interesting and useful.
+- Find an intuitive way to convey the method (e.g. a nice figure or gif like [this](https://twitter.com/nickchk/status/1068215492458905600)).
+- Explain in what situations we want to use this method.
 
 ### Packages
-- Walk us through what the package does
-- Explain why economists would want to use it
-- Write up some simple code (maybe some RMarkdown slides like mine, or just a notebook like [this](https://raw.githack.com/uo-ec607/lectures/master/07-web-apis/07-web-apis.html)) showing us how to use it
+- Walk us through what the package does.
+- Explain why economists would want to use it.
+- Write up some simple code (maybe some RMarkdown slides like mine, or just a notebook like [this](https://raw.githack.com/uo-ec607/lectures/master/07-web-apis/07-web-apis.html)) showing us how to use it.
