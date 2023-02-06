@@ -38,7 +38,7 @@ knit_hooks$set(
       continue = if (options$engine %in% c('sh','bash')) '$ ' else ' '
       )
 })
-julia_setup(JULIA_HOME = "/Applications/Julia-1.8.app/Contents/Resources/julia/bin")
+julia_setup(JULIA_HOME = "/Users/ir229/.juliaup/bin")
 ```
 
 ---
@@ -54,10 +54,6 @@ Necessary things to do:
 - Install [Julia](https://julialang.org/downloads/) with these Julia packages: `Expectations, Distributions, LinearAlgebra, BenchmarkTools`
     - Or use homebrew/other package manager
 
---
-
-These slides are based on Software Carpentry, notes by Grant Mcdermott, QuantEcon, Julia documentation, etc
-
 ---
 
 class: inverse, center, middle
@@ -67,6 +63,15 @@ name: vscode
 
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
+---
+
+# VSCode
+
+- Extensions
+- Terminal/command line
+- Julia (interactive)
+- Project manager
+- Git
 
 ---
 
@@ -139,11 +144,11 @@ type in commands to interact with the **kernel** and hardware
 
 # What is the shell?
 
-The most common one is .hi-blue[bash], Bourne again shell, because it comes default on Macs and Linux
+The most common one is .hi[bash], Bourne again shell, because it comes default on Linux and old Macs
 
 --
 
-I use .hi-blue[fish], friendly interactive shell, because it comes default with a lot of nice features,
+I use .hi[fish], friendly interactive shell, because it comes default with a lot of nice features,
 all the commands still work identically to bash
 
 ---
@@ -159,7 +164,7 @@ When you open up the shell you should see a prompt, usually starting with `$ ` (
 
 # Shell basics
 
-We can type in one .hi-blue[command], `ls` which lists the contents of your current directory
+We can type in one .hi[command], `ls` which lists the contents of your current directory
 
 --
 
@@ -173,7 +178,7 @@ My current directory is the one for this set of slides
 
 # Shell basics
 
-Commands come with potential .hi-blue[options] or .hi-blue[flags] that modify how they act
+Commands come with potential .hi[options] or .hi[flags] that modify how they act
 ```{bash}
 ls
 ```
@@ -197,7 +202,7 @@ ls -lSh
 
 # Shell basics
 
-Finally commands have an .hi-blue[argument] that the command operates on
+Finally commands have an .hi[argument] that the command operates on
 
 --
 
@@ -239,7 +244,7 @@ We already learned how to list the files in a particular directory, but we need 
 
 --
 
-We often will want to know our .hi-blue[current working directory] so we know where we are before we start running commands
+We often will want to know our .hi[current working directory] so we know where we are before we start running commands
 
 --
 
@@ -303,7 +308,7 @@ pwd
 
 --
 
-When navigating, it is often easier and more reproducible to use .hi-blue[relative paths]
+When navigating, it is often easier and more reproducible to use .hi[relative paths]
 
 --
 
@@ -315,7 +320,7 @@ This is when arguments are relative to your current working directory, instead o
 
 There's a few expressions that make this possible
 
-- `~` is your .hi-blue[home directory]
+- `~` is your .hi[home directory]
 - `.` is your current directory
 - `..` is the parent directory
 - `-` is the previous directory you were in
@@ -689,7 +694,7 @@ We can change all of our txt files to csvs, `-s` indicates that the first argume
 
 # Accessing multiple files
 
-We can access multiple things at once using .hi-blue[wildcards] `*`,
+We can access multiple things at once using .hi[wildcards] `*`,
 which replaces zero to any number of characters in the expression
 
 --
@@ -737,7 +742,7 @@ wc sandbox/*.txt
 
 # Redirecting
 
-Now suppose we had 1 million files and wanted to find the one with the most words? Just printing to the screen doesn't work, we'd want to save the output and use it somewhere else, we can do that by .hi-blue[redirecting] with the greater than symbol `>`
+Now suppose we had 1 million files and wanted to find the one with the most words? Just printing to the screen doesn't work, we'd want to save the output and use it somewhere else, we can do that by .hi[redirecting] with the greater than symbol `>`
 
 --
 
@@ -813,7 +818,7 @@ cat sandbox/trees.txt
 
 # Piping
 
-We've learned a few options for manipulating text files, we can combine them in easy ways using .hi-blue[piping] (same idea as Julia's queryverse and R's tidyverse)
+We've learned a few options for manipulating text files, we can combine them in easy ways using .hi[piping] (same idea as Julia's queryverse and R's tidyverse)
 
 --
 
@@ -945,7 +950,7 @@ Looks like it worked but we have the header every other line, how do we get rid 
 
 # Looping example 2
 
-.hi-blue[Hint:] we only need the header once, and then we want the last line of the csv for each file
+.hi[Hint:] we only need the header once, and then we want the last line of the csv for each file
 
 --
 
@@ -1058,7 +1063,7 @@ grep -w in sandbox/lucy_in_the_sky.txt | head -5
 
 # Grepping
 
-`grep`s real power comes from using .hi-blue[regular expressions]
+`grep`s real power comes from using .hi[regular expressions]
 
 These are complex expressions that allow you to search for very specific things
 
@@ -1787,7 +1792,7 @@ When broadcasting, you might want to consider **pre-allocating** arrays
 
 Vectorization creates *temporary allocations*, temporary arrays in the middle of the process that aren't actually needed for the final product
 
-Julia can do broadcasting in a nicer, faster way by .hi-blue[fusing] operations together and avoiding these temporary allocations
+Julia can do broadcasting in a nicer, faster way by .hi[fusing] operations together and avoiding these temporary allocations
 
 ---
 
@@ -1911,7 +1916,7 @@ out_3 = similar(out_1)
 # Scope
 
 
-The .hi-blue[scope] of a variable name determines when it is valid to refer to it
+The .hi[scope] of a variable name determines when it is valid to refer to it
 
 --
 
@@ -1987,7 +1992,7 @@ What happened?
 --
 
 The `zz` outside the for loop has a different scope,
-the .hi-blue[global scope], than the `zz` inside it
+the .hi[global scope], than the `zz` inside it
 
 --
 
@@ -1995,7 +2000,7 @@ The global scope is the outer most scope, outside all functions and loops
 
 --
 
-The `zz` inside the for loop has a scope .hi-blue[local] to the loop
+The `zz` inside the for loop has a scope .hi[local] to the loop
 
 --
 
@@ -2022,7 +2027,7 @@ println("zz = $zz")
 
 Local scope kicks in whenever you have a new block keyword (i.e. you indented something) except for `if`
 
-Global variables inside a local scope are inherted for .hi-blue[reading], not writing
+Global variables inside a local scope are inherted for .hi[reading], not writing
 
 ```{julia}
 x, y = 1, 2;
@@ -2039,7 +2044,7 @@ x
 
 # Scope
 
-Important piece: nested functions can modify their parent scope's .hi-blue[local] variables
+Important piece: nested functions can modify their parent scope's .hi[local] variables
 
 --
 
@@ -2117,7 +2122,7 @@ wrapper()
 
 # Closures
 
-These inner functions we've been looking at are called .hi-blue[closures]
+These inner functions we've been looking at are called .hi[closures]
 
 When a function `f` is parsed in Julia, it looks to see if any of the variables have been previously defined in the current scope
 
@@ -2141,7 +2146,7 @@ g(0.2)
 
 --
 
-In both of these examples `f` is a closure designed to .hi-blue[capture] a variable from an outer scope
+In both of these examples `f` is a closure designed to .hi[capture] a variable from an outer scope
 
 ---
 
@@ -2193,7 +2198,7 @@ The returned closure still has access to the outer function's local scope!
 
 # Generic functions
 
-If you use Julia to write code for research you should aim to write .hi-blue[generic functions]
+If you use Julia to write code for research you should aim to write .hi[generic functions]
 
 --
 
@@ -2202,14 +2207,14 @@ and have high performance (e.g. comparable speed to C)
 
 --
 
-Functions are made generic by paying attention to types and making sure types are .hi-blue[stable]
+Functions are made generic by paying attention to types and making sure types are .hi[stable]
 
 
 ---
 
 # Generic functions
 
-.hi-blue[Type stability:] Given an input into a function, operations on that input should maintain the type so Julia **knows** what its type will be throughout the full function call
+.hi[Type stability:] Given an input into a function, operations on that input should maintain the type so Julia **knows** what its type will be throughout the full function call
 
 --
 

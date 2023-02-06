@@ -2,5 +2,5 @@
      195 sandbox/hey_jude.txt
        0 sandbox/lengths.txt
      220 sandbox/lucy_in_the_sky.txt
-      21 sandbox/trees.txt
-     443 total
+      15 sandbox/trees.txt
+     437 total
