@@ -146,55 +146,6 @@ $g(x) = x \Rightarrow f(x) \equiv g(x) - x = 0$
 
 ---
 
-# Rootfinding with constraints
-
-Economic problems virtually always involve constraints
-
---
-
-These constraints may or may not be binding
-
---
-
-e.g. a firm profit max problem: a control vector $x$ may be constrained to be $x \in [a,b]$
-
---
-
-This results in a complementarity problem:
-
---
-
-
-\begin{align}
-x_i > a_i \Rightarrow f_i(x) \geq 0 \,\,\, \forall \, i=1,...,n \\
-x_i < b_i \Rightarrow f_i(x) \leq 0 \,\,\, \forall \, i=1,...,n
-\end{align}
-
---
-
-What do these equations mean?
-
----
-
-# Rootfinding with constraints
-
-\begin{align}
-x_i > a_i \Rightarrow f_i(x) \geq 0 \,\,\, \forall \, i=1,...,n \\
-x_i < b_i \Rightarrow f_i(x) \leq 0 \,\,\, \forall \, i=1,...,n
-\end{align}
-
-If the constraints on $x_i$ do not bind, $a_i < x_i < b_i$, then the first-order condition is precisely zero
-
---
-
-Suppose the upper bound binds, $x_i = b_i$
-
---
-
-Then $f_i(x) \geq 0$ since $x_i > a_i$, but we can't guarantee that $f_i(x) = 0$ because $f_i(x)$ might still be increasing
-
----
-
 # Basic non-linear rootfinders: Bisection method
 
 What does the intermediate value theorem tell us?
@@ -228,8 +179,14 @@ Continually bisect the interval!
 The bisection method works by continually bisecting the interval and only keeping the half interval with a zero until "convergence"
 
 1. Select the midpoint of $[a,b]$, $(a+b)/2$
+--
+
 2. Zero must be in the lower or upper half
+--
+
 3. Check the sign of the midpoint, if it has the same sign as the lower bound a root must be the right subinterval
+--
+
 4. Select the midpoint of $[(a+b)/2,b]$...
 
 
@@ -283,6 +240,8 @@ bisection(g, -6, 4)
 
 ---
 
+# The bisection method
+
 ```{julia}
 h(x) = cos(x);
 bisection(h, -pi, pi)
@@ -302,6 +261,8 @@ A root can be calculated to arbitrary precision $\epsilon$
 in a maximum of $log([b-a]/\epsilon)/log(2)$ iterations
 
 Robustness comes with drawbacks:
+
+--
 
 1. It only works in one dimension
 2. It is slow because it only uses information about the function's level
@@ -337,7 +298,7 @@ In general, it can be quite unstable as we will see
 
 --
 
-.hi[Code up a function iteration algorithm for an arbitrary function f]
+.hi[Code up a function iteration algorithm to find a fixed point of an arbitrary function f]
 
 ---
 
