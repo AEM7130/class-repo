@@ -1,29 +1,55 @@
 # Problem 1
 
-using QuantEcon # for integration routine
+using CompEcon # for integration routine
 using Distributions 
+using FastGaussQuadrature
+using Expectations
+using QuadGK
+using LinearAlgebra, Statistics
+using Optim
 
-function profit_max_q(a, c, mu, sigma, method="mc", n)
-    b = LogNormal(mu, sigma)
+function profit_max_q(a, c, mu, sigma, method, n)
+    # calculate the expectation of b 
+    log_normal = LogNormal(mu, sigma)
+    if method == "mc"
+        # perform Monte Carlo integration
+        # first draw n random b from the support of log normal
+        b = rand(1:1000000, n)
 
+        # integrate
+        E_b = 1000000 * 1/n * sum(pdf.(log_normal, b) .* b) 
+
+    elseif method == "quad"
+        # perform quadrature integration
+        f(x) = x*pdf(log_normal,x)
+        E_b = quadgk(f, 0, 1000000, rtol=1e-6)
+    else
+        print("Please enter a correct integration method")
+    end
     # define functions
-    P(q) = a - b*q  
+    P(q) = a - E_b*q  
     C(q) = c*q
-    Π(q) = P(q)*q - C(q) 
+    Π(q) = -(P(q)*q - C(q))
 
-    # 
+    # find q 
+    result = optimize(Π,0,1000)
+    q = result.minimizer
+    profit = -result.minimum
 
-
+    # return the result
+    print("Maximized profit is $profit and quantity is $q. Estimated value
+    of b is $E_b")
+    # return q
 end
 
-
-# Problem 2
-# First define a funciton that check the distance of points to 
-# the "center" of the square_points
-
+# Problem 2:
 function distance_to_center(point)
     distance = sqrt((point[1] - 0.5)^2 + (point[2] - 0.5)^2)
-    return distance
+    if distance <= 0.5
+        return 1
+    else
+        return 0
+    end    
 end
 
 
@@ -33,13 +59,15 @@ function estimate_pi(n)
     # return the distances from the points to the center 
     distances = distance_to_center.(square_points)
 
-    # count number of points inside the circle
-    inside_ratio = count(i->(i <= 0.5), distances) / n
+    # area of the square
+    area = 1 * 1/n * sum(distances)
 
     # return pi
-    pi = inside_ratio / (0.5^2)
+    pi = area / (0.5^2)
     return pi
 end
 
-estimate_pi(1000000)
+# estimate_pi(1000000)
+
+# Problem 3
 
