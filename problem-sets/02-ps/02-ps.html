@@ -9,7 +9,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="AEM 7130" />
 
 
 <title>Problem Set 2</title>
@@ -350,35 +349,16 @@ display: none;
 
 
 <h1 class="title toc-ignore">Problem Set 2</h1>
-<h4 class="author">AEM 7130</h4>
 
 </div>
 
 
-<div id="problem-set-2-due-march-17-at-1159pm." class="section level1">
-<h1>Problem Set 2: Due March 17 at 11:59PM.</h1>
 <p>Make sure your code is well-commented and reproducible. Unless stated
-in the problem, you can (and may need to) use some Google searching to
-find how to code parts of your answers.</p>
-<div id="problem-1-git" class="section level2">
-<h2>Problem 1: Git</h2>
-<ol style="list-style-type: decimal">
-<li>Create a new repository named <code>problem-set-1-q-3</code> on your
-GitHub account.</li>
-<li>Put in a <code>README.md</code> with the following text:
-<code>Hello World!</code>.</li>
-<li>Put in a .gitignore file, ignoring the Jupyter files
-.ipynb_checkpoints and the project files, .projects.</li>
-<li>Create a new branch called <code>new-branch</code>.</li>
-<li>Change the <code>README.md</code> text to
-<code>Goodbye World!</code>.</li>
-<li>Create a pull request to merge <code>new-branch</code> back into
-<code>main/master</code>.</li>
-<li>Merge the branch back in.</li>
-</ol>
-</div>
-<div id="problem-2-memory-location" class="section level2">
-<h2>Problem 2: Memory location</h2>
+in the problem, you can (and may need to) use some
+Google/StackExchange/ChatGPT searching to find how to code parts of your
+answers.</p>
+<div id="problem-1-memory-location" class="section level2">
+<h2>Problem 1: Memory location</h2>
 <p>Let’s learn about some of the nuances of memory allocation.</p>
 <ol style="list-style-type: decimal">
 <li>Generate one <span class="math inline">\(20,000 \times
@@ -397,9 +377,10 @@ calculate the elapsed time and memory allocation on the second call
 column-by-column or row-by-row how does it compare?</li>
 </ol>
 </div>
-<div id="problem-3-newton" class="section level2">
-<h2>Problem 3: Newton</h2>
-<p>Consider a Cournot duopoly where inverse demand is given by <span class="math inline">\(P(q) = q^{-1/\eta}\)</span>, and the firm cost
+<div id="problem-2-newton" class="section level2">
+<h2>Problem 2: Newton</h2>
+<p>Consider a Cournot duopoly where aggregate inverse demand is given by
+<span class="math inline">\(P(q) = q^{-1/\eta}\)</span>, <span class="math inline">\(q = q_1 + q_2\)</span>, and the firm cost
 functions are <span class="math inline">\(C_1(q_1) = 0.5 c_1 q_1^2,
 C_2(q_2) = 0.5 c_2 q^2_2\)</span>.</p>
 <ol style="list-style-type: decimal">
@@ -412,8 +393,8 @@ functions.</p>
 <li>Solve for the equilibrium outcome using Newton’s method for <span class="math inline">\(\eta = 1.6, c_1 = .15, c_2 = 0.2\)</span>.</li>
 </ol>
 </div>
-<div id="problem-4-newton-mle" class="section level2">
-<h2>Problem 4: Newton + MLE</h2>
+<div id="problem-3-newton-mle" class="section level2">
+<h2>Problem 3: Newton + MLE</h2>
 <p>Write a function <code>mle_newton(x, y, theta, tol)</code> that
 estimates the parameters <span class="math inline">\(\theta\)</span> of
 a linear model using maximum likelihood. <span class="math inline">\(x\)</span> is an <span class="math inline">\(N
@@ -426,8 +407,8 @@ distributed noise term. The function should return the central estimate
 of <span class="math inline">\(\theta\)</span> as well as bootstrapped
 standard errors.</p>
 </div>
-<div id="problem-5-optimization-packages" class="section level2">
-<h2>Problem 5: Optimization packages</h2>
+<div id="problem-4-optimization-packages" class="section level2">
+<h2>Problem 4: Optimization packages</h2>
 <p>Suppose a consumer has the following CES utility: <span class="math display">\[u(C_1, C_2) = (\kappa C_1^{(\eta - 1)/\eta} +
 (1-\kappa) C_2^{(\eta - 1)/\eta} ) ^{\eta/(\eta-1)}\]</span> and faces a
 budget of <span class="math display">\[ p_1 C_1 + p_2 C_2 =
@@ -437,14 +418,15 @@ W\]</span></p>
 problem.</li>
 <li>Use the <code>Optim</code> or <code>JuMP</code> package and write a
 program<br />
-<code>utility_maximizer(kappa, eta, p1, p2, w, initial_guess, solver)</code>
-to solve this utility maximization problem.</li>
+<code>utility_maximizer(kappa, eta, p1, p2, w, initial_guess)</code> to
+solve this utility maximization problem.</li>
 </ol>
 <p>Feel free to use the default settings (tolerances, etc) for the
 optimization package or change them. Here’s a hint if you run into
 issues with negative numbers: replace the variable <code>X</code> in the
-function with <code>exp(X)</code>, which is strictly positive, while
-letting the solver search over <code>X</code>.</p>
+function with <code>exp(X)</code>, which is strictly positive. This lets
+the solver search over arbitrary real-valued <code>X</code> without
+imposing a non-negativity constraint.</p>
 <ol start="3" style="list-style-type: decimal">
 <li>Choose a set of parameters and solve it analytically. Also solve it
 numerically with the same set of parameters and report the algorithm
@@ -454,7 +436,6 @@ results (e.g. the output shown <a href="https://julianlsolvers.github.io/Optim.
 and <span class="math inline">\(\eta &gt; 1\)</span></li>
 </ul></li>
 </ol>
-</div>
 </div>
 
 
