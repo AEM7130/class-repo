@@ -104,15 +104,15 @@ How do we do this?
 --
 
 First we specify our approximating function: some linear combination of **basis functions** `\(\Psi_i(\mathbf{S})\)`
-`$$V^j(\mathbf{S}|\theta) = \sum_{i=0}^j \theta_i \Psi_i(\mathbf{S})$$`
-with coefficients `\(\theta_0,...,\theta_j\)`
+`$$V^j(\mathbf{S}|c) = \sum_{i=0}^j c_i \Psi_i(\mathbf{S})$$`
+with coefficients `\(c_0,...,c_j\)`
 
 ---
 
 # Projection methods
 
 We then choose some residual function `\(R\)` which is a function of `\(V^j\)`:
-`$$R(\mathbf{S}|\theta) = H(V^j(\mathbf{S}|\theta))$$`
+`$$R(\mathbf{S}|c) = H(V^j(\mathbf{S}|c))$$`
 
 
 
@@ -147,7 +147,7 @@ We can think of the problem as searching for some unknown conditional expectatio
 # Projection methods
 
 We don't know the true functional form of `\(E[Y|X]\)`, but we can approximate it using the first two monomials on `\(X\)`: `\(1\)` and `\(X\)`
-`$$E[Y|X] \approx \theta_0 + \theta_1 X$$`
+`$$E[Y|X] \approx c_0 + c_1 X$$`
 
 --
 
@@ -155,7 +155,7 @@ These are the first two elements of the .hi[monomial basis]
 
 --
 
-One residual function is then: `\(R(Y,X|\theta_0,\theta_1) = abs(Y-\theta_0-\theta_1 X)\)`, the absolute error
+One residual function is then: `\(R(Y,X|c_0,c_1) = abs(Y-c_0-c_1 X)\)`, the absolute error
 
 --
 
@@ -190,11 +190,11 @@ Example: The figure shows two different residuals on some capital domain of `\([
 &lt;/div&gt;
 
 
-The residual based on the coefficient vector `\(\theta_1\)` is large for small values of capital but near-zero everywhere else
+The residual based on the coefficient vector `\(c_1\)` is large for small values of capital but near-zero everywhere else
 
 --
 
-The residual based on `\(\theta_2\)` has medium values just about everywhere
+The residual based on `\(c_2\)` has medium values just about everywhere
 
 --
 
@@ -214,23 +214,23 @@ Suppose we have some weight functions `\(\phi_i:\Omega \rightarrow \mathbb{R}\)`
 
 The one-dimensional metric is defined as
 `\begin{equation*}
-	\rho(R\cdot|\theta,0) =
+	\rho(R\cdot|c,0) =
 	\begin{cases}
-		0 &amp; \text{if } \int_\Omega\phi_i(\mathbf{S})R(\cdot|\theta)d\mathbf{S} = 0, i=1,...,j+1\\
+		0 &amp; \text{if } \int_\Omega\phi_i(\mathbf{S})R(\cdot|c)d\mathbf{S} = 0, i=1,...,j+1\\
 		1 &amp;\text{otherwise}
 	\end{cases}
 \end{equation*}`
 
 --
 
-Where we want to solve for `\(\theta = \text{argmin} \, \rho(R(\cdot|\theta),0)\)`
+Where we want to solve for `\(c = \text{argmin} \, \rho(R(\cdot|c),0)\)`
 
 ---
 
 # We want to use weighted residuals
 
 We can then change our problem to simply solving a system of integrals ensuring the metric is zero
-`$$\int_\Omega\phi_i(\mathbf{S})R(\cdot|\theta)d\mathbf{S} = 0, i=1,...,j+1.$$` 
+`$$\int_\Omega\phi_i(\mathbf{S})R(\cdot|c)d\mathbf{S} = 0, i=1,...,j+1.$$` 
 
 --
 
@@ -249,7 +249,7 @@ First lets begin with a simple example before moving into the most commonly used
 # Least squares projection
 
 Suppose we selected the weight function to be
-`$$\phi_i(\mathbf{S}) = \frac{\partial R(\mathbf{S}|\theta)}{\partial \theta_{i-1}}$$`
+`$$\phi_i(\mathbf{S}) = \frac{\partial R(\mathbf{S}|c)}{\partial c_{i-1}}$$`
 
 --
 
@@ -260,11 +260,11 @@ Then we would be performing least squares! Why?
 # Least squares projection
 
 Recall the objective of least squares is
-`$$\min_{\mathbf{\theta}} \int R^2(\cdot|\theta)d\mathbf{S}$$`
+`$$\min_{\mathbf{c}} \int R^2(\cdot|c)d\mathbf{S}$$`
 --
 
 The FOC for a minimum is
-`$$\int \frac{\partial R(\mathbf{S}|\theta)}{\partial \theta_{i-1}}R(\cdot|\theta)d\mathbf{S} = 0, i = 1,...,j+1$$`
+`$$\int \frac{\partial R(\mathbf{S}|c)}{\partial c_{i-1}}R(\cdot|c)d\mathbf{S} = 0, i = 1,...,j+1$$`
 
 --
 
@@ -309,7 +309,7 @@ So the solution to our problem must set the residual to zero at these collocatio
 --
 
 Since we have a finite set of points we do not need to solve difficult integrals but only a system of equations
-`$$R(\mathbf{S}_i|\theta) = 0, i=1,...,j+1$$`
+`$$R(\mathbf{S}_i|c) = 0, i=1,...,j+1$$`
 
 --
 
@@ -377,14 +377,14 @@ to be equal to the number of coefficients (which induces a Dirac delta weighting
 
 Solve a system of equations, *linear in `\(c_j\)`* that equates the approximating function at the grid points to the recovered values
 
-`$$\Psi \mathbf{c} = \mathbf{y}$$`
+`$$\Psi \mathbf{c} = \mathbf{v}$$`
 
-where `\(\Psi\)` is the matrix of basis functions, `\(c\)` is a vector of coefficients, and `\(y\)` is a vector of the recovered values
+where `\(\Psi\)` is the matrix of basis functions, `\(c\)` is a vector of coefficients, and `\(v\)` is a vector of the recovered values
 
 --
 
 We can recover `\(c\)` by left dividing by `\(\Psi\)` which yields
-`$$\mathbf{c} = \Psi^{-1}\mathbf{y}$$`
+`$$\mathbf{c} = \Psi^{-1}\mathbf{v}$$` 
 
 ---
 
@@ -395,7 +395,7 @@ then we can just use OLS to solve for the coefficients by minimizing the sum of 
 
 --
 
-`$$\mathbf{c} = (\Psi'\Psi)^{-1}\Psi'\mathbf{y}$$`
+`$$\mathbf{c} = (\Psi'\Psi)^{-1}\Psi'\mathbf{v}$$`
 
 --
 
@@ -538,15 +538,15 @@ We will be plotting stuff, see [http://docs.juliaplots.org/latest/generated/gr/]
 ```
 ## 10-element Vector{Float64}:
 ##   0.0
-##   0.9990725797455932
-##   0.004015857154895404
-##  -0.17384373873936457
-##   0.007075663353328676
-##   0.004040763230065874
-##   0.0016747985985856027
-##  -0.000619466784448347
-##   6.485272688544635e-5
-##  -2.2936960126221835e-6
+##   0.9990725797453611
+##   0.004015857155746594
+##  -0.17384373874058445
+##   0.007075663354237428
+##   0.004040763229673627
+##   0.0016747985986872982
+##  -0.0006194667844639566
+##   6.485272688675296e-5
+##  -2.293696012668126e-6
 ```
 
 ---
@@ -584,25 +584,25 @@ and an arbitrary vector of points to evaluate the approximating function at (for
 ```
 ## 629×1 Matrix{Float64}:
 ##   0.0
-##   0.009990953610595057
-##   0.01998166833300688
-##   0.02997110371354652
-##   0.03995822109622349
-##   0.04994198367414624
-##   0.05992135654203622
-##   0.0698953067498249
-##   0.07986280335730386
-##   0.08982281748979845
+##   0.00999095361059282
+##   0.019981668333002568
+##   0.029971103713540295
+##   0.03995822109621549
+##   0.04994198367413662
+##   0.059921356542025114
+##   0.06989530674981242
+##   0.07986280335729017
+##   0.08982281748978363
 ##   ⋮
-##  -0.08303623493739565
+##  -0.08303623493737788
 ##  -0.07307101015972606
-##  -0.0630990038267818
-##  -0.05312124622678738
-##  -0.04313876967560759
-##  -0.03315260846170531
-##  -0.023163798791927093
+##  -0.06309900382674627
+##  -0.05312124622679448
+##  -0.04313876967565733
+##  -0.033152608461719524
+##  -0.023163798791912882
 ##  -0.013173378738834174
-##  -0.003182388189131302
+##  -0.0031823881891028805
 ```
 
 ---
@@ -723,7 +723,7 @@ Second, they can vary dramatically in size, which leads to scaling/truncation er
 ```
 
 ```
-## Condition number: 8.509428073744648e21
+## Condition number: 6.388871948025998e20
 ```
 
 ---
@@ -937,7 +937,7 @@ There are two important theorems to know about Chebyshev polynomials
 
 --
 
-**Chebyshev interpolation theorem:** *If `\(f(x) \in \mathbb{C}[a,b]\)`, if `\(\{\psi_i(x), i=0,...\}\)` is a system of polynomials (where `\(\psi_i(x)\)` is of exact degree i) orthogonal with respect to `\(\phi(x)\)` on `\([a,b]\)` and if `\(p_j = \sum_{i=0}^j \theta_i \psi_i(x)\)` interpolates `\(f(x)\)` in the zeros of `\(\psi_{n+1}(x)\)`, then:
+**Chebyshev interpolation theorem:** *If `\(f(x) \in \mathbb{C}[a,b]\)`, if `\(\{\psi_i(x), i=0,...\}\)` is a system of polynomials (where `\(\psi_i(x)\)` is of exact degree i) orthogonal with respect to `\(\phi(x)\)` on `\([a,b]\)` and if `\(p_j = \sum_{i=0}^j c_i \psi_i(x)\)` interpolates `\(f(x)\)` in the zeros of `\(\psi_{n+1}(x)\)`, then:
 `$$\lim_{j\rightarrow\infty} \left(|| f-p_j||_2 \right)^2 = \lim_{j\rightarrow\infty}\int_a^b \phi(x) \left(f(x) - p_j \right)^2 dx = 0$$`*
 
 --
@@ -982,8 +982,8 @@ So the error in the approximation is as well!
 # Two important theorems
 
 We often also have that Chebyshev approximations geometrically converge which give us the following convenient property:
-`$$|f(x) - f^j(x|\theta)| \sim O(\theta_j)$$`
-The truncation error by stopping at polynomial `\(j\)` is of the same order as the magnitude of the coefficient `\(\theta_j\)` on the last polynomial
+`$$|f(x) - f^j(x|c)| \sim O(c_j)$$`
+The truncation error by stopping at polynomial `\(j\)` is of the same order as the magnitude of the coefficient `\(c_j\)` on the last polynomial
 
 --
 
@@ -1487,15 +1487,15 @@ the spline in between these points is given by
 
 &lt;!-- # Rough idea of how we proceed --&gt;
 
-&lt;!-- Recall we solve for coefficients `\(\theta\)` by setting the residual to be zero at all of our collocation points --&gt;
+&lt;!-- Recall we solve for coefficients `\(c\)` by setting the residual to be zero at all of our collocation points --&gt;
 
 &lt;!-- -- --&gt;
 
-&lt;!-- But the residual is a function of `\(V\)`, and thus will be a function of `\(\theta\)`, a loop seemingly impossible to escape --&gt;
+&lt;!-- But the residual is a function of `\(V\)`, and thus will be a function of `\(c\)`, a loop seemingly impossible to escape --&gt;
 
 &lt;!-- -- --&gt;
 
-&lt;!-- We can solve this problem by *iterating* on the problem, continually setting the residuals equal to zero, recovering new `\(\theta\)`s, and repeating --&gt;
+&lt;!-- We can solve this problem by *iterating* on the problem, continually setting the residuals equal to zero, recovering new `\(c\)`s, and repeating --&gt;
 
 &lt;!-- --- --&gt;
 
