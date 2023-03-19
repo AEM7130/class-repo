@@ -472,7 +472,7 @@ We will be plotting stuff, see [http://docs.juliaplots.org/latest/generated/gr/]
 ```{julia}
 using Plots
 gr();
-f(x) = sin.(x);
+f(x) = sin(x);
 
 Plots.plot(f, 0, 2pi, line = 4, grid = false, legend = false, size = (500, 250))
 ```
@@ -488,7 +488,7 @@ function project_monomial(f, n, lb, ub)
     # Ψ = matrix of monomial basis functions evaluted on the grid
 
     coll_points = range(lb, ub, length = n)                      # collocation points
-    y_values = f(coll_points)                                    # function values on the grid
+    y_values = @. f(coll_points)                                    # function values on the grid
     basis_functions = [coll_points.^degree for degree = 0:n-1]   # vector of basis functions
     basis_matrix = hcat(basis_functions...)                      # basis matrix
 

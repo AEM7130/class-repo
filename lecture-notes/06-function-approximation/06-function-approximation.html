@@ -489,7 +489,7 @@ We will be plotting stuff, see [http://docs.juliaplots.org/latest/generated/gr/]
 ```julia
  using Plots
  gr();
- f(x) = sin.(x);
+ f(x) = sin(x);
  
  Plots.plot(f, 0, 2pi, line = 4, grid = false, legend = false, size = (500, 250))
 ```
@@ -508,7 +508,7 @@ We will be plotting stuff, see [http://docs.juliaplots.org/latest/generated/gr/]
      # Ψ = matrix of monomial basis functions evaluted on the grid
  
      coll_points = range(lb, ub, length = n)                      # collocation points
-     y_values = f(coll_points)                                    # function values on the grid
+     y_values = @. f(coll_points)                                    # function values on the grid
      basis_functions = [coll_points.^degree for degree = 0:n-1]   # vector of basis functions
      basis_matrix = hcat(basis_functions...)                      # basis matrix
  
@@ -723,7 +723,7 @@ Second, they can vary dramatically in size, which leads to scaling/truncation er
 ```
 
 ```
-## Condition number: 6.388871948025998e20
+## Condition number: 2.03519978200562e22
 ```
 
 ---
