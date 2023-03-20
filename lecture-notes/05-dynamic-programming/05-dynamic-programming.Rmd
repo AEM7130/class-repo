@@ -171,26 +171,15 @@ The idea behind dynamic programmming (like most of what we do) is to exchange so
 
 --
 
-Dynamic programming was developed by Richard Bellman
-
---
-
 The essence of dynamic programming is summed up in .hi[Bellman's Principle of Optimality]
 
----
-
-# Dynamic programming
-
+--
 .hi[Principle of Optimality:]
 > An optimal policy has the property that whatever the initial state and initial decision are, the remaining decisions must constitute an optimal policy with regard to the state resulting from the first decision
 
 --
 
 In simpler terms: your current optimal decision is only dependent on the current state, not your past actions
-
---
-
-Why does this make our problem simpler?
 
 
 ---
@@ -201,17 +190,17 @@ In dynamic programming we really just solve for one object
 
 --
 
-This object is a function that effectively tells us what is the optimal action to take given the current state
+This object is a function that tells us what is the optimal action to take given the current state
 
 --
 
-The tricky thing about this (and what we will be learning about for the next few weeks), is how we actually solve for this function
+The tricky thing about this, is how we actually solve for this function
 
 ---
 
 # Dynamic programming
 
-You may have heard about these functions before: policy functions, value functions
+Policy functions or value functions tell us how to take optimal actions
 
 --
 
@@ -295,18 +284,13 @@ Solving the problem yields a solution that is a function, $V(x)$
 
 --
 
-This is a recursive problem since it maps itself into a scalar value, can be hard to think about at first
-
---
-
-One of the workhorse solution methods exploits this recursion and  
-contraction mapping properties of the Bellman operator to solve for $V(x)$
+This is a recursive problem, one of the workhorse solution methods exploits this recursion and contraction mapping properties of the Bellman operator to solve for $V(x)$
 
 ---
 
 # Solution properties
 
-Under standard assuptions we have that
+Under standard assumptions we have that
 1. The solution to the Bellman equation, $V(x)$, is strictly concave
 2. The solution is approached in the limit as $j \rightarrow \infty$ by iterations on:  
 $V_{j+1}(x) = \max_{u} r(x,u) + \beta V_j(x')$, given any bounded and continuous $V_0$ and our transition equation
@@ -325,8 +309,8 @@ E.g: set the current marginal benefit, energy from burning fossil fuels, with th
 
 Example: 
 1. We have a stock of capital $K_t$ that depreciates at rate $\delta \in (0,1)$
-2. We can invest to increase our future capital $I_t$ at cost $c(I_t)$ and effectiveness $\gamma \in (0,1]$
-3. Per-period payoff $U(Y_t)$ from consuming output $Y_t = f(K_t) = K_t$
+2. We can invest to increase our future capital $I_t$$
+3. Per-period payoff $U(C_t)$ from consuming output $C_t$
 4. Discount factor is $\beta \in (0,1)$
 
 ---
@@ -335,37 +319,38 @@ Example:
 
 The Bellman equation is
 \begin{align}
-  V(K_t) &= \max_{I_t} \left\{ u(K_t) - c(I_t) + \beta V(K_{t+1}) \right\} \notag \\
-  &\text{subject to: } \,\,\,\, K_{t+1} = (1 - \delta) K_t + \gamma I \notag
+  V(K_t) &= \max_{C_t} \left\{ u(C_t) + \beta V(K_{t+1}) \right\} \notag \\
+  &\text{subject to: } \,\,\,\, K_{t+1} = (1 - \delta) K_t - C_t \notag
 \end{align}
 
 --
 
-The FOC with respect to investment is
-$$c_I(I_t) = \beta \, \gamma \, V_K(K_{t+1})$$
+The FOC with respect to consumption is
+$$u'(C_t) = \beta \, V_K(K_{t+1})$$
 
 --
 
 Envelope theorem gives us
-$$V_K(K_t) = u_K(K_t) + \beta \, \delta \, V_K(K_{t+1})$$
+$$V_K(K_t) =  \beta \, \delta \, V_K(K_{t+1})$$
 
 ---
 
 # Euler equations
 
-The FOC with respect to investment is
-$$c_I(I_t) = \beta \, \gamma \, V_K(K_{t+1})$$
+The FOC with respect to consumption is
+$$u'(C_t) = \beta \, V_K(K_{t+1})$$
+
 
 Envelope theorem gives us
-$$V_K(K_t) = u_K(K_t) + \beta \, \delta \, V_K(K_{t+1})$$
+$$V_K(K_t) =  \beta \, (1-\delta) \, V_K(K_{t+1})$$
 
 --
 
 Advance both by one period since they must hold for all $t$
 
 \begin{gather}
-  c_I(I_{t+1}) = \beta \, \gamma \, V_K(K_{t+2}) \notag\\
-  V_K(K_{t+1}) = u_K(K_{t+1}) + \beta \, \delta \, V_K(K_{t+2}) \notag
+  u'(C_{t+1}) = \beta \, V_K(K_{t+2}) \notag\\
+  V_K(K_{t+1}) =  \beta \, (1-\delta) \, V_K(K_{t+2}) \notag
 \end{gather}
 
 ---
@@ -373,21 +358,19 @@ Advance both by one period since they must hold for all $t$
 # Euler equations
 
 Substitute the time $t$ and time $t+1$ FOCs into our time $t+1$ envelope condition
-$$\frac{c'(I_t)}{\beta \, \gamma} = u'(K_{t+1}) + \beta \, \delta \frac{c'(I_{t+1})}{\beta \, \gamma}$$
-$$\Rightarrow c'(I_t) = \beta \left[ \gamma \, u'(K_{t+1}) + \delta \, c'(I_{t+1}) \right]$$
-
+$$u'(C_t) =  \beta \, (1-\delta) \, u'(C_{t+1})$$
 --
 
-LHS is marginal cost of investment, RHS is marginal benefit of investment .hi-blue[along an optimal path]
+LHS is marginal benefit of consumption, RHS is marginal cost of consumption .hi-blue[along an optimal path]
 
 ---
 
 # Euler equations
 
-$$\Rightarrow c'(I_t) = \beta \left[ \gamma \, u'(K_{t+1}) + \delta \, c'(I_{t+1}) \right]$$
+$$u'(C_t) =  \beta \, (1-\delta) \, u'(C_{t+1})$$
 
-LHS: marginal cost of investment  
-RHS: marginal benefit of higher utility from more future output, and lower future investment cost because of higher capital stock
+LHS: marginal benefit of consumption
+RHS: marginal cost of lower utility from more less output because of a lower future capital stock
 
 ---
 
@@ -395,21 +378,15 @@ RHS: marginal benefit of higher utility from more future output, and lower futur
 
 Euler equations are .hi-blue[no-arbitrage conditions]
 
-Suppose we're on the optimal capital path and want to deviate by cutting back investment
+Suppose we're on the optimal capital path and want to deviate by cutting back consumption
 
 --
 
-Yields a marginal benefit today of saving us some investment cost
+Yields a marginal cost today less consumption utility
 
 --
 
-There are two costs associated with it:
-
---
-
-1. Lower utility tomorrow because we will have a smaller capital stock
-
-2. Greater investment cost tomorrow to return to the optimal capital trajectory
+The benefit is that we have $1-\delta$ units of greater capital tomorrow after depreciation which lets us increase our consumption at some utility discount rate $\beta$
 
 ---
 
@@ -429,22 +406,6 @@ We will focus on deterministic problems but this easily ports to stochastic prob
 
 --
 
-Consider an infinite horizon problem for an economic agent
-1. Payoff $r(s_t,u_t)$ in some period $t$ is a function of the state vector $s_t$ and control vector $u_t$
-2. Transition equations are $s_{t+1} = g(s_t,u_t)$
-3. Assume that $u \in U$ and $s \in S$
-4. Payoff is bounded: $u(s_t,u_t)$
-
----
-
-# Basic theory
-
-Here the current state vector .hi[completely] summarizes all the information of the past and is all the information the agent needs to make a forward-looking decision
-
-$\rightarrow$ our problem has the Markov property
-
---
-
 Final two pieces
 1. Stationarity: does not depend explicitly on time
 2. Discounting: $\beta \in (0,1)$, the future matters but not as much as today
@@ -455,32 +416,11 @@ Discounting and bounded payoffs ensures total value is bounded
 
 # Basic theory
 
-Represent this payoff as
-$$\sum_{t=0}^\infty \beta^t r(s_t,u_t)$$
-
---
-
-The value of the maximized discounted stream of payoffs is
-\begin{gather}
-	V(s_0) = \max_{u_0 \in U(s_0)} r(s_0,u_0) + \beta \left[\max_{\{u_t\}_{t=1}^\infty}	\sum_{t=1}^\infty \beta^{t-1} r(s_t,u_t)\right] \notag \\
-	\text{subject to:     } s_{t+1} = g(s_t,u_t) \notag
-\end{gather}
-
---
-
-the terms inside the square brackets is the maximized discounted stream of payoffs beginning at state $s_1$
-
----
-
-# Basic theory
-
-This means the problem can be written recursively as
+The general problem can be written recursively as
 \begin{gather}
 	V(s_0) = \max_{u_0 \in U(s_0)} r(s_t,u_t) + \beta\,V(s_1) \\
 	\text{subject to:     } s_{t+1} = g(s_t,u_t)
 \end{gather}
-
-which is our Bellman (we just exploited Bellman's principle of optimality)
 
 ---
 
