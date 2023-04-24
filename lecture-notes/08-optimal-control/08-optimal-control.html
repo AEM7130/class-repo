@@ -291,29 +291,7 @@ Usually terminal conditions are free and initial conditions are not
 
 ---
 
-# Pinning down the optimal path
-
-If the agent can select the time `\(T\)` when the problem ends, what do we know about the Hamiltonian at time `\(T\)`?
-
---
-
-It must be zero, why?
-
---
-
-The Hamiltonian tells us how the value of the problem is changing
-
---
-
-If `\(H\)` were positive, the value is increasing and the agent can do better by delaying ending the problem
-
---
-
-If `\(H\)` were negative, the value is decreasing and the agent can do better by ending the problem earlier
-
----
-
-# Pinning down the optimal path
+# Pinning down the optimal path example
 
 If the terminal state is free, the transversality condition is that its shadow value must be zero
 
@@ -1505,7 +1483,7 @@ But this implies something very convenient: that the initial state corresponding
 
 --
 
-Thus what we will do is not guess the value of the initial condition and integrate forward, we will guess the terminal condition and integrate .hi-blue[backward]
+We will guess the terminal condition and integrate .hi-blue[backward]
 
 ---
 
@@ -1543,7 +1521,7 @@ Assume `\(u\)` and `\(f\)` are concave, the Figure shows the phase diagram for t
   &lt;img src="figures/shooting_phase.png" height=350&gt;
 &lt;/div&gt;
 
-We have a steady state at `\(k=k^*\)`, this occurs when `\(f'(k(t)) = r\)` and `\(c^* = f(k^*)\)`
+Steady state when `\(f'(k^*) = r\)` and `\(c^* = f(k^*)\)`
 
 ---
 
@@ -1619,11 +1597,7 @@ We don't actually want to solve for a path on `\(M_U\)` but this gives us some i
 
 # Example: Reverse shooting for `\(\infty\)` horizon problems
 
-We want to change the system so that the stable manifold becomes the unstable manifold
-
---
-
-We can do this easily by reversing time
+We want to change the system so that the stable manifold becomes the unstable manifold by reversing time:
 `\begin{align}
 	\dot{c}(t) = \frac{u'(c(t))}{u''(c(t))}(f'(k) - r) \notag\\
 	\dot{k}(t) = -(f(k(t)) -c(t)) \notag
@@ -1631,11 +1605,11 @@ We can do this easily by reversing time
 
 --
 
-This yields the same phase diagram but with the arrows turned `\(180^\circ\)` so the stable manifold forward in time is now the unstable manifold reverse in time
+Gives same phase diagram but with the arrows flipped so the stable manifold forward in time is now the unstable manifold reverse in time
 
 --
 
-This allows us to exploit how paths tend to converge toward the stable manifold while going away from the steady state
+Paths tend to converge toward the stable manifold while going away from the steady state
 
 ---
 
@@ -1801,27 +1775,27 @@ Now we have to find the initial bounds, one where `\(A(T) &gt; 0\)`, one where `
 &lt;img src="08-optimal-control_files/figure-html/unnamed-chunk-33-J1.png" width="748px" style="display: block; margin: auto;" /&gt;
 
 
----
+&lt;!-- --- --&gt;
 
-# Stable manifold interpretation
+&lt;!-- # Stable manifold interpretation --&gt;
 
-The stable manifold of the original system has an important interpretation
+&lt;!-- The stable manifold of the original system has an important interpretation --&gt;
 
---
+&lt;!-- -- --&gt;
 
-This is an autonomous problem so time plays no direct role besides through discounting
+&lt;!-- This is an autonomous problem so time plays no direct role besides through discounting --&gt;
 
---
+&lt;!-- -- --&gt;
 
-Thus the optimal consumption at some time `\(t\)` depends only on the capital stock
+&lt;!-- Thus the optimal consumption at some time `\(t\)` depends only on the capital stock --&gt;
 
---
+&lt;!-- -- --&gt;
 
-We can express this as a policy function `\(C(k)\)` such that `\(c(t) = C(k(t))\)`
+&lt;!-- We can express this as a policy function `\(C(k)\)` such that `\(c(t) = C(k(t))\)` --&gt;
 
---
+&lt;!-- -- --&gt;
 
-Optimality requires that the capital stock converge to the steady state, and the only optimal `\((c(t),k(t))\)` pairs are on the stable manifold so the stable manifold .hi-blue[is the policy function] `\(C(k)\)`
+&lt;!-- Optimality requires that the capital stock converge to the steady state, and the only optimal `\((c(t),k(t))\)` pairs are on the stable manifold so the stable manifold .hi-blue[is the policy function] `\(C(k)\)` --&gt;
 
 &lt;!-- -- --&gt;
 
