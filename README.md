@@ -225,3 +225,4 @@ Kleinman, Benny, Ernest Liu, and Stephen J. Redding. "Dynamic spatial general eq
 Balboni, Clare (2020) "In harm's way? infrastructure investments and the persistence of coastal cities."
 
 ### Session 12: Final project presentations
+Joycelyn, Version Control
